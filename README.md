@@ -1,20 +1,13 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Wenyu Chiou — Portfolio
 
-# Run and deploy your AI Studio app
+Personal site for Wenyu Chiou, PhD candidate at Lehigh University (Catastrophe Modeling & Resilience).
 
-This contains everything you need to run your app locally.
+Bilingual (EN / 中文). Research focus: **LLM-agent frameworks and multi-agent systems coupled with catastrophe flood models**.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1dWIdurDLTKdMso4N5FwcJEnqFJKE5RoM
+## Stack
+Single-page React app (Babel standalone) — no build step. Just `index.html` + JSX/CSS.
 
-## Run Locally
+## Deploy
+GitHub Pages from the `standalone-portfolio` branch (or merge to `main`).
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Live: https://wenyuchiou.github.io/Wenyu-Portfolio/
