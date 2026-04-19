@@ -90,8 +90,71 @@ function Nav({ lang, setLang, theme, setTheme, active }) {
   );
 }
 
-function Hero({ lang }) {
+function Hero({ lang, mode = "academic" }) {
   const C = window.CONTENT.hero;
+  const I = window.CONTENT.industry?.hero;
+  if (mode === "industry" && I) return <HeroIndustry lang={lang} C={C} I={I}/>;
+  return <HeroAcademic lang={lang} C={C}/>;
+}
+
+function HeroIndustry({ lang, C, I }) {
+  const eye = I.eyebrow[lang];
+  const h1 = I.h1[lang];
+  return (
+    <header className="hero-v2 hero-industry" id="top">
+      <div className="wrap hero-v2-grid">
+        <div className="hero-v2-photo reveal">
+          <img src="assets/cover.jpg" alt="Wenyu Chiou presenting at AGU 2025"/>
+          <div className="hero-v2-photo-cap">
+            <span className="dot"/>
+            <span>{lang === "en" ? "AGU Fall Meeting 2025 · New Orleans" : "AGU 2025 · 紐奧良"}</span>
+          </div>
+        </div>
+
+        <div className="hero-v2-text">
+          <div className="hero-v2-eyebrow reveal">
+            <span>{eye[0]}</span>
+            <span className="sep"/>
+            <span>{eye[1]}</span>
+            <span className="sep"/>
+            <span className="live">{eye[2]}</span>
+          </div>
+
+          <h1 className="hero-v2-h1 reveal">
+            {h1.a}{" "}<em>{h1.b}</em>{" "}{h1.c}{" "}
+            <span className="serif-italic tail">{h1.d}</span>
+          </h1>
+
+          <p className="hero-v2-lede reveal">{T(I.lede, lang)}</p>
+
+          <div className="hero-v2-currently reveal">
+            <span className="hero-currently-label">{T(I.currently.label, lang)}</span>
+            <ul className="hero-currently-list">
+              {I.currently.items.map((it, i) => (
+                <li key={i}><span className="hero-currently-dot" style={{background: it.dot}}/>{T(it.text, lang)}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="hero-v2-cta reveal">
+            <a className="btn primary" href="#contact">{window.Icons.mail}{T(I.cta_primary, lang)}</a>
+            <a className="btn" href="https://www.linkedin.com/in/wenyu-chiou" target="_blank" rel="noopener">{window.Icons.linkedin}{T(I.cta_linkedin, lang)}</a>
+            <a className="btn" href="https://github.com/WenyuChiou" target="_blank" rel="noopener">{window.Icons.github}GitHub</a>
+          </div>
+
+          <dl className="hero-v2-facts reveal">
+            <div><dt>{lang === "en" ? "Role sought" : "職位"}</dt><dd>{lang === "en" ? "AI Agent / ML Engineer · Applied Scientist" : "AI 代理 / ML 工程師 · 應用科學家"}</dd></div>
+            <div><dt>{lang === "en" ? "Location" : "地點"}</dt><dd>{lang === "en" ? "US · Taiwan · Remote" : "美國 · 台灣 · 遠端"}</dd></div>
+            <div><dt>{lang === "en" ? "Available" : "可用時程"}</dt><dd>{lang === "en" ? "Summer 2027 (intern) · Full-time 2027–28" : "2027 夏實習 · 2027–28 全職"}</dd></div>
+            <div><dt>{lang === "en" ? "Based in" : "現居"}</dt><dd>Bethlehem, PA · US</dd></div>
+          </dl>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function HeroAcademic({ lang, C }) {
   return (
     <header className="hero-v2" id="top">
       <div className="wrap hero-v2-grid">
@@ -726,24 +789,62 @@ function TweaksPanel({ lang, theme, setTheme, setLang }) {
   );
 }
 
+function ModeSwitch({ mode, setMode, lang }) {
+  return (
+    <div className="mode-switch" role="tablist" aria-label="Site mode">
+      <button className={"mode-opt" + (mode === "industry" ? " active" : "")} onClick={() => setMode("industry")} role="tab" aria-selected={mode === "industry"}>
+        <span className="mode-dot"/>
+        {lang === "en" ? "Industry" : "業界"}
+      </button>
+      <button className={"mode-opt" + (mode === "academic" ? " active" : "")} onClick={() => setMode("academic")} role="tab" aria-selected={mode === "academic"}>
+        <span className="mode-dot"/>
+        {lang === "en" ? "Academic" : "學術"}
+      </button>
+    </div>
+  );
+}
+
+function ImpactStrip({ lang }) {
+  const I = window.CONTENT.industry?.impact;
+  if (!I) return null;
+  return (
+    <section className="impact-strip reveal" aria-label="Key impact numbers">
+      <div className="wrap">
+        <div className="impact-grid">
+          {I.items.map((it, i) => (
+            <div className="impact-item" key={i}>
+              <div className="impact-num">{it.num}</div>
+              <div className="impact-lbl">{T(it.lbl, lang)}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const [lang, setLang] = useState(() => localStorage.getItem("wy-lang") || "en");
   const [theme, setTheme] = useState(() => localStorage.getItem("wy-theme") || "light");
+  const [mode, setMode] = useState(() => localStorage.getItem("wy-mode") || "industry");
   useEffect(() => { localStorage.setItem("wy-lang", lang); document.documentElement.lang = lang === "zh" ? "zh-TW" : "en"; }, [lang]);
   useEffect(() => { localStorage.setItem("wy-theme", theme); document.documentElement.setAttribute("data-theme", theme); }, [theme]);
+  useEffect(() => { localStorage.setItem("wy-mode", mode); document.documentElement.setAttribute("data-mode", mode); }, [mode]);
   useScrollReveal();
   const active = useActiveSection(["top","about","research","projects","skills","pubs","linkedin","repos","contact"]);
   return (
     <>
+      <ModeSwitch mode={mode} setMode={setMode} lang={lang}/>
       <Nav lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} active={active}/>
-      <Hero lang={lang}/>
-      <About lang={lang}/>
+      <Hero lang={lang} mode={mode}/>
+      <About lang={lang} mode={mode}/>
       <Research lang={lang}/>
-      <Projects lang={lang}/>
-      <Skills lang={lang}/>
-      <Publications lang={lang}/>
+      <Projects lang={lang} mode={mode}/>
+      <Skills lang={lang} mode={mode}/>
+      {mode === "academic" && <Publications lang={lang}/>}
       <LinkedIn lang={lang}/>
       <Repos lang={lang}/>
+      {mode === "industry" && <Publications lang={lang} compact/>}
       <Contact lang={lang}/>
       <Footer lang={lang}/>
       <TweaksPanel lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>

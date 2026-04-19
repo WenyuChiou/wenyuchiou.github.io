@@ -430,6 +430,63 @@ const CONTENT = {
     ]
   },
 
+  industry: {
+    hero: {
+      eyebrow: {
+        en: ["AI Agent Engineer", "Water × LLM × Risk", "Available Summer 2027"],
+        zh: ["AI 代理工程師", "水資源 × LLM × 風險", "2027 夏實習開放中"]
+      },
+      h1: {
+        en: { a: "I build", b: "LLM-agent systems", c: "for water & climate risk —", d: "flood, reservoir, irrigation, catastrophe modeling." },
+        zh: { a: "我打造", b: "LLM 代理系統", c: "處理水資源與氣候風險——", d: "洪水、水庫、灌溉、災害建模。" }
+      },
+      lede: {
+        en: "Ph.D. researcher at Lehigh turning multi-agent systems coupled with catastrophe models into production-ready frameworks. I work where human decisions meet the physical environment — and LLMs now stand in for the humans.",
+        zh: "我是 Lehigh 博士候選人，將多智能體系統與災害模型耦合，轉為可落地的生產框架。研究方向在「人與環境的互動」—— 而現在 LLM 代理扮演了人的角色。"
+      },
+      cta_primary: { en: "Email", zh: "來信" },
+      cta_linkedin: { en: "LinkedIn DM", zh: "LinkedIn 私訊" },
+      currently: {
+        label: { en: "Currently shipping", zh: "目前開發中" },
+        items: [
+          { dot: "oklch(0.62 0.16 150)", text: { en: "Multi-agent flood-catastrophe framework (Lehigh research)", zh: "多智能體洪水—災害耦合框架 (Lehigh 研究)" } },
+          { dot: "oklch(0.65 0.15 240)", text: { en: "WAGF — LLM agent governance framework (open source)", zh: "WAGF — LLM 代理治理框架（開源）" } },
+          { dot: "oklch(0.70 0.14 60)", text: { en: "Open to 2027 ML/AI engineer internships — US & remote", zh: "2027 ML/AI 工程師實習開放中 — 美國/遠端" } }
+        ]
+      }
+    },
+    skills: {
+      intro: { en: "The stack I actually ship in.", zh: "我真正拿來交付產品的技術棧。" },
+      cats: [
+        {
+          icon: "ai",
+          name: { en: "Agentic Systems & LLMs", zh: "代理系統與 LLM" },
+          items: ["LLM Agents", "Multi-Agent Orchestration", "LangGraph", "MCP", "Claude / GPT-5 / Gemini", "Prompt Engineering", "RAG", "World Models"]
+        },
+        {
+          icon: "code",
+          name: { en: "Production ML & Engineering", zh: "生產級 ML 與工程" },
+          items: ["Python", "PyTorch", "scikit-learn", "NumPy / pandas", "FastAPI", "Docker", "Git / CI-CD", "AWS"]
+        },
+        {
+          icon: "data",
+          name: { en: "Data, Geo & Simulation", zh: "資料 · 地理 · 模擬" },
+          items: ["GeoPandas", "QGIS / ArcGIS", "Mesa (ABM)", "MODFLOW", "Monte Carlo", "Bayesian Inference (PyMC)"]
+        },
+        {
+          icon: "brain",
+          name: { en: "Domain — Water & Catastrophe", zh: "領域 — 水資源與災害" },
+          items: ["Flood Risk", "Reservoir Modeling", "Irrigation / SGD", "FEMA Hazus 6.1", "Hydrology", "Climate Adaptation", "Insurance & Resilience"]
+        },
+        {
+          icon: "flow",
+          name: { en: "AI-Native Workflows", zh: "AI 原生工作流" },
+          items: ["Claude Code", "Cursor", "Codex CLI", "Gemini CLI", "Agent Skills Development", "MCP Servers"]
+        },
+      ]
+    }
+  },
+
   contact: {
     num: "09",
     kicker: { en: "Contact", zh: "聯絡" },
