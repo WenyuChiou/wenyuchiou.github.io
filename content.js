@@ -238,17 +238,17 @@ const CONTENT = {
       },
       {
         cover: "agentic",
-        meta: { en: "Agentic workflows · 2025", zh: "AI 代理工作流 · 2025" },
-        title: { en: "Agentic Research Toolkit", zh: "AI 研究代理工具組" },
+        meta: { en: "Claude Code marketplace · 2026", zh: "Claude Code 市集 · 2026" },
+        title: { en: "AI Research Skills — Claude Code Marketplace", zh: "AI Research Skills — Claude Code 市集" },
         desc: {
-          en: "A family of composable Claude Code skills and CLI delegates I built to accelerate my own research — research-hub for session memory, zotero-skills for literature, codex / gemini-delegate for offloading token-heavy tasks to other models.",
-          zh: "我為自己研究打造的一組 Claude Code 技能與 CLI 委派工具：research-hub 管理會話記憶、zotero-skills 處理文獻、codex / gemini-delegate 將高 token 任務委派至其他模型。"
+          en: "A 5-plugin Claude Code marketplace I built and ship: 13 composable skills covering literature triage, research design, project memory, manuscript writing, and multi-AI delegation. Installs in one command; works alongside Codex CLI, Gemini CLI, Cursor, or any host that loads SKILL.md context files.",
+          zh: "我打造並維運的 Claude Code 5-plugin 市集：13 個可組合 skill，涵蓋文獻分流、研究設計、專案記憶、論文寫作與多 AI 委派。一條指令安裝完成；也支援 Codex CLI、Gemini CLI、Cursor 等任何能載入 SKILL.md 的 host。"
         },
-        role: "builder",
-        stack: ["TypeScript", "Claude Code", "MCP", "CLI"],
-        tags: ["Skills", "Agentic Tools"],
-        href: "https://github.com/WenyuChiou?tab=repositories&q=skill",
-        foot: { en: "research-hub · zotero-skills · codex-delegate · gemini-delegate-skill", zh: "research-hub · zotero-skills · codex-delegate · gemini-delegate-skill" }
+        role: "lead",
+        stack: ["Claude Code", "Marketplace", "MCP", "CLI"],
+        tags: ["Skills", "Open Source"],
+        href: "https://github.com/WenyuChiou/ai-research-skills",
+        foot: { en: "5 plugins · 13 skills · 1-command install", zh: "5 個 plugin · 13 個 skill · 一條指令安裝" }
       },
       {
         cover: "codex",
@@ -333,6 +333,7 @@ const CONTENT = {
     kicker: { en: "Open Source", zh: "開源專案" },
     intro: { en: "Curated repositories from github.com/WenyuChiou — research code, AI-agent skills, and trading infrastructure.", zh: "自 github.com/WenyuChiou 精選——研究程式碼、AI 代理技能包與交易系統。" },
     items: [
+      { name: "ai-research-skills", desc: { en: "5-plugin Claude Code marketplace — 13 research skills, one-command install, bilingual.", zh: "5-plugin Claude Code 市集——13 個研究 skill、一條指令安裝、中英雙語。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/ai-research-skills", stars: 35, forks: 1, updated: { en: "Apr 2026", zh: "2026.04" }, status: "active" },
       { name: "FLOODABM", desc: { en: "Coupled ABM & catastrophe model — household flood adaptation (Passaic NJ, 2011–23).", zh: "耦合智能體與災害模型：家戶洪水調適 (NJ Passaic 2011–23)。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/FLOODABM", stars: 12, forks: 2, updated: { en: "Dec 2025", zh: "2025.12" }, status: "active" },
       { name: "WAGF", desc: { en: "Water Agent Governance Framework — closes the logic-action gap in LLM agents.", zh: "水資源代理治理框架——彌合 LLM 代理的邏輯與行動落差。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/WAGF", stars: 8, forks: 1, updated: { en: "Nov 2025", zh: "2025.11" }, status: "active" },
       { name: "Cat_framework", desc: { en: "FEMA Hazus 6.1 earthquake catastrophe pipeline, bridges & probabilistic risk.", zh: "FEMA Hazus 6.1 地震災害模擬流程（橋樑與機率風險）。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/Cat_framework", stars: 5, forks: 0, updated: { en: "Oct 2025", zh: "2025.10" }, status: "active" },
