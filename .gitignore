@@ -24,3 +24,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python (added: .venv was accidentally tracked, polluting GitHub language detection)
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
