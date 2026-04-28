@@ -12,30 +12,38 @@ Bilingual (English / 繁中). Research focus: **LLM-agent frameworks
 and multi-agent systems coupled with catastrophe flood models** for
 long-term household adaptation under risk.
 
-**Live site:** https://wenyuchiou.github.io/Wenyu-Portfolio/
+**Live site:** https://wenyuchiou.github.io/
 
 ## What's in here
 
 | Branch | Purpose |
 |---|---|
-| `standalone-portfolio` | **Live deploy branch.** Single-page site, no build step — `index.html` + JSX/CSS via Babel standalone. GitHub Pages serves from here. |
-| `gh-pages` | Built artifact (legacy). |
-| `main` | Original Vite/React/TypeScript scaffold. Kept for reference; not deployed. |
+| `main` | Mirrors the live site source (HTML + JSX + CSS via Babel standalone), plus personal notes (`PDF/` posters, `Agentic AI.drawio`, `workflow/` images). |
+| `standalone-portfolio` | **Deploy branch.** GitHub Pages serves from here. Same site source as `main`, without the personal notes. |
+| `gh-pages` | Built artifact (legacy, no longer used). |
 
 ## Edit + ship
 
-The live site lives on `standalone-portfolio`. Content for projects,
-publications, repos, etc. all lives in
-[`content.js`](https://github.com/WenyuChiou/Wenyu-Portfolio/blob/standalone-portfolio/content.js)
-on that branch — edit there, push, GitHub Pages refreshes.
+Site content lives in
+[`content.js`](https://github.com/WenyuChiou/wenyuchiou.github.io/blob/standalone-portfolio/content.js)
+on the `standalone-portfolio` branch — edit there, push, GitHub Pages
+refreshes within a minute.
 
 ```bash
-git clone -b standalone-portfolio https://github.com/WenyuChiou/Wenyu-Portfolio
-# Open index.html locally in a browser to preview, or run a static server:
+git clone -b standalone-portfolio https://github.com/WenyuChiou/wenyuchiou.github.io
+# Open index.html locally in a browser, or run a static server:
 python -m http.server 8000
 ```
 
 ## Stack
 
-Babel standalone + plain JSX/CSS — no Vite, no npm install, no build
-step on the deploy branch. Just commit `content.js` changes and push.
+Babel standalone + plain JSX/CSS. No Vite, no `npm install`, no build
+step. Edit `content.js`, push, done.
+
+## Old URL
+
+The portfolio used to live at
+`https://wenyuchiou.github.io/Wenyu-Portfolio/` while this repo was
+named `Wenyu-Portfolio`. After the rename, the old URL is preserved
+via a redirect stub repo at
+[github.com/WenyuChiou/Wenyu-Portfolio](https://github.com/WenyuChiou/Wenyu-Portfolio).

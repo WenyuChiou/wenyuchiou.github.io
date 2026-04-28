@@ -1,8 +1,0 @@
-{
-  "name": "Wenyu's Professional Portfolio",
-  "description": "A high-end, modern personal portfolio for Wenyu Chiou featuring an AI-powered career assistant, project showcase, and professional experience timeline.",
-  "requestFramePermissions": [
-    "camera",
-    "microphone"
-  ]
-}
