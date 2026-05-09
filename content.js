@@ -194,50 +194,9 @@ const CONTENT = {
     intro: { en: "Selected research code, posters, and open-source tools I designed, built and maintain.", zh: "以下是我獨立設計、開發並持續維護的精選研究程式碼、海報與開源工具。" },
     items: [
       {
-        image: "assets/agu2025-poster.jpg",
-        meta: { en: "AGU 2025 · Poster NH41E-0449", zh: "AGU 2025 · 海報 NH41E-0449" },
-        title: { en: "Agent-Based Flood Adaptation Model", zh: "家戶洪水調適智能體模型" },
-        desc: {
-          en: "First framework to couple FEMA Hazus 6.1 catastrophe modeling with an agent-based model of household-level flood adaptation. Each agent is one Passaic River Basin household; decisions are calibrated against 12 years of NJ survey and claims data (2011–2023), accounting for social heterogeneity between owners and renters.",
-          zh: "首度將 FEMA Hazus 6.1 災害模型與家戶層級的智能體模擬耦合。每個 agent 對應一戶 Passaic 流域家庭，決策以紐澤西 12 年 (2011–2023) 的調查與保險理賠資料校正，並涵蓋業主與租屋者間的社會異質性。"
-        },
-        role: "lead",
-        stack: ["Python", "Mesa", "GeoPandas", "PyMC"],
-        tags: ["ABM", "Flood Risk", "Adaptation"],
-        href: "https://github.com/WenyuChiou/FLOODABM",
-        foot: { en: "github.com/WenyuChiou/FLOODABM", zh: "github.com/WenyuChiou/FLOODABM" }
-      },
-      {
-        image: "assets/awesome-agentic-ai-zh-preview.jpg",
-        meta: { en: "Open source · Trending 2026", zh: "開源 · 2026 Trending" },
-        title: { en: "awesome-agentic-ai-zh — 7-Stage Learning Roadmap", zh: "awesome-agentic-ai-zh — 7 階段學習地圖" },
-        desc: {
-          en: "Bridging the agentic AI knowledge gap for the bilingual community. A 7-stage trilingual learning roadmap (zh-TW canonical · zh-CN · English) from LLM basics to multi-agent production. 145+ curated projects, hands-on exercises per stage, 2 tracks (CLI Power User · Agent Builder), 5 audience-segmented branches. ★ 519 in week one with 3 community contributors.",
-          zh: "為中文社群彌合 agentic AI 知識落差。7 階段三語學習地圖 (zh-TW canonical · zh-CN · English)，從 LLM 基礎一路到多代理 production。145+ curated projects、每階段都有 hands-on 練習、2 條學習軌 (CLI Power User · Agent Builder)、5 條依使用者分流的延伸路線。首週 ★ 519、3 位社群貢獻者。"
-        },
-        role: "lead",
-        stack: ["Markdown", "mdBook", "GitHub Pages", "Python"],
-        tags: ["Open Source", "Curriculum", "Community"],
-        href: "https://wenyuchiou.github.io/awesome-agentic-ai-zh/",
-        foot: { en: "Live preview: wenyuchiou.github.io/awesome-agentic-ai-zh · ★ 519 · trilingual", zh: "預覽：wenyuchiou.github.io/awesome-agentic-ai-zh · ★ 519 · 三語" }
-      },
-      {
-        image: "assets/groundwater.gif",
-        meta: { en: "M.S. Thesis · 2023", zh: "碩士論文 · 2023" },
-        title: { en: "Submarine Groundwater Discharge — Taoyuan", zh: "桃園台地海底地下水潛流模擬" },
-        desc: {
-          en: "3D numerical simulation of coastal aquifer flow and salinity dynamics, integrating electrical resistivity tomography with field observations across the Taoyuan Tableland.",
-          zh: "結合電阻率層析成像與現地觀測，模擬桃園台地沿海含水層流場與鹽度動態的 3D 數值模型。"
-        },
-        role: "lead",
-        stack: ["MATLAB", "MODFLOW", "Python", "ERT"],
-        tags: ["Hydrology", "SGD"],
-        href: "https://github.com/WenyuChiou",
-        foot: { en: "NCU · 2021–2023", zh: "中央大學 · 2021–2023" }
-      },
-      {
         image: "assets/wagf-architecture.jpg",
         featured: true,
+        category: "research",
         meta: { en: "Multi-Agent LLM Governance · 2026", zh: "多代理 LLM 治理 · 2026" },
         title: { en: "WAGF — Water Agent Governance Framework", zh: "WAGF — 水資源代理治理框架" },
         desc: {
@@ -251,7 +210,54 @@ const CONTENT = {
         foot: { en: "github.com/WenyuChiou/WAGF", zh: "github.com/WenyuChiou/WAGF" }
       },
       {
+        image: "assets/agu2025-poster.jpg",
+        category: "research",
+        meta: { en: "AGU 2025 · Poster NH41E-0449", zh: "AGU 2025 · 海報 NH41E-0449" },
+        title: { en: "Agent-Based Flood Adaptation Model", zh: "家戶洪水調適智能體模型" },
+        desc: {
+          en: "First framework to couple FEMA Hazus 6.1 catastrophe modeling with an agent-based model of household-level flood adaptation. Each agent is one Passaic River Basin household; decisions are calibrated against 12 years of NJ survey and claims data (2011–2023), accounting for social heterogeneity between owners and renters.",
+          zh: "首度將 FEMA Hazus 6.1 災害模型與家戶層級的智能體模擬耦合。每個 agent 對應一戶 Passaic 流域家庭，決策以紐澤西 12 年 (2011–2023) 的調查與保險理賠資料校正，並涵蓋業主與租屋者間的社會異質性。"
+        },
+        role: "lead",
+        stack: ["Python", "Mesa", "GeoPandas", "PyMC"],
+        tags: ["ABM", "Flood Risk", "Adaptation"],
+        href: "https://github.com/WenyuChiou/FLOODABM",
+        foot: { en: "github.com/WenyuChiou/FLOODABM", zh: "github.com/WenyuChiou/FLOODABM" }
+      },
+      {
+        image: "assets/cat-framework-pipeline.png",
+        category: "research",
+        meta: { en: "Earthquake · 2025", zh: "地震災害 · 2025" },
+        title: { en: "Cat Framework — FEMA Hazus 6.1", zh: "Cat Framework — FEMA Hazus 6.1" },
+        desc: {
+          en: "Modular catastrophe pipeline for earthquake-induced bridge damage, implementing FEMA Hazus 6.1 with spatial interpolation, calibration, and probabilistic risk assessment.",
+          zh: "模組化地震災害模擬，聚焦橋樑震損估算；實作 FEMA Hazus 6.1 並加入空間內插、校正與機率風險評估。"
+        },
+        role: "lead",
+        stack: ["Python", "GeoPandas", "SciPy", "QGIS"],
+        tags: ["CAT Modeling", "FEMA Hazus"],
+        href: "https://github.com/WenyuChiou/Cat_framework",
+        foot: { en: "github.com/WenyuChiou/Cat_framework", zh: "github.com/WenyuChiou/Cat_framework" }
+      },
+      {
+        image: "assets/groundwater.gif",
+        category: "research",
+        meta: { en: "M.S. Thesis · 2023", zh: "碩士論文 · 2023" },
+        title: { en: "Submarine Groundwater Discharge — Taoyuan", zh: "桃園台地海底地下水潛流模擬" },
+        desc: {
+          en: "3D numerical simulation of coastal aquifer flow and salinity dynamics, integrating electrical resistivity tomography with field observations across the Taoyuan Tableland.",
+          zh: "結合電阻率層析成像與現地觀測，模擬桃園台地沿海含水層流場與鹽度動態的 3D 數值模型。"
+        },
+        role: "lead",
+        stack: ["MATLAB", "MODFLOW", "Python", "ERT"],
+        tags: ["Hydrology", "SGD"],
+        href: "https://github.com/WenyuChiou",
+        foot: { en: "NCU · 2021–2023", zh: "中央大學 · 2021–2023" }
+      },
+      {
         image: "assets/ai-research-skills-preview.jpg",
+        category: "workflow",
+        stars: 61,
         meta: { en: "Claude Code marketplace · 2026", zh: "Claude Code 市集 · 2026" },
         title: { en: "AI Research Skills — Claude Code Marketplace", zh: "AI Research Skills — Claude Code 市集" },
         desc: {
@@ -265,20 +271,66 @@ const CONTENT = {
         foot: { en: "Live: wenyuchiou.github.io/ai-research-skills · ★ 61 · 5 plugins · 14 skills", zh: "預覽：wenyuchiou.github.io/ai-research-skills · ★ 61 · 5 個 plugin · 14 個 skill" }
       },
       {
-        image: "assets/cat-framework-pipeline.png",
-        meta: { en: "Earthquake · 2025", zh: "地震災害 · 2025" },
-        title: { en: "Cat Framework — FEMA Hazus 6.1", zh: "Cat Framework — FEMA Hazus 6.1" },
+        category: "workflow",
+        stars: 57,
+        meta: { en: "Claude Code skill · 2026", zh: "Claude Code 技能 · 2026" },
+        title: { en: "codex-delegate — cost-aware multi-LLM routing", zh: "codex-delegate — 多 LLM 路由策略" },
         desc: {
-          en: "Modular catastrophe pipeline for earthquake-induced bridge damage, implementing FEMA Hazus 6.1 with spatial interpolation, calibration, and probabilistic risk assessment.",
-          zh: "模組化地震災害模擬，聚焦橋樑震損估算；實作 FEMA Hazus 6.1 並加入空間內插、校正與機率風險評估。"
+          en: "A Claude Code skill that delegates token-heavy coding tasks to Codex CLI, then reconciles outputs back. Establishes a reusable cost-aware routing pattern: Claude plans + reviews, Codex executes the bulk. Validated across 3 production codebases.",
+          zh: "Claude Code 技能：把繁重程式任務委派給 Codex CLI，再回收整合輸出。建立可複用的 cost-aware 路由模式——Claude 負責規劃與審查、Codex 處理大量執行。已在 3 個 production codebase 驗證。"
         },
         role: "lead",
-        stack: ["Python", "GeoPandas", "SciPy", "QGIS"],
-        tags: ["CAT Modeling", "FEMA Hazus"],
-        href: "https://github.com/WenyuChiou/Cat_framework",
-        foot: { en: "github.com/WenyuChiou/Cat_framework", zh: "github.com/WenyuChiou/Cat_framework" }
+        stack: ["Markdown", "Claude Code", "Codex CLI"],
+        tags: ["Skills", "Multi-LLM"],
+        href: "https://github.com/WenyuChiou/codex-delegate",
+        foot: { en: "github.com/WenyuChiou/codex-delegate · ★ 57", zh: "github.com/WenyuChiou/codex-delegate · ★ 57" }
+      },
+      {
+        category: "workflow",
+        meta: { en: "Multi-agent orchestration · 2026", zh: "多代理協作 · 2026" },
+        title: { en: "agent-collab-skills — orchestration primitives", zh: "agent-collab-skills — 協作元件" },
+        desc: {
+          en: "Five composable skills that turn ad-hoc multi-agent runs into reproducible workflows: task splitter, output reconciler, debate, shared memory, acceptance gate. Sits on top of codex-delegate / gemini-delegate; emits structured artifacts other skills can consume.",
+          zh: "五個可組合的協作元件，把零散的多代理執行變成可重現的工作流：task splitter、output reconciler、debate、shared memory、acceptance gate。建立在 codex-delegate / gemini-delegate 之上，產出其他 skill 可消費的結構化結果。"
+        },
+        role: "lead",
+        stack: ["Markdown", "YAML", "Claude Code"],
+        tags: ["Multi-Agent", "Skills"],
+        href: "https://github.com/WenyuChiou/agent-collab-skills",
+        foot: { en: "github.com/WenyuChiou/agent-collab-skills", zh: "github.com/WenyuChiou/agent-collab-skills" }
+      },
+      {
+        image: "assets/awesome-agentic-ai-zh-preview.jpg",
+        featured: true,
+        category: "learning",
+        stars: 519,
+        meta: { en: "Open source · Trending 2026", zh: "開源 · 2026 Trending" },
+        title: { en: "awesome-agentic-ai-zh — 7-Stage Learning Roadmap", zh: "awesome-agentic-ai-zh — 7 階段學習地圖" },
+        desc: {
+          en: "Bridging the agentic AI knowledge gap for the bilingual community. A 7-stage trilingual learning roadmap (zh-TW canonical · zh-CN · English) from LLM basics to multi-agent production. 145+ curated projects, hands-on exercises per stage, 2 tracks (CLI Power User · Agent Builder), 5 audience-segmented branches. ★ 519 in week one with 3 community contributors.",
+          zh: "為中文社群彌合 agentic AI 知識落差。7 階段三語學習地圖 (zh-TW canonical · zh-CN · English)，從 LLM 基礎一路到多代理 production。145+ curated projects、每階段都有 hands-on 練習、2 條學習軌 (CLI Power User · Agent Builder)、5 條依使用者分流的延伸路線。首週 ★ 519、3 位社群貢獻者。"
+        },
+        role: "lead",
+        stack: ["Markdown", "mdBook", "GitHub Pages", "Python"],
+        tags: ["Open Source", "Curriculum", "Community"],
+        href: "https://wenyuchiou.github.io/awesome-agentic-ai-zh/",
+        foot: { en: "Live preview: wenyuchiou.github.io/awesome-agentic-ai-zh · ★ 519 · trilingual", zh: "預覽：wenyuchiou.github.io/awesome-agentic-ai-zh · ★ 519 · 三語" }
       },
     ],
+    categories: {
+      research: {
+        label: { en: "Research", zh: "研究專案" },
+        sub:   { en: "Models, frameworks, peer-reviewed", zh: "模型 · 框架 · 同儕審查" }
+      },
+      workflow: {
+        label: { en: "AI Workflow & Skills", zh: "AI 工作流 · Skills" },
+        sub:   { en: "Production tooling, marketplaces, multi-LLM patterns", zh: "產品級工具 · 市集 · 多 LLM 模式" }
+      },
+      learning: {
+        label: { en: "Learning & Community", zh: "學習資源 · 社群" },
+        sub:   { en: "Curricula, open-source bilingual", zh: "課程 · 雙語開源" }
+      },
+    },
   },
 
   pubs: {

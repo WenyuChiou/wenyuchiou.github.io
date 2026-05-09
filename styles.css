@@ -1651,6 +1651,72 @@ section { padding: clamp(80px, 11vh, 140px) 0; position: relative; }
 .proj-v2-foot .arr { color: var(--ink-3); transition: transform .3s, color .3s; }
 .proj-v2:hover .arr { color: var(--accent); transform: translate(2px, -2px); }
 
+/* CATEGORY GROUPS (Research / Workflow / Learning) */
+.proj-category { margin-top: 56px; }
+.proj-category:first-of-type { margin-top: 32px; }
+.proj-category-head {
+  display: flex; align-items: baseline; gap: 14px;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--rule);
+  flex-wrap: wrap;
+}
+.proj-category-num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+.proj-category-label {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+.proj-category-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.proj-category-count {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  border: 1px solid var(--rule);
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+}
+
+/* Star highlight badges */
+.proj-compact-stars {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  background: var(--accent-soft);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.proj-flagship-stars {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  background: var(--accent-soft);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-right: auto;
+}
+
 /* FLAGSHIP + COMPACT GRID (text-only project cards) */
 .proj-flagship {
   display: block;
