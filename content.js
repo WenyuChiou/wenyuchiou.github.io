@@ -85,10 +85,32 @@ const CONTENT = {
         role: { en: "Ph.D. Candidate", zh: "博士候選人" },
         org:  { en: "Lehigh University · Center for Catastrophe Modeling and Resilience", zh: "Lehigh 大學 · 災害建模與韌性中心" },
         desc: {
-          en: "Advancing human-flood modeling from empirical loss estimation to behavioral agent simulation. First to couple FEMA Hazus 6.1 with an agent-based model of household-level adaptation decisions, calibrated against 12 years of NJ Passaic survey + claims data (2011–2023). Concurrently developing the governance and safety layer for LLM agents in high-stakes simulations (WAGF, paper in progress).",
-          zh: "推進「人—洪水」建模：從以實證損失估算為基礎，發展至行為層級的智能體模擬。首度將 FEMA Hazus 6.1 與家戶調適決策的智能體模型耦合，並以紐澤西 Passaic 流域 12 年 (2011–2023) 的調查與保險理賠資料校正。同時開發 LLM 智能體在高風險模擬中的治理與安全機制 (WAGF，論文撰寫中)。"
+          en: "Advancing human-flood modeling from empirical foundations to LLM-agent simulation, while shipping the open-source infrastructure that supports it.",
+          zh: "從實證基礎推進到 LLM 代理模擬的「人—洪水」建模研究，同時發布支撐這條路徑的開源基礎設施。"
         },
-        tags: ["ABM", "Flood Risk", "Resilience", "LLM Agents"]
+        bullets: [
+          {
+            en: "Designed and analysed household-level surveys mapping how owners and renters perceive flood risk and translate it into adaptation decisions; integrated 12 years of NJ Passaic survey + claims data (2011–2023) as empirical ground truth.",
+            zh: "設計並分析家戶層級調查，釐清業主與租屋者如何感知洪水風險、並轉譯為調適決策；整合紐澤西 Passaic 流域 12 年 (2011–2023) 調查與保險理賠資料作為實證基礎。"
+          },
+          {
+            en: "Quantified the two-way interaction between household adaptation actions and flood loss outcomes by building the first coupled ABM × CAT (FEMA Hazus 6.1) framework — captures how individual mitigation choices reshape basin-scale loss distributions across 127k+ parcels.",
+            zh: "首度將家戶調適行為與洪水損失結果的雙向交互量化：建立首套 ABM × CAT (FEMA Hazus 6.1) 耦合框架，捕捉個別減災選擇如何改寫流域層級 127k+ 戶的損失分布。"
+          },
+          {
+            en: "Developed WAGF — a governed LLM-agent framework letting LLMs act as bounded-rational households. A 6-stage validation pipeline (physical · behavioral · financial · social) catches Logic-Action Gap failures before they propagate; multi-LLM ablation across Claude / GPT-5 / Gemini.",
+            zh: "開發 WAGF——governed LLM 代理框架，讓 LLM 以有限理性 (bounded rationality) 扮演家戶角色；6 階段驗證管線（物理 · 行為 · 金融 · 社會）在動作落地前攔截邏輯—行動落差失敗；橫跨 Claude / GPT-5 / Gemini 的多 LLM 對比實驗。"
+          },
+          {
+            en: "Built a multi-agent system coupled with catastrophe models so policy questions previously answered by expert judgement can now be quantified — three reference implementations spanning flood, multi-agent flood, and Colorado irrigation.",
+            zh: "建立多代理系統 × 災害模型耦合架構，把過去依賴專家判斷的政策問題轉為可量化分析；完成洪水、多代理洪水、Colorado 灌溉三套參考實作。"
+          },
+          {
+            en: "Shipped open-source agentic-workflow Skills and learning resources for the research community: ai-research-skills (5-plugin Claude Code marketplace · 14 skills · ★ 61), codex-delegate / agent-collab-skills (multi-LLM orchestration), awesome-agentic-ai-zh (★ 519 · 7-stage trilingual learning roadmap).",
+            zh: "為研究社群發布開源 agentic workflow Skills 與學習資源：ai-research-skills (5-plugin Claude Code 市集 · 14 skills · ★ 61)、codex-delegate / agent-collab-skills (多 LLM 協作)、awesome-agentic-ai-zh (★ 519 · 7 階段三語學習地圖)。"
+          }
+        ],
+        tags: ["ABM", "CAT Modeling", "LLM Agents", "Multi-Agent", "Open Source"]
       },
       {
         date: { en: "Jan 2024 — Jun 2024", zh: "2024.01 — 2024.06" },
