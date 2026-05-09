@@ -261,8 +261,8 @@ const CONTENT = {
         role: "lead",
         stack: ["Claude Code", "Marketplace", "MCP", "CLI"],
         tags: ["Skills", "Open Source"],
-        href: "https://github.com/WenyuChiou/ai-research-skills",
-        foot: { en: "★ 61 · 5 plugins · 14 skills · 1-command install", zh: "★ 61 · 5 個 plugin · 14 個 skill · 一條指令安裝" }
+        href: "https://wenyuchiou.github.io/ai-research-skills/",
+        foot: { en: "Live: wenyuchiou.github.io/ai-research-skills · ★ 61 · 5 plugins · 14 skills", zh: "預覽：wenyuchiou.github.io/ai-research-skills · ★ 61 · 5 個 plugin · 14 個 skill" }
       },
       {
         cover: "codex",
