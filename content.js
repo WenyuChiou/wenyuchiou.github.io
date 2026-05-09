@@ -209,7 +209,7 @@ const CONTENT = {
         foot: { en: "github.com/WenyuChiou/FLOODABM", zh: "github.com/WenyuChiou/FLOODABM" }
       },
       {
-        cover: "agentic",
+        image: "assets/awesome-agentic-ai-zh-preview.jpg",
         meta: { en: "Open source · Trending 2026", zh: "開源 · 2026 Trending" },
         title: { en: "awesome-agentic-ai-zh — 7-Stage Learning Roadmap", zh: "awesome-agentic-ai-zh — 7 階段學習地圖" },
         desc: {
@@ -251,7 +251,7 @@ const CONTENT = {
         foot: { en: "github.com/WenyuChiou/WAGF", zh: "github.com/WenyuChiou/WAGF" }
       },
       {
-        cover: "agentic",
+        image: "assets/ai-research-skills-preview.jpg",
         meta: { en: "Claude Code marketplace · 2026", zh: "Claude Code 市集 · 2026" },
         title: { en: "AI Research Skills — Claude Code Marketplace", zh: "AI Research Skills — Claude Code 市集" },
         desc: {
