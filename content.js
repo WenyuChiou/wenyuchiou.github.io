@@ -19,14 +19,14 @@ const CONTENT = {
     title_tail:  { en: "—", zh: "—" },
     title_line3: { en: "and how cities adapt.", zh: "以及城市如何調適。" },
     lede: {
-      en: "I build agent-based models coupled with catastrophe simulators, and use LLM agents to study long-term household adaptation to flood risk.",
-      zh: "我結合智能體模擬 (ABM) 與災害模型，並以 LLM 智能體研究家戶面對洪水風險的長期調適行為。"
+      en: "Advancing human-flood modeling from empirical foundations to LLM-based agent simulation. Open-source maintainer of agentic AI infrastructure — a 7-stage trilingual roadmap (★ 519 in week one) and 7+ Claude Code skills.",
+      zh: "推進「人—洪水」建模——從實證基礎到 LLM 驅動的智能體模擬。同時是開源 agentic AI 基礎設施的維護者：7 階段三語學習地圖（首週 ★ 519）與 7+ 個 Claude Code skills。"
     },
     stats: [
       { label: { en: "Research group", zh: "研究團隊" }, value: { en: "Complex Water Adaptive System Group", zh: "複雜水系適應系統研究群" } },
       { label: { en: "Focus",          zh: "研究重心" }, value_en: ["ABM", "Flood Risk", "LLM Agents"], value_zh: ["智能體", "洪水風險", "LLM 代理"] },
       { label: { en: "Based in",       zh: "地點" }, value: { en: "Bethlehem, PA · USA", zh: "賓州伯利恆 · 美國" } },
-      { label: { en: "Status",         zh: "狀態" }, value: { en: "Open to 2026 collaborations", zh: "2026 開放合作邀請" } },
+      { label: { en: "Status",         zh: "狀態" }, value: { en: "Open to Summer 2027 internships", zh: "2027 暑期實習開放中" } },
     ],
     cv:       { en: "Download CV", zh: "下載 CV" },
     contact:  { en: "Get in touch", zh: "聯絡我" },
@@ -43,12 +43,12 @@ const CONTENT = {
     num: "01",
     kicker: { en: "About", zh: "關於" },
     p1: {
-      en: "I am a Ph.D. Candidate at Lehigh University's Department of Civil & Environmental Engineering, and a member of the Center for Catastrophe Modeling and Resilience. My work explores innovative applications of LLMs as agents to model decision-making under risk — from flood insurance choices to community-scale resilience.",
-      zh: "我是美國 Lehigh University 土木與環境工程系的博士候選人，隸屬於災害建模與韌性中心 (Center for Catastrophe Modeling and Resilience)。我的研究探索將 LLM 作為智能體，用以建模風險下的決策行為——從家戶的洪水保險選擇，到社區層級的韌性問題。"
+      en: "I am a Ph.D. Candidate at Lehigh University's Department of Civil & Environmental Engineering, and a member of the Center for Catastrophe Modeling and Resilience. My research advances human-flood modeling — from empirical foundations grounded in catastrophe simulation to LLM agents that emulate household decision-making under climate risk.",
+      zh: "我是美國 Lehigh University 土木與環境工程系的博士候選人，隸屬於災害建模與韌性中心 (Center for Catastrophe Modeling and Resilience)。我的研究在推進「人—洪水」建模：從以災害模擬為基礎的實證方法，發展到以 LLM 智能體模擬家戶在氣候風險下的決策行為。"
     },
     p2: {
-      en: "My dissertation couples agent-based models with catastrophe simulators to ask how households adapt to flood risk over decades, and how cities adapt alongside them. Around this core I develop AI skills and agentic workflows — composable tools that sit between researchers and language models, from literature triage (research-hub, zotero-skills) and coding delegation (codex-delegate, gemini-delegate-skill) to a multi-analyst trading desk and moodring, a daily sentiment tracker across five equity markets.",
-      zh: "我的博士論文將智能體模擬 (ABM) 與災害模型耦合，研究家戶如何在數十年尺度下調適洪水風險，以及城市如何同步調適。圍繞這個核心，我也開發 AI 技能包與 agentic workflow——介於研究者與語言模型之間的可組合工具：從文獻分流 (research-hub、zotero-skills)、程式委派 (codex-delegate、gemini-delegate-skill)，到多分析師交易桌，以及 moodring——追蹤五大股市情緒的每日儀表板。"
+      en: "Beyond the dissertation, I build open-source agentic AI infrastructure for the research community: a 7-stage trilingual learning roadmap (awesome-agentic-ai-zh, ★ 519 in week one), a 5-plugin Claude Code marketplace covering literature triage to manuscript writing (ai-research-skills), and skills for multi-LLM delegation, multi-agent orchestration, and academic writing.",
+      zh: "博士論文之外，我為研究社群打造開源 agentic AI 基礎設施：7 階段三語學習地圖 (awesome-agentic-ai-zh，首週 ★ 519)、涵蓋文獻分流到論文寫作的 5-plugin Claude Code 市集 (ai-research-skills)，以及多 LLM 委派、多代理協作、學術寫作等 skills。"
     },
     card: {
       role:     { en: "Role",     zh: "身分" },
@@ -85,8 +85,8 @@ const CONTENT = {
         role: { en: "Ph.D. Candidate", zh: "博士候選人" },
         org:  { en: "Lehigh University · Center for Catastrophe Modeling and Resilience", zh: "Lehigh 大學 · 災害建模與韌性中心" },
         desc: {
-          en: "Developing computational models to simulate human-water system interactions under climate change. Building coupled agent-based / catastrophe frameworks and exploring LLM agents for household-level decision-making.",
-          zh: "發展計算模型以模擬氣候變遷下人類與水系之互動，建構耦合式智能體 / 災害模擬框架，並研究 LLM 代理於家戶層級決策之應用。"
+          en: "Advancing human-flood modeling from empirical loss estimation to behavioral agent simulation. First to couple FEMA Hazus 6.1 with an agent-based model of household-level adaptation decisions, calibrated against 12 years of NJ Passaic survey + claims data (2011–2023). Concurrently developing the governance and safety layer for LLM agents in high-stakes simulations (WAGF, paper in progress).",
+          zh: "推進「人—洪水」建模：從以實證損失估算為基礎，發展至行為層級的智能體模擬。首度將 FEMA Hazus 6.1 與家戶調適決策的智能體模型耦合，並以紐澤西 Passaic 流域 12 年 (2011–2023) 的調查與保險理賠資料校正。同時開發 LLM 智能體在高風險模擬中的治理與安全機制 (WAGF，論文撰寫中)。"
         },
         tags: ["ABM", "Flood Risk", "Resilience", "LLM Agents"]
       },
@@ -199,14 +199,28 @@ const CONTENT = {
         meta: { en: "AGU 2025 · Poster NH41E-0449", zh: "AGU 2025 · 海報 NH41E-0449" },
         title: { en: "Agent-Based Flood Adaptation Model", zh: "家戶洪水調適智能體模型" },
         desc: {
-          en: "Comprehensive agent-based framework simulating long-term household adaptation to flood risk across the Passaic River Basin (NJ, 2011–2023), accounting for social heterogeneity between owners and renters.",
-          zh: "以智能體模擬長期家戶洪水調適行為，涵蓋業主與租屋者的社會異質性；案例建於美國紐澤西 Passaic 河流域 (2011–2023)。"
+          en: "First framework to couple FEMA Hazus 6.1 catastrophe modeling with an agent-based model of household-level flood adaptation. Each agent is one Passaic River Basin household; decisions are calibrated against 12 years of NJ survey and claims data (2011–2023), accounting for social heterogeneity between owners and renters.",
+          zh: "首度將 FEMA Hazus 6.1 災害模型與家戶層級的智能體模擬耦合。每個 agent 對應一戶 Passaic 流域家庭，決策以紐澤西 12 年 (2011–2023) 的調查與保險理賠資料校正，並涵蓋業主與租屋者間的社會異質性。"
         },
         role: "lead",
         stack: ["Python", "Mesa", "GeoPandas", "PyMC"],
         tags: ["ABM", "Flood Risk", "Adaptation"],
         href: "https://github.com/WenyuChiou/FLOODABM",
         foot: { en: "github.com/WenyuChiou/FLOODABM", zh: "github.com/WenyuChiou/FLOODABM" }
+      },
+      {
+        cover: "agentic",
+        meta: { en: "Open source · Trending 2026", zh: "開源 · 2026 Trending" },
+        title: { en: "awesome-agentic-ai-zh — 7-Stage Learning Roadmap", zh: "awesome-agentic-ai-zh — 7 階段學習地圖" },
+        desc: {
+          en: "Bridging the agentic AI knowledge gap for the bilingual community. A 7-stage trilingual learning roadmap (zh-TW canonical · zh-CN · English) from LLM basics to multi-agent production. 145+ curated projects, hands-on exercises per stage, 2 tracks (CLI Power User · Agent Builder), 5 audience-segmented branches. ★ 519 in week one with 3 community contributors.",
+          zh: "為中文社群彌合 agentic AI 知識落差。7 階段三語學習地圖 (zh-TW canonical · zh-CN · English)，從 LLM 基礎一路到多代理 production。145+ curated projects、每階段都有 hands-on 練習、2 條學習軌 (CLI Power User · Agent Builder)、5 條依使用者分流的延伸路線。首週 ★ 519、3 位社群貢獻者。"
+        },
+        role: "lead",
+        stack: ["Markdown", "mdBook", "GitHub Pages", "Python"],
+        tags: ["Open Source", "Curriculum", "Community"],
+        href: "https://wenyuchiou.github.io/awesome-agentic-ai-zh/",
+        foot: { en: "Live preview: wenyuchiou.github.io/awesome-agentic-ai-zh · ★ 519 · trilingual", zh: "預覽：wenyuchiou.github.io/awesome-agentic-ai-zh · ★ 519 · 三語" }
       },
       {
         image: "assets/groundwater.gif",
@@ -227,12 +241,12 @@ const CONTENT = {
         meta: { en: "Research framework · 2025", zh: "研究框架 · 2025" },
         title: { en: "WAGF — Water Agent Governance Framework", zh: "WAGF — 水資源代理治理框架" },
         desc: {
-          en: "Closes the Logic-Action Gap in LLM agents — lets them act as bounded-rational humans while preserving behavioral diversity across a population of households.",
-          zh: "彌合 LLM 代理的「邏輯—行動落差」：讓 LLM 在有限理性下模擬人類行為，同時保留家戶群體間的行為多樣性。"
+          en: "Formalizing safety for LLM agents in consequential simulations. The first 6-stage validation pipeline (physical · behavioral · financial · social) that catches Logic-Action Gap failures — hallucination, logical drift, unsafe state mutation — before they propagate. Three reference implementations across flood, multi-agent flood, and Colorado irrigation; multi-LLM ablation. Paper in progress.",
+          zh: "為高風險模擬中的 LLM 智能體建立安全機制。首套 6 階段驗證管線（物理 · 行為 · 金融 · 社會），在動作落地前攔截「邏輯—行動落差」失敗——幻覺、邏輯偏移、不安全的狀態變更。涵蓋洪水、多代理洪水、Colorado 灌溉三套參考實作；多 LLM 對比實驗。論文撰寫中。"
         },
         role: "lead",
         stack: ["Python", "LangGraph", "Claude", "GPT-5"],
-        tags: ["LLM Agents", "Multi-Agent"],
+        tags: ["LLM Agents", "Multi-Agent", "Agent Safety"],
         href: "https://github.com/WenyuChiou/WAGF",
         foot: { en: "github.com/WenyuChiou/WAGF", zh: "github.com/WenyuChiou/WAGF" }
       },
@@ -241,14 +255,14 @@ const CONTENT = {
         meta: { en: "Claude Code marketplace · 2026", zh: "Claude Code 市集 · 2026" },
         title: { en: "AI Research Skills — Claude Code Marketplace", zh: "AI Research Skills — Claude Code 市集" },
         desc: {
-          en: "A 5-plugin Claude Code marketplace I built and ship: 13 composable skills covering literature triage, research design, project memory, manuscript writing, and multi-AI delegation. Installs in one command; works alongside Codex CLI, Gemini CLI, Cursor, or any host that loads SKILL.md context files.",
-          zh: "我打造並維運的 Claude Code 5-plugin 市集：13 個可組合 skill，涵蓋文獻分流、研究設計、專案記憶、論文寫作與多 AI 委派。一條指令安裝完成；也支援 Codex CLI、Gemini CLI、Cursor 等任何能載入 SKILL.md 的 host。"
+          en: "Productizing the research workflow as composable AI infrastructure. A 5-plugin Claude Code marketplace shipping 14 skills that cover literature triage → research design → project context → manuscript writing → multi-LLM delegation. One command installs everything; works alongside Codex CLI, Gemini CLI, Cursor, or any host that loads SKILL.md.",
+          zh: "把研究工作流產品化成可組合的 AI 基礎設施。5-plugin 的 Claude Code 市集，14 個 skill 覆蓋文獻分流 → 研究設計 → 專案 context → 論文撰寫 → 多 LLM 委派的整條流水線。一條指令安裝完成；也支援 Codex CLI、Gemini CLI、Cursor 等任何能載入 SKILL.md 的 host。"
         },
         role: "lead",
         stack: ["Claude Code", "Marketplace", "MCP", "CLI"],
         tags: ["Skills", "Open Source"],
-        href: "https://github.com/WenyuChiou/ai-research-skills",
-        foot: { en: "5 plugins · 13 skills · 1-command install", zh: "5 個 plugin · 13 個 skill · 一條指令安裝" }
+        href: "https://wenyuchiou.github.io/ai-research-skills/",
+        foot: { en: "Live: wenyuchiou.github.io/ai-research-skills · ★ 61 · 5 plugins · 14 skills", zh: "預覽：wenyuchiou.github.io/ai-research-skills · ★ 61 · 5 個 plugin · 14 個 skill" }
       },
       {
         cover: "codex",
@@ -333,20 +347,22 @@ const CONTENT = {
     kicker: { en: "Open Source", zh: "開源專案" },
     intro: { en: "Curated repositories from github.com/WenyuChiou — research code, AI-agent skills, and trading infrastructure.", zh: "自 github.com/WenyuChiou 精選——研究程式碼、AI 代理技能包與交易系統。" },
     items: [
-      { name: "ai-research-skills", desc: { en: "5-plugin Claude Code marketplace — 13 research skills, one-command install, bilingual.", zh: "5-plugin Claude Code 市集——13 個研究 skill、一條指令安裝、中英雙語。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/ai-research-skills", stars: 35, forks: 1, updated: { en: "Apr 2026", zh: "2026.04" }, status: "active" },
-      { name: "agent-collab-skills", desc: { en: "5 Claude Code skills for multi-agent orchestration — task splitter, output reconciler, debate, shared memory, acceptance gate.", zh: "5 個 Claude Code skill 處理多 agent 協作——拆任務、整合輸出、對抗式辯論、共享記憶、驗收閘門。" }, lang: "Markdown", color: "oklch(0.55 0.18 200)", href: "https://github.com/WenyuChiou/agent-collab-skills", stars: 1, forks: 0, updated: { en: "Apr 2026", zh: "2026.04" }, status: "active" },
-      { name: "FLOODABM", desc: { en: "Coupled ABM & catastrophe model — household flood adaptation (Passaic NJ, 2011–23).", zh: "耦合智能體與災害模型：家戶洪水調適 (NJ Passaic 2011–23)。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/FLOODABM", stars: 12, forks: 2, updated: { en: "Dec 2025", zh: "2025.12" }, status: "active" },
-      { name: "WAGF", desc: { en: "Water Agent Governance Framework — closes the logic-action gap in LLM agents.", zh: "水資源代理治理框架——彌合 LLM 代理的邏輯與行動落差。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/WAGF", stars: 8, forks: 1, updated: { en: "Nov 2025", zh: "2025.11" }, status: "active" },
-      { name: "Cat_framework", desc: { en: "FEMA Hazus 6.1 earthquake catastrophe pipeline, bridges & probabilistic risk.", zh: "FEMA Hazus 6.1 地震災害模擬流程（橋樑與機率風險）。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/Cat_framework", stars: 5, forks: 0, updated: { en: "Oct 2025", zh: "2025.10" }, status: "active" },
-      { name: "research-hub", desc: { en: "AI-powered literature pipeline: fetch → knowledge graph → synthesis.", zh: "AI 文獻流程：取用→知識圖→綜整報告。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/research-hub", stars: 24, forks: 3, updated: { en: "Dec 2025", zh: "2025.12" }, status: "active" },
-      { name: "zotero-skills", desc: { en: "Programmatic Zotero skills — search, add, classify, annotate references.", zh: "Zotero 程式化技能：搜尋、新增、分類、註解文獻。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/zotero-skills", stars: 18, forks: 2, updated: { en: "Nov 2025", zh: "2025.11" }, status: "active" },
-      { name: "codex-delegate", desc: { en: "Claude Code skill — delegate token-heavy coding to Codex or Gemini CLI.", zh: "Claude Code 技能:將繁重程式任務委派給 Codex / Gemini CLI。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/codex-delegate", stars: 31, forks: 4, updated: { en: "Dec 2025", zh: "2025.12" }, status: "active" },
-      { name: "gemini-delegate-skill", desc: { en: "Delegate CJK content generation & Chinese financial writing to Gemini CLI.", zh: "將中日韓內容與中文財經寫作委派給 Gemini CLI。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/gemini-delegate-skill", stars: 9, forks: 1, updated: { en: "Nov 2025", zh: "2025.11" }, status: "active" },
-      { name: "multi-analyst-desk", desc: { en: "4 AI specialists + chief strategist for ETF options; bilingual reports.", zh: "四位 AI 分析師 + 首席策略師組成的 ETF 選擇權交易桌，雙語報告。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/multi-analyst-desk", stars: 15, forks: 3, updated: { en: "Oct 2025", zh: "2025.10" }, status: "active" },
-      { name: "ai-trader-ollama", desc: { en: "Autonomous trading system with multiple specialized AI agents.", zh: "多位專門化 AI 代理組成的自主交易系統。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/ai-trader-ollama", stars: 11, forks: 2, updated: { en: "Sep 2025", zh: "2025.09" }, status: "experimental" },
-      { name: "moodring", desc: { en: "Daily sentiment scoring across 5 equity markets (US/TW/JP/KR/EU).", zh: "五大股市的每日情緒評分 (美/台/日/韓/歐)。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/moodring", stars: 7, forks: 1, updated: { en: "Aug 2025", zh: "2025.08" }, status: "active" },
-      { name: "session-sweep", desc: { en: "Claude Code plugin — clean stale git worktrees, reclaim disk.", zh: "Claude Code 外掛:清理 stale git worktrees、回收磁碟空間。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/session-sweep", stars: 14, forks: 2, updated: { en: "Nov 2025", zh: "2025.11" }, status: "active" },
-      { name: "Event-Driven-Strategy", desc: { en: "ML trading inspired by hydraulic-jump fluid dynamics — market reversals.", zh: "以水躍 (hydraulic jump) 流體力學啟發的機器學習交易策略——偵測反轉。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/Event-Driven-Strategy", stars: 6, forks: 1, updated: { en: "Jul 2024", zh: "2024.07" }, status: "archived" },
+      { name: "awesome-agentic-ai-zh", desc: { en: "Trilingual 7-stage learning roadmap for agentic AI — 145+ curated projects, hands-on exercises per stage, 2 tracks, 5 audience-segmented branches.", zh: "三語 7 階段 agentic AI 學習地圖——145+ curated projects、每階段 hands-on 練習、2 條學習軌、5 條依使用者分流的延伸路線。" }, lang: "Markdown", color: "oklch(0.55 0.18 280)", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh", stars: 519, forks: 34, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "ai-research-skills", desc: { en: "5-plugin Claude Code marketplace — 14 research skills, one-command install, bilingual.", zh: "5-plugin Claude Code 市集——14 個研究 skill、一條指令安裝、中英雙語。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/ai-research-skills", stars: 61, forks: 1, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "codex-delegate", desc: { en: "Claude Code skill — delegate token-heavy coding to Codex CLI; cost-aware routing pattern.", zh: "Claude Code 技能：將繁重程式任務委派給 Codex CLI；建立 cost-aware 路由模式。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/codex-delegate", stars: 57, forks: 4, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "gemini-delegate-skill", desc: { en: "Claude Code skill — delegate large-context synthesis & CJK long-form drafting to Gemini CLI.", zh: "Claude Code 技能：將大 context 統整與中日韓長文撰寫委派給 Gemini CLI。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/gemini-delegate-skill", stars: 34, forks: 1, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "zotero-skills", desc: { en: "Programmatic Zotero skills — search, add, classify, annotate references via Claude Code.", zh: "Zotero 程式化技能：透過 Claude Code 搜尋、新增、分類、註解文獻。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/zotero-skills", stars: 16, forks: 2, updated: { en: "Nov 2025", zh: "2025.11" }, status: "active" },
+      { name: "research-hub", desc: { en: "AI-operable research workspace integrating Zotero + Obsidian + NotebookLM via CLI / MCP / REST.", zh: "AI 可操作的研究 workspace，整合 Zotero + Obsidian + NotebookLM，提供 CLI / MCP / REST 介面。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/research-hub", stars: 14, forks: 3, updated: { en: "Dec 2025", zh: "2025.12" }, status: "active" },
+      { name: "agent-collab-skills", desc: { en: "Multi-agent orchestration primitives — task splitter, output reconciler, debate, shared memory, acceptance gate.", zh: "多代理協作元件——task splitter、output reconciler、debate、shared memory、acceptance gate。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/agent-collab-skills", stars: 0, forks: 0, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "academic-writing-skills", desc: { en: "Findings-first paper writing skill — banned-word audits, figure-text consistency, submission checklists.", zh: "以 findings-first 為核心的論文寫作 skill——banned-word 稽核、圖文一致性、投稿 checklist。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/academic-writing-skills", stars: 2, forks: 0, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "FLOODABM", desc: { en: "Coupled ABM × catastrophe model — household flood adaptation (Passaic NJ, 2011–2023). AGU 2025 poster.", zh: "智能體 × 災害模型耦合：家戶洪水調適 (NJ Passaic 2011–2023)。AGU 2025 poster。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/FLOODABM", stars: 0, forks: 0, updated: { en: "Dec 2025", zh: "2025.12" }, status: "active" },
+      { name: "WAGF", desc: { en: "Water Agent Governance Framework — first 6-stage validation pipeline catching Logic-Action Gap failures in LLM agents.", zh: "水資源代理治理框架——首套 6 階段驗證管線，攔截 LLM 智能體的「邏輯—行動落差」失敗。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/WAGF", stars: 0, forks: 0, updated: { en: "Nov 2025", zh: "2025.11" }, status: "active" },
+      { name: "Cat_framework", desc: { en: "FEMA Hazus 6.1 re-implementation for earthquake-induced bridge damage — adds spatial-interpolation + calibration the official tool doesn't expose.", zh: "FEMA Hazus 6.1 重新實作於地震震損橋樑——加入官方工具未開放的空間內插與校正步驟。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/Cat_framework", stars: 0, forks: 0, updated: { en: "Oct 2025", zh: "2025.10" }, status: "active" },
+      { name: "moodring", desc: { en: "Daily sentiment scoring across 5 equity markets (US/TW/JP/KR/EU).", zh: "五大股市的每日情緒評分 (美/台/日/韓/歐)。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/moodring", stars: 9, forks: 1, updated: { en: "Aug 2025", zh: "2025.08" }, status: "active" },
+      { name: "multi-analyst-desk", desc: { en: "4 AI specialists + chief strategist for ETF options; bilingual reports.", zh: "四位 AI 分析師 + 首席策略師組成的 ETF 選擇權交易桌，雙語報告。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/multi-analyst-desk", stars: 0, forks: 0, updated: { en: "Oct 2025", zh: "2025.10" }, status: "archived" },
+      { name: "ai-trader-ollama", desc: { en: "Autonomous trading system with multiple specialized AI agents and RAG memory.", zh: "多位專門化 AI 代理 + RAG 記憶的自主交易系統。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/ai-trader-ollama", stars: 0, forks: 0, updated: { en: "Sep 2025", zh: "2025.09" }, status: "archived" },
+      { name: "session-sweep", desc: { en: "Claude Code plugin — clean stale git worktrees, reclaim disk.", zh: "Claude Code 外掛：清理 stale git worktrees、回收磁碟空間。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/session-sweep", stars: 0, forks: 0, updated: { en: "Nov 2025", zh: "2025.11" }, status: "active" },
+      { name: "Event-Driven-Strategy", desc: { en: "ML trading inspired by hydraulic-jump fluid dynamics — detects market reversal events.", zh: "以水躍 (hydraulic jump) 流體力學啟發的機器學習交易策略——偵測市場反轉。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/Event-Driven-Strategy", stars: 0, forks: 0, updated: { en: "Jul 2024", zh: "2024.07" }, status: "archived" },
     ]
   },
 
@@ -494,8 +510,8 @@ const CONTENT = {
     kicker: { en: "Contact", zh: "聯絡" },
     title: { en: "Let's build something thoughtful.", zh: "一起做點有意義的研究吧。" },
     body: {
-      en: "I'm open to research collaborations, industry roles starting 2026, and conversations about LLM agents, decision science, or disaster modeling.",
-      zh: "歡迎研究合作、2026 年開始的業界職位邀請，以及關於 LLM 代理、決策科學或災害建模的討論。"
+      en: "I'm open to research collaborations, Summer 2027 ML / AI engineer internships, and conversations about LLM agents, agent safety, decision science, or catastrophe modeling.",
+      zh: "歡迎研究合作、2027 暑期 ML / AI engineer 實習邀請，以及關於 LLM 代理、代理安全、決策科學或災害建模的討論。"
     },
     email_label: { en: "Email", zh: "來信" },
     github_label: { en: "GitHub", zh: "GitHub" },
