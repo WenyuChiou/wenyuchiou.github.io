@@ -214,6 +214,10 @@ const CONTENT = {
         category: "research",
         meta: { en: "AGU 2025 · Poster NH41E-0449", zh: "AGU 2025 · 海報 NH41E-0449" },
         title: { en: "Agent-Based Flood Adaptation Model", zh: "家戶洪水調適智能體模型" },
+        tldr: {
+          en: "Couples FEMA Hazus 6.1 with household-level ABM; calibrated on 12 years of NJ survey + claims data.",
+          zh: "FEMA Hazus 6.1 × 家戶層級 ABM 耦合，以紐澤西 12 年調查與理賠資料校正。"
+        },
         desc: {
           en: "First framework to couple FEMA Hazus 6.1 catastrophe modeling with an agent-based model of household-level flood adaptation. Each agent is one Passaic River Basin household; decisions are calibrated against 12 years of NJ survey and claims data (2011–2023), accounting for social heterogeneity between owners and renters.",
           zh: "首度將 FEMA Hazus 6.1 災害模型與家戶層級的智能體模擬耦合。每個 agent 對應一戶 Passaic 流域家庭，決策以紐澤西 12 年 (2011–2023) 的調查與保險理賠資料校正，並涵蓋業主與租屋者間的社會異質性。"
@@ -229,6 +233,10 @@ const CONTENT = {
         category: "research",
         meta: { en: "Earthquake · 2025", zh: "地震災害 · 2025" },
         title: { en: "Cat Framework — FEMA Hazus 6.1", zh: "Cat Framework — FEMA Hazus 6.1" },
+        tldr: {
+          en: "FEMA Hazus 6.1 reimplemented for bridge damage — adds spatial interpolation + calibration the official tool lacks.",
+          zh: "重新實作 FEMA Hazus 6.1 於橋樑震損；補上官方未開放的空間內插與校正步驟。"
+        },
         desc: {
           en: "Modular catastrophe pipeline for earthquake-induced bridge damage, implementing FEMA Hazus 6.1 with spatial interpolation, calibration, and probabilistic risk assessment.",
           zh: "模組化地震災害模擬，聚焦橋樑震損估算；實作 FEMA Hazus 6.1 並加入空間內插、校正與機率風險評估。"
@@ -244,6 +252,10 @@ const CONTENT = {
         category: "research",
         meta: { en: "M.S. Thesis · 2023", zh: "碩士論文 · 2023" },
         title: { en: "Submarine Groundwater Discharge — Taoyuan", zh: "桃園台地海底地下水潛流模擬" },
+        tldr: {
+          en: "3D coastal aquifer flow + salinity simulation, integrating ERT survey with field observations.",
+          zh: "結合 ERT 探勘與現地觀測，建立 3D 沿海含水層流場與鹽度模型。"
+        },
         desc: {
           en: "3D numerical simulation of coastal aquifer flow and salinity dynamics, integrating electrical resistivity tomography with field observations across the Taoyuan Tableland.",
           zh: "結合電阻率層析成像與現地觀測，模擬桃園台地沿海含水層流場與鹽度動態的 3D 數值模型。"
@@ -252,7 +264,7 @@ const CONTENT = {
         stack: ["MATLAB", "MODFLOW", "Python", "ERT"],
         tags: ["Hydrology", "SGD"],
         href: "https://github.com/WenyuChiou",
-        foot: { en: "NCU · 2021–2023", zh: "中央大學 · 2021–2023" }
+        foot: { en: "NCU · 2021–2023 · Thesis archive", zh: "中央大學 · 2021–2023 · 論文存檔" }
       },
       {
         image: "assets/ai-research-skills-preview.jpg",
@@ -260,6 +272,10 @@ const CONTENT = {
         stars: 61,
         meta: { en: "Claude Code marketplace · 2026", zh: "Claude Code 市集 · 2026" },
         title: { en: "AI Research Skills — Claude Code Marketplace", zh: "AI Research Skills — Claude Code 市集" },
+        tldr: {
+          en: "5-plugin Claude Code marketplace · 14 skills from literature triage to manuscript writing.",
+          zh: "5-plugin Claude Code 市集，14 個 skill 覆蓋文獻分流到論文撰寫。"
+        },
         desc: {
           en: "Productizing the research workflow as composable AI infrastructure. A 5-plugin Claude Code marketplace shipping 14 skills that cover literature triage → research design → project context → manuscript writing → multi-LLM delegation. One command installs everything; works alongside Codex CLI, Gemini CLI, Cursor, or any host that loads SKILL.md.",
           zh: "把研究工作流產品化成可組合的 AI 基礎設施。5-plugin 的 Claude Code 市集，14 個 skill 覆蓋文獻分流 → 研究設計 → 專案 context → 論文撰寫 → 多 LLM 委派的整條流水線。一條指令安裝完成；也支援 Codex CLI、Gemini CLI、Cursor 等任何能載入 SKILL.md 的 host。"
@@ -267,14 +283,19 @@ const CONTENT = {
         role: "lead",
         stack: ["Claude Code", "Marketplace", "MCP", "CLI"],
         tags: ["Skills", "Open Source"],
-        href: "https://wenyuchiou.github.io/ai-research-skills/",
-        foot: { en: "Live: wenyuchiou.github.io/ai-research-skills · ★ 61 · 5 plugins · 14 skills", zh: "預覽：wenyuchiou.github.io/ai-research-skills · ★ 61 · 5 個 plugin · 14 個 skill" }
+        href: "https://github.com/WenyuChiou/ai-research-skills",
+        previewHref: "https://wenyuchiou.github.io/ai-research-skills/",
+        foot: { en: "github.com/WenyuChiou/ai-research-skills · ★ 61 · live preview ↗", zh: "github.com/WenyuChiou/ai-research-skills · ★ 61 · 線上預覽 ↗" }
       },
       {
         category: "workflow",
         stars: 57,
         meta: { en: "Claude Code skill · 2026", zh: "Claude Code 技能 · 2026" },
         title: { en: "codex-delegate — cost-aware multi-LLM routing", zh: "codex-delegate — 多 LLM 路由策略" },
+        tldr: {
+          en: "Claude plans + reviews, Codex executes the bulk — reusable cost-aware routing pattern.",
+          zh: "Claude 規劃與審查、Codex 執行繁重任務；可複用的 cost-aware 路由。"
+        },
         desc: {
           en: "A Claude Code skill that delegates token-heavy coding tasks to Codex CLI, then reconciles outputs back. Establishes a reusable cost-aware routing pattern: Claude plans + reviews, Codex executes the bulk. Validated across 3 production codebases.",
           zh: "Claude Code 技能：把繁重程式任務委派給 Codex CLI，再回收整合輸出。建立可複用的 cost-aware 路由模式——Claude 負責規劃與審查、Codex 處理大量執行。已在 3 個 production codebase 驗證。"
@@ -289,6 +310,10 @@ const CONTENT = {
         category: "workflow",
         meta: { en: "Multi-agent orchestration · 2026", zh: "多代理協作 · 2026" },
         title: { en: "agent-collab-skills — orchestration primitives", zh: "agent-collab-skills — 協作元件" },
+        tldr: {
+          en: "Five primitives — task splitter · reconciler · debate · shared memory · acceptance gate.",
+          zh: "五個協作元件——任務分派 · 結果整合 · 辯論 · 共享記憶 · 收斂閘。"
+        },
         desc: {
           en: "Five composable skills that turn ad-hoc multi-agent runs into reproducible workflows: task splitter, output reconciler, debate, shared memory, acceptance gate. Sits on top of codex-delegate / gemini-delegate; emits structured artifacts other skills can consume.",
           zh: "五個可組合的協作元件，把零散的多代理執行變成可重現的工作流：task splitter、output reconciler、debate、shared memory、acceptance gate。建立在 codex-delegate / gemini-delegate 之上，產出其他 skill 可消費的結構化結果。"
@@ -306,6 +331,10 @@ const CONTENT = {
         stars: 519,
         meta: { en: "Open source · Trending 2026", zh: "開源 · 2026 Trending" },
         title: { en: "awesome-agentic-ai-zh — 7-Stage Learning Roadmap", zh: "awesome-agentic-ai-zh — 7 階段學習地圖" },
+        tldr: {
+          en: "Trilingual 7-stage roadmap from LLM basics to multi-agent production · 145+ curated projects.",
+          zh: "三語 7 階段路線圖，從 LLM 基礎到多代理 production · 145+ curated projects。"
+        },
         desc: {
           en: "Bridging the agentic AI knowledge gap for the bilingual community. A 7-stage trilingual learning roadmap (zh-TW canonical · zh-CN · English) from LLM basics to multi-agent production. 145+ curated projects, hands-on exercises per stage, 2 tracks (CLI Power User · Agent Builder), 5 audience-segmented branches. ★ 519 in week one with 3 community contributors.",
           zh: "為中文社群彌合 agentic AI 知識落差。7 階段三語學習地圖 (zh-TW canonical · zh-CN · English)，從 LLM 基礎一路到多代理 production。145+ curated projects、每階段都有 hands-on 練習、2 條學習軌 (CLI Power User · Agent Builder)、5 條依使用者分流的延伸路線。首週 ★ 519、3 位社群貢獻者。"
@@ -313,8 +342,9 @@ const CONTENT = {
         role: "lead",
         stack: ["Markdown", "mdBook", "GitHub Pages", "Python"],
         tags: ["Open Source", "Curriculum", "Community"],
-        href: "https://wenyuchiou.github.io/awesome-agentic-ai-zh/",
-        foot: { en: "Live preview: wenyuchiou.github.io/awesome-agentic-ai-zh · ★ 519 · trilingual", zh: "預覽：wenyuchiou.github.io/awesome-agentic-ai-zh · ★ 519 · 三語" }
+        href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
+        previewHref: "https://wenyuchiou.github.io/awesome-agentic-ai-zh/",
+        foot: { en: "github.com/WenyuChiou/awesome-agentic-ai-zh · ★ 519 · live preview ↗", zh: "github.com/WenyuChiou/awesome-agentic-ai-zh · ★ 519 · 線上預覽 ↗" }
       },
     ],
     categories: {
