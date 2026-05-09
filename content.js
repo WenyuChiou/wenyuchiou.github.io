@@ -117,8 +117,8 @@ const CONTENT = {
         role: { en: "Research Assistant", zh: "研究助理" },
         org:  { en: "National Central University", zh: "國立中央大學" },
         desc: {
-          en: "Developed 3D groundwater flow simulation models for coastal aquifer systems and established Nature-Based Solutions (NBS) assessment indicators.",
-          zh: "開發沿海含水層 3D 地下水模擬模型，建立以自然為本解方 (NBS) 的評估指標。"
+          en: "Developed 3D groundwater flow simulation models for coastal aquifer systems and contributed to Nature-Based Solutions (NBS) assessment indicators.",
+          zh: "開發沿海含水層 3D 地下水模擬模型，並參與自然為本解方 (NBS) 評估指標的建立。"
         },
         tags: ["Groundwater", "NBS", "Modeling"]
       },
@@ -127,10 +127,20 @@ const CONTENT = {
         role: { en: "Summer Intern", zh: "暑期實習" },
         org:  { en: "NCDR (National Science and Technology Center for Disaster Reduction)", zh: "國家災害防救科技中心 (NCDR)" },
         desc: {
-          en: "Conducted research on climate change adaptation strategies and disaster risk reduction.",
-          zh: "進行氣候變遷調適策略與災害風險減輕之研究。"
+          en: "Conducted research on climate change adaptation strategies and disaster risk reduction (during M.S. studies).",
+          zh: "進行氣候變遷調適策略與災害風險減輕之研究（碩士在學期間）。"
         },
         tags: ["Climate Adaptation", "Disaster Risk"]
+      },
+      {
+        date: { en: "Aug 2021 — Jun 2023", zh: "2021.08 — 2023.06" },
+        role: { en: "M.S. Researcher · Hydrological & Oceanic Sciences", zh: "碩士研究員 · 水文與海洋科學" },
+        org:  { en: "National Central University · Department of Hydrological and Oceanic Sciences", zh: "國立中央大學 · 水文與海洋科學系" },
+        desc: {
+          en: "Master's thesis on submarine groundwater discharge along the Taoyuan coastline — built a 3D numerical model of coastal aquifer flow and salinity dynamics, calibrated against electrical resistivity tomography (ERT) surveys and field observations across the Taoyuan Tableland.",
+          zh: "碩士論文聚焦桃園沿岸海底地下水潛流：建立沿海含水層流場與鹽度動態的 3D 數值模型，以電阻率層析成像 (ERT) 探勘與現地觀測資料校正，研究範圍涵蓋整個桃園台地。"
+        },
+        tags: ["Hydrology", "SGD", "MODFLOW", "Field Survey"]
       },
       {
         date: { en: "Jul 2020 — Aug 2020", zh: "2020.07 — 2020.08" },
