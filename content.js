@@ -195,7 +195,6 @@ const CONTENT = {
     items: [
       {
         image: "assets/agu2025-poster.jpg",
-        featured: true,
         meta: { en: "AGU 2025 · Poster NH41E-0449", zh: "AGU 2025 · 海報 NH41E-0449" },
         title: { en: "Agent-Based Flood Adaptation Model", zh: "家戶洪水調適智能體模型" },
         desc: {
@@ -238,7 +237,8 @@ const CONTENT = {
       },
       {
         image: "assets/wagf-architecture.jpg",
-        meta: { en: "Research framework · 2025", zh: "研究框架 · 2025" },
+        featured: true,
+        meta: { en: "Multi-Agent LLM Governance · 2026", zh: "多代理 LLM 治理 · 2026" },
         title: { en: "WAGF — Water Agent Governance Framework", zh: "WAGF — 水資源代理治理框架" },
         desc: {
           en: "Formalizing safety for LLM agents in consequential simulations. The first 6-stage validation pipeline (physical · behavioral · financial · social) that catches Logic-Action Gap failures — hallucination, logical drift, unsafe state mutation — before they propagate. Three reference implementations across flood, multi-agent flood, and Colorado irrigation; multi-LLM ablation. Paper in progress.",

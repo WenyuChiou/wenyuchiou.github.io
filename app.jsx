@@ -443,47 +443,66 @@ function Research({ lang }) {
 
 function Projects({ lang }) {
   const C = window.CONTENT.projects;
+  const featuredItem = C.items.find(p => p.featured);
+  const compactItems = C.items.filter(p => !p.featured);
+
+  // Derive a short compact-card name from the project's URL (repo slug)
+  // and fall back to the first 1–2 words of the title.
+  const compactName = (p) => {
+    const url = p.href || "";
+    const m = url.match(/github\.com\/[^/]+\/([^/?#]+)/) ||
+              url.match(/wenyuchiou\.github\.io\/([^/?#]+)/);
+    if (m && m[1]) return m[1].replace(/\/$/, "");
+    const title = (p.title.en || "").split(" — ")[0];
+    return title.split(" ").slice(0, 2).join(" ");
+  };
+
   return (
     <section id="projects" className="wrap section-pad">
       <SectionHead num="03" kicker={C.kicker} lang={lang} sub={{en: "Posters, frameworks, open-source", zh: "海報 · 框架 · 開源"}}/>
       <p className="reveal section-intro">{T(C.intro, lang)}</p>
-      <div className="proj-v2-grid reveal-stagger">
-        {C.items.map((p, i) => {
-          const roleLbl = {
-            lead:    lang === "en" ? "Lead"         : "主導",
-            builder: lang === "en" ? "Builder"      : "建構者",
-            collab:  lang === "en" ? "Collaborator" : "合作者",
-          }[p.role];
-          return (
-          <a className={"proj-v2" + (p.featured ? " featured" : "")} key={i} href={p.href} target="_blank" rel="noopener">
-            <div className="proj-v2-media">
-              {p.image ? <img src={p.image} alt={T(p.title, lang)}/> : <div className="proj-v2-placeholder">{window.Covers[p.cover]}</div>}
-              {p.role && <span className={"proj-v2-role proj-v2-role-" + p.role}>{roleLbl}</span>}
+
+      {featuredItem && (
+        <a className="proj-flagship reveal" href={featuredItem.href} target="_blank" rel="noopener">
+          <div className="proj-flagship-head">
+            <span className="proj-flagship-star">★</span>
+            <span className="proj-flagship-tag">{lang === "en" ? "FLAGSHIP" : "旗艦"}</span>
+            <span className="proj-flagship-meta">{T(featuredItem.meta, lang)}</span>
+          </div>
+          <h3 className="proj-flagship-title">{T(featuredItem.title, lang)}</h3>
+          {featuredItem.stack && (
+            <div className="proj-flagship-subtitle">
+              {featuredItem.stack.slice(0, 4).map((s, j) => (
+                <React.Fragment key={j}>
+                  {j > 0 && <span className="proj-flagship-dot"> · </span>}
+                  <span>{s}</span>
+                </React.Fragment>
+              ))}
             </div>
-            <div className="proj-v2-body">
-              <div className="proj-v2-meta">
-                <span className="pill">{T(p.meta, lang)}</span>
-                {p.featured && <span className="pill pill-featured">★ {lang === "en" ? "Featured" : "精選"}</span>}
-              </div>
-              <h3 className="proj-v2-title">{T(p.title, lang)}</h3>
-              <p className="proj-v2-desc">{T(p.desc, lang)}</p>
-              {p.stack && (
-                <div className="proj-v2-stack">
-                  <span className="proj-v2-stack-label">{lang === "en" ? "Stack" : "技術棧"}</span>
-                  {p.stack.map((s, j) => <span className="stack-pill mono" key={j}>{s}</span>)}
-                </div>
-              )}
-              <div className="proj-v2-tags">
-                {p.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
-              </div>
-              <div className="proj-v2-foot">
-                <span className="mono">{T(p.foot, lang)}</span>
-                <span className="arr">{window.Icons.external}</span>
-              </div>
+          )}
+          <p className="proj-flagship-desc">{T(featuredItem.desc, lang)}</p>
+          <div className="proj-flagship-tags">
+            {featuredItem.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
+          </div>
+          <div className="proj-flagship-foot">
+            <span className="mono">↗ {T(featuredItem.foot, lang)}</span>
+          </div>
+        </a>
+      )}
+
+      <div className="proj-compact-grid reveal-stagger">
+        {compactItems.map((p, i) => (
+          <a className="proj-compact" key={i} href={p.href} target="_blank" rel="noopener">
+            <div className="proj-compact-head">
+              <span className="proj-compact-name">{compactName(p)}</span>
+              <span className="proj-compact-dots">•••</span>
+            </div>
+            <div className="proj-compact-meta">{T(p.meta, lang)}</div>
+            <div className="proj-compact-tags">
+              {(p.tags || []).slice(0, 3).map((t, j) => <span className="chip chip-sm" key={j}>{t}</span>)}
             </div>
           </a>
-          );
-        })}
+        ))}
       </div>
     </section>
   );
