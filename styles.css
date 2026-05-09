@@ -656,6 +656,39 @@ section { padding: clamp(80px, 11vh, 140px) 0; position: relative; }
   margin: 0 0 20px;
   text-wrap: pretty;
 }
+.career-bullets {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 78ch;
+}
+.career-bullet {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 14px;
+  align-items: baseline;
+  padding-left: 2px;
+  border-left: 2px solid var(--rule-2);
+  padding: 6px 0 6px 16px;
+  transition: border-color .25s;
+}
+.career-bullet:hover { border-left-color: var(--accent); }
+.career-bullet-num {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  padding-top: 2px;
+}
+.career-bullet-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
 .career-tags {
   display: flex;
   flex-wrap: wrap;

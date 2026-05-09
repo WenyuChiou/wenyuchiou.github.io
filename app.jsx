@@ -400,6 +400,16 @@ function CareerTrack({ items, lang }) {
         </div>
         <h3 className="career-role">{T(cur.role, lang)}</h3>
         <p className="career-desc">{T(cur.desc, lang)}</p>
+        {cur.bullets && cur.bullets.length > 0 && (
+          <ul className="career-bullets">
+            {cur.bullets.map((b, j) => (
+              <li key={j} className="career-bullet">
+                <span className="career-bullet-num mono">{String(j + 1).padStart(2, "0")}</span>
+                <span className="career-bullet-text">{T(b, lang)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="career-tags">
           {cur.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
         </div>
