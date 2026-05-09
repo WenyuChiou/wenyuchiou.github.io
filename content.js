@@ -284,8 +284,7 @@ const CONTENT = {
         stack: ["Claude Code", "Marketplace", "MCP", "CLI"],
         tags: ["Skills", "Open Source"],
         href: "https://github.com/WenyuChiou/ai-research-skills",
-        previewHref: "https://wenyuchiou.github.io/ai-research-skills/",
-        foot: { en: "github.com/WenyuChiou/ai-research-skills · ★ 61 · live preview ↗", zh: "github.com/WenyuChiou/ai-research-skills · ★ 61 · 線上預覽 ↗" }
+        foot: { en: "github.com/WenyuChiou/ai-research-skills · ★ 61", zh: "github.com/WenyuChiou/ai-research-skills · ★ 61" }
       },
       {
         category: "workflow",
@@ -343,8 +342,7 @@ const CONTENT = {
         stack: ["Markdown", "mdBook", "GitHub Pages", "Python"],
         tags: ["Open Source", "Curriculum", "Community"],
         href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
-        previewHref: "https://wenyuchiou.github.io/awesome-agentic-ai-zh/",
-        foot: { en: "github.com/WenyuChiou/awesome-agentic-ai-zh · ★ 519 · live preview ↗", zh: "github.com/WenyuChiou/awesome-agentic-ai-zh · ★ 519 · 線上預覽 ↗" }
+        foot: { en: "github.com/WenyuChiou/awesome-agentic-ai-zh · ★ 519 · trilingual", zh: "github.com/WenyuChiou/awesome-agentic-ai-zh · ★ 519 · 三語" }
       },
     ],
     categories: {

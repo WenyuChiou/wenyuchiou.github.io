@@ -507,11 +507,6 @@ function Projects({ lang }) {
             {window.Icons.github}
             <span>{lang === "en" ? "View on GitHub" : "前往 GitHub"} ↗</span>
           </a>
-          {p.previewHref && (
-            <a className="proj-flagship-btn" href={p.previewHref} target="_blank" rel="noopener">
-              <span>{lang === "en" ? "Live preview" : "線上預覽"} ↗</span>
-            </a>
-          )}
         </div>
       </div>
     </div>
