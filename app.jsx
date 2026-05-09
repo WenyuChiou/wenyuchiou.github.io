@@ -443,8 +443,6 @@ function Research({ lang }) {
 
 function Projects({ lang }) {
   const C = window.CONTENT.projects;
-  const featuredItem = C.items.find(p => p.featured);
-  const compactItems = C.items.filter(p => !p.featured);
 
   // Derive a short compact-card name from the project's URL (repo slug)
   // and fall back to the first 1–2 words of the title.
@@ -457,53 +455,85 @@ function Projects({ lang }) {
     return title.split(" ").slice(0, 2).join(" ");
   };
 
+  // Star highlight threshold — items with stars >= this get a visible badge
+  const STAR_HIGHLIGHT = 30;
+
+  const groupOrder = ["research", "workflow", "learning"];
+  const cats = C.categories || {};
+  const itemsByCat = (cat) => C.items.filter(p => (p.category || "research") === cat);
+
+  const renderCompact = (p, i) => (
+    <a className="proj-compact" key={i} href={p.href} target="_blank" rel="noopener">
+      <div className="proj-compact-head">
+        <span className="proj-compact-name">{compactName(p)}</span>
+        {p.stars >= STAR_HIGHLIGHT
+          ? <span className="proj-compact-stars" title={p.stars + " stars"}>★ {p.stars}</span>
+          : <span className="proj-compact-dots">•••</span>}
+      </div>
+      <div className="proj-compact-meta">{T(p.meta, lang)}</div>
+      <div className="proj-compact-tags">
+        {(p.tags || []).slice(0, 3).map((t, j) => <span className="chip chip-sm" key={j}>{t}</span>)}
+      </div>
+    </a>
+  );
+
+  const renderFlagship = (p) => (
+    <a className="proj-flagship reveal" href={p.href} target="_blank" rel="noopener">
+      <div className="proj-flagship-head">
+        <span className="proj-flagship-star">★</span>
+        <span className="proj-flagship-tag">{lang === "en" ? "FLAGSHIP" : "旗艦"}</span>
+        <span className="proj-flagship-meta">{T(p.meta, lang)}</span>
+      </div>
+      <h3 className="proj-flagship-title">{T(p.title, lang)}</h3>
+      {p.stack && (
+        <div className="proj-flagship-subtitle">
+          {p.stack.slice(0, 4).map((s, j) => (
+            <React.Fragment key={j}>
+              {j > 0 && <span className="proj-flagship-dot"> · </span>}
+              <span>{s}</span>
+            </React.Fragment>
+          ))}
+        </div>
+      )}
+      <p className="proj-flagship-desc">{T(p.desc, lang)}</p>
+      <div className="proj-flagship-tags">
+        {p.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
+      </div>
+      <div className="proj-flagship-foot">
+        {p.stars >= STAR_HIGHLIGHT && <span className="proj-flagship-stars">★ {p.stars}</span>}
+        <span className="mono">↗ {T(p.foot, lang)}</span>
+      </div>
+    </a>
+  );
+
   return (
     <section id="projects" className="wrap section-pad">
       <SectionHead num="03" kicker={C.kicker} lang={lang} sub={{en: "Posters, frameworks, open-source", zh: "海報 · 框架 · 開源"}}/>
       <p className="reveal section-intro">{T(C.intro, lang)}</p>
 
-      {featuredItem && (
-        <a className="proj-flagship reveal" href={featuredItem.href} target="_blank" rel="noopener">
-          <div className="proj-flagship-head">
-            <span className="proj-flagship-star">★</span>
-            <span className="proj-flagship-tag">{lang === "en" ? "FLAGSHIP" : "旗艦"}</span>
-            <span className="proj-flagship-meta">{T(featuredItem.meta, lang)}</span>
-          </div>
-          <h3 className="proj-flagship-title">{T(featuredItem.title, lang)}</h3>
-          {featuredItem.stack && (
-            <div className="proj-flagship-subtitle">
-              {featuredItem.stack.slice(0, 4).map((s, j) => (
-                <React.Fragment key={j}>
-                  {j > 0 && <span className="proj-flagship-dot"> · </span>}
-                  <span>{s}</span>
-                </React.Fragment>
-              ))}
+      {groupOrder.map((cat, gi) => {
+        const items = itemsByCat(cat);
+        if (items.length === 0) return null;
+        const catMeta = cats[cat] || { label: { en: cat, zh: cat }, sub: { en: "", zh: "" } };
+        const featuredHere = items.find(p => p.featured);
+        const compactHere  = items.filter(p => !p.featured);
+        return (
+          <div className="proj-category reveal" key={cat}>
+            <div className="proj-category-head">
+              <span className="proj-category-num">{String(gi + 1).padStart(2, "0")} /</span>
+              <h3 className="proj-category-label">{T(catMeta.label, lang)}</h3>
+              <span className="proj-category-sub">{T(catMeta.sub, lang)}</span>
+              <span className="proj-category-count">{items.length}</span>
             </div>
-          )}
-          <p className="proj-flagship-desc">{T(featuredItem.desc, lang)}</p>
-          <div className="proj-flagship-tags">
-            {featuredItem.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
+            {featuredHere && renderFlagship(featuredHere)}
+            {compactHere.length > 0 && (
+              <div className="proj-compact-grid reveal-stagger">
+                {compactHere.map((p, i) => renderCompact(p, i))}
+              </div>
+            )}
           </div>
-          <div className="proj-flagship-foot">
-            <span className="mono">↗ {T(featuredItem.foot, lang)}</span>
-          </div>
-        </a>
-      )}
-
-      <div className="proj-compact-grid reveal-stagger">
-        {compactItems.map((p, i) => (
-          <a className="proj-compact" key={i} href={p.href} target="_blank" rel="noopener">
-            <div className="proj-compact-head">
-              <span className="proj-compact-name">{compactName(p)}</span>
-              <span className="proj-compact-dots">•••</span>
-            </div>
-            <div className="proj-compact-meta">{T(p.meta, lang)}</div>
-            <div className="proj-compact-tags">
-              {(p.tags || []).slice(0, 3).map((t, j) => <span className="chip chip-sm" key={j}>{t}</span>)}
-            </div>
-          </a>
-        ))}
-      </div>
+        );
+      })}
     </section>
   );
 }
