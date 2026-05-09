@@ -219,8 +219,8 @@ const CONTENT = {
         role: "lead",
         stack: ["Markdown", "mdBook", "GitHub Pages", "Python"],
         tags: ["Open Source", "Curriculum", "Community"],
-        href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
-        foot: { en: "★ 519 · 3 contributors · trilingual", zh: "★ 519 · 3 位貢獻者 · 三語" }
+        href: "https://wenyuchiou.github.io/awesome-agentic-ai-zh/",
+        foot: { en: "Live preview: wenyuchiou.github.io/awesome-agentic-ai-zh · ★ 519 · trilingual", zh: "預覽：wenyuchiou.github.io/awesome-agentic-ai-zh · ★ 519 · 三語" }
       },
       {
         image: "assets/groundwater.gif",
