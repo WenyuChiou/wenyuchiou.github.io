@@ -471,6 +471,7 @@ function Projects({ lang }) {
           : <span className="proj-compact-dots">•••</span>}
       </div>
       <div className="proj-compact-meta">{T(p.meta, lang)}</div>
+      {p.tldr && <p className="proj-compact-tldr">{T(p.tldr, lang)}</p>}
       <div className="proj-compact-tags">
         {(p.tags || []).slice(0, 3).map((t, j) => <span className="chip chip-sm" key={j}>{t}</span>)}
       </div>
@@ -478,7 +479,7 @@ function Projects({ lang }) {
   );
 
   const renderFlagship = (p) => (
-    <a className="proj-flagship reveal" href={p.href} target="_blank" rel="noopener">
+    <div className="proj-flagship reveal">
       <div className="proj-flagship-head">
         <span className="proj-flagship-star">★</span>
         <span className="proj-flagship-tag">{lang === "en" ? "FLAGSHIP" : "旗艦"}</span>
@@ -501,9 +502,19 @@ function Projects({ lang }) {
       </div>
       <div className="proj-flagship-foot">
         {p.stars >= STAR_HIGHLIGHT && <span className="proj-flagship-stars">★ {p.stars}</span>}
-        <span className="mono">↗ {T(p.foot, lang)}</span>
+        <div className="proj-flagship-links">
+          <a className="proj-flagship-btn primary" href={p.href} target="_blank" rel="noopener">
+            {window.Icons.github}
+            <span>{lang === "en" ? "View on GitHub" : "前往 GitHub"} ↗</span>
+          </a>
+          {p.previewHref && (
+            <a className="proj-flagship-btn" href={p.previewHref} target="_blank" rel="noopener">
+              <span>{lang === "en" ? "Live preview" : "線上預覽"} ↗</span>
+            </a>
+          )}
+        </div>
       </div>
-    </a>
+    </div>
   );
 
   return (
