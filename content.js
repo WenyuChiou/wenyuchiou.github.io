@@ -237,7 +237,7 @@ const CONTENT = {
         foot: { en: "NCU · 2021–2023", zh: "中央大學 · 2021–2023" }
       },
       {
-        cover: "wagf",
+        image: "assets/wagf-architecture.jpg",
         meta: { en: "Research framework · 2025", zh: "研究框架 · 2025" },
         title: { en: "WAGF — Water Agent Governance Framework", zh: "WAGF — 水資源代理治理框架" },
         desc: {
@@ -265,7 +265,7 @@ const CONTENT = {
         foot: { en: "Live: wenyuchiou.github.io/ai-research-skills · ★ 61 · 5 plugins · 14 skills", zh: "預覽：wenyuchiou.github.io/ai-research-skills · ★ 61 · 5 個 plugin · 14 個 skill" }
       },
       {
-        cover: "codex",
+        image: "assets/cat-framework-pipeline.png",
         meta: { en: "Earthquake · 2025", zh: "地震災害 · 2025" },
         title: { en: "Cat Framework — FEMA Hazus 6.1", zh: "Cat Framework — FEMA Hazus 6.1" },
         desc: {
