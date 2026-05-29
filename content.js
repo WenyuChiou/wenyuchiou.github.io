@@ -422,7 +422,7 @@ const CONTENT = {
       },
       {
         title: { en: "Integrating Electrical Resistivity Tomography, Field Observations, and Numerical Simulations to Investigate Submarine Groundwater Discharge of the Taoyuan Tableland, Taiwan", zh: "以電阻率層析成像、現地觀測與數值模擬探討桃園台地之海底地下水潛流動態" },
-        authors: "Chiou, W.-Y., et al.",
+        authors: "Li, M.-H., Chiou, W.-Y., Chen, C.-C.",
         venue: "AGU Fall Meeting",
         venue_short: "AGU '23",
         year: "2023",
