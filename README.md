@@ -18,7 +18,7 @@ long-term household adaptation under risk.
 
 | Branch | Purpose |
 |---|---|
-| `main` | Mirrors the live site source (HTML + JSX + CSS via Babel standalone), plus personal notes (`PDF/` posters, `Agentic AI.drawio`, `workflow/` images). |
+| `main` | Mirrors the live site source (HTML + JSX + CSS, precompiled to one bundle by esbuild), plus personal notes (`PDF/` posters, `Agentic AI.drawio`, `workflow/` images). |
 | `standalone-portfolio` | **Deploy branch.** GitHub Pages serves from here. Same site source as `main`, without the personal notes. |
 | `gh-pages` | Built artifact (legacy, no longer used). |
 
@@ -26,19 +26,28 @@ long-term household adaptation under risk.
 
 Site content lives in
 [`content.js`](https://github.com/WenyuChiou/wenyuchiou.github.io/blob/standalone-portfolio/content.js)
-on the `standalone-portfolio` branch — edit there, push, GitHub Pages
-refreshes within a minute.
+(copy) and the `*.jsx` components, on the `standalone-portfolio` deploy
+branch. **The browser loads a precompiled bundle (`assets/app.bundle.js`),
+so after editing source you MUST rebuild and commit the bundle** or the
+live site serves stale code.
 
 ```bash
 git clone -b standalone-portfolio https://github.com/WenyuChiou/wenyuchiou.github.io
-# Open index.html locally in a browser, or run a static server:
-python -m http.server 8000
+cd wenyuchiou.github.io
+npm ci                      # first time only (installs esbuild)
+# ...edit content.js / icons.jsx / covers.jsx / app.jsx ...
+npm run build               # regenerates assets/app.bundle.js
+git add -A && git commit -m "..." && git push   # Pages refreshes within a minute
 ```
+
+To just preview locally without editing: `python -m http.server 8000`.
 
 ## Stack
 
-Babel standalone + plain JSX/CSS. No Vite, no `npm install`, no build
-step. Edit `content.js`, push, done.
+Plain JSX + CSS, **precompiled by [esbuild](https://esbuild.github.io/)**
+into a single `assets/app.bundle.js` (classic `React.createElement`,
+React/ReactDOM from the unpkg CDN — production builds, no in-browser
+Babel). No Vite, no CI: `npm run build` locally, commit the bundle, push.
 
 ## Old URL
 
