@@ -2284,3 +2284,13 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
 [data-theme="dark"] .cmdk-item.active { background: oklch(0.26 0.04 272); }
 @media (prefers-reduced-motion: reduce) { .lightbox, .cmdk-overlay { animation: none; } }
 @media (max-width: 900px) { .nav-cmdk-keys { display: none; } .nav-cmdk { padding: 0; width: 38px; justify-content: center; } }
+
+
+/* Flagship project: 2-column when it has a poster (fills the empty right side) */
+.proj-flagship.has-media { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 40px; align-items: center; }
+.proj-flagship-main { min-width: 0; }
+.proj-flagship.has-media .proj-flagship-poster { margin: 0; max-width: none; align-self: center; }
+@media (max-width: 820px) {
+  .proj-flagship.has-media { grid-template-columns: 1fr; gap: 24px; }
+  .proj-flagship.has-media .proj-flagship-poster { max-width: 100%; }
+}
