@@ -9,7 +9,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..600;1,8..60,300..600&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+TC:wght@400;500&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..600;1,8..60,300..600&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+TC:wght@400;500&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet"/>
 
   <link rel="stylesheet" href="styles.css"/>
 
@@ -24,6 +24,14 @@
       "theme": "light",
       "language": "en"
     }/*EDITMODE-END*/;
+  </script>
+  <script>
+    // Apply persisted theme/mode/lang before first paint (no FOUC; correct lang for AT)
+    try {
+      var __t = localStorage.getItem('wy-theme'); if (__t) document.documentElement.setAttribute('data-theme', __t);
+      var __m = localStorage.getItem('wy-mode'); if (__m) document.documentElement.setAttribute('data-mode', __m);
+      var __l = localStorage.getItem('wy-lang'); if (__l) document.documentElement.lang = (__l === 'zh' ? 'zh-TW' : 'en');
+    } catch (e) {}
   </script>
 </head>
 <body>

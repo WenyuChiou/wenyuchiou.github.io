@@ -8,40 +8,44 @@ const CV_FILES = {
   industry: "assets/Wenyu_Chiou_CV_Industry.pdf",
 };
 
-function useScrollReveal() {
+// Reveal-on-scroll. Content is NEVER allowed to depend on JS to be visible:
+// the effect re-runs whenever `deps` change (e.g. mode/lang swap remounts
+// sections) and a scroll listener re-sweeps so fast scrolling can't outrun
+// the reveal. prefers-reduced-motion → reveal everything immediately.
+function useScrollReveal(deps = []) {
   useEffect(() => {
     const reveal = (el) => {
       el.classList.add("in");
-      // Force any stuck transitions to complete
       el.getAnimations().forEach(a => a.finish());
     };
+    const all = () => document.querySelectorAll(".reveal:not(.in), .reveal-stagger:not(.in)");
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      all().forEach(reveal);
+      return;
+    }
     const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); }
-      });
+      entries.forEach((e) => { if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); } });
     }, { threshold: 0.05, rootMargin: "0px 0px -10% 0px" });
-    const obs = () => {
-      document.querySelectorAll(".reveal:not(.in), .reveal-stagger:not(.in)").forEach(el => {
+    const sweep = () => {
+      all().forEach(el => {
         const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight * 0.95 && r.bottom > 0) {
-          reveal(el);
-        } else {
-          io.observe(el);
-        }
+        if (r.top < window.innerHeight * 0.95 && r.bottom > 0) reveal(el);
+        else io.observe(el);
       });
     };
-    requestAnimationFrame(obs);
-    const t1 = setTimeout(obs, 250);
-    const t2 = setTimeout(obs, 800);
-    // Safety net: if anything is still invisible after 2s, just reveal it
-    const safety = setTimeout(() => {
-      document.querySelectorAll(".reveal:not(.in), .reveal-stagger:not(.in)").forEach(el => {
-        const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight * 1.2) reveal(el);
-      });
-    }, 1500);
-    return () => { io.disconnect(); clearTimeout(t1); clearTimeout(t2); clearTimeout(safety); };
-  }, []);
+    requestAnimationFrame(sweep);
+    const timers = [250, 800, 1500].map(ms => setTimeout(sweep, ms));
+    // Fail-safe: re-sweep on scroll so a fast flick never leaves a section blank.
+    let raf = 0;
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; sweep(); }); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      io.disconnect();
+      timers.forEach(clearTimeout);
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, deps);
 }
 
 function useActiveSection(ids) {
@@ -60,6 +64,7 @@ function Nav({ lang, setLang, theme, setTheme, active, mode = "industry" }) {
   const C = window.CONTENT.nav;
   const [menuOpen, setMenuOpen] = useState(false);
   const cvFile = CV_FILES[mode] || CV_FILES.industry;
+  const cvName = (mode === "academic" ? "Wenyu_Chiou_CV_Academic.pdf" : "Wenyu_Chiou_CV_Industry.pdf");
   const links = [
     ["about",    C.about,    "01"],
     ["research", C.research, "02"],
@@ -86,11 +91,11 @@ function Nav({ lang, setLang, theme, setTheme, active, mode = "industry" }) {
           ))}
         </div>
         <div className="nav-tools">
-          <a className="nav-cv" href={cvFile} download="Wenyu_Chiou_CV.pdf" title={T(window.CONTENT.hero.cv, lang)}>{window.Icons.download}<span>CV</span></a>
-          <button className="icon-btn" onClick={() => setLang(lang === "en" ? "zh" : "en")} title="Language">
+          <a className="nav-cv" href={cvFile} download={cvName} title={T(window.CONTENT.hero.cv, lang)}>{window.Icons.download}<span>CV</span></a>
+          <button className="icon-btn" onClick={() => setLang(lang === "en" ? "zh" : "en")} title="Language" aria-label={lang === "en" ? "切換至中文 · Switch to Chinese" : "Switch to English · 切換至英文"}>
             <span style={{fontFamily: "var(--serif)", fontStyle: "italic", fontSize: 14}}>{lang === "en" ? "中" : "EN"}</span>
           </button>
-          <button className="icon-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} title="Theme">
+          <button className="icon-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} title="Theme" aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}>
             {theme === "dark" ? window.Icons.sun : window.Icons.moon}
           </button>
           <button className="icon-btn nav-burger" onClick={() => setMenuOpen(o => !o)} aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen ? "true" : "false"} aria-controls="mobile-nav-menu">
@@ -106,7 +111,7 @@ function Nav({ lang, setLang, theme, setTheme, active, mode = "industry" }) {
                 <span className="nav-menu-num">{num}</span>{T(label, lang)}
               </a>
             ))}
-            <a className="nav-menu-cv" href={cvFile} download="Wenyu_Chiou_CV.pdf" onClick={() => setMenuOpen(false)}>
+            <a className="nav-menu-cv" href={cvFile} download={cvName} onClick={() => setMenuOpen(false)}>
               {window.Icons.download}{T(window.CONTENT.hero.cv, lang)}
             </a>
           </div>
@@ -164,7 +169,7 @@ function HeroIndustry({ lang, C, I }) {
 
           <div className="hero-v2-cta reveal">
             <a className="btn primary" href="#contact">{window.Icons.mail}{T(I.cta_primary, lang)}</a>
-            <a className="btn" href={CV_FILES.industry} download="Wenyu_Chiou_CV.pdf">{window.Icons.download}{T(C.cv, lang)}</a>
+            <a className="btn" href={CV_FILES.industry} download="Wenyu_Chiou_CV_Industry.pdf">{window.Icons.download}{T(C.cv, lang)}</a>
             <a className="btn ghost" href="https://www.linkedin.com/in/wenyu-chiou" target="_blank" rel="noopener">{window.Icons.linkedin}{T(I.cta_linkedin, lang)}</a>
             <a className="btn ghost" href="https://github.com/WenyuChiou" target="_blank" rel="noopener">{window.Icons.github}GitHub</a>
           </div>
@@ -223,7 +228,7 @@ function HeroAcademic({ lang, C }) {
 
           <div className="hero-v2-cta reveal">
             <a className="btn primary" href="#contact">{window.Icons.mail}{T(C.contact, lang)}</a>
-            <a className="btn" href={CV_FILES.academic} download="Wenyu_Chiou_CV.pdf">{window.Icons.download}{T(C.cv, lang)}</a>
+            <a className="btn" href={CV_FILES.academic} download="Wenyu_Chiou_CV_Academic.pdf">{window.Icons.download}{T(C.cv, lang)}</a>
             <a className="btn ghost" href="https://github.com/WenyuChiou" target="_blank" rel="noopener">{window.Icons.github}GitHub</a>
             <a className="btn ghost" href="#projects">{lang === "en" ? "See work" : "看作品"}{window.Icons.arrow}</a>
           </div>
@@ -637,7 +642,7 @@ function Publications({ lang }) {
                   {p.featured && <span className="pub-featured-badge">★ {lang === "en" ? "Featured" : "精選"}</span>}
                   <span className="pub-venue-short mono">{p.venue_short || p.venue}</span>
                 </div>
-                <h4 className="pub-title" onClick={() => setExpanded(isOpen ? null : i)}>
+                <h4 className="pub-title" role="button" tabIndex={0} aria-expanded={isOpen ? "true" : "false"} onClick={() => setExpanded(isOpen ? null : i)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpanded(isOpen ? null : i); } }}>
                   {T(p.title, lang)}
                 </h4>
                 <div className="pub-authors">
@@ -690,7 +695,7 @@ function Skills({ lang }) {
   };
   return (
     <section id="skills" className="wrap section-pad">
-      <SectionHead num="05" kicker={C.kicker} lang={lang} sub={{en: "Methods, tools, and AI-native workflows", zh: "方法、工具與 AI 原生工作流"}}/>
+      <SectionHead num="04" kicker={C.kicker} lang={lang} sub={{en: "Methods, tools, and AI-native workflows", zh: "方法、工具與 AI 原生工作流"}}/>
       <div className="skills-grid reveal-stagger">
         {C.cats.map((cat, i) => (
           <div className="skill-card" key={i}>
@@ -712,7 +717,7 @@ function LinkedIn({ lang }) {
   const C = window.CONTENT.linkedin;
   return (
     <section id="linkedin" className="wrap section-pad">
-      <SectionHead num="07" kicker={C.kicker} lang={lang} sub={{en: "Recent posts & notes", zh: "近期貼文與筆記"}}/>
+      <SectionHead num="06" kicker={C.kicker} lang={lang} sub={{en: "Recent posts & notes", zh: "近期貼文與筆記"}}/>
       <div className="ln-head reveal">
         <p className="section-intro" style={{margin: 0, flex: 1}}>{T(C.intro, lang)}</p>
         <a className="btn" href={C.profile_url} target="_blank" rel="noopener">
@@ -774,7 +779,7 @@ function Repos({ lang }) {
   const byName = Object.fromEntries(C.items.map(r => [r.name, r]));
   return (
     <section id="repos" className="wrap section-pad">
-      <SectionHead num="06" kicker={C.kicker} lang={lang} sub={{en: "Grouped by what they do", zh: "依用途分組"}}/>
+      <SectionHead num="07" kicker={C.kicker} lang={lang} sub={{en: "Grouped by what they do", zh: "依用途分組"}}/>
       <p className="reveal section-intro">{T(C.intro, lang)}</p>
       <div className="repo-groups reveal-stagger">
         {groups.map((g, gi) => (
@@ -884,12 +889,12 @@ function TweaksPanel({ lang, theme, setTheme, setLang }) {
 
 function ModeSwitch({ mode, setMode, lang }) {
   return (
-    <div className="mode-switch" role="tablist" aria-label="Site mode">
-      <button className={"mode-opt" + (mode === "industry" ? " active" : "")} onClick={() => setMode("industry")} role="tab" aria-selected={mode === "industry"}>
+    <div className="mode-switch" role="group" aria-label="Site mode">
+      <button className={"mode-opt" + (mode === "industry" ? " active" : "")} onClick={() => setMode("industry")} aria-pressed={mode === "industry" ? "true" : "false"}>
         <span className="mode-dot"/>
         {lang === "en" ? "Industry" : "業界"}
       </button>
-      <button className={"mode-opt" + (mode === "academic" ? " active" : "")} onClick={() => setMode("academic")} role="tab" aria-selected={mode === "academic"}>
+      <button className={"mode-opt" + (mode === "academic" ? " active" : "")} onClick={() => setMode("academic")} aria-pressed={mode === "academic" ? "true" : "false"}>
         <span className="mode-dot"/>
         {lang === "en" ? "Academic" : "學術"}
       </button>
@@ -923,22 +928,25 @@ function App() {
   useEffect(() => { localStorage.setItem("wy-lang", lang); document.documentElement.lang = lang === "zh" ? "zh-TW" : "en"; }, [lang]);
   useEffect(() => { localStorage.setItem("wy-theme", theme); document.documentElement.setAttribute("data-theme", theme); }, [theme]);
   useEffect(() => { localStorage.setItem("wy-mode", mode); document.documentElement.setAttribute("data-mode", mode); }, [mode]);
-  useScrollReveal();
+  useScrollReveal([mode, lang]);
   const active = useActiveSection(["top","about","research","projects","skills","pubs","linkedin","repos","contact"]);
   return (
     <>
+      <a className="skip-link" href="#main-content">{lang === "en" ? "Skip to content" : "跳至內容"}</a>
       <ModeSwitch mode={mode} setMode={setMode} lang={lang}/>
       <Nav lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} active={active} mode={mode}/>
-      <Hero lang={lang} mode={mode}/>
-      <About lang={lang} mode={mode}/>
-      <Research lang={lang}/>
-      <Projects lang={lang} mode={mode}/>
-      <Skills lang={lang} mode={mode}/>
-      {mode === "academic" && <Publications lang={lang}/>}
-      <LinkedIn lang={lang}/>
-      <Repos lang={lang}/>
-      {mode === "industry" && <Publications lang={lang} compact/>}
-      <Contact lang={lang}/>
+      <main id="main-content">
+        <Hero lang={lang} mode={mode}/>
+        <About lang={lang} mode={mode}/>
+        <Research lang={lang}/>
+        <Projects lang={lang} mode={mode}/>
+        <Skills lang={lang} mode={mode}/>
+        {mode === "academic" && <Publications lang={lang}/>}
+        <LinkedIn lang={lang}/>
+        <Repos lang={lang}/>
+        {mode === "industry" && <Publications lang={lang} compact/>}
+        <Contact lang={lang}/>
+      </main>
       <Footer lang={lang}/>
       <TweaksPanel lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>
     </>
