@@ -408,7 +408,7 @@ const CONTENT = {
         featured: true,
         cites: 0,
         doi: "10.1002/essoar.2025.NH41E-0449",
-        abstract: { en: "A coupled ABM + catastrophe-model framework simulating 13 years of household flood adaptation across 127,000 parcels in the Passaic River Basin (NJ). Captures social heterogeneity in risk perception, mitigation choices, and economic constraints.", zh: "耦合 ABM 與災害模型，模擬 Passaic 流域 127,000 戶家庭 13 年的洪水調適歷程，呈現風險感知、減災決策與經濟約束的社會異質性。" },
+        abstract: { en: "Couples a multilevel agent-based model with a catastrophe model (exposure · hazard · vulnerability · finance) to simulate long-term household flood adaptation across census tracts of the Passaic River Basin (Essex, Morris & Passaic Counties). Owners and renters choose insurance, elevation, buyout or relocation through a Bayesian decision model driven by threat/coping/stakeholder perceptions and tract-level social heterogeneity, with 2011–2023 peak flood depths from the 1K-DHM distributed hydrologic model. Adaptation yields a 35% payout advantage for owners and 43% for renters, with renters shifting toward relocation over time.", zh: "將多層級智能體模型 (ABM) 與災害模型（暴險 · 危害 · 脆弱度 · 財務）耦合，模擬 Passaic 流域（Essex、Morris、Passaic 三郡）各普查區的家戶長期洪水調適。屋主與租客依威脅／因應／利害關係人感知與普查區社會異質性，透過貝氏決策模型選擇投保、墊高、買斷或搬遷；危害以 1K-DHM 分布式水文模型的 2011–2023 尖峰淹水深度驅動。調適為屋主帶來 35%、租客 43% 的理賠優勢，租客並隨時間轉向搬遷。" },
       },
       {
         title: { en: "Advancing Flood Risk Assessment", zh: "推進洪水風險評估方法" },
@@ -428,7 +428,7 @@ const CONTENT = {
         year: "2023",
         type: "poster",
         cites: 4,
-        abstract: { en: "ERT + piezometer + MODFLOW triangulation to map SGD fluxes along the Taoyuan coastline. Reveals previously under-mapped freshwater discharge pathways.", zh: "結合 ERT、壓力計與 MODFLOW 三角驗證，繪製桃園海岸 SGD 通量分佈，揭示先前未識別的淡水潛流路徑。" },
+        abstract: { en: "Quantifies submarine groundwater discharge (SGD) along the Taoyuan coastline by integrating electrical resistivity tomography (ERT), water-quality and water-table observations, and coupled density-dependent flow-and-transport simulation. Estimates more than 0.5 Mt/day of fresh groundwater discharging to the sea, with a shallow clay layer retarding seawater intrusion while sustaining seaward freshwater outflow.", zh: "整合電阻率層析成像 (ERT)、水質與水位觀測，以及密度相依的耦合流動—傳輸模擬，量化桃園海岸的海底地下水潛流 (SGD)；估計每日逾 0.5 Mt 淡水向海洋潛流，並發現淺層黏土層延緩海水入侵、同時維持向海的淡水外流。" },
       },
       {
         title: { en: "Long-term variation of water isotope composition in Feitsui Reservoir", zh: "翡翠水庫水體同位素組成的長期變化" },
@@ -449,7 +449,7 @@ const CONTENT = {
         type: "journal",
         quartile: "Q3",
         cites: 3,
-        abstract: { en: "Eddy-covariance + sap-flow analysis of a subtropical evergreen forest; quantifies ET seasonality and canopy conductance response.", zh: "以渦度共變與莖流法分析亞熱帶常綠林,量化 ET 季節性與冠層導度響應。" },
+        abstract: { en: "Uses 2010–2020 eddy-covariance flux and micrometeorological observations at the Lianhuachi station to contrast dry- and wet-season water and energy budgets of a central-Taiwan evergreen broad-leaved forest. Classifying seasons by the 3-month Standardized Precipitation Index (SPI3), it finds the forest sustains evapotranspiration from soil moisture through mild-to-moderate drought.", zh: "以蓮華池站 2010–2020 年渦度共變通量與微氣象觀測，比較台灣中部常綠闊葉林乾、濕季的水與能量收支；以三個月標準化降水指數 (SPI3) 分類季節，發現森林在輕至中度乾旱期間仍能由土壤水分支撐蒸發散。" },
       },
     ]
   },
