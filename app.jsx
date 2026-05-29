@@ -631,26 +631,37 @@ function Projects({ lang, gh }) {
   const renderFlagship = (p) => {
    const fstars = liveStars(p);
    return (
-    <div className="proj-flagship reveal">
-      <div className="proj-flagship-head">
-        <span className="proj-flagship-star">★</span>
-        <span className="proj-flagship-tag">{lang === "en" ? "FLAGSHIP" : "旗艦"}</span>
-        <span className="proj-flagship-meta">{T(p.meta, lang)}</span>
-      </div>
-      <h3 className="proj-flagship-title">{T(p.title, lang)}</h3>
-      {p.stack && (
-        <div className="proj-flagship-subtitle">
-          {p.stack.slice(0, 4).map((s, j) => (
-            <React.Fragment key={j}>
-              {j > 0 && <span className="proj-flagship-dot"> · </span>}
-              <span>{s}</span>
-            </React.Fragment>
-          ))}
+    <div className={"proj-flagship reveal" + (p.image ? " has-media" : "")}>
+      <div className="proj-flagship-main">
+        <div className="proj-flagship-head">
+          <span className="proj-flagship-star">★</span>
+          <span className="proj-flagship-tag">{lang === "en" ? "FLAGSHIP" : "旗艦"}</span>
+          <span className="proj-flagship-meta">{T(p.meta, lang)}</span>
         </div>
-      )}
-      <p className="proj-flagship-desc">{T(p.desc, lang)}</p>
-      <div className="proj-flagship-tags">
-        {p.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
+        <h3 className="proj-flagship-title">{T(p.title, lang)}</h3>
+        {p.stack && (
+          <div className="proj-flagship-subtitle">
+            {p.stack.slice(0, 4).map((s, j) => (
+              <React.Fragment key={j}>
+                {j > 0 && <span className="proj-flagship-dot"> · </span>}
+                <span>{s}</span>
+              </React.Fragment>
+            ))}
+          </div>
+        )}
+        <p className="proj-flagship-desc">{T(p.desc, lang)}</p>
+        <div className="proj-flagship-tags">
+          {p.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
+        </div>
+        <div className="proj-flagship-foot">
+          {fstars >= STAR_HIGHLIGHT && <span className="proj-flagship-stars">★ <CountUp end={fstars}/></span>}
+          <div className="proj-flagship-links">
+            <a className="proj-flagship-btn primary" href={p.href} target="_blank" rel="noopener noreferrer">
+              {window.Icons.github}
+              <span>{lang === "en" ? "View on GitHub" : "前往 GitHub"} ↗</span>
+            </a>
+          </div>
+        </div>
       </div>
       {p.image && (
         <button className="proj-flagship-poster" onClick={() => setLightbox({ src: p.image, alt: T(p.title, lang) })}
@@ -658,15 +669,6 @@ function Projects({ lang, gh }) {
           <img src={p.image} alt={T(p.title, lang)} loading="lazy"/>
         </button>
       )}
-      <div className="proj-flagship-foot">
-        {fstars >= STAR_HIGHLIGHT && <span className="proj-flagship-stars">★ <CountUp end={fstars}/></span>}
-        <div className="proj-flagship-links">
-          <a className="proj-flagship-btn primary" href={p.href} target="_blank" rel="noopener noreferrer">
-            {window.Icons.github}
-            <span>{lang === "en" ? "View on GitHub" : "前往 GitHub"} ↗</span>
-          </a>
-        </div>
-      </div>
     </div>
    );
   };
