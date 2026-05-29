@@ -161,6 +161,41 @@ a:hover { color: var(--accent); border-color: var(--accent); }
 .nav-links a.active::before { opacity: 1; }
 
 .nav-tools { display: flex; gap: 6px; align-items: center; }
+.nav-cv {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 38px; padding: 0 14px;
+  border-radius: 100px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-2);
+  font-size: 13px; font-weight: 500;
+  text-decoration: none;
+  transition: border-color .2s, color .2s, transform .2s;
+}
+.nav-cv:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.nav-cv svg { width: 15px; height: 15px; }
+.nav-tools .nav-burger { display: none; }
+.nav-menu { border-top: 1px solid var(--rule); background: var(--paper); }
+.nav-menu-list { display: flex; flex-direction: column; padding: 8px 0 16px; }
+.nav-menu-list a {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 13px 4px;
+  font-size: 17px; color: var(--ink-2); text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+}
+.nav-menu-list a:last-child { border-bottom: none; }
+.nav-menu-list a.active { color: var(--accent); }
+.nav-menu-num { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.1em; }
+.nav-menu-cv {
+  margin-top: 12px;
+  justify-content: center;
+  gap: 8px !important;
+  border: 1px solid var(--ink) !important;
+  border-radius: 100px;
+  color: var(--ink) !important;
+  font-weight: 500;
+}
+.nav-menu-cv svg { width: 16px; height: 16px; }
 .icon-btn {
   width: 38px; height: 38px; border-radius: 50%;
   border: 1px solid var(--rule);
@@ -308,6 +343,8 @@ section { padding: clamp(80px, 11vh, 140px) 0; position: relative; }
 .btn:hover { border-color: var(--ink); transform: translateY(-2px); box-shadow: var(--shadow); }
 .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .btn.primary:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--ink-3); padding-left: 14px; padding-right: 14px; }
+.btn.ghost:hover { color: var(--ink); border-color: var(--rule); box-shadow: none; }
 .btn svg { width: 15px; height: 15px; }
 
 /* Hero sidebar (aside) — researcher card */
@@ -1208,6 +1245,8 @@ section { padding: clamp(80px, 11vh, 140px) 0; position: relative; }
   .t-date { text-align: left; padding-right: 0; }
   .t-body { padding-left: 0; }
   .nav-links { display: none; }
+  .nav-tools .nav-burger { display: grid; }
+  .nav-cv { display: none; }
   .about-card { position: static; }
 }
 

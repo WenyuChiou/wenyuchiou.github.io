@@ -2,6 +2,12 @@
 const { useState, useEffect, useRef } = React;
 const T = (val, lang) => (typeof val === "string" ? val : val?.[lang] ?? "");
 
+// Mode-specific CV downloads: ACADEMIC and INDUSTRY versions
+const CV_FILES = {
+  academic: "assets/Wenyu_Chiou_CV_Academic.pdf",
+  industry: "assets/Wenyu_Chiou_CV_Industry.pdf",
+};
+
 function useScrollReveal() {
   useEffect(() => {
     const reveal = (el) => {
@@ -50,8 +56,10 @@ function useActiveSection(ids) {
   return active;
 }
 
-function Nav({ lang, setLang, theme, setTheme, active }) {
+function Nav({ lang, setLang, theme, setTheme, active, mode = "industry" }) {
   const C = window.CONTENT.nav;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const cvFile = CV_FILES[mode] || CV_FILES.industry;
   const links = [
     ["about",    C.about,    "01"],
     ["research", C.research, "02"],
@@ -78,14 +86,32 @@ function Nav({ lang, setLang, theme, setTheme, active }) {
           ))}
         </div>
         <div className="nav-tools">
+          <a className="nav-cv" href={cvFile} download="Wenyu_Chiou_CV.pdf" title={T(window.CONTENT.hero.cv, lang)}>{window.Icons.download}<span>CV</span></a>
           <button className="icon-btn" onClick={() => setLang(lang === "en" ? "zh" : "en")} title="Language">
             <span style={{fontFamily: "var(--serif)", fontStyle: "italic", fontSize: 14}}>{lang === "en" ? "中" : "EN"}</span>
           </button>
           <button className="icon-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} title="Theme">
             {theme === "dark" ? window.Icons.sun : window.Icons.moon}
           </button>
+          <button className="icon-btn nav-burger" onClick={() => setMenuOpen(o => !o)} aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen ? "true" : "false"} aria-controls="mobile-nav-menu">
+            {menuOpen ? window.Icons.close : window.Icons.menu}
+          </button>
         </div>
       </div>
+      {menuOpen && (
+        <div className="nav-menu" id="mobile-nav-menu">
+          <div className="wrap nav-menu-list">
+            {links.map(([id, label, num]) => (
+              <a key={id} href={`#${id}`} className={active === id ? "active" : ""} onClick={() => setMenuOpen(false)}>
+                <span className="nav-menu-num">{num}</span>{T(label, lang)}
+              </a>
+            ))}
+            <a className="nav-menu-cv" href={cvFile} download="Wenyu_Chiou_CV.pdf" onClick={() => setMenuOpen(false)}>
+              {window.Icons.download}{T(window.CONTENT.hero.cv, lang)}
+            </a>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
@@ -138,8 +164,9 @@ function HeroIndustry({ lang, C, I }) {
 
           <div className="hero-v2-cta reveal">
             <a className="btn primary" href="#contact">{window.Icons.mail}{T(I.cta_primary, lang)}</a>
-            <a className="btn" href="https://www.linkedin.com/in/wenyu-chiou" target="_blank" rel="noopener">{window.Icons.linkedin}{T(I.cta_linkedin, lang)}</a>
-            <a className="btn" href="https://github.com/WenyuChiou" target="_blank" rel="noopener">{window.Icons.github}GitHub</a>
+            <a className="btn" href={CV_FILES.industry} download="Wenyu_Chiou_CV.pdf">{window.Icons.download}{T(C.cv, lang)}</a>
+            <a className="btn ghost" href="https://www.linkedin.com/in/wenyu-chiou" target="_blank" rel="noopener">{window.Icons.linkedin}{T(I.cta_linkedin, lang)}</a>
+            <a className="btn ghost" href="https://github.com/WenyuChiou" target="_blank" rel="noopener">{window.Icons.github}GitHub</a>
           </div>
 
           <dl className="hero-v2-facts reveal">
@@ -196,7 +223,8 @@ function HeroAcademic({ lang, C }) {
 
           <div className="hero-v2-cta reveal">
             <a className="btn primary" href="#contact">{window.Icons.mail}{T(C.contact, lang)}</a>
-            <a className="btn" href="https://github.com/WenyuChiou" target="_blank" rel="noopener">{window.Icons.github}GitHub</a>
+            <a className="btn" href={CV_FILES.academic} download="Wenyu_Chiou_CV.pdf">{window.Icons.download}{T(C.cv, lang)}</a>
+            <a className="btn ghost" href="https://github.com/WenyuChiou" target="_blank" rel="noopener">{window.Icons.github}GitHub</a>
             <a className="btn ghost" href="#projects">{lang === "en" ? "See work" : "看作品"}{window.Icons.arrow}</a>
           </div>
 
@@ -900,7 +928,7 @@ function App() {
   return (
     <>
       <ModeSwitch mode={mode} setMode={setMode} lang={lang}/>
-      <Nav lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} active={active}/>
+      <Nav lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} active={active} mode={mode}/>
       <Hero lang={lang} mode={mode}/>
       <About lang={lang} mode={mode}/>
       <Research lang={lang}/>
