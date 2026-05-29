@@ -19,8 +19,8 @@ const CONTENT = {
     title_tail:  { en: "—", zh: "—" },
     title_line3: { en: "and how cities adapt.", zh: "以及城市如何調適。" },
     lede: {
-      en: "Advancing human-flood modeling from empirical foundations to LLM-based agent simulation. Open-source maintainer of agentic AI infrastructure — a 7-stage trilingual roadmap (★ 519 in week one) and 7+ Claude Code skills.",
-      zh: "推進「人—洪水」建模——從實證基礎到 LLM 驅動的智能體模擬。同時是開源 agentic AI 基礎設施的維護者：7 階段三語學習地圖（首週 ★ 519）與 7+ 個 Claude Code skills。"
+      en: "Advancing human-flood modeling from empirical foundations to LLM-based agent simulation. Open-source maintainer of agentic AI infrastructure — a 7-stage trilingual roadmap (★ 1.8k) and 7+ Claude Code skills.",
+      zh: "推進「人—洪水」建模——從實證基礎到 LLM 驅動的智能體模擬。同時是開源 agentic AI 基礎設施的維護者：7 階段三語學習地圖（★ 1.8k）與 7+ 個 Claude Code skills。"
     },
     stats: [
       { label: { en: "Research group", zh: "研究團隊" }, value: { en: "Complex Water Adaptive System Group", zh: "複雜水系適應系統研究群" } },
@@ -47,8 +47,8 @@ const CONTENT = {
       zh: "我是美國 Lehigh University 土木與環境工程系的博士候選人，隸屬於災害建模與韌性中心 (Center for Catastrophe Modeling and Resilience)。我的研究在推進「人—洪水」建模：從以災害模擬為基礎的實證方法，發展到以 LLM 智能體模擬家戶在氣候風險下的決策行為。"
     },
     p2: {
-      en: "Beyond the dissertation, I build open-source agentic AI infrastructure for the research community: a 7-stage trilingual learning roadmap (awesome-agentic-ai-zh, ★ 519 in week one), a 5-plugin Claude Code marketplace covering literature triage to manuscript writing (ai-research-skills), and skills for multi-LLM delegation, multi-agent orchestration, and academic writing.",
-      zh: "博士論文之外，我為研究社群打造開源 agentic AI 基礎設施：7 階段三語學習地圖 (awesome-agentic-ai-zh，首週 ★ 519)、涵蓋文獻分流到論文寫作的 5-plugin Claude Code 市集 (ai-research-skills)，以及多 LLM 委派、多代理協作、學術寫作等 skills。"
+      en: "Beyond the dissertation, I build open-source agentic AI infrastructure for the research community: a 7-stage trilingual learning roadmap (awesome-agentic-ai-zh, ★ 1.8k), a 5-plugin Claude Code marketplace covering literature triage to manuscript writing (ai-research-skills), and skills for multi-LLM delegation, multi-agent orchestration, and academic writing.",
+      zh: "博士論文之外，我為研究社群打造開源 agentic AI 基礎設施：7 階段三語學習地圖 (awesome-agentic-ai-zh，★ 1.8k)、涵蓋文獻分流到論文寫作的 5-plugin Claude Code 市集 (ai-research-skills)，以及多 LLM 委派、多代理協作、學術寫作等 skills。"
     },
     card: {
       role:     { en: "Role",     zh: "身分" },
@@ -106,8 +106,8 @@ const CONTENT = {
             zh: "建立多代理系統 × 災害模型耦合架構，把過去依賴專家判斷的政策問題轉為可量化分析；完成洪水、多代理洪水、Colorado 灌溉三套參考實作。"
           },
           {
-            en: "Shipped open-source agentic-workflow Skills and learning resources for the research community: ai-research-skills (5-plugin Claude Code marketplace · 14 skills · ★ 61), codex-delegate / agent-collab-skills (multi-LLM orchestration), awesome-agentic-ai-zh (★ 519 · 7-stage trilingual learning roadmap).",
-            zh: "為研究社群發布開源 agentic workflow Skills 與學習資源：ai-research-skills (5-plugin Claude Code 市集 · 14 skills · ★ 61)、codex-delegate / agent-collab-skills (多 LLM 協作)、awesome-agentic-ai-zh (★ 519 · 7 階段三語學習地圖)。"
+            en: "Shipped open-source agentic-workflow Skills and learning resources for the research community: ai-research-skills (5-plugin Claude Code marketplace · 14 skills · ★ 82), codex-delegate / agent-collab-skills (multi-LLM orchestration), awesome-agentic-ai-zh (★ 1.8k · 7-stage trilingual learning roadmap).",
+            zh: "為研究社群發布開源 agentic workflow Skills 與學習資源：ai-research-skills (5-plugin Claude Code 市集 · 14 skills · ★ 82)、codex-delegate / agent-collab-skills (多 LLM 協作)、awesome-agentic-ai-zh (★ 1.8k · 7 階段三語學習地圖)。"
           }
         ],
         tags: ["ABM", "CAT Modeling", "LLM Agents", "Multi-Agent", "Open Source"]
@@ -301,7 +301,7 @@ const CONTENT = {
       {
         image: "assets/ai-research-skills-preview.jpg",
         category: "workflow",
-        stars: 61,
+        stars: 82,
         meta: { en: "Claude Code marketplace · 2026", zh: "Claude Code 市集 · 2026" },
         title: { en: "AI Research Skills — Claude Code Marketplace", zh: "AI Research Skills — Claude Code 市集" },
         tldr: {
@@ -316,11 +316,11 @@ const CONTENT = {
         stack: ["Claude Code", "Marketplace", "MCP", "CLI"],
         tags: ["Skills", "Open Source"],
         href: "https://github.com/WenyuChiou/ai-research-skills",
-        foot: { en: "github.com/WenyuChiou/ai-research-skills · ★ 61", zh: "github.com/WenyuChiou/ai-research-skills · ★ 61" }
+        foot: { en: "github.com/WenyuChiou/ai-research-skills · ★ 82", zh: "github.com/WenyuChiou/ai-research-skills · ★ 82" }
       },
       {
         category: "workflow",
-        stars: 57,
+        stars: 59,
         meta: { en: "Claude Code skill · 2026", zh: "Claude Code 技能 · 2026" },
         title: { en: "codex-delegate — cost-aware multi-LLM routing", zh: "codex-delegate — 多 LLM 路由策略" },
         tldr: {
@@ -335,7 +335,7 @@ const CONTENT = {
         stack: ["Markdown", "Claude Code", "Codex CLI"],
         tags: ["Skills", "Multi-LLM"],
         href: "https://github.com/WenyuChiou/codex-delegate",
-        foot: { en: "github.com/WenyuChiou/codex-delegate · ★ 57", zh: "github.com/WenyuChiou/codex-delegate · ★ 57" }
+        foot: { en: "github.com/WenyuChiou/codex-delegate · ★ 59", zh: "github.com/WenyuChiou/codex-delegate · ★ 59" }
       },
       {
         category: "workflow",
@@ -359,7 +359,7 @@ const CONTENT = {
         image: "assets/awesome-agentic-ai-zh-preview.jpg",
         featured: true,
         category: "learning",
-        stars: 519,
+        stars: 1803,
         meta: { en: "Open source · Trending 2026", zh: "開源 · 2026 Trending" },
         title: { en: "awesome-agentic-ai-zh — 7-Stage Learning Roadmap", zh: "awesome-agentic-ai-zh — 7 階段學習地圖" },
         tldr: {
@@ -367,14 +367,14 @@ const CONTENT = {
           zh: "三語 7 階段路線圖，從 LLM 基礎到多代理 production · 145+ curated projects。"
         },
         desc: {
-          en: "Bridging the agentic AI knowledge gap for the bilingual community. A 7-stage trilingual learning roadmap (zh-TW canonical · zh-CN · English) from LLM basics to multi-agent production. 145+ curated projects, hands-on exercises per stage, 2 tracks (CLI Power User · Agent Builder), 5 audience-segmented branches. ★ 519 in week one with 3 community contributors.",
-          zh: "為中文社群彌合 agentic AI 知識落差。7 階段三語學習地圖 (zh-TW canonical · zh-CN · English)，從 LLM 基礎一路到多代理 production。145+ curated projects、每階段都有 hands-on 練習、2 條學習軌 (CLI Power User · Agent Builder)、5 條依使用者分流的延伸路線。首週 ★ 519、3 位社群貢獻者。"
+          en: "Bridging the agentic AI knowledge gap for the bilingual community. A 7-stage trilingual learning roadmap (zh-TW canonical · zh-CN · English) from LLM basics to multi-agent production. 145+ curated projects, hands-on exercises per stage, 2 tracks (CLI Power User · Agent Builder), 5 audience-segmented branches. ★ 1.8k and 200+ forks across a growing bilingual community.",
+          zh: "為中文社群彌合 agentic AI 知識落差。7 階段三語學習地圖 (zh-TW canonical · zh-CN · English)，從 LLM 基礎一路到多代理 production。145+ curated projects、每階段都有 hands-on 練習、2 條學習軌 (CLI Power User · Agent Builder)、5 條依使用者分流的延伸路線。★ 1.8k、200+ forks，社群持續成長中。"
         },
         role: "lead",
         stack: ["Markdown", "mdBook", "GitHub Pages", "Python"],
         tags: ["Open Source", "Curriculum", "Community"],
         href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
-        foot: { en: "github.com/WenyuChiou/awesome-agentic-ai-zh · ★ 519 · trilingual", zh: "github.com/WenyuChiou/awesome-agentic-ai-zh · ★ 519 · 三語" }
+        foot: { en: "github.com/WenyuChiou/awesome-agentic-ai-zh · ★ 1.8k · trilingual", zh: "github.com/WenyuChiou/awesome-agentic-ai-zh · ★ 1.8k · 三語" }
       },
     ],
     categories: {
@@ -459,18 +459,18 @@ const CONTENT = {
     kicker: { en: "Open Source", zh: "開源專案" },
     intro: { en: "Curated repositories from github.com/WenyuChiou — research code, AI-agent skills, and trading infrastructure.", zh: "自 github.com/WenyuChiou 精選——研究程式碼、AI 代理技能包與交易系統。" },
     items: [
-      { name: "awesome-agentic-ai-zh", desc: { en: "Trilingual 7-stage learning roadmap for agentic AI — 145+ curated projects, hands-on exercises per stage, 2 tracks, 5 audience-segmented branches.", zh: "三語 7 階段 agentic AI 學習地圖——145+ curated projects、每階段 hands-on 練習、2 條學習軌、5 條依使用者分流的延伸路線。" }, lang: "Markdown", color: "oklch(0.55 0.18 280)", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh", stars: 519, forks: 34, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "ai-research-skills", desc: { en: "5-plugin Claude Code marketplace — 14 research skills, one-command install, bilingual.", zh: "5-plugin Claude Code 市集——14 個研究 skill、一條指令安裝、中英雙語。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/ai-research-skills", stars: 61, forks: 1, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "codex-delegate", desc: { en: "Claude Code skill — delegate token-heavy coding to Codex CLI; cost-aware routing pattern.", zh: "Claude Code 技能：將繁重程式任務委派給 Codex CLI；建立 cost-aware 路由模式。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/codex-delegate", stars: 57, forks: 4, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "gemini-delegate-skill", desc: { en: "Claude Code skill — delegate large-context synthesis & CJK long-form drafting to Gemini CLI.", zh: "Claude Code 技能：將大 context 統整與中日韓長文撰寫委派給 Gemini CLI。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/gemini-delegate-skill", stars: 34, forks: 1, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "zotero-skills", desc: { en: "Programmatic Zotero skills — search, add, classify, annotate references via Claude Code.", zh: "Zotero 程式化技能：透過 Claude Code 搜尋、新增、分類、註解文獻。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/zotero-skills", stars: 16, forks: 2, updated: { en: "Nov 2025", zh: "2025.11" }, status: "active" },
-      { name: "research-hub", desc: { en: "AI-operable research workspace integrating Zotero + Obsidian + NotebookLM via CLI / MCP / REST.", zh: "AI 可操作的研究 workspace，整合 Zotero + Obsidian + NotebookLM，提供 CLI / MCP / REST 介面。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/research-hub", stars: 14, forks: 3, updated: { en: "Dec 2025", zh: "2025.12" }, status: "active" },
-      { name: "agent-collab-skills", desc: { en: "Multi-agent orchestration primitives — task splitter, output reconciler, debate, shared memory, acceptance gate.", zh: "多代理協作元件——task splitter、output reconciler、debate、shared memory、acceptance gate。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/agent-collab-skills", stars: 0, forks: 0, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "academic-writing-skills", desc: { en: "Findings-first paper writing skill — banned-word audits, figure-text consistency, submission checklists.", zh: "以 findings-first 為核心的論文寫作 skill——banned-word 稽核、圖文一致性、投稿 checklist。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/academic-writing-skills", stars: 2, forks: 0, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "FLOODABM", desc: { en: "Coupled ABM × catastrophe model — household flood adaptation (Passaic NJ, 2011–2023). AGU 2025 poster.", zh: "智能體 × 災害模型耦合：家戶洪水調適 (NJ Passaic 2011–2023)。AGU 2025 poster。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/FLOODABM", stars: 0, forks: 0, updated: { en: "Dec 2025", zh: "2025.12" }, status: "active" },
-      { name: "WAGF", desc: { en: "Water Agent Governance Framework — first 6-stage validation pipeline catching Logic-Action Gap failures in LLM agents.", zh: "水資源代理治理框架——首套 6 階段驗證管線，攔截 LLM 智能體的「邏輯—行動落差」失敗。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/WAGF", stars: 0, forks: 0, updated: { en: "Nov 2025", zh: "2025.11" }, status: "active" },
+      { name: "awesome-agentic-ai-zh", desc: { en: "Trilingual 7-stage learning roadmap for agentic AI — 145+ curated projects, hands-on exercises per stage, 2 tracks, 5 audience-segmented branches.", zh: "三語 7 階段 agentic AI 學習地圖——145+ curated projects、每階段 hands-on 練習、2 條學習軌、5 條依使用者分流的延伸路線。" }, lang: "Markdown", color: "oklch(0.55 0.18 280)", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh", stars: 1803, forks: 206, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "ai-research-skills", desc: { en: "5-plugin Claude Code marketplace — 14 research skills, one-command install, bilingual.", zh: "5-plugin Claude Code 市集——14 個研究 skill、一條指令安裝、中英雙語。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/ai-research-skills", stars: 82, forks: 6, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "codex-delegate", desc: { en: "Claude Code skill — delegate token-heavy coding to Codex CLI; cost-aware routing pattern.", zh: "Claude Code 技能：將繁重程式任務委派給 Codex CLI；建立 cost-aware 路由模式。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/codex-delegate", stars: 59, forks: 5, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "gemini-delegate-skill", desc: { en: "Claude Code skill — delegate large-context synthesis & CJK long-form drafting to Gemini CLI.", zh: "Claude Code 技能：將大 context 統整與中日韓長文撰寫委派給 Gemini CLI。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/gemini-delegate-skill", stars: 37, forks: 9, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "zotero-skills", desc: { en: "Programmatic Zotero skills — search, add, classify, annotate references via Claude Code.", zh: "Zotero 程式化技能：透過 Claude Code 搜尋、新增、分類、註解文獻。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/zotero-skills", stars: 25, forks: 3, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "research-hub", desc: { en: "AI-operable research workspace integrating Zotero + Obsidian + NotebookLM via CLI / MCP / REST.", zh: "AI 可操作的研究 workspace，整合 Zotero + Obsidian + NotebookLM，提供 CLI / MCP / REST 介面。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/research-hub", stars: 19, forks: 3, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "agent-collab-skills", desc: { en: "Multi-agent orchestration primitives — task splitter, output reconciler, debate, shared memory, acceptance gate.", zh: "多代理協作元件——task splitter、output reconciler、debate、shared memory、acceptance gate。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/agent-collab-skills", stars: 2, forks: 1, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "academic-writing-skills", desc: { en: "Findings-first paper writing skill — banned-word audits, figure-text consistency, submission checklists.", zh: "以 findings-first 為核心的論文寫作 skill——banned-word 稽核、圖文一致性、投稿 checklist。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/academic-writing-skills", stars: 5, forks: 1, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "FLOODABM", desc: { en: "Coupled ABM × catastrophe model — household flood adaptation (Passaic NJ, 2011–2023). AGU 2025 poster.", zh: "智能體 × 災害模型耦合：家戶洪水調適 (NJ Passaic 2011–2023)。AGU 2025 poster。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/FLOODABM", stars: 0, forks: 0, updated: { en: "Mar 2026", zh: "2026.03" }, status: "active" },
+      { name: "WAGF", desc: { en: "Water Agent Governance Framework — first 6-stage validation pipeline catching Logic-Action Gap failures in LLM agents.", zh: "水資源代理治理框架——首套 6 階段驗證管線，攔截 LLM 智能體的「邏輯—行動落差」失敗。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/WAGF", stars: 0, forks: 0, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
       { name: "Cat_framework", desc: { en: "FEMA Hazus 6.1 re-implementation for earthquake-induced bridge damage — adds spatial-interpolation + calibration the official tool doesn't expose.", zh: "FEMA Hazus 6.1 重新實作於地震震損橋樑——加入官方工具未開放的空間內插與校正步驟。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/Cat_framework", stars: 0, forks: 0, updated: { en: "Oct 2025", zh: "2025.10" }, status: "active" },
-      { name: "moodring", desc: { en: "Daily sentiment scoring across 5 equity markets (US/TW/JP/KR/EU).", zh: "五大股市的每日情緒評分 (美/台/日/韓/歐)。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/moodring", stars: 9, forks: 1, updated: { en: "Aug 2025", zh: "2025.08" }, status: "active" },
+      { name: "moodring", desc: { en: "Daily sentiment scoring across 5 equity markets (US/TW/JP/KR/EU).", zh: "五大股市的每日情緒評分 (美/台/日/韓/歐)。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/moodring", stars: 10, forks: 5, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
       { name: "multi-analyst-desk", desc: { en: "4 AI specialists + chief strategist for ETF options; bilingual reports.", zh: "四位 AI 分析師 + 首席策略師組成的 ETF 選擇權交易桌，雙語報告。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/multi-analyst-desk", stars: 0, forks: 0, updated: { en: "Oct 2025", zh: "2025.10" }, status: "archived" },
       { name: "ai-trader-ollama", desc: { en: "Autonomous trading system with multiple specialized AI agents and RAG memory.", zh: "多位專門化 AI 代理 + RAG 記憶的自主交易系統。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/ai-trader-ollama", stars: 0, forks: 0, updated: { en: "Sep 2025", zh: "2025.09" }, status: "archived" },
       { name: "session-sweep", desc: { en: "Claude Code plugin — clean stale git worktrees, reclaim disk.", zh: "Claude Code 外掛：清理 stale git worktrees、回收磁碟空間。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/session-sweep", stars: 0, forks: 0, updated: { en: "Nov 2025", zh: "2025.11" }, status: "active" },
