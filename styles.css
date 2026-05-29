@@ -23,8 +23,8 @@
   --shadow: 0 1px 2px oklch(0.2 0.05 260 / 0.05), 0 8px 24px oklch(0.2 0.05 260 / 0.06);
   --shadow-lg: 0 2px 4px oklch(0.2 0.05 260 / 0.06), 0 24px 60px oklch(0.2 0.05 260 / 0.1);
 
-  --serif: "Instrument Serif", "Source Serif 4", "Noto Serif TC", Georgia, serif;
-  --sans: "Inter Tight", "Noto Sans TC", -apple-system, "Helvetica Neue", sans-serif;
+  --serif: "Fraunces", "Noto Serif TC", Georgia, serif;
+  --sans: "Inter", "Noto Sans TC", -apple-system, "Helvetica Neue", sans-serif;
   --mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
 
   --radius: 14px;

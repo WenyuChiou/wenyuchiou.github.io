@@ -143,9 +143,8 @@ function Nav({ lang, setLang, theme, setTheme, active, mode = "industry", onCmdK
     ["projects", C.projects, "03"],
     ["skills",   { en: "Skills", zh: "技能" }, "04"],
     ["pubs",     C.pubs,     "05"],
-    ["linkedin", { en: "LinkedIn", zh: "LinkedIn" }, "06"],
-    ["repos",    C.repos,    "07"],
-    ["contact",  C.contact,  "08"],
+    ["repos",    C.repos,    "06"],
+    ["contact",  C.contact,  "07"],
   ];
   return (
     <nav className="nav">
@@ -756,9 +755,8 @@ function CommandPalette({ open, onClose, lang, mode, setLang, setTheme, setMode 
     { label: nav.projects, hint: "03", run: () => go("projects") },
     { label: { en: "Skills", zh: "技能" }, hint: "04", run: () => go("skills") },
     { label: nav.pubs,     hint: "05", run: () => go("pubs") },
-    { label: { en: "LinkedIn", zh: "LinkedIn" }, hint: "06", run: () => go("linkedin") },
-    { label: nav.repos,    hint: "07", run: () => go("repos") },
-    { label: nav.contact,  hint: "08", run: () => go("contact") },
+    { label: nav.repos,    hint: "06", run: () => go("repos") },
+    { label: nav.contact,  hint: "07", run: () => go("contact") },
     { label: { en: "Download CV", zh: "下載 CV" }, hint: "↓", run: () => { onClose(); window.location.href = CV_FILES[mode] || CV_FILES.industry; } },
     { label: { en: "Email Wenyu", zh: "寄信給我" }, run: () => { onClose(); window.location.href = "mailto:wec324@lehigh.edu"; } },
     { label: { en: "GitHub", zh: "GitHub" }, run: () => ext("https://github.com/WenyuChiou") },
@@ -937,49 +935,6 @@ function Skills({ lang }) {
   );
 }
 
-function LinkedIn({ lang }) {
-  const C = window.CONTENT.linkedin;
-  return (
-    <section id="linkedin" className="wrap section-pad">
-      <SectionHead num="06" kicker={C.kicker} lang={lang} sub={{en: "Recent posts & notes", zh: "近期貼文與筆記"}}/>
-      <div className="ln-head reveal">
-        <p className="section-intro" style={{margin: 0, flex: 1}}>{T(C.intro, lang)}</p>
-        <a className="btn" href={C.profile_url} target="_blank" rel="noopener noreferrer">
-          {window.Icons.linkedin}{lang === "en" ? "Follow on LinkedIn" : "在 LinkedIn 追蹤"}
-        </a>
-      </div>
-      <div className="ln-grid reveal-stagger">
-        {C.items.map((it, i) => (
-          <a className="ln-card" key={i} href={C.profile_url} target="_blank" rel="noopener noreferrer">
-            <div className="ln-author">
-              <div className="ln-avatar">WC</div>
-              <div className="ln-author-meta">
-                <div className="ln-author-name">{T(window.CONTENT.nav.name, lang)} <span className="ln-verify" aria-hidden>✓</span></div>
-                <div className="ln-author-sub">{lang === "en" ? "PhD Candidate · Lehigh University — Catastrophe Modeling & Resilience" : "博士候選人 · Lehigh 大學 — 災害建模與韌性中心"}</div>
-                <div className="ln-author-time mono">{T(it.date, lang)} · <span className="ln-globe">🌐</span></div>
-              </div>
-              <span className="ln-tag">{T(it.tag, lang)}</span>
-            </div>
-            <h4 className="ln-title">{T(it.title, lang)}</h4>
-            <p className="ln-excerpt">{T(it.excerpt, lang)}</p>
-            <div className="ln-reactions">
-              <span className="ln-react-dots" aria-hidden>
-                <span className="ln-react-dot ln-react-like">👍</span>
-                <span className="ln-react-dot ln-react-love">❤</span>
-                <span className="ln-react-dot ln-react-insight">💡</span>
-              </span>
-              <span className="ln-react-count">{it.reactions}</span>
-              <span className="ln-react-sep">·</span>
-              <span className="ln-react-count">{it.comments} {lang === "en" ? "comments" : "則留言"}</span>
-              <span className="ln-more">{lang === "en" ? "Read →" : "閱讀 →"}</span>
-            </div>
-          </a>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function Repos({ lang, gh }) {
   const C = window.CONTENT.repos;
   // Group repos by theme so the reading flow matches the About story
@@ -1003,7 +958,7 @@ function Repos({ lang, gh }) {
   const byName = Object.fromEntries(C.items.map(r => [r.name, r]));
   return (
     <section id="repos" className="wrap section-pad">
-      <SectionHead num="07" kicker={C.kicker} lang={lang} sub={{en: "Grouped by what they do", zh: "依用途分組"}}/>
+      <SectionHead num="06" kicker={C.kicker} lang={lang} sub={{en: "Grouped by what they do", zh: "依用途分組"}}/>
       <p className="reveal section-intro">{T(C.intro, lang)}</p>
       <div className="repo-groups reveal-stagger">
         {groups.map((g, gi) => (
@@ -1055,7 +1010,7 @@ function Contact({ lang }) {
   const C = window.CONTENT.contact;
   return (
     <section id="contact" className="wrap section-pad contact">
-      <SectionHead num="08" kicker={C.kicker} lang={lang}/>
+      <SectionHead num="07" kicker={C.kicker} lang={lang}/>
       <div className="contact-inner reveal">
         <h2 className="serif italic">{T(C.title, lang)}</h2>
         <p>{T(C.body, lang)}</p>
@@ -1165,7 +1120,7 @@ function App() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
-  const active = useActiveSection(["top","about","research","projects","skills","pubs","linkedin","repos","contact"]);
+  const active = useActiveSection(["top","about","research","projects","skills","pubs","repos","contact"]);
   return (
     <>
       <a className="skip-link" href="#main-content">{lang === "en" ? "Skip to content" : "跳至內容"}</a>
@@ -1179,7 +1134,6 @@ function App() {
         <Projects lang={lang} mode={mode} gh={gh}/>
         <Skills lang={lang} mode={mode}/>
         {mode === "academic" && <Publications lang={lang}/>}
-        <LinkedIn lang={lang}/>
         <Repos lang={lang} gh={gh}/>
         {mode === "industry" && <Publications lang={lang} compact/>}
         <Contact lang={lang}/>
