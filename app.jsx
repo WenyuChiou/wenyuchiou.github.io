@@ -132,7 +132,7 @@ function CountUp({ end, format }) {
   return <span ref={ref}>{fmt(val)}</span>;
 }
 
-function Nav({ lang, setLang, theme, setTheme, active, mode = "industry", onCmdK }) {
+function Nav({ lang, setLang, theme, setTheme, active, mode = "industry", setMode, onCmdK }) {
   const C = window.CONTENT.nav;
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
@@ -168,6 +168,7 @@ function Nav({ lang, setLang, theme, setTheme, active, mode = "industry", onCmdK
           ))}
         </div>
         <div className="nav-tools">
+          {setMode && <div className="nav-mode"><ModeSwitch mode={mode} setMode={setMode} lang={lang}/></div>}
           <button className="nav-cmdk" onClick={onCmdK} title={lang === "en" ? "Quick nav (⌘K)" : "快速導覽 (⌘K)"} aria-label={lang === "en" ? "Open quick navigation" : "開啟快速導覽"}>
             {window.Icons.search}<span className="nav-cmdk-keys mono">⌘K</span>
           </button>
@@ -186,6 +187,7 @@ function Nav({ lang, setLang, theme, setTheme, active, mode = "industry", onCmdK
       {menuOpen && (
         <div className="nav-menu" id="mobile-nav-menu">
           <div className="wrap nav-menu-list">
+            {setMode && <div className="nav-menu-mode"><ModeSwitch mode={mode} setMode={setMode} lang={lang}/></div>}
             {links.map(([id, label, num]) => (
               <a key={id} href={`#${id}`} className={active === id ? "active" : ""} onClick={() => setMenuOpen(false)}>
                 <span className="nav-menu-num">{num}</span>{T(label, lang)}
@@ -1084,7 +1086,8 @@ function TweaksPanel({ lang, theme, setTheme, setLang }) {
 
 function ModeSwitch({ mode, setMode, lang }) {
   return (
-    <div className="mode-switch" role="group" aria-label="Site mode">
+    <div className="mode-switch" role="group" aria-label={lang === "en" ? "Site view: Industry or Academic" : "網站版本：業界或學術"}>
+      <span className="mode-switch-label">{lang === "en" ? "View" : "版本"}</span>
       <button className={"mode-opt" + (mode === "industry" ? " active" : "")} onClick={() => setMode("industry")} aria-pressed={mode === "industry" ? "true" : "false"}>
         <span className="mode-dot"/>
         {lang === "en" ? "Industry" : "業界"}
@@ -1137,8 +1140,7 @@ function App() {
   return (
     <>
       <a className="skip-link" href="#main-content">{lang === "en" ? "Skip to content" : "跳至內容"}</a>
-      <ModeSwitch mode={mode} setMode={setMode} lang={lang}/>
-      <Nav lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} active={active} mode={mode} onCmdK={() => setCmdk(true)}/>
+      <Nav lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} active={active} mode={mode} setMode={setMode} onCmdK={() => setCmdk(true)}/>
       <CommandPalette open={cmdk} onClose={() => setCmdk(false)} lang={lang} mode={mode} setLang={setLang} setTheme={setTheme} setMode={setMode}/>
       <main id="main-content">
         <Hero lang={lang} mode={mode}/>
