@@ -252,6 +252,20 @@ function HeroIndustry({ lang, C, I }) {
 
           <p className="hero-v2-lede reveal">{T(I.lede, lang)}</p>
 
+          {I.pipeline && (
+            <div className="wagf-pipeline reveal">
+              <span className="wagf-pipeline-kicker">{T(I.pipeline.kicker, lang)}</span>
+              <ol className="wagf-stages">
+                {I.pipeline.stages.map((s, i) => (
+                  <li className={"wagf-stage" + (s.signal ? " is-signal" : "")} key={s.key}>
+                    <span className="wagf-node" aria-hidden="true"/>
+                    <span className="wagf-stage-label">{T(s.label, lang)}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
           <div className="hero-v2-currently reveal">
             <span className="hero-currently-label">{T(I.currently.label, lang)}</span>
             <ul className="hero-currently-list">
@@ -363,9 +377,9 @@ function About({ lang, num }) {
         <div className="about-v2-lead reveal">
           <p className="lead-text">
             {lang === "en" ? (
-              <>I build <em>agent-based models</em> coupled with catastrophe simulators, and use <em>LLM agents</em> to study long-term household adaptation to flood risk.</>
+              <>I build <span className="lead-uline">agent-based models</span> coupled with catastrophe simulators, and use <em>LLM agents</em> to study long-term household adaptation to flood risk.</>
             ) : (
-              <>我結合 <em>智能體模擬 (ABM)</em> 與災害模型，並以 <em>LLM 智能體</em> 研究家戶面對洪水風險的長期調適行為。</>
+              <>我結合 <span className="lead-uline">智能體模擬 (ABM)</span> 與災害模型，並以 <em>LLM 智能體</em> 研究家戶面對洪水風險的長期調適行為。</>
             )}
           </p>
         </div>
