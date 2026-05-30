@@ -775,7 +775,7 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
 
 /* PUBLICATIONS */
 .pub-summary {
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(3, 1fr);
   gap: 0; margin-bottom: 32px;
   border: 1px solid var(--rule);
   background: var(--paper);
@@ -828,7 +828,7 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
   border: 1px solid var(--rule);
   color: var(--ink-3); line-height: 1;
 }
-.pub-type-journal { color: #2f5fa6; border-color: rgba(47, 95, 166, 0.3); background: rgba(47, 95, 166, 0.06); }
+.pub-type-journal { color: #1e4a8c; border-color: rgba(47, 95, 166, 0.3); background: rgba(47, 95, 166, 0.06); }
 .pub-type-poster { color: #a66100; border-color: rgba(166, 97, 0, 0.3); background: rgba(166, 97, 0, 0.05); }
 .pub-type-report { color: #555; background: oklch(0.97 0 0); }
 .pub-q {
@@ -2083,3 +2083,7 @@ h1, .section-title, .hero-v2-h1, .proj-flagship-title { font-optical-sizing: aut
 [data-theme="dark"] .pub-type-report { color: var(--ink-2); background: oklch(0.28 0 0); border-color: oklch(0.45 0 0); }
 [data-theme="dark"] .repo-status-active { color: oklch(0.74 0.15 150); border-color: oklch(0.74 0.15 150 / 0.35); background: oklch(0.74 0.15 150 / 0.12); }
 [data-theme="dark"] .repo-status-active::before { background: oklch(0.74 0.15 150); }
+
+/* Wave 2C: review fixes — tablet skills 2-col, mobile nav height with mode-switch */
+@media (max-width: 980px) { .skills-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .nav-menu { max-height: calc(100dvh - 98px); } }
