@@ -466,26 +466,33 @@ function CareerTrack({ items, lang }) {
     return o.split(/[·,]/)[0].trim();
   };
 
+  const nodeRefs = useRef([]);
   const onKey = (e) => {
-    if (e.key === "ArrowRight") setSel(i => Math.min(chrono.length - 1, i + 1));
-    if (e.key === "ArrowLeft") setSel(i => Math.max(0, i - 1));
+    let ni;
+    if (e.key === "ArrowRight") ni = Math.min(chrono.length - 1, sel + 1);
+    else if (e.key === "ArrowLeft") ni = Math.max(0, sel - 1);
+    else return;
+    e.preventDefault();
+    setSel(ni);
+    const n = nodeRefs.current[ni]; if (n) n.focus();
   };
 
   return (
-    <div className="career" tabIndex={0} onKeyDown={onKey}>
+    <div className="career" onKeyDown={onKey}>
       {/* Axis with nodes + a ghost "next" node on the right */}
       <div className="career-axis" role="tablist" aria-label={lang === "en" ? "Career timeline" : "職涯時間軸"}>
         <div className="career-line"/>
         {chrono.map((it, i) => (
           <button
             key={i}
+            ref={el => { nodeRefs.current[i] = el; }}
             className={"career-node" + (active === i ? " is-active" : "") + (sel === i ? " is-selected" : "")}
             role="tab"
+            tabIndex={sel === i ? 0 : -1}
             aria-selected={sel === i ? "true" : "false"}
             onClick={() => setSel(i)}
             onMouseEnter={() => setHover(i)}
             onMouseLeave={() => setHover(null)}
-            onFocus={() => setSel(i)}
           >
             <span className="node-dot" aria-hidden="true"></span>
             <span className="node-year mono">{yearOf(it)}</span>
@@ -599,25 +606,28 @@ function Projects({ lang, gh }) {
     const key = p.href + i;
     const isOpen = open === key;
     const stars = liveStars(p);
+    const did = ("projd-" + (p.href || compactName(p))).replace(/[^a-zA-Z0-9_-]/g, "-");
     return (
       <article className={"proj-compact" + (isOpen ? " open" : "")} key={i}>
-        <div className="proj-compact-head" role="button" tabIndex={0}
-             aria-expanded={isOpen ? "true" : "false"}
+        <div className="proj-compact-trigger" role="button" tabIndex={0}
+             aria-expanded={isOpen ? "true" : "false"} aria-controls={isOpen ? did : undefined}
              title={lang === "en" ? "Click for details" : "點擊看詳情"}
              onClick={() => setOpen(isOpen ? null : key)}
              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(isOpen ? null : key); } }}>
-          <span className="proj-compact-name">{compactName(p)}</span>
-          {stars >= STAR_HIGHLIGHT
-            ? <span className="proj-compact-stars" title={stars + " stars"}>★ <CountUp end={stars}/></span>
-            : <span className="proj-compact-chevron" aria-hidden="true">{isOpen ? "–" : "+"}</span>}
-        </div>
-        <div className="proj-compact-meta">{T(p.meta, lang)}</div>
-        {p.tldr && <p className="proj-compact-tldr">{T(p.tldr, lang)}</p>}
-        <div className="proj-compact-tags">
-          {(p.tags || []).slice(0, 3).map((t, j) => <span className="chip chip-sm" key={j}>{t}</span>)}
+          <div className="proj-compact-head">
+            <span className="proj-compact-name">{compactName(p)}</span>
+            {stars >= STAR_HIGHLIGHT
+              ? <span className="proj-compact-stars" title={stars + " stars"}>★ <CountUp end={stars}/></span>
+              : <span className="proj-compact-chevron" aria-hidden="true">{isOpen ? "–" : "+"}</span>}
+          </div>
+          <div className="proj-compact-meta">{T(p.meta, lang)}</div>
+          {p.tldr && <p className="proj-compact-tldr">{T(p.tldr, lang)}</p>}
+          <div className="proj-compact-tags">
+            {(p.tags || []).slice(0, 3).map((t, j) => <span className="chip chip-sm" key={j}>{t}</span>)}
+          </div>
         </div>
         {isOpen && (
-          <div className="proj-detail">
+          <div className="proj-detail" id={did}>
             {p.desc && <p className="proj-detail-desc">{T(p.desc, lang)}</p>}
             {p.image && (
               <button className="proj-detail-poster" onClick={() => setLightbox({ src: p.image, alt: T(p.title, lang) })}
@@ -870,7 +880,7 @@ function Publications({ lang }) {
                   {p.featured && <span className="pub-featured-badge">★ {lang === "en" ? "Featured" : "精選"}</span>}
                   <span className="pub-venue-short mono">{p.venue_short || p.venue}</span>
                 </div>
-                <h4 className="pub-title" role="button" tabIndex={0} aria-expanded={isOpen ? "true" : "false"} onClick={() => setExpanded(isOpen ? null : i)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpanded(isOpen ? null : i); } }}>
+                <h4 className="pub-title" role="button" tabIndex={0} aria-expanded={isOpen ? "true" : "false"} aria-controls={isOpen ? ("puba-" + i) : undefined} onClick={() => setExpanded(isOpen ? null : i)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpanded(isOpen ? null : i); } }}>
                   {T(p.title, lang)}
                 </h4>
                 <div className="pub-authors">
@@ -882,7 +892,7 @@ function Publications({ lang }) {
                   ))}
                 </div>
                 {isOpen && p.abstract && (
-                  <p className="pub-abstract">{T(p.abstract, lang)}</p>
+                  <p className="pub-abstract" id={"puba-" + i}>{T(p.abstract, lang)}</p>
                 )}
                 <div className="pub-actions">
                   {p.cites > 0 && (
