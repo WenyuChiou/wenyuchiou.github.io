@@ -1122,9 +1122,6 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
   .timeline::before { display: none; }
   .t-date { text-align: left; padding-right: 0; }
   .t-body { padding-left: 0; }
-  .nav-links { display: none; }
-  .nav-tools .nav-burger { display: grid; }
-  .nav-cv { display: none; }
   .about-card { position: static; }
 }
 
@@ -1152,7 +1149,6 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
   aspect-ratio: 4/5;
   border-radius: 6px;
   overflow: hidden;
-  position: relative;
   background: var(--bg-2);
   box-shadow: var(--shadow-lg);
   position: sticky;

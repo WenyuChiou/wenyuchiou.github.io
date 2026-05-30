@@ -31,6 +31,14 @@ const CONTENT = {
     contact:  { en: "Get in touch", zh: "聯絡我" },
     name:     { en: "Wenyu Chiou", zh: "邱文昱" },
     id:       { en: "PhD · 2024→", zh: "博士生 · 2024→" },
+    currently: {
+      label: { en: "Currently", zh: "目前" },
+      items: [
+        { dot: "oklch(0.62 0.16 150)", text: { en: "Drafting FLOODABM journal paper", zh: "撰寫 FLOODABM 期刊論文中" } },
+        { dot: "oklch(0.65 0.15 240)", text: { en: "Developing LLM-agent framework + multi-agent system coupled with catastrophe flood model", zh: "開發 LLM 代理框架與多智能體系統，與災害洪水模型耦合" } },
+        { dot: "oklch(0.70 0.14 60)", text: { en: "Open to 2027 internships & collaborations", zh: "開放 2027 實習與學術合作" } },
+      ],
+    },
   },
 
 
