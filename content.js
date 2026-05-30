@@ -19,8 +19,8 @@ const CONTENT = {
     title_tail:  { en: "—", zh: "—" },
     title_line3: { en: "and how cities adapt.", zh: "以及城市如何調適。" },
     lede: {
-      en: "Advancing human-flood modeling from empirical foundations to LLM-based agent simulation. Open-source maintainer of agentic AI infrastructure — a 7-stage trilingual roadmap (★ 1.8k) and 7+ Claude Code skills.",
-      zh: "推進「人—洪水」建模——從實證基礎到 LLM 驅動的智能體模擬。同時是開源 agentic AI 基礎設施的維護者：7 階段三語學習地圖（★ 1.8k）與 7+ 個 Claude Code skills。"
+      en: "Advancing human-flood modeling from empirical foundations to LLM-based agent simulation. Open-source maintainer of agentic AI infrastructure — an 8-stage trilingual roadmap (★ 1.8k) and 7+ Claude Code skills.",
+      zh: "推進「人—洪水」建模——從實證基礎到 LLM 驅動的智能體模擬。同時是開源 agentic AI 基礎設施的維護者：8 階段三語學習地圖（★ 1.8k）與 7+ 個 Claude Code skills。"
     },
     stats: [
       { label: { en: "Research group", zh: "研究團隊" }, value: { en: "Complex Water Adaptive System Group", zh: "複雜水系適應系統研究群" } },
@@ -34,10 +34,6 @@ const CONTENT = {
     id:       { en: "PhD · 2024→", zh: "博士生 · 2024→" },
   },
 
-  marquee: {
-    en: ["Agent-Based Modeling", "LLM Agents", "Catastrophe Modeling", "Flood Adaptation", "Bayesian Inference", "Hydrology", "Resilience", "Decision under Risk", "Multi-Agent Systems"],
-    zh: ["智能體模擬", "LLM 代理", "災害建模", "洪水調適", "貝氏推論", "水文學", "韌性分析", "風險下的決策", "多代理系統"]
-  },
 
   about: {
     num: "01",
@@ -47,8 +43,8 @@ const CONTENT = {
       zh: "我是美國 Lehigh University 土木與環境工程系的博士候選人，隸屬於災害建模與韌性中心 (Center for Catastrophe Modeling and Resilience)。我的研究在推進「人—洪水」建模：從以災害模擬為基礎的實證方法，發展到以 LLM 智能體模擬家戶在氣候風險下的決策行為。"
     },
     p2: {
-      en: "Beyond the dissertation, I build open-source agentic AI infrastructure for the research community: a 7-stage trilingual learning roadmap (awesome-agentic-ai-zh, ★ 1.8k), a 5-plugin Claude Code marketplace covering literature triage to manuscript writing (ai-research-skills), and skills for multi-LLM delegation, multi-agent orchestration, and academic writing.",
-      zh: "博士論文之外，我為研究社群打造開源 agentic AI 基礎設施：7 階段三語學習地圖 (awesome-agentic-ai-zh，★ 1.8k)、涵蓋文獻分流到論文寫作的 5-plugin Claude Code 市集 (ai-research-skills)，以及多 LLM 委派、多代理協作、學術寫作等 skills。"
+      en: "Beyond the dissertation, I build open-source agentic AI infrastructure for the research community: an 8-stage trilingual learning roadmap (awesome-agentic-ai-zh, ★ 1.8k), a 5-plugin Claude Code marketplace covering literature triage to manuscript writing (ai-research-skills), and skills for multi-LLM delegation, multi-agent orchestration, and academic writing.",
+      zh: "博士論文之外，我為研究社群打造開源 agentic AI 基礎設施：8 階段三語學習地圖 (awesome-agentic-ai-zh，★ 1.8k)、涵蓋文獻分流到論文寫作的 5-plugin Claude Code 市集 (ai-research-skills)，以及多 LLM 委派、多代理協作、學術寫作等 skills。"
     },
     card: {
       role:     { en: "Role",     zh: "身分" },
@@ -106,8 +102,8 @@ const CONTENT = {
             zh: "建立多代理系統 × 災害模型耦合架構，把過去依賴專家判斷的政策問題轉為可量化分析；完成洪水、多代理洪水、Colorado 灌溉三套參考實作。"
           },
           {
-            en: "Shipped open-source agentic-workflow Skills and learning resources for the research community: ai-research-skills (5-plugin Claude Code marketplace · 14 skills · ★ 82), codex-delegate / agent-collab-skills (multi-LLM orchestration), awesome-agentic-ai-zh (★ 1.8k · 7-stage trilingual learning roadmap).",
-            zh: "為研究社群發布開源 agentic workflow Skills 與學習資源：ai-research-skills (5-plugin Claude Code 市集 · 14 skills · ★ 82)、codex-delegate / agent-collab-skills (多 LLM 協作)、awesome-agentic-ai-zh (★ 1.8k · 7 階段三語學習地圖)。"
+            en: "Shipped open-source agentic-workflow Skills and learning resources for the research community: ai-research-skills (5-plugin Claude Code marketplace · 14 skills · ★ 82), codex-delegate / agent-collab-skills (multi-LLM orchestration), awesome-agentic-ai-zh (★ 1.8k · 8-stage trilingual learning roadmap).",
+            zh: "為研究社群發布開源 agentic workflow Skills 與學習資源：ai-research-skills (5-plugin Claude Code 市集 · 14 skills · ★ 82)、codex-delegate / agent-collab-skills (多 LLM 協作)、awesome-agentic-ai-zh (★ 1.8k · 8 階段三語學習地圖)。"
           }
         ],
         tags: ["ABM", "CAT Modeling", "LLM Agents", "Multi-Agent", "Open Source"]
@@ -361,14 +357,14 @@ const CONTENT = {
         category: "learning",
         stars: 1803,
         meta: { en: "Open source · Trending 2026", zh: "開源 · 2026 Trending" },
-        title: { en: "awesome-agentic-ai-zh — 7-Stage Learning Roadmap", zh: "awesome-agentic-ai-zh — 7 階段學習地圖" },
+        title: { en: "awesome-agentic-ai-zh — 8-Stage Learning Roadmap", zh: "awesome-agentic-ai-zh — 8 階段學習地圖" },
         tldr: {
-          en: "Trilingual 7-stage roadmap from LLM basics to multi-agent production · 145+ curated projects.",
-          zh: "三語 7 階段路線圖，從 LLM 基礎到多代理 production · 145+ curated projects。"
+          en: "Trilingual 8-stage roadmap from LLM basics to multi-agent production · 240+ curated projects.",
+          zh: "三語 8 階段路線圖，從 LLM 基礎到多代理 production · 240+ curated projects。"
         },
         desc: {
-          en: "Bridging the agentic AI knowledge gap for the bilingual community. A 7-stage trilingual learning roadmap (zh-TW canonical · zh-CN · English) from LLM basics to multi-agent production. 145+ curated projects, hands-on exercises per stage, 2 tracks (CLI Power User · Agent Builder), 5 audience-segmented branches. ★ 1.8k and 200+ forks across a growing bilingual community.",
-          zh: "為中文社群彌合 agentic AI 知識落差。7 階段三語學習地圖 (zh-TW canonical · zh-CN · English)，從 LLM 基礎一路到多代理 production。145+ curated projects、每階段都有 hands-on 練習、2 條學習軌 (CLI Power User · Agent Builder)、5 條依使用者分流的延伸路線。★ 1.8k、200+ forks，社群持續成長中。"
+          en: "Bridging the agentic AI knowledge gap for the bilingual community. An 8-stage trilingual learning roadmap (zh-TW canonical · zh-CN · English) from LLM basics to multi-agent production. 240+ curated projects, hands-on exercises per stage, 2 tracks (CLI Power User · Agent Builder), 5 audience-segmented branches. ★ 1.8k and 200+ forks across a growing bilingual community.",
+          zh: "為中文社群彌合 agentic AI 知識落差。8 階段三語學習地圖 (zh-TW canonical · zh-CN · English)，從 LLM 基礎一路到多代理 production。240+ curated projects、每階段都有 hands-on 練習、2 條學習軌 (CLI Power User · Agent Builder)、5 條依使用者分流的延伸路線。★ 1.8k、200+ forks，社群持續成長中。"
         },
         role: "lead",
         stack: ["Markdown", "mdBook", "GitHub Pages", "Python"],
@@ -406,19 +402,8 @@ const CONTENT = {
         year: "2025",
         type: "poster",
         featured: true,
-        cites: 0,
         doi: "10.1002/essoar.2025.NH41E-0449",
         abstract: { en: "Couples a multilevel agent-based model with a catastrophe model (exposure · hazard · vulnerability · finance) to simulate long-term household flood adaptation across census tracts of the Passaic River Basin (Essex, Morris & Passaic Counties). Owners and renters choose insurance, elevation, buyout or relocation through a Bayesian decision model driven by threat/coping/stakeholder perceptions and tract-level social heterogeneity, with 2011–2023 peak flood depths from the 1K-DHM distributed hydrologic model. Adaptation yields a 35% payout advantage for owners and 43% for renters, with renters shifting toward relocation over time.", zh: "將多層級智能體模型 (ABM) 與災害模型（暴險 · 危害 · 脆弱度 · 財務）耦合，模擬 Passaic 流域（Essex、Morris、Passaic 三郡）各普查區的家戶長期洪水調適。屋主與租客依威脅／因應／利害關係人感知與普查區社會異質性，透過貝氏決策模型選擇投保、墊高、買斷或搬遷；危害以 1K-DHM 分布式水文模型的 2011–2023 尖峰淹水深度驅動。調適為屋主帶來 35%、租客 43% 的理賠優勢，租客並隨時間轉向搬遷。" },
-      },
-      {
-        title: { en: "Advancing Flood Risk Assessment", zh: "推進洪水風險評估方法" },
-        authors: "Chiou, W.-Y., et al.",
-        venue: "AGU Fall Meeting",
-        venue_short: "AGU '24",
-        year: "2024",
-        type: "poster",
-        cites: 2,
-        abstract: { en: "Methodological review and proposal for integrating probabilistic flood hazard curves with behavioral response models.", zh: "整合機率洪水風險曲線與行為回應模型的方法論回顧與提案。" },
       },
       {
         title: { en: "Integrating Electrical Resistivity Tomography, Field Observations, and Numerical Simulations to Investigate Submarine Groundwater Discharge of the Taoyuan Tableland, Taiwan", zh: "以電阻率層析成像、現地觀測與數值模擬探討桃園台地之海底地下水潛流動態" },
@@ -427,7 +412,6 @@ const CONTENT = {
         venue_short: "AGU '23",
         year: "2023",
         type: "poster",
-        cites: 4,
         abstract: { en: "Quantifies submarine groundwater discharge (SGD) along the Taoyuan coastline by integrating electrical resistivity tomography (ERT), water-quality and water-table observations, and coupled density-dependent flow-and-transport simulation. Estimates more than 0.5 Mt/day of fresh groundwater discharging to the sea, with a shallow clay layer retarding seawater intrusion while sustaining seaward freshwater outflow.", zh: "整合電阻率層析成像 (ERT)、水質與水位觀測，以及密度相依的耦合流動—傳輸模擬，量化桃園海岸的海底地下水潛流 (SGD)；估計每日逾 0.5 Mt 淡水向海洋潛流，並發現淺層黏土層延緩海水入侵、同時維持向海的淡水外流。" },
       },
       {
@@ -437,18 +421,16 @@ const CONTENT = {
         venue_short: "IES '20",
         year: "2020",
         type: "report",
-        cites: 1,
-        abstract: { en: "Eight-year δ18O and δ2H record tracing reservoir mixing dynamics and climate-driven isotope excursions.", zh: "八年 δ18O 與 δ2H 觀測，追蹤水庫混合動態與氣候驅動的同位素變化。" },
+        abstract: { en: "A biweekly δ18O/δ2H record of Feitsui Reservoir (Sep 2014 – May 2019), analyzed with EEMD. The seasonal isotope cycle (continental-moisture winters, tropical-moisture summers) is clear until early 2017 then vanishes, while a multi-year deuterium-excess cycle mirrors Taipei rainwater and tracks ENSO.", zh: "翡翠水庫 2014/9–2019/5 的雙週 δ18O/δ2H 同位素觀測，以 EEMD 分析；水同位素季節循環（冬季偏陸源、夏季偏熱帶水氣）在 2017 年初前清楚、之後消失，而 d-excess 的多年週期與台北雨水一致，歸因於 ENSO。" },
       },
       {
         title: { en: "Seasonal variations of water and energy budget of evergreen broad-leaved forest in central Taiwan", zh: "台灣中部常綠闊葉林之水量與能量收支季節變化" },
         authors: "Chiou, W.-Y., et al.",
         venue: "Journal of Taiwan Agricultural Engineering",
         venue_short: "JTAE",
-        year: "2020",
+        year: "2021",
         type: "journal",
         quartile: "Q3",
-        cites: 3,
         abstract: { en: "Uses 2010–2020 eddy-covariance flux and micrometeorological observations at the Lianhuachi station to contrast dry- and wet-season water and energy budgets of a central-Taiwan evergreen broad-leaved forest. Classifying seasons by the 3-month Standardized Precipitation Index (SPI3), it finds the forest sustains evapotranspiration from soil moisture through mild-to-moderate drought.", zh: "以蓮華池站 2010–2020 年渦度共變通量與微氣象觀測，比較台灣中部常綠闊葉林乾、濕季的水與能量收支；以三個月標準化降水指數 (SPI3) 分類季節，發現森林在輕至中度乾旱期間仍能由土壤水分支撐蒸發散。" },
       },
     ]
@@ -459,7 +441,7 @@ const CONTENT = {
     kicker: { en: "Open Source", zh: "開源專案" },
     intro: { en: "Curated repositories from github.com/WenyuChiou — research code, AI-agent skills, and trading infrastructure.", zh: "自 github.com/WenyuChiou 精選——研究程式碼、AI 代理技能包與交易系統。" },
     items: [
-      { name: "awesome-agentic-ai-zh", desc: { en: "Trilingual 7-stage learning roadmap for agentic AI — 145+ curated projects, hands-on exercises per stage, 2 tracks, 5 audience-segmented branches.", zh: "三語 7 階段 agentic AI 學習地圖——145+ curated projects、每階段 hands-on 練習、2 條學習軌、5 條依使用者分流的延伸路線。" }, lang: "Markdown", color: "oklch(0.55 0.18 280)", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh", stars: 1803, forks: 206, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "awesome-agentic-ai-zh", desc: { en: "Trilingual 8-stage learning roadmap for agentic AI — 240+ curated projects, hands-on exercises per stage, 2 tracks, 5 audience-segmented branches.", zh: "三語 8 階段 agentic AI 學習地圖——240+ curated projects、每階段 hands-on 練習、2 條學習軌、5 條依使用者分流的延伸路線。" }, lang: "Markdown", color: "oklch(0.55 0.18 280)", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh", stars: 1803, forks: 206, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
       { name: "ai-research-skills", desc: { en: "5-plugin Claude Code marketplace — 14 research skills, one-command install, bilingual.", zh: "5-plugin Claude Code 市集——14 個研究 skill、一條指令安裝、中英雙語。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/ai-research-skills", stars: 82, forks: 6, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
       { name: "codex-delegate", desc: { en: "Claude Code skill — delegate token-heavy coding to Codex CLI; cost-aware routing pattern.", zh: "Claude Code 技能：將繁重程式任務委派給 Codex CLI；建立 cost-aware 路由模式。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/codex-delegate", stars: 59, forks: 5, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
       { name: "gemini-delegate-skill", desc: { en: "Claude Code skill — delegate large-context synthesis & CJK long-form drafting to Gemini CLI.", zh: "Claude Code 技能：將大 context 統整與中日韓長文撰寫委派給 Gemini CLI。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/gemini-delegate-skill", stars: 37, forks: 9, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
@@ -478,87 +460,7 @@ const CONTENT = {
     ]
   },
 
-  linkedin: {
-    num: "08",
-    kicker: { en: "On LinkedIn", zh: "LinkedIn 動態" },
-    intro: {
-      en: "Recent notes on my research, AI-native workflows and what I'm building. Full feed on LinkedIn.",
-      zh: "關於研究進展、AI 原生工作流與正在打造的東西的近期筆記。完整動態請至 LinkedIn。"
-    },
-    profile_url: "https://www.linkedin.com/in/wenyu-chiou",
-    items: [
-      {
-        tag: { en: "Research", zh: "研究" },
-        date: { en: "Dec 2025", zh: "2025.12" },
-        title: { en: "Presenting at AGU Fall Meeting — Poster NH41E-0449", zh: "AGU 年會現場 · 海報 NH41E-0449" },
-        excerpt: {
-          en: "Sharing our coupled ABM × catastrophe framework for long-term household flood adaptation under social heterogeneity. New Orleans was wonderful — grateful for every conversation at the poster.",
-          zh: "在 AGU 分享我們的耦合式 ABM × 災害模擬框架，聚焦家戶長期洪水調適與社會異質性。紐奧良非常棒，感謝每一位在海報前駐足討論的朋友。"
-        },
-        reactions: 142,
-        comments: 18,
-      },
-      {
-        tag: { en: "AI Workflows", zh: "AI 工作流" },
-        date: { en: "Nov 2025", zh: "2025.11" },
-        title: { en: "Why I built codex-delegate for Claude Code", zh: "為什麼我為 Claude Code 寫了 codex-delegate" },
-        excerpt: {
-          en: "A small Claude Code skill that hands token-heavy coding off to Codex or Gemini CLI — so the main agent stays fresh for reasoning while the grunt work runs elsewhere.",
-          zh: "一個小小的 Claude Code 技能，把繁重的程式任務委派給 Codex 或 Gemini CLI——讓主代理保留給推理，粗活交給別人去跑。"
-        },
-        reactions: 96,
-        comments: 11,
-      },
-      {
-        tag: { en: "Thought", zh: "觀點" },
-        date: { en: "Oct 2025", zh: "2025.10" },
-        title: { en: "Bounded rationality is a prompt, not a personality", zh: "有限理性是一段 prompt，而不是一種人格" },
-        excerpt: {
-          en: "Asking an LLM to \"act as a rational human\" misses the point. A research-grade bounded-rational agent is about constraints, memory and feedback — not vibes.",
-          zh: "要求 LLM「扮演理性人」抓不到重點。研究等級的有限理性代理，重點在於限制、記憶與回饋，而不是感覺。"
-        },
-        reactions: 214,
-        comments: 32,
-      },
-      {
-        tag: { en: "Open Source", zh: "開源" },
-        date: { en: "Sep 2025", zh: "2025.09" },
-        title: { en: "WAGF v1 — closing the Logic-Action Gap in LLM agents", zh: "WAGF v1 發布 · 彌合 LLM 代理的邏輯與行動落差" },
-        excerpt: {
-          en: "Released the Water Agent Governance Framework — lets LLM agents act as bounded-rational humans while keeping behavioral diversity across a population.",
-          zh: "WAGF（水資源代理治理框架）v1 釋出——讓 LLM 代理能以有限理性扮演人類，同時保留群體間的行為多樣性。"
-        },
-        reactions: 187,
-        comments: 24,
-      },
-    ]
-  },
 
-  blog: {
-    num: "09",
-    kicker: { en: "Writing", zh: "文章" },
-    intro: { en: "Short essays on decision science, agent-based modeling and the craft of research engineering.", zh: "關於決策科學、智能體模擬與研究工程手藝的短文。" },
-    items: [
-      {
-        cover: "essay1",
-        meta: { en: "Essay · 8 min read", zh: "長文 · 閱讀 8 分鐘" },
-        title: { en: "Bounded rationality is a prompt, not a personality", zh: "有限理性是一段 prompt，而不是一種人格" },
-        excerpt: { en: "Why asking an LLM to 'act as a rational human' misses the point — and what a research-grade bounded-rational agent actually looks like.", zh: "為什麼要求 LLM「扮演理性人」會抓不到重點——以及研究等級的有限理性代理應該長什麼樣。" }
-      },
-      {
-        cover: "essay2",
-        meta: { en: "Notes · 5 min read", zh: "筆記 · 閱讀 5 分鐘" },
-        title: { en: "Coupling hazard models with agents, in practice", zh: "把災害模型和智能體耦合起來：實務筆記" },
-        excerpt: { en: "A field report on the interfaces, timestep tricks and calibration loops that make hybrid simulations usable.", zh: "一份實地報告——關於讓混合模擬真正可用的介面設計、時間步技巧與校正迴圈。" }
-      },
-      {
-        cover: "essay3",
-        meta: { en: "Tools · 6 min read", zh: "工具 · 閱讀 6 分鐘" },
-        title: { en: "Agentic workflows for solo researchers", zh: "單打獨鬥研究者的代理工作流" },
-        excerpt: { en: "The three small agents I wrote this year that, together, replaced a research-assistant team I never had the budget for.", zh: "我今年寫的三個小代理——它們加起來，取代了我從來請不起的研究助理團隊。" }
-      },
-    ]
-  },
 
   industry: {
     hero: {
