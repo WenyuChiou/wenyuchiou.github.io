@@ -6,6 +6,7 @@
 // Run: npm run build   (then commit assets/app.bundle.js)
 import esbuild from "esbuild";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 const ORDER = [
   { src: "content.js", loader: "js" },
@@ -33,3 +34,18 @@ for (const f of ORDER) {
 mkdirSync("assets", { recursive: true });
 writeFileSync("assets/app.bundle.js", out);
 console.log(`Built assets/app.bundle.js — ${(out.length / 1024).toFixed(1)} KB`);
+
+// Cache-bust: stamp index.html's asset refs with a content hash. The asset
+// filenames are stable across builds, so without this GitHub Pages / the browser
+// can serve a stale bundle for ~10min after a deploy. A content hash changes only
+// when the file changes, so caches stay warm yet every deploy is picked up at once.
+const hash = (s) => createHash("sha256").update(s).digest("hex").slice(0, 8);
+const bundleV = hash(out);
+// Normalize CRLF→LF so the hash is identical to the committed (LF) bytes
+// GitHub Pages serves, and stable if the repo is built on Linux/macOS too.
+const cssV = hash(readFileSync("styles.css", "utf8").replace(/\r\n/g, "\n"));
+const html = readFileSync("index.html", "utf8")
+  .replace(/(href=")styles\.css(?:\?v=[a-f0-9]+)?(")/g, `$1styles.css?v=${cssV}$2`)
+  .replace(/(src=")assets\/app\.bundle\.js(?:\?v=[a-f0-9]+)?(")/g, `$1assets/app.bundle.js?v=${bundleV}$2`);
+writeFileSync("index.html", html);
+console.log(`Stamped index.html — styles.css?v=${cssV} · app.bundle.js?v=${bundleV}`);
