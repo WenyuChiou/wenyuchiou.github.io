@@ -1859,18 +1859,18 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
 }
 
 /* MODE SWITCH (industry / academic) */
+/* Mode switch — segmented control inside the nav (was a floating pill) */
 .mode-switch {
-  position: fixed;
-  top: 16px; left: 50%;
-  transform: translateX(-50%);
-  z-index: 90;
-  display: inline-flex;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  display: inline-flex; align-items: center; gap: 3px;
   border: 1px solid var(--rule);
   border-radius: 100px;
   padding: 3px;
-  box-shadow: 0 2px 12px rgba(20, 20, 30, 0.06);
+  background: var(--paper);
+}
+.mode-switch-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3);
+  padding: 0 5px 0 8px; white-space: nowrap;
 }
 .mode-opt {
   display: inline-flex; align-items: center; gap: 6px;
@@ -1895,15 +1895,19 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
 }
 .mode-opt.active .mode-dot { background: oklch(0.72 0.15 150); opacity: 1; }
 
-@media (max-width: 640px) {
-  .mode-switch { top: 8px; padding: 2px; }
-  .mode-opt { padding: 5px 10px; font-size: 10px; }
+/* Desktop: the switch lives in nav-tools; the mobile-menu copy is hidden. */
+.nav-menu-mode { display: none; }
+@media (max-width: 1024px) {
+  .nav-tools .nav-mode { display: none; }
+  .nav-menu-mode {
+    display: flex; justify-content: center;
+    padding-bottom: 14px; margin-bottom: 6px;
+    border-bottom: 1px solid var(--rule);
+  }
 }
-
-/* Push nav down so it doesn't collide with mode switch */
-[data-mode] .nav { top: 52px; }
 @media (max-width: 640px) {
-  [data-mode] .nav { top: 40px; }
+  .nav { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .mode-switch-label { display: none; }
 }
 
 /* IMPACT STRIP */
