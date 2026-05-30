@@ -18,7 +18,7 @@
   --accent-ink: oklch(0.2 0.16 272);
 
   /* Signature highlighter — a warm chartreuse used VERY sparingly */
-  --signal: oklch(0.55 0.13 210);
+  --signal: oklch(0.50 0.13 210);
   --mark: oklch(0.62 0.13 210);
   --mark-wash: oklch(0.86 0.07 210 / 0.5);
 
@@ -1340,6 +1340,9 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
   text-wrap: balance;
 }
 .about-v2-lead em { color: var(--accent); font-style: italic; }
+/* De-emphasized lead phrase: ink text + thin accent underline (one accent
+   word per sentence — keep --accent for the AI-builder signal 'LLM agents'). */
+.about-v2-lead .lead-uline { font-style: italic; background: linear-gradient(var(--accent), var(--accent)) no-repeat left bottom / 100% 2px; padding-bottom: 1px; }
 
 .about-v2-body {
   max-width: 62ch;
@@ -2075,3 +2078,43 @@ h1, .section-title, .hero-v2-h1, .proj-flagship-title { font-optical-sizing: aut
 .rail-dot.is-active:hover .rail-num { opacity: 0; }
 .rail-top { margin-top: 4px; }
 .rail-top .rail-tick { border-style: dashed; }
+
+/* === WAGF validation-pipeline strip (industry hero signature move) === */
+.wagf-pipeline { margin: 22px 0 26px; }
+.wagf-pipeline-kicker {
+  display: block; font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+  margin-bottom: 12px;
+}
+.wagf-stages {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  position: relative;
+}
+/* the connecting rule behind the nodes */
+.wagf-stages::before {
+  content: ""; position: absolute; top: 5px; left: 6%; right: 6%;
+  height: 1px; background: var(--rule); z-index: 0;
+}
+.wagf-stage {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 9px;
+}
+.wagf-node {
+  width: 11px; height: 11px; border-radius: 50%;
+  border: 1.5px solid var(--ink-3); background: var(--bg);
+  box-shadow: 0 0 0 3px var(--bg);
+}
+.wagf-stage.is-signal .wagf-node {
+  border-color: var(--signal); background: var(--signal);
+  box-shadow: 0 0 0 3px var(--bg), 0 0 9px var(--signal);
+}
+.wagf-stage-label {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--ink-2);
+}
+.wagf-stage.is-signal .wagf-stage-label { color: var(--signal); }
+@media (max-width: 520px) {
+  .wagf-stages { grid-template-columns: repeat(2, 1fr); gap: 16px 0; }
+  .wagf-stages::before { display: none; }
+}

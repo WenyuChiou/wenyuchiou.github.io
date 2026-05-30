@@ -387,6 +387,15 @@ const CONTENT = {
           { dot: "oklch(0.65 0.15 240)", text: { en: "WAGF — LLM agent governance framework (open source)", zh: "WAGF — LLM 代理治理框架（開源）" } },
           { dot: "oklch(0.70 0.14 60)", text: { en: "Open to 2027 ML/AI engineer internships — US & remote", zh: "2027 ML/AI 工程師實習開放中 — 美國/遠端" } }
         ]
+      },
+      pipeline: {
+        kicker: { en: "WAGF · validation pipeline", zh: "WAGF · 驗證管線" },
+        stages: [
+          { key: "PHYSICAL",   label: { en: "Physical", zh: "物理" } },
+          { key: "BEHAVIORAL", label: { en: "Behavioral", zh: "行為" }, signal: true },
+          { key: "FINANCIAL",  label: { en: "Financial", zh: "金融" } },
+          { key: "SOCIAL",     label: { en: "Social", zh: "社會" } }
+        ]
       }
     },
     skills: {
