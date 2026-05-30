@@ -132,6 +132,14 @@ function CountUp({ end, format }) {
   return <span ref={ref}>{fmt(val)}</span>;
 }
 
+// Per-mode section ordering (W3 part 2). Industry leads with shipped work +
+// proof (Projects/Skills first); academic leads with research identity + papers.
+// Numbers in the section heads + nav are derived from position, not hardcoded.
+const SECTION_ORDER = {
+  industry: ["projects", "skills", "research", "pubs", "repos", "about", "contact"],
+  academic: ["about", "research", "pubs", "projects", "skills", "repos", "contact"],
+};
+
 function Nav({ lang, setLang, theme, setTheme, active, mode = "industry", setMode, onCmdK }) {
   const C = window.CONTENT.nav;
   const [menuOpen, setMenuOpen] = useState(false);
@@ -143,15 +151,12 @@ function Nav({ lang, setLang, theme, setTheme, active, mode = "industry", setMod
   }, [menuOpen]);
   const cvFile = CV_FILES[mode] || CV_FILES.industry;
   const cvName = (mode === "academic" ? "Wenyu_Chiou_CV_Academic.pdf" : "Wenyu_Chiou_CV_Industry.pdf");
-  const links = [
-    ["about",    C.about,    "01"],
-    ["research", C.research, "02"],
-    ["projects", C.projects, "03"],
-    ["skills",   { en: "Skills", zh: "技能" }, "04"],
-    ["pubs",     C.pubs,     "05"],
-    ["repos",    C.repos,    "06"],
-    ["contact",  C.contact,  "07"],
-  ];
+  const labelFor = {
+    about: C.about, research: C.research, projects: C.projects,
+    skills: { en: "Skills", zh: "技能" }, pubs: C.pubs, repos: C.repos, contact: C.contact,
+  };
+  const links = (SECTION_ORDER[mode] || SECTION_ORDER.academic)
+    .map((id, i) => [id, labelFor[id], String(i + 1).padStart(2, "0")]);
   return (
     <nav className="nav">
       <div className="wrap nav-row">
@@ -340,11 +345,11 @@ function SectionHead({ num, kicker, lang, sub }) {
   );
 }
 
-function About({ lang }) {
+function About({ lang, num }) {
   const C = window.CONTENT.about;
   return (
     <section id="about" className="wrap section-pad">
-      <SectionHead num="01" kicker={C.kicker} lang={lang}/>
+      <SectionHead num={num} kicker={C.kicker} lang={lang}/>
 
       <div className="about-v2">
         <div className="about-v2-lead reveal">
@@ -547,12 +552,12 @@ function CareerTrack({ items, lang }) {
   );
 }
 
-function Research({ lang }) {
+function Research({ lang, num }) {
   const E = window.CONTENT.experience;
   const D = window.CONTENT.education;
   return (
     <section id="research" className="wrap section-pad">
-      <SectionHead num="02" kicker={E.kicker} lang={lang} sub={{en: "Career trajectory · open for 2027 industry roles", zh: "職涯軌跡 · 2027 業界機會開放中"}}/>
+      <SectionHead num={num} kicker={E.kicker} lang={lang} sub={{en: "Career trajectory · open for 2027 industry roles", zh: "職涯軌跡 · 2027 業界機會開放中"}}/>
       <CareerTrack items={E.items} lang={lang}/>
       <div className="edu-compact reveal-stagger">
         <h4 className="col-title">{lang === "en" ? "Education" : "學歷"}</h4>
@@ -573,7 +578,7 @@ function Research({ lang }) {
   );
 }
 
-function Projects({ lang, gh }) {
+function Projects({ lang, gh, num }) {
   const C = window.CONTENT.projects;
   const [open, setOpen] = useState(null);     // expanded compact card key
   const [lightbox, setLightbox] = useState(null); // {src, alt} or null
@@ -688,7 +693,7 @@ function Projects({ lang, gh }) {
 
   return (
     <section id="projects" className="wrap section-pad">
-      <SectionHead num="03" kicker={C.kicker} lang={lang} sub={{en: "Four flagship case studies", zh: "四個旗艦案例"}}/>
+      <SectionHead num={num} kicker={C.kicker} lang={lang} sub={{en: "Four flagship case studies", zh: "四個旗艦案例"}}/>
       <p className="reveal section-intro">{T(C.intro, lang)}</p>
 
       <div className="proj-flagships">
@@ -804,7 +809,7 @@ function CommandPalette({ open, onClose, lang, mode, setLang, setTheme, setMode 
   );
 }
 
-function Publications({ lang }) {
+function Publications({ lang, num }) {
   const C = window.CONTENT.pubs;
   const [expanded, setExpanded] = React.useState(null);
   const [copied, setCopied] = React.useState(null);
@@ -834,7 +839,7 @@ function Publications({ lang }) {
 
   return (
     <section id="pubs" className="wrap section-pad">
-      <SectionHead num="05" kicker={C.kicker} lang={lang}/>
+      <SectionHead num={num} kicker={C.kicker} lang={lang}/>
       <p className="reveal section-intro">{T(C.intro, lang)}</p>
 
       <div className="pub-summary reveal">
@@ -900,7 +905,7 @@ function Publications({ lang }) {
   );
 }
 
-function Skills({ lang, mode }) {
+function Skills({ lang, mode, num }) {
   const ind = mode === "industry" && window.CONTENT.industry && window.CONTENT.industry.skills;
   const C = ind ? { kicker: window.CONTENT.skills.kicker, cats: ind.cats } : window.CONTENT.skills;
   const iconMap = {
@@ -913,7 +918,7 @@ function Skills({ lang, mode }) {
   };
   return (
     <section id="skills" className="wrap section-pad">
-      <SectionHead num="04" kicker={C.kicker} lang={lang} sub={ind ? ind.intro : {en: "Methods, tools, and AI-native workflows", zh: "方法、工具與 AI 原生工作流"}}/>
+      <SectionHead num={num} kicker={C.kicker} lang={lang} sub={ind ? ind.intro : {en: "Methods, tools, and AI-native workflows", zh: "方法、工具與 AI 原生工作流"}}/>
       <div className="skills-grid reveal-stagger">
         {C.cats.map((cat, i) => (
           <div className="skill-card" key={i}>
@@ -931,7 +936,7 @@ function Skills({ lang, mode }) {
   );
 }
 
-function Repos({ lang, gh }) {
+function Repos({ lang, gh, num }) {
   const C = window.CONTENT.repos;
   // Group repos by theme so the reading flow matches the About story
   // Repos that have a detailed case study in the Projects section above.
@@ -972,7 +977,7 @@ function Repos({ lang, gh }) {
   const byName = Object.fromEntries(C.items.map(r => [r.name, r]));
   return (
     <section id="repos" className="wrap section-pad">
-      <SectionHead num="06" kicker={C.kicker} lang={lang} sub={{en: "Every public repo, grouped", zh: "所有公開儲存庫 · 依用途分組"}}/>
+      <SectionHead num={num} kicker={C.kicker} lang={lang} sub={{en: "Every public repo, grouped", zh: "所有公開儲存庫 · 依用途分組"}}/>
       <p className="reveal section-intro">{T(C.intro, lang)}</p>
       <div className="repo-groups reveal-stagger">
         {groups.map((g, gi) => (
@@ -1021,11 +1026,11 @@ function Repos({ lang, gh }) {
   );
 }
 
-function Contact({ lang }) {
+function Contact({ lang, num }) {
   const C = window.CONTENT.contact;
   return (
     <section id="contact" className="wrap section-pad contact">
-      <SectionHead num="07" kicker={C.kicker} lang={lang}/>
+      <SectionHead num={num} kicker={C.kicker} lang={lang}/>
       <div className="contact-inner reveal">
         <h2 className="serif italic">{T(C.title, lang)}</h2>
         <p>{T(C.body, lang)}</p>
@@ -1137,6 +1142,8 @@ function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
   const active = useActiveSection(["top","about","research","projects","skills","pubs","repos","contact"]);
+  const SECTION_COMP = { about: About, research: Research, projects: Projects, skills: Skills, pubs: Publications, repos: Repos, contact: Contact };
+  const order = SECTION_ORDER[mode] || SECTION_ORDER.academic;
   return (
     <>
       <a className="skip-link" href="#main-content">{lang === "en" ? "Skip to content" : "跳至內容"}</a>
@@ -1145,13 +1152,11 @@ function App() {
       <main id="main-content">
         <Hero lang={lang} mode={mode}/>
         {mode === "industry" && <ImpactStrip lang={lang}/>}
-        <About lang={lang} mode={mode}/>
-        <Research lang={lang}/>
-        <Projects lang={lang} mode={mode} gh={gh}/>
-        <Skills lang={lang} mode={mode}/>
-        <Publications lang={lang}/>
-        <Repos lang={lang} gh={gh}/>
-        <Contact lang={lang}/>
+        {order.map((key, i) => {
+          const Comp = SECTION_COMP[key];
+          if (!Comp) return null; // defensive: an unknown key is skipped, never crashes the page
+          return <Comp key={key} lang={lang} mode={mode} gh={gh} num={String(i + 1).padStart(2, "0")}/>;
+        })}
       </main>
       <Footer lang={lang}/>
       <TweaksPanel lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>
