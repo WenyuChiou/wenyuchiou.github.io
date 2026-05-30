@@ -741,7 +741,7 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
   margin-top: 20px;
 }
 .career-btn {
-  width: 40px; height: 40px;
+  width: 44px; height: 44px;
   border-radius: 50%;
   border: 1px solid var(--rule);
   background: var(--paper);
@@ -1290,7 +1290,7 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
 [data-theme="dark"] .hero-v2-photo img { filter: saturate(0.85) brightness(0.88); }
 .hero-v2-photo-cap {
   position: absolute; bottom: 14px; left: 14px;
-  background: oklch(0.2 0.04 60 / 0.6);
+  background: oklch(0.2 0.02 260 / 0.6);
   color: #fff;
   backdrop-filter: blur(8px);
   padding: 8px 14px;
@@ -2212,7 +2212,7 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
 
 /* INDUSTRY HERO tweaks — keep layout, add subtle accent */
 .hero-industry .hero-v2-h1 em {
-  background: linear-gradient(180deg, transparent 60%, oklch(0.92 0.08 85) 60%);
+  background: linear-gradient(180deg, transparent 60%, var(--mark) 60%);
   font-style: normal;
   padding: 0 2px;
 }
@@ -2301,10 +2301,16 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
 [data-theme="dark"] { --wash: oklch(0.22 0.02 85); }
 html { scroll-padding-top: 120px; }
 @media (max-width: 640px) { html { scroll-padding-top: 100px; } }
-[data-theme="dark"] .hero-industry .hero-v2-h1 em {
-  background: linear-gradient(180deg, transparent 60%, oklch(0.45 0.11 85) 60%);
-}
 
 @media (max-width: 900px) {
   .nav-menu { max-height: calc(100dvh - 58px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
 }
+
+/* Wave 2: tablet nav tier + Fraunces optical sizing + focusable-heading ring */
+@media (max-width: 1024px) {
+  .nav-links { display: none; }
+  .nav-tools .nav-burger { display: grid; }
+  .nav-cv { display: none; }
+}
+h1, .section-title, .hero-v2-h1, .proj-flagship-title { font-optical-sizing: auto; font-variation-settings: "opsz" 96; }
+[role="button"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
