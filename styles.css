@@ -18,7 +18,8 @@
   --accent-ink: oklch(0.2 0.16 272);
 
   /* Signature highlighter — a warm chartreuse used VERY sparingly */
-  --mark: oklch(0.92 0.18 108);
+  --mark: oklch(0.9 0.15 108);
+  --mark-wash: oklch(0.9 0.15 108 / 0.45);
 
   --shadow: 0 1px 2px oklch(0.2 0.05 260 / 0.05), 0 8px 24px oklch(0.2 0.05 260 / 0.06);
   --shadow-lg: 0 2px 4px oklch(0.2 0.05 260 / 0.06), 0 24px 60px oklch(0.2 0.05 260 / 0.1);
@@ -47,7 +48,8 @@
   --accent-2: oklch(0.68 0.2 272);
   --accent-soft: oklch(0.3 0.08 272);
   --accent-ink: oklch(0.85 0.15 282);
-  --mark: oklch(0.85 0.2 108);
+  --mark: oklch(0.78 0.115 108);
+  --mark-wash: oklch(0.78 0.115 108 / 0.55);
   --shadow: 0 1px 2px #0006, 0 8px 24px #0004;
   --shadow-lg: 0 2px 4px #0008, 0 24px 60px #0005;
 }
@@ -1174,7 +1176,7 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
   letter-spacing: 0.04em;
   display: inline-flex; align-items: center; gap: 8px;
 }
-.hero-v2-photo-cap .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--mark); box-shadow: 0 0 8px var(--mark); }
+.hero-v2-photo-cap .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--mark); box-shadow: 0 0 6px var(--mark-wash); }
 
 .hero-v2-text { padding-top: 10px; }
 .hero-v2-eyebrow {
@@ -1219,11 +1221,12 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
   content: "";
   position: absolute;
   left: -2px; right: -2px;
-  bottom: 0.12em;
-  height: 0.35em;
-  background: var(--mark);
+  bottom: 0.02em;
+  height: 0.28em;
+  background: var(--mark-wash);
   z-index: -1;
-  opacity: 0.6;
+  opacity: 1;
+  border-radius: 1px;
 }
 .hero-v2-h1 .serif-italic { font-style: italic; color: var(--ink-2); }
 .hero-v2-h1 .tail { font-size: 0.82em; }
@@ -1953,7 +1956,8 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
 
 /* INDUSTRY HERO tweaks — keep layout, add subtle accent */
 .hero-industry .hero-v2-h1 em {
-  background: linear-gradient(180deg, transparent 60%, var(--mark) 60%);
+  background: linear-gradient(180deg, transparent 66%, var(--mark-wash) 66%);
+  border-radius: 1px;
   font-style: normal;
   padding: 0 2px;
 }
