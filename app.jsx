@@ -228,11 +228,11 @@ function HeroIndustry({ lang, C, I }) {
   return (
     <header className="hero-v2 hero-industry" id="top">
       <div className="wrap hero-v2-grid">
-        <div className="hero-v2-photo reveal">
-          <img src="assets/cover.jpg" alt="Wenyu Chiou presenting at AGU 2025"/>
+        <div className="hero-v2-photo hero-v2-photo--diagram reveal">
+          <img src="assets/wagf-architecture.jpg" alt="WAGF — governed LLM-agent validation architecture"/>
           <div className="hero-v2-photo-cap">
             <span className="dot"/>
-            <span>{lang === "en" ? "AGU Fall Meeting 2025 · New Orleans" : "AGU 2025 · 紐奧良"}</span>
+            <span>{lang === "en" ? "WAGF · governed multi-agent architecture" : "WAGF · 治理型多代理架構"}</span>
           </div>
         </div>
 

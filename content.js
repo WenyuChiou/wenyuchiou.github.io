@@ -87,8 +87,8 @@ const CONTENT = {
             zh: "首度將家戶調適行為與洪水損失結果的雙向交互量化：建立首套 ABM × CAT (FEMA Hazus 6.1) 耦合框架，捕捉個別減災選擇如何改寫 Passaic 流域（Essex、Morris、Passaic 三郡）各普查區的損失分布。"
           },
           {
-            en: "Developed WAGF — a governed LLM-agent framework letting LLMs act as bounded-rational households. A 6-stage validation pipeline (physical · behavioral · financial · social) catches Logic-Action Gap failures before they propagate; multi-LLM ablation across Claude / GPT-5 / Gemini.",
-            zh: "開發 WAGF——governed LLM 代理框架，讓 LLM 以有限理性 (bounded rationality) 扮演家戶角色；6 階段驗證管線（物理 · 行為 · 金融 · 社會）在動作落地前攔截邏輯—行動落差失敗；橫跨 Claude / GPT-5 / Gemini 的多 LLM 對比實驗。"
+            en: "Developed WAGF — a governed LLM-agent framework letting LLMs act as bounded-rational households. A governed validation pipeline (physical · behavioral · financial · social) catches Logic-Action Gap failures before they propagate; multi-LLM ablation across Claude / GPT-5 / Gemini.",
+            zh: "開發 WAGF——governed LLM 代理框架，讓 LLM 以有限理性 (bounded rationality) 扮演家戶角色；治理式驗證管線（物理 · 行為 · 金融 · 社會）在動作落地前攔截邏輯—行動落差失敗；橫跨 Claude / GPT-5 / Gemini 的多 LLM 對比實驗。"
           },
           {
             en: "Built a multi-agent system coupled with catastrophe models so policy questions previously answered by expert judgement can now be quantified — three reference implementations spanning flood, multi-agent flood, and Colorado irrigation.",
@@ -220,8 +220,8 @@ const CONTENT = {
         meta: { en: "Multi-Agent LLM Governance · 2026", zh: "多代理 LLM 治理 · 2026" },
         title: { en: "WAGF — Water Agent Governance Framework", zh: "WAGF — 水資源代理治理框架" },
         desc: {
-          en: "Formalizing safety for LLM agents in consequential simulations. The first 6-stage validation pipeline (physical · behavioral · financial · social) that catches Logic-Action Gap failures — hallucination, logical drift, unsafe state mutation — before they propagate. Three reference implementations across flood, multi-agent flood, and Colorado irrigation; multi-LLM ablation. Paper in progress.",
-          zh: "為高風險模擬中的 LLM 智能體建立安全機制。首套 6 階段驗證管線（物理 · 行為 · 金融 · 社會），在動作落地前攔截「邏輯—行動落差」失敗——幻覺、邏輯偏移、不安全的狀態變更。涵蓋洪水、多代理洪水、Colorado 灌溉三套參考實作；多 LLM 對比實驗。論文撰寫中。"
+          en: "Formalizing safety for LLM agents in consequential simulations. The first governed validation pipeline (physical · behavioral · financial · social) that catches Logic-Action Gap failures — hallucination, logical drift, unsafe state mutation — before they propagate. Three reference implementations across flood, multi-agent flood, and Colorado irrigation; multi-LLM ablation. Paper in progress.",
+          zh: "為高風險模擬中的 LLM 智能體建立安全機制。首套治理式驗證管線（物理 · 行為 · 金融 · 社會），在動作落地前攔截「邏輯—行動落差」失敗——幻覺、邏輯偏移、不安全的狀態變更。涵蓋洪水、多代理洪水、Colorado 灌溉三套參考實作；多 LLM 對比實驗。論文撰寫中。"
         },
         role: "lead",
         stack: ["Python", "LangGraph", "Claude", "GPT-5"],
@@ -352,7 +352,7 @@ const CONTENT = {
       { name: "agent-collab-skills", desc: { en: "Multi-agent orchestration primitives — task splitter, output reconciler, debate, shared memory, acceptance gate.", zh: "多代理協作元件——task splitter、output reconciler、debate、shared memory、acceptance gate。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/agent-collab-skills", stars: 2, forks: 1, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
       { name: "academic-writing-skills", desc: { en: "Findings-first paper writing skill — banned-word audits, figure-text consistency, submission checklists.", zh: "以 findings-first 為核心的論文寫作 skill——banned-word 稽核、圖文一致性、投稿 checklist。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/academic-writing-skills", stars: 5, forks: 1, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
       { name: "FLOODABM", desc: { en: "Coupled ABM × catastrophe model — household flood adaptation (Passaic NJ, 2011–2023). AGU 2025 poster.", zh: "智能體 × 災害模型耦合：家戶洪水調適 (NJ Passaic 2011–2023)。AGU 2025 poster。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/FLOODABM", stars: 0, forks: 0, updated: { en: "Mar 2026", zh: "2026.03" }, status: "active" },
-      { name: "WAGF", desc: { en: "Water Agent Governance Framework — first 6-stage validation pipeline catching Logic-Action Gap failures in LLM agents.", zh: "水資源代理治理框架——首套 6 階段驗證管線，攔截 LLM 智能體的「邏輯—行動落差」失敗。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/WAGF", stars: 0, forks: 0, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "WAGF", desc: { en: "Water Agent Governance Framework — first governed validation pipeline catching Logic-Action Gap failures in LLM agents.", zh: "水資源代理治理框架——首套治理式驗證管線，攔截 LLM 智能體的「邏輯—行動落差」失敗。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/WAGF", stars: 0, forks: 0, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
       { name: "Cat_framework", desc: { en: "FEMA Hazus 6.1 re-implementation for earthquake-induced bridge damage — adds spatial-interpolation + calibration the official tool doesn't expose.", zh: "FEMA Hazus 6.1 重新實作於地震震損橋樑——加入官方工具未開放的空間內插與校正步驟。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/Cat_framework", stars: 0, forks: 0, updated: { en: "Oct 2025", zh: "2025.10" }, status: "active" },
       { name: "moodring", desc: { en: "Daily sentiment scoring across 5 equity markets (US/TW/JP/KR/EU).", zh: "五大股市的每日情緒評分 (美/台/日/韓/歐)。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/moodring", stars: 10, forks: 5, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
       { name: "multi-analyst-desk", desc: { en: "4 AI specialists + chief strategist for ETF options; bilingual reports.", zh: "四位 AI 分析師 + 首席策略師組成的 ETF 選擇權交易桌，雙語報告。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/multi-analyst-desk", stars: 0, forks: 0, updated: { en: "Oct 2025", zh: "2025.10" }, status: "archived" },
@@ -367,16 +367,16 @@ const CONTENT = {
   industry: {
     hero: {
       eyebrow: {
-        en: ["AI Agent Engineer", "Water × LLM × Risk", "Available Summer 2027"],
-        zh: ["AI 代理工程師", "水資源 × LLM × 風險", "2027 夏實習開放中"]
+        en: ["AI Agent Engineer", "Governed multi-agent systems", "Available Summer 2027"],
+        zh: ["AI 代理工程師", "治理型多代理系統", "2027 夏實習開放中"]
       },
       h1: {
-        en: { a: "I build", b: "LLM-agent systems", c: "for water & climate risk —", d: "flood, reservoir, irrigation, catastrophe modeling." },
-        zh: { a: "我打造", b: "LLM 代理系統", c: "處理水資源與氣候風險——", d: "洪水、水庫、灌溉、災害建模。" }
+        en: { a: "I build", b: "governed LLM agents", c: "that act in consequential simulations —", d: "flood, catastrophe, and climate-risk decision systems." },
+        zh: { a: "我打造", b: "治理型 LLM 代理", c: "讓它們在高後果模擬中行動——", d: "洪水、災害與氣候風險決策系統。" }
       },
       lede: {
-        en: "Ph.D. researcher at Lehigh turning multi-agent systems coupled with catastrophe models into production-ready frameworks. I work where human decisions meet the physical environment — and LLMs now stand in for the humans.",
-        zh: "我是 Lehigh 博士候選人，將多智能體系統與災害模型耦合，轉為可落地的生產框架。研究方向在「人與環境的互動」—— 而現在 LLM 代理扮演了人的角色。"
+        en: "I build the governance layer that catches LLM agents’ Logic-Action-Gap failures before they propagate — so my agents act inside a FEMA-Hazus-coupled catastrophe model, not a sandbox. Ph.D. researcher at Lehigh; open-source maintainer of agentic-AI infrastructure.",
+        zh: "我打造一層治理機制，在 LLM 代理的「邏輯—行動落差」失敗擴散前攔截它——讓代理在與 FEMA-Hazus 耦合的災害模型中行動，而非沙盒。Lehigh 博士候選人，開源 agentic-AI 基礎設施維護者。"
       },
       cta_primary: { en: "Email", zh: "來信" },
       cta_linkedin: { en: "LinkedIn DM", zh: "LinkedIn 私訊" },
@@ -430,11 +430,11 @@ const CONTENT = {
     },
     impact: {
       items: [
+        { num: "WAGF", lbl: { en: "Governed agent pipeline", zh: "治理式代理管線" } },
+        { num: "3", lbl: { en: "LLMs ablated · Claude·GPT-5·Gemini", zh: "LLM 對比 · Claude·GPT-5·Gemini" } },
+        { num: "3", lbl: { en: "Reference systems shipped", zh: "參考系統實作" } },
         { num: "★ 1.8k", lbl: { en: "Stars · awesome-agentic-ai-zh", zh: "Stars · awesome-agentic-ai-zh" } },
-        { num: "240+", lbl: { en: "Curated projects", zh: "精選 curated projects" } },
         { num: "15", lbl: { en: "Skills · research marketplace", zh: "skills · 研究市集" } },
-        { num: "12 yrs", lbl: { en: "Flood data modeled · NJ", zh: "洪水資料建模 · NJ" } },
-        { num: "35–43%", lbl: { en: "Adaptation payout edge", zh: "調適理賠優勢" } },
       ]
     }
   },
