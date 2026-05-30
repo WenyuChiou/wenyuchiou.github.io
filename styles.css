@@ -30,7 +30,7 @@
 
   --radius: 14px;
   --radius-sm: 8px;
-  --maxw: 1280px;
+  --maxw: 1480px;
   --gutter: clamp(20px, 4vw, 60px);
 }
 
@@ -78,22 +78,22 @@ body::before {
   z-index: 0;
   background-image:
     linear-gradient(to right,
-      transparent 0, transparent calc(50% - 600px),
-      oklch(0.9 0.01 260 / 0.4) calc(50% - 600px), oklch(0.9 0.01 260 / 0.4) calc(50% - 599px),
-      transparent calc(50% - 599px), transparent calc(50% + 599px),
-      oklch(0.9 0.01 260 / 0.4) calc(50% + 599px), oklch(0.9 0.01 260 / 0.4) calc(50% + 600px),
-      transparent calc(50% + 600px)
+      transparent 0, transparent calc(50% - var(--maxw) / 2),
+      oklch(0.9 0.01 260 / 0.4) calc(50% - var(--maxw) / 2), oklch(0.9 0.01 260 / 0.4) calc(50% - var(--maxw) / 2 + 1px),
+      transparent calc(50% - var(--maxw) / 2 + 1px), transparent calc(50% + var(--maxw) / 2 - 1px),
+      oklch(0.9 0.01 260 / 0.4) calc(50% + var(--maxw) / 2 - 1px), oklch(0.9 0.01 260 / 0.4) calc(50% + var(--maxw) / 2),
+      transparent calc(50% + var(--maxw) / 2)
     );
   opacity: 1;
 }
 [data-theme="dark"] body::before {
   background-image:
     linear-gradient(to right,
-      transparent 0, transparent calc(50% - 600px),
-      oklch(0.3 0.01 260 / 0.6) calc(50% - 600px), oklch(0.3 0.01 260 / 0.6) calc(50% - 599px),
-      transparent calc(50% - 599px), transparent calc(50% + 599px),
-      oklch(0.3 0.01 260 / 0.6) calc(50% + 599px), oklch(0.3 0.01 260 / 0.6) calc(50% + 600px),
-      transparent calc(50% + 600px)
+      transparent 0, transparent calc(50% - var(--maxw) / 2),
+      oklch(0.3 0.01 260 / 0.6) calc(50% - var(--maxw) / 2), oklch(0.3 0.01 260 / 0.6) calc(50% - var(--maxw) / 2 + 1px),
+      transparent calc(50% - var(--maxw) / 2 + 1px), transparent calc(50% + var(--maxw) / 2 - 1px),
+      oklch(0.3 0.01 260 / 0.6) calc(50% + var(--maxw) / 2 - 1px), oklch(0.3 0.01 260 / 0.6) calc(50% + var(--maxw) / 2),
+      transparent calc(50% + var(--maxw) / 2)
     );
 }
 
