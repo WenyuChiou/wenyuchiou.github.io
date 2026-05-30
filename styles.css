@@ -1158,6 +1158,21 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
   position: sticky;
   top: 100px;
 }
+/* Industry hero shows the WAGF architecture diagram (not a portrait): show it
+   whole (contain), let it set its own height, give it a clean framed surface. */
+.hero-v2-photo--diagram {
+  aspect-ratio: auto;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 18px;
+  overflow: clip;
+}
+.hero-v2-photo--diagram img {
+  object-fit: contain;
+  object-position: center;
+  height: auto;
+  filter: none;
+}
 .hero-v2-photo img {
   width: 100%; height: 100%;
   object-fit: cover;
