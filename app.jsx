@@ -324,6 +324,7 @@ function HeroAcademic({ lang, C }) {
             <div><dt>{lang === "en" ? "Group" : "研究群"}</dt><dd>Complex Water Adaptive System</dd></div>
             <div><dt>{lang === "en" ? "Center" : "中心"}</dt><dd>{lang === "en" ? "Catastrophe Modeling & Resilience" : "災害建模與韌性中心"}</dd></div>
             <div><dt>{lang === "en" ? "Focus" : "重心"}</dt><dd>ABM · LLM Agents · Flood Risk</dd></div>
+            <div><dt>{lang === "en" ? "Since" : "起始"}</dt><dd>Aug 2024</dd></div>
             <div><dt>{lang === "en" ? "Based in" : "地點"}</dt><dd>Bethlehem, PA · US</dd></div>
           </dl>
         </div>
@@ -367,26 +368,12 @@ function About({ lang, num }) {
           <p>{T(C.p2, lang)}</p>
         </div>
 
-        <aside className="about-v2-card reveal">
-          <div className="about-v2-card-inner">
-            <div className="about-v2-portrait">
-              <img src="assets/avatar.jpg" alt="Wenyu Chiou"/>
-            </div>
-            <dl>
-              <dt>{lang === "en" ? "Role" : "身分"}</dt>
-              <dd>{lang === "en" ? "Ph.D. Candidate" : "博士候選人"}</dd>
-              <dt>{lang === "en" ? "At" : "任職"}</dt>
-              <dd>Lehigh University · CEE</dd>
-              <dt>{lang === "en" ? "Since" : "起始"}</dt>
-              <dd>Aug 2024</dd>
-              <dt>{lang === "en" ? "Based in" : "地點"}</dt>
-              <dd>Bethlehem, PA</dd>
-            </dl>
-            <div className="interests">
-              {C.interests.slice(0, 6).map((i, idx) => <span className="chip" key={idx}>{T(i, lang)}</span>)}
-            </div>
+        <div className="about-keywords reveal">
+          <span className="about-keywords-label">{T(C.interests_label, lang)}</span>
+          <div className="interests">
+            {C.interests.map((i, idx) => <span className="chip" key={idx}>{T(i, lang)}</span>)}
           </div>
-        </aside>
+        </div>
       </div>
 
       <div className="field-strip reveal-stagger">
