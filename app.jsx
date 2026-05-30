@@ -135,6 +135,12 @@ function CountUp({ end, format }) {
 function Nav({ lang, setLang, theme, setTheme, active, mode = "industry", onCmdK }) {
   const C = window.CONTENT.nav;
   const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e) => { if (e.key === "Escape") setMenuOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
   const cvFile = CV_FILES[mode] || CV_FILES.industry;
   const cvName = (mode === "academic" ? "Wenyu_Chiou_CV_Academic.pdf" : "Wenyu_Chiou_CV_Industry.pdf");
   const links = [
@@ -823,7 +829,6 @@ function Publications({ lang }) {
     preprint: lang === "en" ? "Preprint" : "預印本",
   };
 
-  const totalCites = C.items.reduce((s, p) => s + (p.cites || 0), 0);
   const journalCount = C.items.filter(p => p.type === "journal").length;
   const posterCount = C.items.filter(p => p.type === "poster").length;
 
@@ -849,7 +854,6 @@ function Publications({ lang }) {
         <div className="pub-sum-item"><span className="pub-sum-num">{C.items.length}</span><span className="pub-sum-lbl">{lang === "en" ? "Publications" : "著作"}</span></div>
         <div className="pub-sum-item"><span className="pub-sum-num">{posterCount}</span><span className="pub-sum-lbl">{lang === "en" ? "Conference posters" : "會議海報"}</span></div>
         <div className="pub-sum-item"><span className="pub-sum-num">{journalCount}</span><span className="pub-sum-lbl">{lang === "en" ? "Journal articles" : "期刊論文"}</span></div>
-        <div className="pub-sum-item"><span className="pub-sum-num">{totalCites}</span><span className="pub-sum-lbl">{lang === "en" ? "Citations (GS)" : "引用 (GS)"}</span></div>
       </div>
 
       <div className="pub-list reveal-stagger">
@@ -881,10 +885,12 @@ function Publications({ lang }) {
                   <p className="pub-abstract">{T(p.abstract, lang)}</p>
                 )}
                 <div className="pub-actions">
-                  <span className="pub-cites">
-                    <svg viewBox="0 0 16 16" width="11" height="11" fill="currentColor"><path d="M6 2a1 1 0 000 2h4a1 1 0 100-2H6zM4 6a1 1 0 011-1h6a1 1 0 110 2H5a1 1 0 01-1-1zm-1 4a1 1 0 011-1h8a1 1 0 110 2H4a1 1 0 01-1-1zm1 4a1 1 0 011-1h6a1 1 0 110 2H5a1 1 0 01-1-1z"/></svg>
-                    {lang === "en" ? "Cited by " : "被引用 "}{p.cites || 0}
-                  </span>
+                  {p.cites > 0 && (
+                    <span className="pub-cites">
+                      <svg viewBox="0 0 16 16" width="11" height="11" fill="currentColor"><path d="M6 2a1 1 0 000 2h4a1 1 0 100-2H6zM4 6a1 1 0 011-1h6a1 1 0 110 2H5a1 1 0 01-1-1zm-1 4a1 1 0 011-1h8a1 1 0 110 2H4a1 1 0 01-1-1zm1 4a1 1 0 011-1h6a1 1 0 110 2H5a1 1 0 01-1-1z"/></svg>
+                      {lang === "en" ? "Cited by " : "被引用 "}{p.cites}
+                    </span>
+                  )}
                   {p.doi && (
                     <a className="pub-link" href={`https://doi.org/${p.doi}`} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()}>
                       DOI ↗
