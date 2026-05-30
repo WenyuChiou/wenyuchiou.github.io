@@ -102,8 +102,8 @@ const CONTENT = {
             zh: "建立多代理系統 × 災害模型耦合架構，把過去依賴專家判斷的政策問題轉為可量化分析；完成洪水、多代理洪水、Colorado 灌溉三套參考實作。"
           },
           {
-            en: "Shipped open-source agentic-workflow Skills and learning resources for the research community: ai-research-skills (5-plugin Claude Code marketplace · 14 skills · ★ 82), codex-delegate / agent-collab-skills (multi-LLM orchestration), awesome-agentic-ai-zh (★ 1.8k · 8-stage trilingual learning roadmap).",
-            zh: "為研究社群發布開源 agentic workflow Skills 與學習資源：ai-research-skills (5-plugin Claude Code 市集 · 14 skills · ★ 82)、codex-delegate / agent-collab-skills (多 LLM 協作)、awesome-agentic-ai-zh (★ 1.8k · 8 階段三語學習地圖)。"
+            en: "Shipped open-source agentic-workflow Skills and learning resources for the research community: ai-research-skills (5-plugin Claude Code marketplace · 15 skills · ★ 82), codex-delegate / agent-collab-skills (multi-LLM orchestration), awesome-agentic-ai-zh (★ 1.8k · 8-stage trilingual learning roadmap).",
+            zh: "為研究社群發布開源 agentic workflow Skills 與學習資源：ai-research-skills (5-plugin Claude Code 市集 · 15 skills · ★ 82)、codex-delegate / agent-collab-skills (多 LLM 協作)、awesome-agentic-ai-zh (★ 1.8k · 8 階段三語學習地圖)。"
           }
         ],
         tags: ["ABM", "CAT Modeling", "LLM Agents", "Multi-Agent", "Open Source"]
@@ -301,12 +301,12 @@ const CONTENT = {
         meta: { en: "Claude Code marketplace · 2026", zh: "Claude Code 市集 · 2026" },
         title: { en: "AI Research Skills — Claude Code Marketplace", zh: "AI Research Skills — Claude Code 市集" },
         tldr: {
-          en: "5-plugin Claude Code marketplace · 14 skills from literature triage to manuscript writing.",
-          zh: "5-plugin Claude Code 市集，14 個 skill 覆蓋文獻分流到論文撰寫。"
+          en: "5-plugin Claude Code marketplace · 15 skills from literature triage to manuscript writing.",
+          zh: "5-plugin Claude Code 市集，15 個 skill 覆蓋文獻分流到論文撰寫。"
         },
         desc: {
-          en: "Productizing the research workflow as composable AI infrastructure. A 5-plugin Claude Code marketplace shipping 14 skills that cover literature triage → research design → project context → manuscript writing → multi-LLM delegation. One command installs everything; works alongside Codex CLI, Gemini CLI, Cursor, or any host that loads SKILL.md.",
-          zh: "把研究工作流產品化成可組合的 AI 基礎設施。5-plugin 的 Claude Code 市集，14 個 skill 覆蓋文獻分流 → 研究設計 → 專案 context → 論文撰寫 → 多 LLM 委派的整條流水線。一條指令安裝完成；也支援 Codex CLI、Gemini CLI、Cursor 等任何能載入 SKILL.md 的 host。"
+          en: "Productizing the research workflow as composable AI infrastructure. A 5-plugin Claude Code marketplace shipping 15 skills that cover literature triage → research design → project context → manuscript writing → multi-LLM delegation. One command installs everything; works alongside Codex CLI, Gemini CLI, Cursor, or any host that loads SKILL.md.",
+          zh: "把研究工作流產品化成可組合的 AI 基礎設施。5-plugin 的 Claude Code 市集，15 個 skill 覆蓋文獻分流 → 研究設計 → 專案 context → 論文撰寫 → 多 LLM 委派的整條流水線。一條指令安裝完成；也支援 Codex CLI、Gemini CLI、Cursor 等任何能載入 SKILL.md 的 host。"
         },
         role: "lead",
         stack: ["Claude Code", "Marketplace", "MCP", "CLI"],
@@ -442,7 +442,7 @@ const CONTENT = {
     intro: { en: "Curated repositories from github.com/WenyuChiou — research code, AI-agent skills, and trading infrastructure.", zh: "自 github.com/WenyuChiou 精選——研究程式碼、AI 代理技能包與交易系統。" },
     items: [
       { name: "awesome-agentic-ai-zh", desc: { en: "Trilingual 8-stage learning roadmap for agentic AI — 240+ curated projects, hands-on exercises per stage, 2 tracks, 5 audience-segmented branches.", zh: "三語 8 階段 agentic AI 學習地圖——240+ curated projects、每階段 hands-on 練習、2 條學習軌、5 條依使用者分流的延伸路線。" }, lang: "Markdown", color: "oklch(0.55 0.18 280)", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh", stars: 1803, forks: 206, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "ai-research-skills", desc: { en: "5-plugin Claude Code marketplace — 14 research skills, one-command install, bilingual.", zh: "5-plugin Claude Code 市集——14 個研究 skill、一條指令安裝、中英雙語。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/ai-research-skills", stars: 82, forks: 6, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
+      { name: "ai-research-skills", desc: { en: "5-plugin Claude Code marketplace — 15 research skills, one-command install, bilingual.", zh: "5-plugin Claude Code 市集——15 個研究 skill、一條指令安裝、中英雙語。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/ai-research-skills", stars: 82, forks: 6, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
       { name: "codex-delegate", desc: { en: "Claude Code skill — delegate token-heavy coding to Codex CLI; cost-aware routing pattern.", zh: "Claude Code 技能：將繁重程式任務委派給 Codex CLI；建立 cost-aware 路由模式。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/codex-delegate", stars: 59, forks: 5, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
       { name: "gemini-delegate-skill", desc: { en: "Claude Code skill — delegate large-context synthesis & CJK long-form drafting to Gemini CLI.", zh: "Claude Code 技能：將大 context 統整與中日韓長文撰寫委派給 Gemini CLI。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/gemini-delegate-skill", stars: 37, forks: 9, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
       { name: "zotero-skills", desc: { en: "Programmatic Zotero skills — search, add, classify, annotate references via Claude Code.", zh: "Zotero 程式化技能：透過 Claude Code 搜尋、新增、分類、註解文獻。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/zotero-skills", stars: 25, forks: 3, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
