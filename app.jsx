@@ -913,8 +913,9 @@ function Publications({ lang }) {
   );
 }
 
-function Skills({ lang }) {
-  const C = window.CONTENT.skills;
+function Skills({ lang, mode }) {
+  const ind = mode === "industry" && window.CONTENT.industry && window.CONTENT.industry.skills;
+  const C = ind ? { kicker: window.CONTENT.skills.kicker, cats: ind.cats } : window.CONTENT.skills;
   const iconMap = {
     brain: window.Icons.brain || window.Icons.repo,
     code:  window.Icons.code  || window.Icons.repo,
@@ -925,7 +926,7 @@ function Skills({ lang }) {
   };
   return (
     <section id="skills" className="wrap section-pad">
-      <SectionHead num="04" kicker={C.kicker} lang={lang} sub={{en: "Methods, tools, and AI-native workflows", zh: "方法、工具與 AI 原生工作流"}}/>
+      <SectionHead num="04" kicker={C.kicker} lang={lang} sub={ind ? ind.intro : {en: "Methods, tools, and AI-native workflows", zh: "方法、工具與 AI 原生工作流"}}/>
       <div className="skills-grid reveal-stagger">
         {C.cats.map((cat, i) => (
           <div className="skill-card" key={i}>
@@ -997,7 +998,7 @@ function Repos({ lang, gh }) {
                       </div>
                       <p className="repo-row-desc">{T(r.desc, lang)}</p>
                       <div className="repo-row-stats">
-                        <span className="repo-stat"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M8 .25l2.39 4.84 5.34.78-3.87 3.77.91 5.32L8 12.48l-4.77 2.48.91-5.32L.27 5.87l5.34-.78z"/></svg><CountUp end={stars}/></span>
+                        <span className="repo-stat"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M8 .25l2.39 4.84 5.34.78-3.87 3.77.91 5.32L8 12.48l-4.77 2.48.91-5.32L.27 5.87l5.34-.78z"/></svg>{stars}</span>
                         <span className="repo-stat"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v5.256a2.251 2.251 0 101.5 0V5.372zM5 13a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm9.75-.75a.75.75 0 110 1.5.75.75 0 010-1.5zM13.25 7a3.251 3.251 0 11-3.25-3.25h.879l-.44-.44a.75.75 0 011.06-1.06l1.72 1.72a.75.75 0 010 1.06l-1.72 1.72a.75.75 0 11-1.06-1.06l.44-.44H10A1.75 1.75 0 0011.75 7z"/></svg>{forks}</span>
                         <span className="repo-stat repo-stat-date mono">↻ {T(r.updated, lang)}</span>
                       </div>
@@ -1123,7 +1124,7 @@ function App() {
   const [cmdk, setCmdk] = useState(false);
   useEffect(() => {
     const onKey = (e) => {
-      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); setCmdk(o => !o); }
+      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); setCmdk(true); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -1141,9 +1142,8 @@ function App() {
         <Research lang={lang}/>
         <Projects lang={lang} mode={mode} gh={gh}/>
         <Skills lang={lang} mode={mode}/>
-        {mode === "academic" && <Publications lang={lang}/>}
+        <Publications lang={lang}/>
         <Repos lang={lang} gh={gh}/>
-        {mode === "industry" && <Publications lang={lang} compact/>}
         <Contact lang={lang}/>
       </main>
       <Footer lang={lang}/>
