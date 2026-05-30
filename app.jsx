@@ -573,7 +573,6 @@ function Research({ lang }) {
 
 function Projects({ lang, gh }) {
   const C = window.CONTENT.projects;
-  const [filter, setFilter] = useState("all");
   const [open, setOpen] = useState(null);     // expanded compact card key
   const [lightbox, setLightbox] = useState(null); // {src, alt} or null
 
@@ -597,10 +596,6 @@ function Projects({ lang, gh }) {
 
   // Star highlight threshold — items with stars >= this get a visible badge
   const STAR_HIGHLIGHT = 30;
-
-  const groupOrder = ["research", "workflow", "learning"];
-  const cats = C.categories || {};
-  const itemsByCat = (cat) => C.items.filter(p => (p.category || "research") === cat);
 
   const renderCompact = (p, i) => {
     const key = p.href + i;
@@ -644,14 +639,14 @@ function Projects({ lang, gh }) {
     );
   };
 
-  const renderFlagship = (p) => {
+  const renderFlagship = (p, i) => {
    const fstars = liveStars(p);
    return (
-    <div className={"proj-flagship reveal" + (p.image ? " has-media" : "")}>
+    <div className={"proj-flagship reveal" + (p.image ? " has-media" : "")} key={i}>
       <div className="proj-flagship-main">
         <div className="proj-flagship-head">
-          <span className="proj-flagship-star">★</span>
-          <span className="proj-flagship-tag">{lang === "en" ? "FLAGSHIP" : "旗艦"}</span>
+          <span className="proj-flagship-star">{String(i + 1).padStart(2, "0")}</span>
+          <span className="proj-flagship-tag">{lang === "en" ? "CASE STUDY" : "案例研究"}</span>
           <span className="proj-flagship-meta">{T(p.meta, lang)}</span>
         </div>
         <h3 className="proj-flagship-title">{T(p.title, lang)}</h3>
@@ -691,43 +686,23 @@ function Projects({ lang, gh }) {
 
   return (
     <section id="projects" className="wrap section-pad">
-      <SectionHead num="03" kicker={C.kicker} lang={lang} sub={{en: "Posters, frameworks, open-source", zh: "海報 · 框架 · 開源"}}/>
+      <SectionHead num="03" kicker={C.kicker} lang={lang} sub={{en: "Four flagship case studies", zh: "四個旗艦案例"}}/>
       <p className="reveal section-intro">{T(C.intro, lang)}</p>
 
-      <div className="proj-filter reveal" role="tablist" aria-label={lang === "en" ? "Filter projects" : "篩選專案"}>
-        {[["all", { en: "All", zh: "全部" }, C.items.length], ...groupOrder.map(c => [c, (cats[c] || {}).label || { en: c, zh: c }, itemsByCat(c).length])].map(([key, label, n]) => (
-          <button key={key} className={"proj-filter-tab" + (filter === key ? " active" : "")}
-                  role="tab" aria-selected={filter === key ? "true" : "false"}
-                  onClick={() => { setFilter(key); setOpen(null); }}>
-            {T(label, lang)} <span className="proj-filter-count">{n}</span>
-          </button>
-        ))}
+      <div className="proj-flagships">
+        {C.items.filter(p => p.featured).map((p, i) => renderFlagship(p, i))}
       </div>
-
-      {groupOrder.map((cat, gi) => {
-        const items = itemsByCat(cat);
-        if (items.length === 0) return null;
-        if (filter !== "all" && cat !== filter) return null;
-        const catMeta = cats[cat] || { label: { en: cat, zh: cat }, sub: { en: "", zh: "" } };
-        const featuredHere = items.find(p => p.featured);
-        const compactHere  = items.filter(p => !p.featured);
-        return (
-          <div className="proj-category reveal" key={cat}>
-            <div className="proj-category-head">
-              <span className="proj-category-num">{String(gi + 1).padStart(2, "0")} /</span>
-              <h3 className="proj-category-label">{T(catMeta.label, lang)}</h3>
-              <span className="proj-category-sub">{T(catMeta.sub, lang)}</span>
-              <span className="proj-category-count">{items.length}</span>
-            </div>
-            {featuredHere && renderFlagship(featuredHere)}
-            {compactHere.length > 0 && (
-              <div className="proj-compact-grid reveal-stagger">
-                {compactHere.map((p, i) => renderCompact(p, i))}
-              </div>
-            )}
-          </div>
-        );
-      })}
+      {C.items.some(p => !p.featured) && (
+        <div className="proj-compact-grid reveal-stagger">
+          {C.items.filter(p => !p.featured).map((p, i) => renderCompact(p, i))}
+        </div>
+      )}
+      <a className="proj-crosslink reveal" href="#repos">
+        <span>{lang === "en"
+          ? "See all " + window.CONTENT.repos.items.length + " repositories in Open Source"
+          : "查看「開源」中全部 " + window.CONTENT.repos.items.length + " 個儲存庫"}</span>
+        <span className="proj-crosslink-arrow" aria-hidden="true">↓</span>
+      </a>
       {lightbox && <Lightbox {...lightbox} onClose={() => setLightbox(null)} lang={lang}/>}
     </section>
   );
@@ -957,6 +932,8 @@ function Skills({ lang, mode }) {
 function Repos({ lang, gh }) {
   const C = window.CONTENT.repos;
   // Group repos by theme so the reading flow matches the About story
+  // Repos that have a detailed case study in the Projects section above.
+  const CASE = new Set(["WAGF", "FLOODABM", "ai-research-skills", "awesome-agentic-ai-zh"]);
   const groups = [
     {
       label: { en: "Research code", zh: "研究程式碼" },
@@ -966,7 +943,12 @@ function Repos({ lang, gh }) {
     {
       label: { en: "AI skills & agentic workflows", zh: "AI 技能與代理工作流" },
       tag:   { en: "Composable tools for researchers", zh: "給研究者的可組合工具" },
-      names: ["research-hub", "zotero-skills", "codex-delegate", "gemini-delegate-skill", "session-sweep"]
+      names: ["ai-research-skills", "codex-delegate", "gemini-delegate-skill", "agent-collab-skills", "zotero-skills", "research-hub", "academic-writing-skills", "session-sweep"]
+    },
+    {
+      label: { en: "Learning & community", zh: "學習資源與社群" },
+      tag:   { en: "Curricula & open-source roadmaps", zh: "課程與開源學習地圖" },
+      names: ["awesome-agentic-ai-zh"]
     },
     {
       label: { en: "Trading & market sensing", zh: "量化與市場感測" },
@@ -974,10 +956,21 @@ function Repos({ lang, gh }) {
       names: ["multi-analyst-desk", "ai-trader-ollama", "moodring", "Event-Driven-Strategy"]
     },
   ];
+  // Orphan guard — any repo not placed in a group above still renders, so the
+  // index can never silently drop a repository again (the P0-2 missing-repos bug).
+  const claimed = new Set(groups.flatMap(g => g.names));
+  const orphans = C.items.filter(r => !claimed.has(r.name)).map(r => r.name);
+  if (orphans.length) {
+    groups.push({
+      label: { en: "More", zh: "其他" },
+      tag:   { en: "Additional repositories", zh: "其他儲存庫" },
+      names: orphans
+    });
+  }
   const byName = Object.fromEntries(C.items.map(r => [r.name, r]));
   return (
     <section id="repos" className="wrap section-pad">
-      <SectionHead num="06" kicker={C.kicker} lang={lang} sub={{en: "Grouped by what they do", zh: "依用途分組"}}/>
+      <SectionHead num="06" kicker={C.kicker} lang={lang} sub={{en: "Every public repo, grouped", zh: "所有公開儲存庫 · 依用途分組"}}/>
       <p className="reveal section-intro">{T(C.intro, lang)}</p>
       <div className="repo-groups reveal-stagger">
         {groups.map((g, gi) => (
@@ -1003,6 +996,7 @@ function Repos({ lang, gh }) {
                     <div className="repo-row-body">
                       <div className="repo-row-top">
                         <span className="repo-row-name">{r.name}</span>
+                        {CASE.has(r.name) && <span className="repo-cs-flag" title={lang === "en" ? "Detailed case study in Projects above" : "上方精選專案有詳細案例"}>★ {lang === "en" ? "Case study" : "案例"}</span>}
                         <span className="repo-row-lang" style={{"--lang-color": r.color}}>{r.lang}</span>
                         {statusLabel && <span className={"repo-status repo-status-" + r.status}>{statusLabel}</span>}
                       </div>
@@ -1148,6 +1142,7 @@ function App() {
       <CommandPalette open={cmdk} onClose={() => setCmdk(false)} lang={lang} mode={mode} setLang={setLang} setTheme={setTheme} setMode={setMode}/>
       <main id="main-content">
         <Hero lang={lang} mode={mode}/>
+        {mode === "industry" && <ImpactStrip lang={lang}/>}
         <About lang={lang} mode={mode}/>
         <Research lang={lang}/>
         <Projects lang={lang} mode={mode} gh={gh}/>
