@@ -284,7 +284,7 @@ function HeroAcademic({ lang, C }) {
             <span className="sep"/>
             <span>Lehigh · CEE</span>
             <span className="sep"/>
-            <span className="live">{lang === "en" ? "Open for 2026" : "2026 開放合作"}</span>
+            <span className="live">{lang === "en" ? "Open for 2027" : "2027 開放合作"}</span>
           </div>
 
           <h1 className="hero-v2-h1 reveal">
@@ -302,7 +302,7 @@ function HeroAcademic({ lang, C }) {
             <ul className="hero-currently-list">
               <li><span className="hero-currently-dot" style={{background: "oklch(0.62 0.16 150)"}}/>{lang === "en" ? "Drafting FLOODABM journal paper" : "撰寫 FLOODABM 期刊論文中"}</li>
               <li><span className="hero-currently-dot" style={{background: "oklch(0.65 0.15 240)"}}/>{lang === "en" ? "Developing LLM-agent framework + multi-agent system coupled with catastrophe flood model" : "開發 LLM 代理框架與多智能體系統，與災害洪水模型耦合"}</li>
-              <li><span className="hero-currently-dot" style={{background: "oklch(0.70 0.14 60)"}}/>{lang === "en" ? "Open to 2026 internships & collaborations" : "開放 2026 實習與學術合作"}</li>
+              <li><span className="hero-currently-dot" style={{background: "oklch(0.70 0.14 60)"}}/>{lang === "en" ? "Open to 2027 internships & collaborations" : "開放 2027 實習與學術合作"}</li>
             </ul>
           </div>
 
@@ -550,7 +550,7 @@ function Research({ lang }) {
   const D = window.CONTENT.education;
   return (
     <section id="research" className="wrap section-pad">
-      <SectionHead num="02" kicker={E.kicker} lang={lang} sub={{en: "Career trajectory · open for 2026 industry roles", zh: "職涯軌跡 · 2026 業界機會開放中"}}/>
+      <SectionHead num="02" kicker={E.kicker} lang={lang} sub={{en: "Career trajectory · open for 2027 industry roles", zh: "職涯軌跡 · 2027 業界機會開放中"}}/>
       <CareerTrack items={E.items} lang={lang}/>
       <div className="edu-compact reveal-stagger">
         <h4 className="col-title">{lang === "en" ? "Education" : "學歷"}</h4>

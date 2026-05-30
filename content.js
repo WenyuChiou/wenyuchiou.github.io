@@ -2,11 +2,10 @@
 const CONTENT = {
   nav: {
     about:    { en: "About",        zh: "關於" },
-    research: { en: "Research",     zh: "研究" },
+    research: { en: "Experience",   zh: "經歷" },
     projects: { en: "Projects",     zh: "專案" },
     pubs:     { en: "Publications", zh: "著作" },
-    repos:    { en: "Repos",        zh: "開源" },
-    writing:  { en: "Writing",      zh: "文章" },
+    repos:    { en: "Open Source",  zh: "開源" },
     contact:  { en: "Contact",      zh: "聯絡" },
   },
 
@@ -90,8 +89,8 @@ const CONTENT = {
             zh: "設計並分析家戶層級調查，釐清業主與租屋者如何感知洪水風險、並轉譯為調適決策；整合紐澤西 Passaic 流域 12 年 (2011–2023) 調查與保險理賠資料作為實證基礎。"
           },
           {
-            en: "Quantified the two-way interaction between household adaptation actions and flood loss outcomes by building the first coupled ABM × CAT (FEMA Hazus 6.1) framework — captures how individual mitigation choices reshape basin-scale loss distributions across 127k+ parcels.",
-            zh: "首度將家戶調適行為與洪水損失結果的雙向交互量化：建立首套 ABM × CAT (FEMA Hazus 6.1) 耦合框架，捕捉個別減災選擇如何改寫流域層級 127k+ 戶的損失分布。"
+            en: "Quantified the two-way interaction between household adaptation actions and flood loss outcomes by building the first coupled ABM × CAT (FEMA Hazus 6.1) framework — captures how individual mitigation choices reshape basin-scale loss distributions across census tracts of the Passaic River Basin (Essex, Morris & Passaic Counties).",
+            zh: "首度將家戶調適行為與洪水損失結果的雙向交互量化：建立首套 ABM × CAT (FEMA Hazus 6.1) 耦合框架，捕捉個別減災選擇如何改寫 Passaic 流域（Essex、Morris、Passaic 三郡）各普查區的損失分布。"
           },
           {
             en: "Developed WAGF — a governed LLM-agent framework letting LLMs act as bounded-rational households. A 6-stage validation pipeline (physical · behavioral · financial · social) catches Logic-Action Gap failures before they propagate; multi-LLM ablation across Claude / GPT-5 / Gemini.",
