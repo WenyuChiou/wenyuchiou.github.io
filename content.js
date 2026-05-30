@@ -25,7 +25,7 @@ const CONTENT = {
       { label: { en: "Research group", zh: "研究團隊" }, value: { en: "Complex Water Adaptive System Group", zh: "複雜水系適應系統研究群" } },
       { label: { en: "Focus",          zh: "研究重心" }, value_en: ["ABM", "Flood Risk", "LLM Agents"], value_zh: ["智能體", "洪水風險", "LLM 代理"] },
       { label: { en: "Based in",       zh: "地點" }, value: { en: "Bethlehem, PA · USA", zh: "賓州伯利恆 · 美國" } },
-      { label: { en: "Status",         zh: "狀態" }, value: { en: "Open to Summer 2027 internships", zh: "2027 暑期實習開放中" } },
+      { label: { en: "Status",         zh: "狀態" }, value: { en: "Open to 2027 research opportunities & collaborations", zh: "2027 研究機會與合作開放中" } },
     ],
     cv:       { en: "Download CV", zh: "下載 CV" },
     contact:  { en: "Get in touch", zh: "聯絡我" },
@@ -36,7 +36,7 @@ const CONTENT = {
       items: [
         { dot: "oklch(0.62 0.16 150)", text: { en: "Drafting FLOODABM journal paper", zh: "撰寫 FLOODABM 期刊論文中" } },
         { dot: "oklch(0.65 0.15 240)", text: { en: "Developing LLM-agent framework + multi-agent system coupled with catastrophe flood model", zh: "開發 LLM 代理框架與多智能體系統，與災害洪水模型耦合" } },
-        { dot: "oklch(0.70 0.14 60)", text: { en: "Open to 2027 internships & collaborations", zh: "開放 2027 實習與學術合作" } },
+        { dot: "oklch(0.70 0.14 60)", text: { en: "Open to 2027 research opportunities & collaborations", zh: "開放 2027 研究機會與合作" } },
       ],
     },
   },
@@ -304,8 +304,7 @@ const CONTENT = {
         year: "2025",
         type: "poster",
         featured: true,
-        doi: "10.1002/essoar.2025.NH41E-0449",
-        abstract: { en: "Couples a multilevel agent-based model with a catastrophe model (exposure · hazard · vulnerability · finance) to simulate long-term household flood adaptation across census tracts of the Passaic River Basin (Essex, Morris & Passaic Counties). Owners and renters choose insurance, elevation, buyout or relocation through a Bayesian decision model driven by threat/coping/stakeholder perceptions and tract-level social heterogeneity, with 2011–2023 peak flood depths from the 1K-DHM distributed hydrologic model. Adaptation yields a 35% payout advantage for owners and 43% for renters, with renters shifting toward relocation over time.", zh: "將多層級智能體模型 (ABM) 與災害模型（暴險 · 危害 · 脆弱度 · 財務）耦合，模擬 Passaic 流域（Essex、Morris、Passaic 三郡）各普查區的家戶長期洪水調適。屋主與租客依威脅／因應／利害關係人感知與普查區社會異質性，透過貝氏決策模型選擇投保、墊高、買斷或搬遷；危害以 1K-DHM 分布式水文模型的 2011–2023 尖峰淹水深度驅動。調適為屋主帶來 35%、租客 43% 的理賠優勢，租客並隨時間轉向搬遷。" },
+          abstract: { en: "Couples a multilevel agent-based model with a catastrophe model (exposure · hazard · vulnerability · finance) to simulate long-term household flood adaptation across census tracts of the Passaic River Basin (Essex, Morris & Passaic Counties). Owners and renters choose insurance, elevation, buyout or relocation through a Bayesian decision model driven by threat/coping/stakeholder perceptions and tract-level social heterogeneity, with 2011–2023 peak flood depths from the 1K-DHM distributed hydrologic model. Adaptation yields a 35% payout advantage for owners and 43% for renters, with renters shifting toward relocation over time.", zh: "將多層級智能體模型 (ABM) 與災害模型（暴險 · 危害 · 脆弱度 · 財務）耦合，模擬 Passaic 流域（Essex、Morris、Passaic 三郡）各普查區的家戶長期洪水調適。屋主與租客依威脅／因應／利害關係人感知與普查區社會異質性，透過貝氏決策模型選擇投保、墊高、買斷或搬遷；危害以 1K-DHM 分布式水文模型的 2011–2023 尖峰淹水深度驅動。調適為屋主帶來 35%、租客 43% 的理賠優勢，租客並隨時間轉向搬遷。" },
       },
       {
         title: { en: "Integrating Electrical Resistivity Tomography, Field Observations, and Numerical Simulations to Investigate Submarine Groundwater Discharge of the Taoyuan Tableland, Taiwan", zh: "以電阻率層析成像、現地觀測與數值模擬探討桃園台地之海底地下水潛流動態" },
@@ -368,7 +367,7 @@ const CONTENT = {
     hero: {
       eyebrow: {
         en: ["AI Agent Engineer", "Governed multi-agent systems", "Available Summer 2027"],
-        zh: ["AI 代理工程師", "治理型多代理系統", "2027 夏實習開放中"]
+        zh: ["AI 代理工程師", "治理型多代理系統", "2027 開放合作"]
       },
       h1: {
         en: { a: "I build", b: "governed LLM agents", c: "that act in consequential simulations —", d: "flood, catastrophe, and climate-risk decision systems." },
@@ -439,13 +438,24 @@ const CONTENT = {
     }
   },
 
+  academic: {
+    signal: {
+      items: [
+        { num: "1st", lbl: { en: "Coupled ABM × CAT (FEMA Hazus 6.1)", zh: "首套 ABM × CAT 耦合 (FEMA Hazus 6.1)" } },
+        { num: "12 yrs", lbl: { en: "NJ Passaic empirical data · 2011–2023", zh: "紐澤西 Passaic 實證資料 · 2011–2023" } },
+        { num: "3", lbl: { en: "Reference implementations", zh: "參考實作" } },
+        { num: "3", lbl: { en: "LLMs ablated · Claude·GPT-5·Gemini", zh: "LLM 對比 · Claude·GPT-5·Gemini" } },
+        { num: "3 cty", lbl: { en: "Passaic River Basin · Essex·Morris·Passaic", zh: "Passaic 流域 · Essex·Morris·Passaic" } },
+      ]
+    }
+  },
   contact: {
     num: "09",
     kicker: { en: "Contact", zh: "聯絡" },
     title: { en: "Let's build something thoughtful.", zh: "一起做點有意義的研究吧。" },
     body: {
-      en: "I'm open to research collaborations, Summer 2027 ML / AI engineer internships, and conversations about LLM agents, agent safety, decision science, or catastrophe modeling.",
-      zh: "歡迎研究合作、2027 暑期 ML / AI engineer 實習邀請，以及關於 LLM 代理、代理安全、決策科學或災害建模的討論。"
+      en: "I'm open to research opportunities, 2027 collaborations & roles, and conversations about LLM agents, agent safety, decision science, or catastrophe modeling.",
+      zh: "歡迎研究合作、2027 研究機會與合作，以及關於 LLM 代理、代理安全、決策科學或災害建模的討論。"
     },
     email_label: { en: "Email", zh: "來信" },
     github_label: { en: "GitHub", zh: "GitHub" },

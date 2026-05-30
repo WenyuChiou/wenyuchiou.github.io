@@ -342,6 +342,7 @@ function HeroAcademic({ lang, C }) {
           </div>
 
           <dl className="hero-v2-facts reveal">
+            <div><dt>{lang === "en" ? "Advisor" : "指導教授"}</dt><dd>Dr. Ethan Yang</dd></div>
             <div><dt>{lang === "en" ? "Group" : "研究群"}</dt><dd>Complex Water Adaptive System</dd></div>
             <div><dt>{lang === "en" ? "Center" : "中心"}</dt><dd>{lang === "en" ? "Catastrophe Modeling & Resilience" : "災害建模與韌性中心"}</dd></div>
             <div><dt>{lang === "en" ? "Focus" : "重心"}</dt><dd>ABM · LLM Agents · Flood Risk</dd></div>
@@ -447,7 +448,7 @@ function Timeline({ items, lang }) {
 }
 
 // Horizontal interactive timeline — industry-facing
-function CareerTrack({ items, lang }) {
+function CareerTrack({ items, lang, mode }) {
   // items come newest-first from content; reverse so time reads left→right
   const chrono = [...items].reverse();
   const defaultIdx = chrono.length - 1; // most recent selected
@@ -522,7 +523,7 @@ function CareerTrack({ items, lang }) {
           <span className="node-year mono">2026</span>
           <span className="node-label">
             <span className="node-role">{lang === "en" ? "Next" : "下一步"}</span>
-            <span className="node-org">{lang === "en" ? "Industry" : "業界"}</span>
+            <span className="node-org">{mode === "academic" ? (lang === "en" ? "Dissertation" : "博士論文") : (lang === "en" ? "Industry" : "業界")}</span>
           </span>
         </div>
       </div>
@@ -560,13 +561,13 @@ function CareerTrack({ items, lang }) {
   );
 }
 
-function Research({ lang, num }) {
+function Research({ lang, num, mode }) {
   const E = window.CONTENT.experience;
   const D = window.CONTENT.education;
   return (
     <section id="research" className="wrap section-pad">
-      <SectionHead num={num} kicker={E.kicker} lang={lang} sub={{en: "Career trajectory · open for 2027 industry roles", zh: "職涯軌跡 · 2027 業界機會開放中"}}/>
-      <CareerTrack items={E.items} lang={lang}/>
+      <SectionHead num={num} kicker={E.kicker} lang={lang} sub={mode === "academic" ? {en: "Research trajectory & training", zh: "研究歷程與訓練"} : {en: "Career trajectory · open for 2027 industry roles", zh: "職涯軌跡 · 2027 業界機會開放中"}}/>
+      <CareerTrack items={E.items} lang={lang} mode={mode}/>
       <div className="edu-compact reveal-stagger">
         <h4 className="col-title">{lang === "en" ? "Education" : "學歷"}</h4>
         <ul className="edu-list">
@@ -858,7 +859,9 @@ function Publications({ lang, num }) {
 
       <div className="pub-list reveal-stagger">
         {C.items.map((p, i) => {
-          const parts = p.authors.split("Chiou, W.-Y.");
+          const meToken = p.meToken || "Chiou, W.-Y.";
+          // case-insensitive split so author highlight never silently drops on format variance
+          const parts = p.authors.split(new RegExp(meToken.replace(/[.*+?^${}()|[\]\\]/g, "\$&"), "i"));
           const isOpen = expanded === i;
           return (
             <article className={"pub" + (p.featured ? " pub-featured" : "") + (isOpen ? " pub-open" : "")} key={i}>
@@ -877,7 +880,7 @@ function Publications({ lang, num }) {
                   {parts.map((chunk, j) => (
                     <React.Fragment key={j}>
                       {chunk}
-                      {j < parts.length - 1 && <span className="me">Chiou, W.-Y.</span>}
+                      {j < parts.length - 1 && <span className="me">{meToken}</span>}
                     </React.Fragment>
                   ))}
                 </div>
@@ -1113,11 +1116,11 @@ function ModeSwitch({ mode, setMode, lang }) {
   );
 }
 
-function ImpactStrip({ lang }) {
-  const I = window.CONTENT.industry?.impact;
+function ImpactStrip({ lang, data, label }) {
+  const I = data || window.CONTENT.industry?.impact;
   if (!I) return null;
   return (
-    <section className="impact-strip reveal" aria-label="Key impact numbers">
+    <section className="impact-strip reveal" aria-label={label || "Key impact numbers"}>
       <div className="wrap">
         <div className="impact-grid">
           {I.items.map((it, i) => (
@@ -1189,6 +1192,7 @@ function App() {
       <main id="main-content">
         <Hero lang={lang} mode={mode}/>
         {mode === "industry" && <ImpactStrip lang={lang}/>}
+        {mode === "academic" && window.CONTENT.academic?.signal && <ImpactStrip lang={lang} data={window.CONTENT.academic.signal} label={lang === "en" ? "Research at a glance" : "研究一覽"}/>}
         {order.map((key, i) => {
           const Comp = SECTION_COMP[key];
           if (!Comp) return null; // defensive: an unknown key is skipped, never crashes the page
