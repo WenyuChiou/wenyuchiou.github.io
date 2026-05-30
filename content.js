@@ -53,20 +53,6 @@ const CONTENT = {
       en: "Beyond the dissertation, I build open-source agentic AI infrastructure for the research community: an 8-stage trilingual learning roadmap (awesome-agentic-ai-zh, ★ 1.8k), a 5-plugin Claude Code marketplace covering literature triage to manuscript writing (ai-research-skills), and skills for multi-LLM delegation, multi-agent orchestration, and academic writing.",
       zh: "博士論文之外，我為研究社群打造開源 agentic AI 基礎設施：8 階段三語學習地圖 (awesome-agentic-ai-zh，★ 1.8k)、涵蓋文獻分流到論文寫作的 5-plugin Claude Code 市集 (ai-research-skills)，以及多 LLM 委派、多代理協作、學術寫作等 skills。"
     },
-    card: {
-      role:     { en: "Role",     zh: "身分" },
-      role_v:   { en: "Ph.D. Candidate", zh: "博士候選人" },
-      inst:     { en: "Institution", zh: "任職" },
-      inst_v:   { en: "Lehigh University · CEE", zh: "Lehigh 土木環境系" },
-      group:    { en: "Group",    zh: "研究群" },
-      group_v:  { en: "Complex Water Adaptive System", zh: "Complex Water Adaptive System" },
-      center:   { en: "Center",   zh: "中心" },
-      center_v: { en: "Catastrophe Modeling & Resilience", zh: "災害建模與韌性中心" },
-      field:    { en: "Field",    zh: "領域" },
-      field_v:  { en: "ABM · LLM Agents · Flood Risk", zh: "智能體 · LLM · 洪水風險" },
-      orcid:    { en: "ORCID",    zh: "ORCID" },
-      orcid_v:  { en: "0009-0005-8006-1288", zh: "0009-0005-8006-1288" },
-    },
     interests_label: { en: "Research keywords", zh: "研究關鍵字" },
     interests: [
       { en: "Catastrophe Modeling", zh: "災害建模" },

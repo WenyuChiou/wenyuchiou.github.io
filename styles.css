@@ -1314,8 +1314,8 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
 /* ABOUT v2 */
 .about-v2 {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
-  gap: 64px 72px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px;
   align-items: start;
   margin-bottom: 80px;
 }
@@ -1340,9 +1340,14 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
 .about-v2-lead em { color: var(--accent); font-style: italic; }
 
 .about-v2-body {
-  grid-column: 1;
-  grid-row: 2;
   max-width: 62ch;
+}
+
+.about-keywords { margin-top: 24px; }
+.about-keywords-label {
+  font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--ink-3);
+  display: block; margin-bottom: 10px;
 }
 .about-v2-body p {
   font-size: 19px;
@@ -1364,53 +1369,7 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
   font-style: normal;
 }
 
-.about-v2-card {
-  grid-column: 2;
-  grid-row: 2;
-  position: sticky;
-  top: 100px;
-  align-self: start;
-}
-.about-v2-card-inner {
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  padding: 24px;
-  box-shadow: var(--shadow);
-}
-.about-v2-portrait {
-  aspect-ratio: 1/1;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 20px;
-  background: var(--bg-2);
-}
-.about-v2-portrait img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: center 25%;
-  display: block;
-  filter: saturate(0.92);
-}
-.about-v2-card dl {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 8px 16px;
-  margin: 0 0 16px;
-  font-size: 13px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--rule-2);
-}
-.about-v2-card dt {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  align-self: center;
-}
-.about-v2-card dd { margin: 0; color: var(--ink); align-self: center; font-size: 14px; }
-.about-v2-card .interests { display: flex; flex-wrap: wrap; gap: 6px; }
+.about-keywords .interests { margin-top: 0; padding-top: 0; border-top: none; }
 
 /* Field strip — photo evidence */
 .field-strip {
@@ -1840,7 +1799,6 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
   .hero-v2-grid { grid-template-columns: 1fr; }
   .hero-v2-photo { position: static; aspect-ratio: 3/4; max-width: 500px; }
   .about-v2 { grid-template-columns: 1fr; }
-  .about-v2-card { position: static; grid-column: 1; grid-row: auto; }
   .field-strip { grid-template-columns: 1fr; }
   .two-col { grid-template-columns: 1fr; gap: 40px; }
   .proj-v2 { grid-column: span 6; }
