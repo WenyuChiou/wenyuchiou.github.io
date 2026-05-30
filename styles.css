@@ -1933,6 +1933,7 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
 @media (prefers-reduced-motion: reduce) {
   .reveal, .reveal-stagger, .reveal-stagger > * { opacity: 1 !important; transform: none !important; transition: none !important; }
   html { scroll-behavior: auto !important; }
+  .rail-tick, .rail-num, .rail-label { transition: none !important; }
 }
 
 .pub-title[role="button"] { cursor: pointer; }
@@ -2003,6 +2004,7 @@ html { scroll-padding-top: 120px; }
   .nav-links { display: none; }
   .nav-tools .nav-burger { display: grid; }
   .nav-cv { display: none; }
+  .section-rail { display: none; }
 }
 h1, .section-title, .hero-v2-h1, .proj-flagship-title { font-optical-sizing: auto; font-variation-settings: "opsz" 96; }
 [role="button"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
@@ -2017,3 +2019,54 @@ h1, .section-title, .hero-v2-h1, .proj-flagship-title { font-optical-sizing: aut
 /* Wave 2C: review fixes — tablet skills 2-col, mobile nav height with mode-switch */
 @media (max-width: 980px) { .skills-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 640px) { .nav-menu { max-height: calc(100dvh - 98px); } }
+
+/* === SectionRail — fixed right-edge dot rail (static spine + per-mode dots) === */
+.section-rail {
+  position: fixed; z-index: 40;
+  top: 50%; transform: translateY(-50%);
+  right: max(14px, calc((100vw - var(--maxw)) / 2 - 56px));
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  padding: 8px 0;
+}
+.rail-spine {
+  position: absolute; top: 4px; bottom: 4px; left: 50%; width: 2px;
+  transform: translateX(-50%); border-radius: 2px;
+  background: var(--rule);
+}
+.rail-dot {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; text-decoration: none;
+}
+.rail-tick {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1.5px solid var(--ink-3); background: var(--bg);
+  box-shadow: 0 0 0 3px var(--bg);
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+}
+.rail-dot:hover .rail-tick { transform: scale(1.25); border-color: var(--accent); }
+.rail-dot.is-active .rail-tick { background: var(--accent); border-color: var(--accent); transform: scale(1.35); }
+.rail-dot:focus-visible { outline: none; }
+.rail-dot:focus-visible .rail-tick { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--accent); }
+.rail-num {
+  position: absolute; right: 22px; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.05em;
+  color: var(--ink-3); opacity: 0; transition: opacity .18s ease;
+  pointer-events: none; white-space: nowrap;
+}
+.rail-dot.is-active .rail-num { opacity: 1; color: var(--accent); }
+.rail-label {
+  position: absolute; right: 20px; top: 50%; transform: translateY(-50%) translateX(4px);
+  font-family: var(--serif); font-size: 13px; line-height: 1;
+  color: var(--ink); background: var(--paper);
+  border: 1px solid var(--rule); border-radius: 100px;
+  padding: 6px 12px; box-shadow: var(--shadow);
+  opacity: 0; pointer-events: none; white-space: nowrap;
+  transition: opacity .16s ease, transform .16s ease;
+}
+.rail-dot:hover .rail-label,
+.rail-dot:focus-visible .rail-label { opacity: 1; transform: translateY(-50%) translateX(0); }
+/* active number hides when the label pill is showing, to avoid overlap */
+.rail-dot.is-active:hover .rail-num { opacity: 0; }
+.rail-top { margin-top: 4px; }
+.rail-top .rail-tick { border-style: dashed; }

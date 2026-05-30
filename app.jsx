@@ -140,6 +140,17 @@ const SECTION_ORDER = {
   academic: ["about", "research", "pubs", "projects", "skills", "repos", "contact"],
 };
 
+// Single source of truth for section id -> {en,zh} label, shared by the top
+// Nav and the SectionRail so the two can never drift. Reuses window.CONTENT.nav.
+function sectionLabel(id) {
+  const C = window.CONTENT.nav;
+  const map = {
+    about: C.about, research: C.research, projects: C.projects,
+    skills: { en: "Skills", zh: "技能" }, pubs: C.pubs, repos: C.repos, contact: C.contact,
+  };
+  return map[id] || { en: id, zh: id };
+}
+
 function Nav({ lang, setLang, theme, setTheme, active, mode = "industry", setMode, onCmdK }) {
   const C = window.CONTENT.nav;
   const [menuOpen, setMenuOpen] = useState(false);
@@ -151,12 +162,8 @@ function Nav({ lang, setLang, theme, setTheme, active, mode = "industry", setMod
   }, [menuOpen]);
   const cvFile = CV_FILES[mode] || CV_FILES.industry;
   const cvName = (mode === "academic" ? "Wenyu_Chiou_CV_Academic.pdf" : "Wenyu_Chiou_CV_Industry.pdf");
-  const labelFor = {
-    about: C.about, research: C.research, projects: C.projects,
-    skills: { en: "Skills", zh: "技能" }, pubs: C.pubs, repos: C.repos, contact: C.contact,
-  };
   const links = (SECTION_ORDER[mode] || SECTION_ORDER.academic)
-    .map((id, i) => [id, labelFor[id], String(i + 1).padStart(2, "0")]);
+    .map((id, i) => [id, sectionLabel(id), String(i + 1).padStart(2, "0")]);
   return (
     <nav className="nav">
       <div className="wrap nav-row">
@@ -1111,6 +1118,34 @@ function ImpactStrip({ lang }) {
   );
 }
 
+// Fixed right-edge vertical dot rail: one dot per section (in per-mode order),
+// the active dot tracks the same `active` the nav uses, a static spine line
+// connects the dots, and a bilingual label pill appears on hover/focus. Hidden
+// ≤1024px (the burger covers mobile). Reuses --accent family only (never --mark).
+function SectionRail({ lang, mode, active }) {
+  const order = SECTION_ORDER[mode] || SECTION_ORDER.academic;
+  return (
+    <nav className="section-rail" aria-label={lang === "en" ? "Section navigation" : "區塊導覽"}>
+      <span className="rail-spine" aria-hidden="true"/>
+      {order.map((id, i) => {
+        const isActive = active === id;
+        return (
+          <a key={id} className={"rail-dot" + (isActive ? " is-active" : "")} href={"#" + id}
+             aria-current={isActive ? "location" : undefined}>
+            <span className="rail-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+            <span className="rail-tick" aria-hidden="true"/>
+            <span className="rail-label">{T(sectionLabel(id), lang)}</span>
+          </a>
+        );
+      })}
+      <a className="rail-dot rail-top" href="#top">
+        <span className="rail-tick" aria-hidden="true"/>
+        <span className="rail-label">{lang === "en" ? "Top" : "回頂端"}</span>
+      </a>
+    </nav>
+  );
+}
+
 function App() {
   const [lang, setLang] = useState(() => localStorage.getItem("wy-lang") || "en");
   const [theme, setTheme] = useState(() => localStorage.getItem("wy-theme") || "light");
@@ -1135,6 +1170,7 @@ function App() {
     <>
       <a className="skip-link" href="#main-content">{lang === "en" ? "Skip to content" : "跳至內容"}</a>
       <Nav lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} active={active} mode={mode} setMode={setMode} onCmdK={() => setCmdk(true)}/>
+      <SectionRail lang={lang} mode={mode} active={active}/>
       <CommandPalette open={cmdk} onClose={() => setCmdk(false)} lang={lang} mode={mode} setLang={setLang} setTheme={setTheme} setMode={setMode}/>
       <main id="main-content">
         <Hero lang={lang} mode={mode}/>
