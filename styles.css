@@ -2133,3 +2133,12 @@ h1, .section-title, .hero-v2-h1, .proj-flagship-title { font-optical-sizing: aut
   .wagf-stages { grid-template-columns: repeat(2, 1fr); gap: 16px 0; }
   .wagf-stages::before { display: none; }
 }
+
+/* Under-review / in-prep status pill — neutral outlined, distinct from the green quartile pill */
+.pub-status-pill {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.04em; line-height: 1;
+  padding: 3px 7px; border-radius: 3px;
+  background: transparent; color: var(--signal);
+  border: 1px solid var(--signal);
+}
