@@ -830,7 +830,7 @@ function Publications({ lang, num }) {
     preprint: lang === "en" ? "Preprint" : "預印本",
   };
 
-  const journalCount = C.items.filter(p => p.type === "journal").length;
+  const journalCount = C.items.filter(p => p.type === "journal" && !p.status).length;
   const posterCount = C.items.filter(p => p.type === "poster").length;
 
   const makeBibtex = (p) => {
@@ -869,6 +869,7 @@ function Publications({ lang, num }) {
               <div className="pub-body">
                 <div className="pub-meta-top">
                   <span className={"pub-type pub-type-" + p.type}>{typeLabel[p.type] || p.type}</span>
+                  {p.status && <span className="pub-status-pill mono">{p.status === "under review" ? (lang === "en" ? "Under review" : "審查中") : p.status === "in prep" ? (lang === "en" ? "In preparation" : "撰寫中") : p.status}</span>}
                   {p.quartile && <span className="pub-q">{p.quartile}</span>}
                   {p.featured && <span className="pub-featured-badge">★ {lang === "en" ? "Featured" : "精選"}</span>}
                   <span className="pub-venue-short mono">{p.venue_short || p.venue}</span>
@@ -894,20 +895,32 @@ function Publications({ lang, num }) {
                       {lang === "en" ? "Cited by " : "被引用 "}{p.cites}
                     </span>
                   )}
+                  {p.pdf && (
+                    <a className="pub-link" href={p.pdf} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()}>
+                      {lang === "en" ? (p.type === "poster" ? "Poster PDF" : "Paper PDF") : (p.type === "poster" ? "海報 PDF" : "論文 PDF")} ↗
+                    </a>
+                  )}
+                  {p.code && (
+                    <a className="pub-link" href={p.code} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()}>
+                      {lang === "en" ? "Code" : "程式碼"} ↗
+                    </a>
+                  )}
                   {p.doi && (
                     <a className="pub-link" href={`https://doi.org/${p.doi}`} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()}>
                       DOI ↗
                     </a>
                   )}
-                  <button className="pub-link" onClick={(e) => copyBib(e, p, i)}>
-                    {copied === i ? (lang === "en" ? "✓ Copied" : "✓ 已複製") : "BibTeX"}
-                  </button>
+                  {!p.status && (
+                    <button className="pub-link" onClick={(e) => copyBib(e, p, i)}>
+                      {copied === i ? (lang === "en" ? "✓ Copied" : "✓ 已複製") : "BibTeX"}
+                    </button>
+                  )}
                   <button className="pub-link pub-expand" onClick={(e) => { e.preventDefault(); setExpanded(isOpen ? null : i); }}>
                     {isOpen ? (lang === "en" ? "Hide abstract ↑" : "收合摘要 ↑") : (lang === "en" ? "Abstract ↓" : "摘要 ↓")}
                   </button>
                 </div>
               </div>
-              <div className="pub-year">{p.year}</div>
+              {!p.status && <div className="pub-year">{p.year}</div>}
             </article>
           );
         })}

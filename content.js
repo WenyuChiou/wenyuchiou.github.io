@@ -299,11 +299,23 @@ const CONTENT = {
       {
         title: { en: "Modeling Long-Term Household Flood Adaptation under Social Heterogeneity: A Coupled Agent-Based Modeling Framework", zh: "社會異質性下的家戶長期洪水調適建模：耦合式智能體框架" },
         authors: "Chiou, W.-Y., et al.",
+        venue: "Journal article",
+        venue_short: "Journal",
+        type: "journal",
+        status: "under review",
+        lead: true,
+        code: "https://github.com/WenyuChiou/FLOODABM",
+        abstract: { en: "The journal extension of the AGU 2025 study: a multilevel agent-based model coupled with a catastrophe model (exposure · hazard · vulnerability · finance) simulating long-term household flood adaptation across the Passaic River Basin. Owners and renters choose insurance, elevation, buyout or relocation via a Bayesian decision model driven by threat/coping/stakeholder perceptions and tract-level social heterogeneity, with 2011–2023 peak flood depths from the 1K-DHM distributed hydrologic model.", zh: "AGU 2025 研究的期刊延伸版：多層級智能體模型與災害模型（暴險 · 危害 · 脆弱度 · 財務）耦合，模擬 Passaic 流域家戶的長期洪水調適。屋主與租客依威脅／因應／利害關係人感知與普查區社會異質性，透過貝氏決策模型選擇投保、墊高、買斷或搬遷；危害以 1K-DHM 分布式水文模型的 2011–2023 尖峰淹水深度驅動。" },
+      },
+      {
+        title: { en: "Modeling Long-Term Household Flood Adaptation under Social Heterogeneity: A Coupled Agent-Based Modeling Framework", zh: "社會異質性下的家戶長期洪水調適建模：耦合式智能體框架" },
+        authors: "Chiou, W.-Y., et al.",
         venue: "AGU Fall Meeting",
         venue_short: "AGU '25",
         year: "2025",
         type: "poster",
         featured: true,
+        pdf: "assets/AGU2025_poster_Wenyu_Chiou.pdf",
           abstract: { en: "Couples a multilevel agent-based model with a catastrophe model (exposure · hazard · vulnerability · finance) to simulate long-term household flood adaptation across census tracts of the Passaic River Basin (Essex, Morris & Passaic Counties). Owners and renters choose insurance, elevation, buyout or relocation through a Bayesian decision model driven by threat/coping/stakeholder perceptions and tract-level social heterogeneity, with 2011–2023 peak flood depths from the 1K-DHM distributed hydrologic model. Adaptation yields a 35% payout advantage for owners and 43% for renters, with renters shifting toward relocation over time.", zh: "將多層級智能體模型 (ABM) 與災害模型（暴險 · 危害 · 脆弱度 · 財務）耦合，模擬 Passaic 流域（Essex、Morris、Passaic 三郡）各普查區的家戶長期洪水調適。屋主與租客依威脅／因應／利害關係人感知與普查區社會異質性，透過貝氏決策模型選擇投保、墊高、買斷或搬遷；危害以 1K-DHM 分布式水文模型的 2011–2023 尖峰淹水深度驅動。調適為屋主帶來 35%、租客 43% 的理賠優勢，租客並隨時間轉向搬遷。" },
       },
       {
