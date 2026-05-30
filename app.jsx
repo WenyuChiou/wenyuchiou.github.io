@@ -1087,7 +1087,7 @@ function TweaksPanel({ lang, theme, setTheme, setLang }) {
 function ModeSwitch({ mode, setMode, lang }) {
   return (
     <div className="mode-switch" role="group" aria-label={lang === "en" ? "Site view: Industry or Academic" : "網站版本：業界或學術"}>
-      <span className="mode-switch-label">{lang === "en" ? "View" : "版本"}</span>
+      <span className="mode-switch-label" aria-hidden="true">{lang === "en" ? "View" : "版本"}</span>
       <button className={"mode-opt" + (mode === "industry" ? " active" : "")} onClick={() => setMode("industry")} aria-pressed={mode === "industry" ? "true" : "false"}>
         <span className="mode-dot"/>
         {lang === "en" ? "Industry" : "業界"}
