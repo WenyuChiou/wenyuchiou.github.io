@@ -363,7 +363,7 @@ function SectionHead({ num, kicker, lang, sub }) {
     <header className="section-head reveal">
       <div className="section-head-meta">
         <span className="section-num">{num}</span>
-        <div className="section-rule"/>
+        <div className="section-rule reveal"/>
         {sub && <span className="section-sub">{T(sub, lang)}</span>}
       </div>
       <h2 className="section-title">{T(kicker, lang)}</h2>
@@ -394,6 +394,28 @@ function About({ lang, num }) {
         </div>
 
         <div className="about-keywords reveal">
+          {/* decorative attention/concept-graph — the keywords related to one another,
+              as an interpretability view draws self-attention. Draws once then rests. */}
+          <svg className="keyword-attn" aria-hidden="true" viewBox="0 0 300 200" preserveAspectRatio="none">
+            <g className="kw-edges" fill="none" stroke="var(--accent)" strokeLinecap="round">
+              <path d="M40,46 C110,20 180,70 250,40"/>
+              <path d="M40,46 C90,110 150,120 250,150"/>
+              <path d="M250,40 C200,90 150,80 70,140"/>
+              <path d="M250,40 C260,100 180,150 130,165"/>
+              <path d="M40,46 C120,60 170,40 250,150"/>
+              <path d="M70,140 C140,120 200,130 250,150"/>
+              <path d="M130,165 C90,120 120,70 250,40"/>
+              <path d="M40,46 C30,110 50,150 130,165"/>
+            </g>
+            <g className="kw-nodes" fill="var(--accent)">
+              <circle cx="40" cy="46" r="3.5"/>
+              <circle cx="250" cy="40" r="3.5"/>
+              <circle cx="70" cy="140" r="3"/>
+              <circle cx="250" cy="150" r="3"/>
+              <circle cx="130" cy="165" r="3"/>
+              <circle cx="160" cy="90" r="2.5"/>
+            </g>
+          </svg>
           <span className="about-keywords-label">{T(C.interests_label, lang)}</span>
           <div className="interests">
             {C.interests.map((i, idx) => <span className="chip" key={idx}>{T(i, lang)}</span>)}
