@@ -473,6 +473,7 @@ const CONTENT = {
     github_label: { en: "GitHub", zh: "GitHub" },
     linkedin_label: { en: "LinkedIn", zh: "LinkedIn" },
     orcid_label: { en: "ORCID", zh: "ORCID" },
+    scholar_label: { en: "Google Scholar", zh: "Google Scholar" },
   },
 
   footer: {
