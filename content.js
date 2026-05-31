@@ -18,8 +18,8 @@ const CONTENT = {
     title_tail:  { en: "—", zh: "—" },
     title_line3: { en: "and how cities adapt.", zh: "以及城市如何調適。" },
     lede: {
-      en: "Advancing human-flood modeling from empirical foundations to LLM-based agent simulation. Open-source maintainer of agentic AI infrastructure — an 8-stage trilingual roadmap (★ 1.8k) and 7+ Claude Code skills.",
-      zh: "推進「人—洪水」建模——從實證基礎到 LLM 驅動的智能體模擬。同時是開源 agentic AI 基礎設施的維護者：8 階段三語學習地圖（★ 1.8k）與 7+ 個 Claude Code skills。"
+      en: "Advancing human-flood modeling from empirical foundations to LLM-based agent simulation — coupling agent-based models with catastrophe flood simulators to study long-term household adaptation.",
+      zh: "推進「人—洪水」建模——從實證基礎到 LLM 驅動的智能體模擬，並將智能體模型與災害洪水模型耦合，探討家戶長期的調適行為。"
     },
     stats: [
       { label: { en: "Research group", zh: "研究團隊" }, value: { en: "Complex Water Adaptive System Group", zh: "複雜水系適應系統研究群" } },
