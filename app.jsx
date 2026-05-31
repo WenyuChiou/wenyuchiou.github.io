@@ -1064,6 +1064,7 @@ function Contact({ lang, num }) {
           <a className="btn" href="https://www.linkedin.com/in/wenyu-chiou" target="_blank" rel="noopener noreferrer">{window.Icons.linkedin}{T(C.linkedin_label, lang)}</a>
           <a className="btn" href="https://www.threads.com/@wenyu_chiou" target="_blank" rel="noopener noreferrer">{window.Icons.threads}Threads</a>
           <a className="btn" href="https://orcid.org/0009-0005-8006-1288" target="_blank" rel="noopener noreferrer">{T(C.orcid_label, lang)}</a>
+          <a className="btn" href="https://scholar.google.com/citations?user=vSQ3zT4AAAAJ" target="_blank" rel="noopener noreferrer">{T(C.scholar_label, lang)}</a>
         </div>
       </div>
     </section>
