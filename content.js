@@ -402,10 +402,10 @@ const CONTENT = {
       pipeline: {
         kicker: { en: "WAGF · validation pipeline", zh: "WAGF · 驗證管線" },
         stages: [
-          { key: "PHYSICAL",   label: { en: "Physical", zh: "物理" } },
-          { key: "BEHAVIORAL", label: { en: "Behavioral", zh: "行為" }, signal: true },
-          { key: "FINANCIAL",  label: { en: "Financial", zh: "金融" } },
-          { key: "SOCIAL",     label: { en: "Social", zh: "社會" } }
+          { key: "PHYSICAL",   label: { en: "Physical", zh: "物理" }, tip: { en: "Checks each agent action against physical-world constraints before it propagates.", zh: "在動作擴散前，依物理世界限制檢驗每個代理行為。" } },
+          { key: "BEHAVIORAL", label: { en: "Behavioral", zh: "行為" }, signal: true, tip: { en: "Catches the Logic-Action Gap — when an agent’s stated reasoning and its chosen action diverge.", zh: "攔截「邏輯—行動落差」——代理的論述推理與實際選擇行為不一致時。" } },
+          { key: "FINANCIAL",  label: { en: "Financial", zh: "金融" }, tip: { en: "Validates that financial decisions (insurance, buyout, elevation) stay internally consistent.", zh: "驗證金融決策（投保、買斷、墊高）維持內部一致。" } },
+          { key: "SOCIAL",     label: { en: "Social", zh: "社會" }, tip: { en: "Holds agent behavior to the tract-level social heterogeneity the model is calibrated on.", zh: "讓代理行為符合模型校正所依據的普查區社會異質性。" } }
         ]
       }
     },

@@ -257,9 +257,12 @@ function HeroIndustry({ lang, C, I }) {
               <span className="wagf-pipeline-kicker">{T(I.pipeline.kicker, lang)}</span>
               <ol className="wagf-stages">
                 {I.pipeline.stages.map((s, i) => (
-                  <li className={"wagf-stage" + (s.signal ? " is-signal" : "")} key={s.key}>
+                  <li className={"wagf-stage" + (s.signal ? " is-signal" : "")} key={s.key}
+                      tabIndex={s.tip ? 0 : undefined}
+                      aria-label={s.tip ? T(s.label, lang) + " — " + T(s.tip, lang) : undefined}>
                     <span className="wagf-node" aria-hidden="true"/>
                     <span className="wagf-stage-label">{T(s.label, lang)}</span>
+                    {s.tip && <span className="wagf-tip" aria-hidden="true">{T(s.tip, lang)}</span>}
                   </li>
                 ))}
               </ol>
