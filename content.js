@@ -453,11 +453,11 @@ const CONTENT = {
   academic: {
     signal: {
       items: [
-        { num: "1st", lbl: { en: "Coupled ABM × CAT (FEMA Hazus 6.1)", zh: "首套 ABM × CAT 耦合 (FEMA Hazus 6.1)" } },
-        { num: "12 yrs", lbl: { en: "NJ Passaic empirical data · 2011–2023", zh: "紐澤西 Passaic 實證資料 · 2011–2023" } },
-        { num: "3", lbl: { en: "Reference implementations", zh: "參考實作" } },
-        { num: "3", lbl: { en: "LLMs ablated · Claude·GPT-5·Gemini", zh: "LLM 對比 · Claude·GPT-5·Gemini" } },
-        { num: "3 cty", lbl: { en: "Passaic River Basin · Essex·Morris·Passaic", zh: "Passaic 流域 · Essex·Morris·Passaic" } },
+        { num: "5", lbl: { en: "Papers & posters", zh: "論文與海報" } },
+        { num: "16", lbl: { en: "Open-source repositories", zh: "開源儲存庫" } },
+        { num: "★ 1.8k+", lbl: { en: "Open-source community", zh: "開源社群" } },
+        { num: "3", lbl: { en: "Research domains · flood · groundwater · agentic AI", zh: "研究領域 · 洪水 · 地下水 · agentic AI" } },
+        { num: "PhD", lbl: { en: "Lehigh · CEE · since 2024", zh: "Lehigh · 土木環境 · 2024 起" } },
       ]
     }
   },
