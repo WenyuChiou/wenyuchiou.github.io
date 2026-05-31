@@ -215,7 +215,7 @@ const CONTENT = {
     intro: { en: "Four projects I designed, built and maintain end-to-end — from a dissertation safety framework to a 1.8k-star community roadmap. The complete repository index follows in Open Source below.", zh: "以下四個專案由我獨立設計、開發並維護——從博士論文的安全框架到 1.8k star 的社群學習地圖。完整儲存庫索引見下方「開源」。" },
     items: [
       {
-        image: "assets/wagf-architecture.jpg",
+        image: "assets/wagf-framework.png",
         featured: true,
         meta: { en: "Multi-Agent LLM Governance · 2026", zh: "多代理 LLM 治理 · 2026" },
         title: { en: "WAGF — Water Agent Governance Framework", zh: "WAGF — 水資源代理治理框架" },

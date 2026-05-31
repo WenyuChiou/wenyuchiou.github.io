@@ -1965,6 +1965,7 @@ section { padding: clamp(52px, 7vh, 92px) 0; position: relative; }
 @media (prefers-reduced-motion: reduce) {
   .reveal, .reveal-stagger, .reveal-stagger > * { opacity: 1 !important; transform: none !important; transition: none !important; }
   html { scroll-behavior: auto !important; }
+  .wagf-stages::after, .wagf-node::after { animation: none !important; opacity: 0 !important; }
   .rail-tick, .rail-num, .rail-label { transition: none !important; }
 }
 
@@ -2120,6 +2121,39 @@ h1, .section-title, .hero-v2-h1, .proj-flagship-title { font-optical-sizing: aut
   content: ""; position: absolute; top: 5px; left: 6%; right: 6%;
   height: 1px; background: var(--rule); z-index: 0;
 }
+/* a teal data-pulse that flows left→right along the line — the pipeline 'running'.
+   Continuous loop; frozen by prefers-reduced-motion below. */
+/* flow pulse: a fixed-width blob translated across the line (transform = GPU-composited) */
+.wagf-stages { overflow: hidden; }
+.wagf-stages::after {
+  content: ""; position: absolute; top: 4.5px; left: 6%;
+  width: 22%; height: 2px; z-index: 0; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--signal), transparent);
+  opacity: 0.85; will-change: transform;
+  transform: translateX(-120%);
+  animation: wagf-flow 3.2s linear infinite;
+}
+@keyframes wagf-flow {
+  0%   { transform: translateX(-120%); }
+  100% { transform: translateX(420%); }
+}
+/* node glow pulse via an opacity-only pseudo (GPU-composited; no box-shadow repaint) */
+.wagf-node { position: relative; }
+.wagf-node::after {
+  content: ""; position: absolute; inset: -3px; border-radius: 50%;
+  background: var(--signal); opacity: 0; will-change: opacity; pointer-events: none;
+  animation: wagf-node-pulse 3.2s ease-in-out infinite;
+}
+.wagf-stage:nth-child(1) .wagf-node::after { animation-delay: 0s; }
+.wagf-stage:nth-child(2) .wagf-node::after { animation-delay: .8s; }
+.wagf-stage:nth-child(3) .wagf-node::after { animation-delay: 1.6s; }
+.wagf-stage:nth-child(4) .wagf-node::after { animation-delay: 2.4s; }
+@keyframes wagf-node-pulse {
+  0%, 70%, 100% { opacity: 0; }
+  12%           { opacity: 0.45; }
+}
+/* signal node: standing glow stays (static box-shadow), no pulse */
+.wagf-stage.is-signal .wagf-node::after { animation: none; opacity: 0; }
 .wagf-stage {
   position: relative; z-index: 1;
   display: flex; flex-direction: column; align-items: flex-start; gap: 9px;
@@ -2162,7 +2196,7 @@ h1, .section-title, .hero-v2-h1, .proj-flagship-title { font-optical-sizing: aut
 .wagf-stage:focus-within .wagf-tip { opacity: 1; transform: translateY(0); }
 @media (max-width: 520px) {
   .wagf-stages { grid-template-columns: repeat(2, 1fr); gap: 16px 0; }
-  .wagf-stages::before { display: none; }
+  .wagf-stages::before, .wagf-stages::after { display: none; }
   .wagf-stage:nth-child(even) .wagf-tip { left: auto; right: 0; }
 }
 
