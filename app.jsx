@@ -228,8 +228,8 @@ function HeroIndustry({ lang, C, I }) {
   return (
     <header className="hero-v2 hero-industry" id="top">
       <div className="wrap hero-v2-grid">
-        <div className="hero-v2-photo reveal">
-          <img src="assets/cover.jpg" alt="Wenyu Chiou presenting at AGU 2025"/>
+        <div className="hero-v2-photo reveal" aria-hidden="true">
+          <img src="assets/cover.jpg" alt=""/>
           <div className="hero-v2-photo-cap">
             <span className="dot"/>
             <span>{lang === "en" ? "AGU Fall Meeting 2025 · New Orleans" : "AGU 2025 · 紐奧良"}</span>
@@ -301,8 +301,8 @@ function HeroAcademic({ lang, C }) {
   return (
     <header className="hero-v2" id="top">
       <div className="wrap hero-v2-grid">
-        <div className="hero-v2-photo reveal">
-          <img src="assets/cover.jpg" alt="Wenyu Chiou presenting at AGU 2025"/>
+        <div className="hero-v2-photo reveal" aria-hidden="true">
+          <img src="assets/cover.jpg" alt=""/>
           <div className="hero-v2-photo-cap">
             <span className="dot"/>
             <span>{lang === "en" ? "AGU Fall Meeting 2025 · New Orleans" : "AGU 2025 · 紐奧良"}</span>
@@ -780,17 +780,15 @@ function CommandPalette({ open, onClose, lang, mode, setLang, setTheme, setMode 
   const inputRef = useRef(null);
   const restore = useRef(null);
 
-  const nav = window.CONTENT.nav;
   const go = (id) => { onClose(); requestAnimationFrame(() => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: "smooth" }); }); };
   const ext = (url) => { onClose(); window.open(url, "_blank", "noopener,noreferrer"); };
+  const sections = (SECTION_ORDER[mode] || SECTION_ORDER.academic).map((id, i) => ({
+    label: sectionLabel(id),
+    hint: String(i + 1).padStart(2, "0"),
+    run: () => go(id),
+  }));
   const items = [
-    { label: nav.about,    hint: "01", run: () => go("about") },
-    { label: nav.research, hint: "02", run: () => go("research") },
-    { label: nav.projects, hint: "03", run: () => go("projects") },
-    { label: { en: "Skills", zh: "技能" }, hint: "04", run: () => go("skills") },
-    { label: nav.pubs,     hint: "05", run: () => go("pubs") },
-    { label: nav.repos,    hint: "06", run: () => go("repos") },
-    { label: nav.contact,  hint: "07", run: () => go("contact") },
+    ...sections,
     { label: { en: "Download CV", zh: "下載 CV" }, hint: "↓", run: () => { onClose(); window.location.href = CV_FILES[mode] || CV_FILES.industry; } },
     { label: { en: "Email Wenyu", zh: "寄信給我" }, run: () => { onClose(); window.location.href = "mailto:wec324@lehigh.edu"; } },
     { label: { en: "GitHub", zh: "GitHub" }, run: () => ext("https://github.com/WenyuChiou") },
@@ -800,6 +798,7 @@ function CommandPalette({ open, onClose, lang, mode, setLang, setTheme, setMode 
     { label: { en: "Switch language 中/EN", zh: "切換語言 中/EN" }, run: () => { onClose(); setLang(l => l === "en" ? "zh" : "en"); } },
   ];
   const shown = items.filter(it => T(it.label, lang).toLowerCase().includes(q.trim().toLowerCase()));
+  const activeOptionId = shown[sel] ? "cmdk-option-" + sel : undefined;
 
   useEffect(() => {
     if (!open) return;
@@ -824,12 +823,13 @@ function CommandPalette({ open, onClose, lang, mode, setLang, setTheme, setMode 
     <div className="cmdk-overlay" onClick={onClose}>
       <div className="cmdk-panel" role="dialog" aria-modal="true" aria-label={lang === "en" ? "Quick navigation" : "快速導覽"} onClick={(e) => e.stopPropagation()}>
         <input ref={inputRef} className="cmdk-input" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={onKey}
+               aria-controls="cmdk-list" aria-activedescendant={activeOptionId}
                placeholder={lang === "en" ? "Jump to a section or action…" : "跳到區塊或執行動作…"}
                aria-label={lang === "en" ? "Search" : "搜尋"} autoComplete="off"/>
-        <ul className="cmdk-list" role="listbox">
+        <ul id="cmdk-list" className="cmdk-list" role="listbox" tabIndex={0} onKeyDown={onKey} aria-label={lang === "en" ? "Quick navigation results" : "快速導覽結果"}>
           {shown.length === 0 && <li className="cmdk-empty">{lang === "en" ? "No matches" : "無相符項目"}</li>}
           {shown.map((it, i) => (
-            <li key={i} role="option" aria-selected={i === sel ? "true" : "false"}
+            <li key={i} id={"cmdk-option-" + i} role="option" aria-selected={i === sel ? "true" : "false"}
                 className={"cmdk-item" + (i === sel ? " active" : "")}
                 onMouseEnter={() => setSel(i)} onClick={() => it.run()}>
               <span>{T(it.label, lang)}</span>
@@ -899,9 +899,11 @@ function Publications({ lang, num }) {
                   {p.featured && <span className="pub-featured-badge">★ {lang === "en" ? "Featured" : "精選"}</span>}
                   <span className="pub-venue-short mono">{p.venue_short || p.venue}</span>
                 </div>
-                <h4 className="pub-title" role="button" tabIndex={0} aria-expanded={isOpen ? "true" : "false"} aria-controls={isOpen ? ("puba-" + i) : undefined} onClick={() => setExpanded(isOpen ? null : i)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpanded(isOpen ? null : i); } }}>
-                  {T(p.title, lang)}
-                </h4>
+                <h3 className="pub-title">
+                  <button type="button" className="pub-title-button" aria-expanded={isOpen ? "true" : "false"} aria-controls={isOpen ? ("puba-" + i) : undefined} onClick={() => setExpanded(isOpen ? null : i)}>
+                    {T(p.title, lang)}
+                  </button>
+                </h3>
                 <div className="pub-authors">
                   {parts.map((chunk, j) => (
                     <React.Fragment key={j}>
@@ -973,7 +975,7 @@ function Skills({ lang, mode, num }) {
           <div className="skill-card" key={i}>
             <div className="skill-head">
               <span className="skill-icon">{iconMap[cat.icon]}</span>
-              <h4>{T(cat.name, lang)}</h4>
+              <h3>{T(cat.name, lang)}</h3>
             </div>
             <div className="skill-items">
               {cat.items.map((it, j) => <span className="chip" key={j}>{it}</span>)}
