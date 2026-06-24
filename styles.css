@@ -2091,7 +2091,7 @@ html { scroll-padding-top: 120px; }
   .nav-menu { max-height: calc(100dvh - 58px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
 }
 
-/* Wave 2: tablet nav tier + Fraunces optical sizing + focusable-heading ring */
+/* Wave 2: tablet nav tier + focusable-heading ring */
 @media (max-width: 1024px) {
   .nav-links { display: none; }
   .nav-tools .nav-burger { display: grid; }
