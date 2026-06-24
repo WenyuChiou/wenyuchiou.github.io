@@ -25,8 +25,8 @@
   --shadow: 0 1px 2px oklch(0.2 0.05 260 / 0.05), 0 8px 24px oklch(0.2 0.05 260 / 0.06);
   --shadow-lg: 0 2px 4px oklch(0.2 0.05 260 / 0.06), 0 24px 60px oklch(0.2 0.05 260 / 0.1);
 
-  --serif: "Fraunces", "Noto Serif TC", Georgia, serif;
-  --sans: "Inter", "Noto Sans TC", -apple-system, "Helvetica Neue", sans-serif;
+  --serif: "Spectral", "Noto Serif TC", Georgia, serif;
+  --sans: "Hanken Grotesk", "Noto Sans TC", -apple-system, "Helvetica Neue", sans-serif;
   --mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
 
   --radius: 14px;
@@ -2098,7 +2098,7 @@ html { scroll-padding-top: 120px; }
   .nav-cv { display: none; }
   .section-rail { display: none; }
 }
-h1, .section-title, .hero-v2-h1, .proj-flagship-title { font-optical-sizing: auto; font-variation-settings: "opsz" 96; }
+h1, .section-title, .hero-v2-h1, .proj-flagship-title { font-optical-sizing: auto; }
 [role="button"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
 /* Wave 2B: status / pub-type pills — dark-mode contrast */
