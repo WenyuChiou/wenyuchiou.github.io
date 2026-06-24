@@ -297,6 +297,17 @@ const CONTENT = {
     intro: { en: "Peer-reviewed papers, conference posters and selected preprints. Highlighted names are mine.", zh: "已發表論文、會議海報與精選預印本；標黃為本人。" },
     items: [
       {
+        title: { en: "Leveraging Large Language Models for Agent-Based Simulation of Human-Water System Interactions", zh: "運用大型語言模型進行人—水系統互動的智能體模擬" },
+        authors: "Yang, Y.C.E., Chiou, W.-Y.",
+        venue: "Water Resources Research",
+        venue_short: "WRR",
+        year: "2026",
+        type: "journal",
+        quartile: "Q1",
+        doi: "10.1029/2025WR042111",
+        abstract: { en: "A proof-of-concept LLM-agent-based-model (LLM-ABM) framework that simulates household flood adaptation — buying insurance, elevating, relocating, or doing nothing — in a synthetic flood-prone city. Households are initialized with trust levels and narrative-style memory, with Protection Motivation Theory structuring their decisions. LLM-driven agents produce memory-mediated, narrative-driven behavioral shifts — in contrast to the threshold-driven, utility-mediated shifts of a traditional stochastic ABM — and year-by-year natural-language appraisals make the agents' reasoning interpretable and diagnosable.", zh: "以大型語言模型驅動的智能體模型 (LLM-ABM) 概念驗證框架，模擬合成洪災城市中家戶的洪水調適——投保、墊高、搬遷或不行動。家戶以信任程度與敘事式記憶初始化，並以保護動機理論 (PMT) 引導決策。LLM 驅動的智能體展現由記憶與敘事中介的行為調整——有別於傳統隨機式 ABM 的門檻／效用驅動轉變——逐年的自然語言評估也讓智能體的推理具可解釋性與可診斷性。" },
+      },
+      {
         title: { en: "Modeling Long-Term Household Flood Adaptation under Social Heterogeneity: A Coupled Agent-Based Modeling Framework", zh: "社會異質性下的家戶長期洪水調適建模：耦合式智能體框架" },
         authors: "Chiou, W.-Y., et al.",
         venue: "Journal article",
