@@ -4,13 +4,15 @@
   "private": true,
   "description": "Personal portfolio site. Source is JSX compiled to a single bundle by esbuild (no in-browser Babel). Run `npm run build` after editing *.jsx / content.js, then commit assets/app.bundle.js.",
   "scripts": {
-    "build": "node build.mjs"
+    "build": "node build.mjs",
+    "pdf": "node cv/build-pdf.mjs"
   },
   "devDependencies": {
     "@fontsource-variable/fraunces": "^5.2.9",
     "@fontsource/inter": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.2.8",
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.24.0",
+    "puppeteer-core": "^25.3.0"
   },
   "dependencies": {
     "react": "^18.3.1",

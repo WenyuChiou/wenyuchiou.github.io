@@ -40,17 +40,14 @@ const SCOPE = [
   "styles.css",    // promoted at S5 (rewritten token/component styles)
   "template.html", // promoted at S8 (feat(prerender): template replaces index.html as source)
   "**/index.html", // promoted at S8 (built static HTML for all 9 routes)
-  // "cv/*.html",      // enable at S10 (feat(cv): CV/resume HTML sources)
-  // "pdf:assets/Wenyu_Chiou_Academic_CV.pdf",        // enable at S10 (generated PDF, text via pdftotext)
-  // "pdf:assets/Wenyu_Chiou_AI_Research_Resume.pdf", // enable at S10 (generated PDF, text via pdftotext)
+  "cv/*.html",
+  "pdf:assets/Wenyu_Chiou_Academic_CV.pdf",
+  "pdf:assets/Wenyu_Chiou_AI_Research_Resume.pdf",
 ];
 
 // Future-scope debt watch: same entries as the commented SCOPE block above,
 // scanned in BOTH modes but never fatal until promoted into SCOPE.
 const FUTURE_SCOPE = [
-  "cv/*.html",
-  "pdf:assets/Wenyu_Chiou_Academic_CV.pdf",
-  "pdf:assets/Wenyu_Chiou_AI_Research_Resume.pdf",
 ];
 
 // ---------------------------------------------------------------------------
@@ -189,7 +186,10 @@ function readEntryText(item) {
 // ---------------------------------------------------------------------------
 // scanning
 // ---------------------------------------------------------------------------
-function scanText(label, text) {
+const DASH_CHARS = new RegExp("[" + String.fromCharCode(0x2013) + String.fromCharCode(0x2014) + String.fromCharCode(0xfffd) + "]", "g");
+const dashNorm = (s) => s.replace(DASH_CHARS, "-");
+
+function scanText(label, text, isPdf = false) {
   const found = []; // {file, name, line, match, detail?}
   const push = (name, index, match, detail) =>
     found.push({ file: label, name, line: lineOf(text, index), match: trunc(match), detail });
@@ -208,8 +208,20 @@ function scanText(label, text) {
   const ids = [...text.matchAll(WINDOWED.b)].map((m) => m.index);
   if (ids.length) {
     for (const m of text.matchAll(WINDOWED.a)) {
-      const near = ids.some((i) => Math.abs(i - m.index) <= WINDOWED.window);
-      if (near) push(WINDOWED.name, m.index, m[0]);
+      const nearIds = ids.filter((i) => Math.abs(i - m.index) <= WINDOWED.window);
+      if (!nearIds.length) continue;
+      // PDF flat text loses section structure: a following "Manuscripts Under
+      // Review" heading legitimately lands near the DOI in extracted text.
+      // Excused ONLY when "published" appears between the DOI and the match -
+      // a truly mislabeled citation has no intervening Published label.
+      // Fail-closed for every non-PDF surface and for any pair lacking the
+      // intervening label.
+      const excused = isPdf && nearIds.every((i) => {
+        const lo = Math.min(i, m.index);
+        const hi = Math.max(i, m.index);
+        return /published/i.test(text.slice(lo, hi));
+      });
+      if (!excused) push(WINDOWED.name, m.index, m[0]);
     }
   }
 
@@ -239,6 +251,9 @@ function scanText(label, text) {
     const prefix = canon.slice(0, DRIFT_PREFIX_LEN);
     for (let i = text.indexOf(prefix); i !== -1; i = text.indexOf(prefix, i + 1)) {
       const got = text.slice(i, i + canon.length);
+      // PDF extraction mangles en/em dashes (often to U+FFFD); a dash-normalized
+      // match is identity for PDF surfaces. Any non-dash difference still drifts.
+      if (isPdf && dashNorm(got) === dashNorm(canon)) continue;
       const decomposed = DECOMPOSITION_ALLOWLIST.some((a) => {
         if (!a.startsWith(prefix)) return false;
         if (text.slice(i, i + a.length) !== a) return false;
@@ -280,7 +295,7 @@ function scanScope(entries, { fromCwd = false } = {}) {
       }
       const text = readEntryText(item);
       if (text == null) continue; // pdf skipped (loud warning already printed)
-      violations.push(...scanText(item.label, text));
+      violations.push(...scanText(item.label, text, item.kind === "pdf"));
     }
   }
   return { violations, missing };

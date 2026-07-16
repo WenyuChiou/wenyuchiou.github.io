@@ -1,0 +1,229 @@
+/*
+ * print.css — shared print stylesheet for the academic CV and industry resume.
+ * Type tokens per visual-design-system.md §5.8.2:
+ *   - academic CV body  = serif stack, 10.5–11pt
+ *   - industry resume   = sans stack, 10–10.5pt, single column
+ *   - mono ONLY for URLs/DOIs
+ *   - no letter-spacing anywhere; grayscale-legible; no color dependence
+ * Font stacks carry robust fallbacks (Georgia / 'Times New Roman'; system sans)
+ * so PDFs render correctly even without self-hosted font files.
+ */
+
+@page {
+  size: Letter;
+  margin: 0.7in;
+}
+
+:root {
+  /* Brand families first; hard fallbacks render identically without font files. */
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace;
+
+  /* Ink scale — grayscale-safe; no hue carries meaning. */
+  --ink-1: #1a1a1a;
+  --ink-2: #3d3d3d;
+  --ink-3: #5c5c5c;
+  --rule: #b8b8b8;
+}
+
+* {
+  box-sizing: border-box;
+  letter-spacing: normal; /* VDS §5.8.2: no letter-spacing anywhere */
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  color: var(--ink-1);
+  background: #ffffff;
+}
+
+/* ---- Document body types ---- */
+
+body.doc-cv {
+  font-family: var(--font-serif);
+  font-size: 10.5pt;
+  line-height: 1.45;
+}
+
+body.doc-resume {
+  font-family: var(--font-sans);
+  font-size: 10pt;
+  line-height: 1.4;
+}
+
+/* ---- Header ---- */
+
+.doc-header {
+  margin-bottom: 14pt;
+  padding-bottom: 8pt;
+  border-bottom: 1px solid var(--rule);
+}
+
+h1 {
+  margin: 0 0 3pt 0;
+  font-size: 19pt;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+body.doc-resume h1 {
+  font-size: 16pt;
+}
+
+.title-line {
+  margin: 0 0 3pt 0;
+  font-size: 11pt;
+  color: var(--ink-2);
+}
+
+body.doc-resume .title-line {
+  font-size: 10.5pt;
+}
+
+.contact-line {
+  margin: 0;
+  font-size: 9.5pt;
+  color: var(--ink-2);
+}
+
+/* ---- Sections ---- */
+
+.cv-section,
+.rs-section {
+  margin: 0 0 11pt 0;
+}
+
+/* Resume sections are short — keep each whole on one page. */
+.rs-section {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+h2 {
+  margin: 0 0 5pt 0;
+  font-size: 11.5pt;
+  font-weight: 700;
+  line-height: 1.2;
+  padding-bottom: 2pt;
+  border-bottom: 1px solid var(--rule);
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+body.doc-resume h2 {
+  font-size: 10.5pt;
+}
+
+/* ---- Entries and lists ---- */
+
+.entry-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  margin: 0 0 6pt 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.entry p {
+  margin: 0;
+}
+
+.entry .detail {
+  color: var(--ink-2);
+  font-size: 9.8pt;
+  margin-top: 1pt;
+}
+
+.dates {
+  float: right;
+  color: var(--ink-3);
+  font-size: 9.5pt;
+  white-space: nowrap;
+}
+
+.entry-meta {
+  display: block;
+  font-size: 9.5pt;
+  color: var(--ink-2);
+  margin-top: 1pt;
+}
+
+.status-label {
+  font-weight: 600;
+  font-variant: small-caps;
+}
+
+.prose {
+  margin: 0;
+  text-align: justify;
+  hyphens: none;
+}
+
+.citation p {
+  padding-left: 18pt;
+  text-indent: -18pt; /* hanging-indent citation */
+}
+
+.self {
+  font-weight: 600; /* own name weight 600, never reordered */
+}
+
+/* Resume lists: plain semantic ul for ATS parsing */
+body.doc-resume ul {
+  margin: 0;
+  padding-left: 14pt;
+}
+
+body.doc-resume li {
+  margin: 0 0 4pt 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.positioning p {
+  margin: 0 0 3pt 0;
+}
+
+.positioning .dialect {
+  font-weight: 600;
+}
+
+/* ---- URLs / DOIs — the only mono usage ---- */
+
+.u {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  color: var(--ink-1);         /* grayscale-safe: no color dependence */
+  text-decoration: none;
+  white-space: nowrap; /* never split mid-DOI/ORCID/URL; all .u tokens are short */
+}
+
+/* ---- Print-specific ---- */
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  a {
+    color: var(--ink-1);
+    text-decoration: none;
+  }
+}
+
+/* ---- Screen preview (does not affect the PDF) ---- */
+
+@media screen {
+  body {
+    max-width: 8.5in;
+    margin: 0 auto;
+    padding: 0.7in;
+    background: #ffffff;
+  }
+}
