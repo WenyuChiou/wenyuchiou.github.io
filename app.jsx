@@ -8,7 +8,9 @@
 // MPA architecture: PAGES is a registry keyed by the data-page attribute on
 // <body> (or #root), defaulting to "home". Each route is a full page load;
 // React hydrates interactivity. S7 adds Research / Engineering / Publications /
-// CaseStudy components to the registry.
+// CaseStudy components to the registry; S8 prerenders every registered page to
+// a static route (prerender.mjs imports App, so module scope must stay
+// SSR-safe — no top-level document/window access outside the mount guard).
 
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -179,25 +181,30 @@ function ThemeToggle({ theme, onThemeChange }) {
 // Header per IA §5.1: wordmark, three nav links, mode toggle, single mailto CTA.
 // The CTA is outline-styled — the page's ONE filled .btn-primary is the contact
 // block's button (VDS §5.6.7 component invariant).
-function Nav({ mode, onModeChange, theme, onThemeChange }) {
+function Nav({ page, mode, onModeChange, theme, onThemeChange }) {
   const M = CONTENT.meta;
   const [open, setOpen] = useState(false);
   const links = [
-    { label: "Research", href: "/research/", anchor: "academic" },
-    { label: "Engineering", href: "/engineering/", anchor: "industry" },
-    { label: "Publications", href: "/publications/" },
+    { label: "Research", href: "/research/", page: "research", anchor: "academic" },
+    { label: "Engineering", href: "/engineering/", page: "engineering", anchor: "industry" },
+    { label: "Publications", href: "/publications/", page: "publications" },
   ];
   return (
     <header className="site-header">
       <a className="skip-link" href="#main">Skip to content</a>
       <div className="wrap nav-inner">
-        <a className="wordmark" href="/">{M.name}</a>
+        <a className="wordmark" href="/" aria-current={page === "home" ? "page" : undefined}>{M.name}</a>
         <nav className={"site-nav" + (open ? " is-open" : "")} aria-label="Site">
           <ul className="nav-links">
             {links.map((l) => (
               <li key={l.href}>
                 <a
-                  className={"nav-link" + (l.anchor === mode ? " is-path-primary" : "")}
+                  className={
+                    "nav-link" +
+                    (l.anchor === mode ? " is-path-primary" : "") +
+                    (l.page === page ? " is-current" : "")
+                  }
+                  aria-current={l.page === page ? "page" : undefined}
                   href={l.href}
                   onClick={() => setOpen(false)}
                 >
@@ -418,16 +425,315 @@ function Home({ mode }) {
   );
 }
 
-// MPA registry — S7 adds research / engineering / publications / case-study
-// pages; the prerender step stamps data-page onto each route's markup.
+/* ------------------------------ inner pages (S7) ------------------------- */
+
+// Shared page header for the inner pages: serif h1 (the page name per IA §1.1)
+// + optional sans lede. One h1 per page.
+function PageHead({ title, lede }) {
+  return (
+    <header className="wrap page-head">
+      <h1 className="page-title">{title}</h1>
+      {lede ? <p className="page-lede">{lede}</p> : null}
+    </header>
+  );
+}
+
+// /research/ — the research program as one arc (IA §1.1 row 2). Opens with the
+// 202-word academic research summary (positioning §4.10, verbatim in
+// content.js), then the five-stage arc as a typographic timeline (VDS §5.7.3:
+// stage label, what, evidence, honest status — no graphics), then the link
+// back to /publications/.
+function ResearchPage() {
+  const R = CONTENT.research;
+  return (
+    <>
+      <PageHead title="Research & Academic Work" />
+      <section className="wrap page-section" aria-label="Research overview">
+        <p className="prose-lede">{R.summary}</p>
+      </section>
+      <section className="wrap section" aria-labelledby="arc-title">
+        <div className="section-head">
+          <span className="section-num" aria-hidden="true">01</span>
+          <h2 id="arc-title" className="section-title">The research program, as one arc</h2>
+        </div>
+        <ol className="arc-list">
+          {R.arc.map((s) => (
+            <li className="arc-stage" key={s.n}>
+              <p className="arc-num" aria-hidden="true">{String(s.n).padStart(2, "0")}</p>
+              <div className="arc-body">
+                <h3 className="arc-name">{s.name}</h3>
+                <p className="arc-what">{s.what}</p>
+                <p className="arc-evidence"><span className="field-label">Evidence</span> {s.evidence}</p>
+                <p className="arc-status">{s.statusNote}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p className="section-more">
+          <a className="quiet-link" href="/publications/">Publications &amp; talks<span aria-hidden="true"> →</span></a>
+        </p>
+      </section>
+    </>
+  );
+}
+
+// /engineering/ — problems solved, systems built, eval/validation record, OSS
+// PRs, capabilities (IA §1.1 row 3; positioning §3). The OSS section carries
+// id="oss": the homepage proof pillar links to /engineering/#oss.
+function EngineeringPage() {
+  const E = CONTENT.engineering;
+  let n = 0;
+  const num = () => String(++n).padStart(2, "0");
+  return (
+    <>
+      <PageHead title="AI, Engineering & Systems" />
+      <section className="wrap section" data-block="problems">
+        <SectionHead num={num()} title="Problems solved" />
+        <div className="problem-list">
+          {E.problems.map((p) => (
+            <div className="problem" key={p.id}>
+              <h3 className="problem-title">{p.problem}</h3>
+              <p className="problem-response">{p.response}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+      <section className="wrap section" data-block="systems">
+        <SectionHead num={num()} title="Systems" />
+        <div className="card-grid cols-2">
+          {E.systems.map((s) => (
+            <article className="card" key={s.name}>
+              <div className="card-head">
+                <h3 className="card-name">{s.name}</h3>
+                <p className="card-status">{s.statusDetail ? s.status + " · " + s.statusDetail : s.status}</p>
+              </div>
+              <p className="card-problem">{s.what}</p>
+              <p className="card-fact">{s.evidence}</p>
+              <p className="card-links">
+                <a className="card-link" href={s.href}>Case study<span aria-hidden="true"> →</span></a>
+                <EvidenceLink href={s.repo}>Repo</EvidenceLink>
+              </p>
+            </article>
+          ))}
+        </div>
+        <p className="systems-note">{E.systemsNote}</p>
+      </section>
+      <section className="wrap section" data-block="eval-record">
+        <SectionHead num={num()} title="Evaluation & validation record" />
+        <ul className="eval-list">
+          {E.evalRecord.map((r, i) => (
+            <li className="eval-item" key={i}>
+              <span className="eval-project">{r.project}</span>
+              <span className="eval-desc">{r.item}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="eval-through">{E.evalThroughLine}</p>
+      </section>
+      <section id="oss" className="wrap section" data-block="oss">
+        <SectionHead num={num()} title="Open-source contributions" />
+        <p className="oss-intro">{E.oss.intro}</p>
+        <ul className="oss-list">
+          {E.oss.items.map((pr) => (
+            <li className="oss-item" key={pr.url}>
+              <span className="oss-ref"><EvidenceLink href={pr.url}>{pr.repo + "#" + pr.number}</EvidenceLink></span>
+              <span className="oss-desc">{pr.desc}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="wrap section" data-block="capabilities">
+        <SectionHead num={num()} title="Capabilities" />
+        <p className="capabilities-line">{E.capabilities.join(" · ")}</p>
+      </section>
+    </>
+  );
+}
+
+// Citation text with own name at weight 600 — honest author order, never
+// reordered (VDS §5.6.5); the string itself stays byte-identical.
+function CitationText({ citation }) {
+  const OWN = "Chiou, W.";
+  const parts = citation.split(OWN);
+  return (
+    <>
+      {parts.map((part, i) => (
+        <React.Fragment key={i}>
+          {i > 0 ? <span className="pub-own-name">{OWN}</span> : null}
+          {part}
+        </React.Fragment>
+      ))}
+    </>
+  );
+}
+
+// /publications/ — IA §4.1: peer-reviewed (honest author order, DOI link),
+// under-review descriptor entries (NO invented titles — CONFIRM #3),
+// presentations (venue + presentation ID only — CONFIRMs #2/#4/#12), and the
+// research-software note (public software lines + the WAGF one-liner, nothing
+// more). Mode-invariant (IA §7.3).
+function PublicationsPage() {
+  const P = CONTENT.publications;
+  let n = 0;
+  const num = () => String(++n).padStart(2, "0");
+  return (
+    <>
+      <PageHead title="Publications & Talks" />
+      <section className="wrap section" data-block="peer-reviewed">
+        <SectionHead num={num()} title="Peer-Reviewed Publications" />
+        <ul className="pub-list">
+          {P.peerReviewed.map((pub) => (
+            <li className="pub" key={pub.doi}>
+              <p className="pub-citation"><CitationText citation={pub.citation} /></p>
+              <p className="pub-note">{pub.authorNote}</p>
+              <p className="pub-meta">
+                <span className="pub-status">{pub.status}</span>
+                <span className="link-sep" aria-hidden="true">·</span>
+                <EvidenceLink href={pub.doiUrl}>{"DOI " + pub.doi}</EvidenceLink>
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="wrap section" data-block="under-review">
+        <SectionHead num={num()} title="Manuscripts Under Review" />
+        <ul className="pub-list">
+          {P.underReview.map((m, i) => (
+            <li className="pub" key={i}>
+              <p className="pub-citation">{m.descriptor}</p>
+              <p className="pub-meta">
+                <span className="pub-status">{m.status}</span>
+                <span className="link-sep" aria-hidden="true">·</span>
+                <span className="pub-target">Target: {m.target}</span>
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="wrap section" data-block="presentations">
+        <SectionHead num={num()} title="Conference Presentations" />
+        <ul className="pub-list">
+          {P.presentations.map((t, i) => (
+            <li className="pub" key={i}>
+              <p className="pub-citation">{t.venue} — {t.detail}</p>
+              {t.note ? <p className="pub-note">{t.note}</p> : null}
+              {t.href ? (
+                <p className="pub-meta"><EvidenceLink href={t.href}>Program listing</EvidenceLink></p>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="wrap section" data-block="software">
+        <SectionHead num={num()} title="Research software" />
+        <ul className="software-list">
+          <li className="software-line">
+            research-hub-pipeline v1.1.1 on PyPI — maintained open-source tool.{" "}
+            <EvidenceLink href="https://pypi.org/project/research-hub-pipeline/">PyPI</EvidenceLink>
+          </li>
+          <li className="software-line">
+            FLOODABM — Zenodo-archived companion code with citation metadata (CITATION.cff) and published seed lists; research prototype.{" "}
+            <EvidenceLink href="https://github.com/WenyuChiou/FLOODABM">Repo</EvidenceLink>
+          </li>
+          <li className="software-line">{P.softwareNote}</li>
+        </ul>
+      </section>
+    </>
+  );
+}
+
+// Case-study template — renders any CONTENT.caseStudies entry in the VDS
+// §5.6.4 4-section layout (Problem → Approach → Validation & limitations →
+// Links) covering all 11 IA §3.1 content fields (implementation-plan §0.6
+// deviation 3): status (header + rail), problem + why-it-matters (§1), my
+// role + approach + system + key challenge (§2), evaluation + results (§3),
+// evidence links + transferable relevance (§4). Pages are mode-invariant
+// (IA §7.3): a professor and a recruiter who exchange links see the same page.
+function CaseStudy({ slug }) {
+  const cs = CONTENT.caseStudies[slug];
+  const statusLine = cs.statusDetail ? cs.status + " · " + cs.statusDetail : cs.status;
+  return (
+    <article className="wrap case-study">
+      <header className="case-head">
+        <p className="case-status">{statusLine}</p>
+        <h1 className="page-title">{cs.title}</h1>
+      </header>
+      <div className="case-layout">
+        <aside className="case-rail" aria-label="Project facts">
+          <div className="rail-group">
+            <p className="field-label">Status</p>
+            <p className="rail-value">{statusLine}</p>
+          </div>
+          <div className="rail-group">
+            <p className="field-label">Links</p>
+            <ul className="rail-links">
+              {cs.evidenceLinks.map((l) => (
+                <li key={l.href}><EvidenceLink href={l.href}>{l.label}</EvidenceLink></li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+        <div className="case-main">
+          <section className="case-section" aria-label="Problem">
+            <SectionHead num="01" title="Problem" />
+            <p className="case-prose">{cs.problem}</p>
+            <h3 className="case-subhead">Why it matters</h3>
+            <p className="case-prose">{cs.whyItMatters}</p>
+          </section>
+          <section className="case-section" aria-label="Approach">
+            <SectionHead num="02" title="Approach" />
+            <h3 className="case-subhead">My role</h3>
+            <p className="case-prose">{cs.myRole}</p>
+            <h3 className="case-subhead">Method</h3>
+            <p className="case-prose">{cs.approach}</p>
+            <h3 className="case-subhead">What was built</h3>
+            <p className="case-prose">{cs.system}</p>
+            <h3 className="case-subhead">Key challenge</h3>
+            <p className="case-prose">{cs.keyChallenge}</p>
+          </section>
+          <section className="case-section" aria-label="Validation and limitations">
+            <SectionHead num="03" title="Validation & limitations" />
+            <p className="case-prose">{cs.evaluation}</p>
+            <h3 className="case-subhead">Results & status</h3>
+            <p className="case-prose">{cs.results}</p>
+          </section>
+          <section className="case-section" aria-label="Links">
+            <SectionHead num="04" title="Links" />
+            <ul className="case-links">
+              {cs.evidenceLinks.map((l) => (
+                <li key={l.href}><EvidenceLink href={l.href}>{l.label}</EvidenceLink></li>
+              ))}
+            </ul>
+            <h3 className="case-subhead">Transferable relevance</h3>
+            <div className="relevance">
+              <p className="case-prose"><span className="field-label">Academic</span> {cs.relevance.academic}</p>
+              <p className="case-prose"><span className="field-label">Industry</span> {cs.relevance.industry}</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+// MPA registry — keyed by the data-page attribute the prerender step stamps
+// onto each route's markup ("project:<slug>" for the five case studies).
 export const PAGES = {
   home: Home,
+  research: ResearchPage,
+  engineering: EngineeringPage,
+  publications: PublicationsPage,
 };
+for (const slug of Object.keys(CONTENT.caseStudies)) {
+  PAGES["project:" + slug] = function CaseStudyPage() {
+    return <CaseStudy slug={slug} />;
+  };
+}
 
 /* ----------------------------- command palette --------------------------- */
 // Ctrl/Cmd-K quick-nav (kept per implementation-plan §1.2): jump to a homepage
 // section (current mode's order), open a page, or fire an action.
-function CommandPalette({ open, onClose, mode, onModeChange, onThemeToggle }) {
+function CommandPalette({ open, onClose, page, mode, onModeChange, onThemeToggle }) {
   const [q, setQ] = useState("");
   const [sel, setSel] = useState(0);
   const inputRef = useRef(null);
@@ -447,11 +753,14 @@ function CommandPalette({ open, onClose, mode, onModeChange, onThemeToggle }) {
   const docs = CONTENT.documents;
   const primaryDoc = mode === "academic" ? docs.academic : docs.industry;
   const otherMode = mode === "academic" ? "industry" : "academic";
-  const sections = homeSections(mode).map((s, i) => ({
-    label: s.label,
-    hint: String(i + 1).padStart(2, "0"),
-    run: () => go(s.id),
-  }));
+  // Section jumps only exist on the homepage; inner pages get page links.
+  const sections = page === "home"
+    ? homeSections(mode).map((s, i) => ({
+        label: s.label,
+        hint: String(i + 1).padStart(2, "0"),
+        run: () => go(s.id),
+      }))
+    : [{ label: "Home", hint: "/", run: () => visit("/") }];
   const items = [
     ...sections,
     { label: "Research page", hint: "/research/", run: () => visit("/research/") },
@@ -530,7 +839,7 @@ function CommandPalette({ open, onClose, mode, onModeChange, onThemeToggle }) {
 
 /* ---------------------------------- app ---------------------------------- */
 
-function App({ page }) {
+export function App({ page }) {
   const [theme, setTheme] = useState(resolveInitialTheme);
   const [mode, setModeState] = useState(resolveInitialMode);
   const [cmdk, setCmdk] = useState(false);
@@ -561,7 +870,7 @@ function App({ page }) {
   const Page = PAGES[page] || Home;
   return (
     <>
-      <Nav mode={mode} onModeChange={onModeChange} theme={theme} onThemeChange={onThemeChange} />
+      <Nav page={page} mode={mode} onModeChange={onModeChange} theme={theme} onThemeChange={onThemeChange} />
       <main id="main">
         <Page mode={mode} />
       </main>
@@ -569,6 +878,7 @@ function App({ page }) {
       <CommandPalette
         open={cmdk}
         onClose={() => setCmdk(false)}
+        page={page}
         mode={mode}
         onModeChange={onModeChange}
         onThemeToggle={() => onThemeChange(theme === "dark" ? "light" : "dark")}
@@ -577,8 +887,14 @@ function App({ page }) {
   );
 }
 
-const rootEl = document.getElementById("root");
-if (rootEl) {
-  const page = document.body.getAttribute("data-page") || rootEl.getAttribute("data-page") || "home";
-  createRoot(rootEl).render(<App page={page} />);
+// Client mount — guarded so prerender.mjs can import App under Node (SSR).
+// The prerendered markup ships the default mode/theme; the client render
+// replaces it with the stored/URL-resolved state (identical markup when the
+// visitor is on the defaults).
+if (typeof document !== "undefined") {
+  const rootEl = document.getElementById("root");
+  if (rootEl) {
+    const page = document.body.getAttribute("data-page") || rootEl.getAttribute("data-page") || "home";
+    createRoot(rootEl).render(<App page={page} />);
+  }
 }

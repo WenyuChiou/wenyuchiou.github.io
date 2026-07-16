@@ -644,6 +644,209 @@ a:hover { color: var(--accent-strong); }
 }
 
 /* ==========================================================================
+   Inner pages (S7) — /research/, /engineering/, /publications/, case studies.
+   Same tokens, two rhythms (VDS §5.7): editorial narrative, technical evidence.
+   ========================================================================== */
+
+/* Active nav route (aria-current="page" carries the semantics). */
+.nav-link.is-current {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 6px;
+}
+
+/* Page head — serif h1 below the hero-display scale (one h1 per page). */
+.page-head { padding-top: var(--space-7); padding-bottom: var(--space-4); }
+.page-title {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+.page-lede { font-size: var(--text-lede); color: var(--ink-2); max-width: var(--measure); margin: var(--space-4) 0 0; }
+.page-section { padding-top: var(--space-5); padding-bottom: var(--space-7); }
+.prose-lede { font-size: var(--text-lede); line-height: 1.65; color: var(--ink-2); max-width: var(--measure); margin: 0; }
+
+/* Reusable mono field label ("Evidence", "Status", "Links", "Academic"…). */
+.field-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 var(--space-1);
+}
+p .field-label, span.field-label { display: inline; margin-right: var(--space-2); }
+
+/* --- /research/: five-stage arc (typographic timeline, VDS §5.7.3) -------- */
+.arc-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+.arc-stage {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: var(--space-4);
+  border-top: 1px solid var(--rule);
+  padding: var(--space-5) 0;
+}
+.arc-num {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+  margin: 6px 0 0;
+}
+.arc-name { font-size: var(--text-h3); font-weight: 550; line-height: 1.25; margin-bottom: var(--space-2); }
+.arc-what { font-size: var(--text-body); color: var(--ink-2); max-width: var(--measure); margin-bottom: var(--space-3); }
+.arc-evidence { font-size: var(--text-sm); color: var(--ink-2); max-width: var(--measure); margin-bottom: var(--space-2); }
+.arc-status {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+/* --- /engineering/: problems, systems, eval record, OSS, capabilities ----- */
+.problem-list { display: flex; flex-direction: column; }
+.problem { border-top: 1px solid var(--rule); padding: var(--space-5) 0; }
+.problem:last-child { padding-bottom: 0; }
+.problem-title { font-size: var(--text-h3); font-weight: 550; line-height: 1.25; margin-bottom: var(--space-3); }
+.problem-response { font-size: var(--text-body); color: var(--ink-2); max-width: var(--measure); margin: 0; }
+
+.card-links { display: flex; align-items: baseline; gap: var(--space-4); flex-wrap: wrap; }
+
+/* WAGF: one plain typographic line below the card grid, never a card. */
+.systems-note {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+  margin: var(--space-5) 0 0;
+}
+
+.eval-list { display: flex; flex-direction: column; }
+.eval-item {
+  display: grid;
+  grid-template-columns: 176px minmax(0, 1fr);
+  gap: var(--space-4);
+  border-top: 1px solid var(--rule);
+  padding: var(--space-3) 0;
+}
+.eval-project {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+}
+.eval-desc { font-size: var(--text-sm); line-height: 1.5; color: var(--ink-2); }
+.eval-through {
+  font-family: var(--font-serif);
+  font-size: var(--text-h3);
+  line-height: 1.25;
+  color: var(--ink);
+  max-width: var(--measure);
+  margin: var(--space-6) 0 0;
+}
+
+.oss-intro { font-size: var(--text-body); color: var(--ink-2); max-width: var(--measure); margin-bottom: var(--space-4); }
+.oss-list { display: flex; flex-direction: column; }
+.oss-item {
+  display: grid;
+  grid-template-columns: minmax(200px, 300px) minmax(0, 1fr);
+  gap: var(--space-4);
+  border-top: 1px solid var(--rule);
+  padding: var(--space-3) 0;
+}
+.oss-desc { font-size: var(--text-sm); line-height: 1.5; color: var(--ink-2); }
+
+.capabilities-line {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.02em;
+  line-height: 2;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* --- /publications/: citation-grade entries (VDS §5.6.5) ------------------ */
+/* Serif citations at 20px — §5.6.5 says serif citation text, §5.1's hard rule
+   says serif never below 20px; 1.25rem satisfies both (recorded deviation). */
+.pub-list { display: flex; flex-direction: column; gap: var(--space-6); margin: 0; padding: 0; list-style: none; }
+.pub-citation {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: var(--measure);
+  padding-left: 1.5em;
+  text-indent: -1.5em;
+  margin-bottom: var(--space-2);
+}
+.pub-own-name { font-weight: 600; }
+.pub-note { font-size: var(--text-sm); color: var(--ink-3); max-width: var(--measure); padding-left: 1.875rem; margin-bottom: var(--space-2); }
+.pub-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  padding-left: 1.875rem;
+  margin: 0;
+}
+.pub-status, .pub-target { color: var(--ink-3); }
+
+.software-list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.software-line {
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: var(--measure);
+  border-top: 1px solid var(--rule);
+  padding: var(--space-3) 0;
+}
+
+/* --- Case-study pages: VDS §5.6.4 — meta rail + 4-section main ------------ */
+.case-study { padding-top: var(--space-7); padding-bottom: var(--space-8); }
+.case-head { margin-bottom: var(--space-6); }
+.case-status {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+  margin-bottom: var(--space-3);
+}
+.case-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 4fr) minmax(0, 8fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+.case-rail { position: sticky; top: 84px; }
+.rail-group + .rail-group { margin-top: var(--space-5); }
+.rail-value { font-size: var(--text-sm); color: var(--ink-2); margin: 0; }
+.rail-links li { margin-bottom: var(--space-2); }
+.case-section { border-top: 1px solid var(--rule); padding: var(--space-6) 0; }
+.case-section:last-child { padding-bottom: 0; }
+.case-subhead { font-size: var(--text-h3); font-weight: 550; line-height: 1.25; margin: var(--space-5) 0 var(--space-3); }
+.case-prose { font-size: var(--text-body); color: var(--ink-2); max-width: var(--measure); }
+.case-links { margin-bottom: var(--space-4); }
+.case-links li { margin-bottom: var(--space-2); }
+.relevance p { margin-bottom: var(--space-3); }
+
+/* Inner-page responsive behavior (VDS §5.4). */
+@media (max-width: 1023.98px) {
+  .case-layout { grid-template-columns: 1fr; gap: var(--space-6); }
+  .case-rail { position: static; }
+}
+@media (max-width: 639.98px) {
+  .arc-stage, .eval-item, .oss-item { grid-template-columns: 1fr; gap: var(--space-2); }
+  .arc-num { margin-top: 0; }
+}
+
+/* ==========================================================================
    Breakpoints — VDS §5.4 (360px floor; no horizontal page scroll)
    ========================================================================== */
 
@@ -737,7 +940,9 @@ a:hover { color: var(--accent-strong); }
   body::before { display: none; }
   .site-header, .mode-switch, .theme-toggle, .nav-menu-btn, .cmdk-overlay,
   .skip-link, .btn { display: none !important; }
-  .card, .pillar, .cv-block { break-inside: avoid; box-shadow: none; }
+  .card, .pillar, .cv-block, .pub, .arc-stage, .problem, .eval-item, .oss-item { break-inside: avoid; box-shadow: none; }
+  .case-layout { display: block; }
+  .case-rail { position: static; }
   a::after {
     content: " (" attr(href) ")";
     font-family: var(--font-mono);
