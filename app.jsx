@@ -1,5 +1,6 @@
 // Wenyu Chiou — personal site (v2 editorial)
-const { useState, useEffect, useRef } = React;
+import React, { useState, useEffect, useRef } from "react";
+import { createRoot } from "react-dom/client";
 const T = (val, lang) => (typeof val === "string" ? val : val?.[lang] ?? "");
 
 // Mode-specific CV downloads: ACADEMIC and INDUSTRY versions
@@ -1246,4 +1247,4 @@ function App() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+createRoot(document.getElementById("root")).render(<App/>);

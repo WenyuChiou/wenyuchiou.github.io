@@ -19,16 +19,12 @@
   <meta name="twitter:image" content="https://wenyuchiou.github.io/assets/cover.jpg"/>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg"/>
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+TC:wght@400;500&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet"/>
+  <!-- Fonts: no external font CDN. Font families keep their names in styles.css
+       with system fallbacks; self-hosted @font-face files arrive in S2. -->
 
   <link rel="stylesheet" href="styles.css?v=d96d05e8"/>
 
-  <!-- React (production) + precompiled bundle (see build.mjs) -->
-  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" integrity="sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" integrity="sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1" crossorigin="anonymous"></script>
+  <!-- React is bundled into assets/app.bundle.js from node_modules (see build.mjs) -->
 
   <script>
     // Tweak defaults persisted by host editor
@@ -49,6 +45,6 @@
 <body>
   <div id="root"></div>
 
-  <script src="assets/app.bundle.js?v=aa1eeb97"></script>
+  <script src="assets/app.bundle.js?v=e618c5dd"></script>
 </body>
 </html>

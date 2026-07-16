@@ -1,37 +1,30 @@
-// Precompile the site to a single bundle so the browser never ships Babel.
-// Each source file keeps its "global script" shape (sets window.CONTENT /
-// window.Icons / window.Covers; app.jsx reads them + renders). We transform
-// JSX -> React.createElement (classic, global React) and minify whitespace +
-// syntax only — identifiers are preserved so cross-file globals never break.
+// Bundle the site into a single self-contained IIFE so the browser never
+// ships Babel and never touches a CDN: React + ReactDOM are bundled from
+// node_modules instead of loaded from unpkg. entry.jsx imports content.js /
+// icons.jsx / covers.jsx (side effects: window.CONTENT / window.Icons /
+// window.Covers) and then app.jsx, which reads them + renders.
+// JSX uses the automatic runtime (react/jsx-runtime), so icons.jsx and
+// covers.jsx need no explicit React import.
 // Run: npm run build   (then commit assets/app.bundle.js)
 import esbuild from "esbuild";
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 
-const ORDER = [
-  { src: "content.js", loader: "js" },
-  { src: "icons.jsx", loader: "jsx" },
-  { src: "covers.jsx", loader: "jsx" },
-  { src: "app.jsx", loader: "jsx" }, // last: sets up + renders the app
-];
+await esbuild.build({
+  entryPoints: ["entry.jsx"],
+  bundle: true,
+  format: "iife",
+  outfile: "assets/app.bundle.js",
+  minify: true,
+  jsx: "automatic",
+  define: { "process.env.NODE_ENV": '"production"' }, // production React build
+  target: "es2019",
+  legalComments: "none",
+});
 
-let out = "";
-for (const f of ORDER) {
-  const code = readFileSync(f.src, "utf8");
-  const res = await esbuild.transform(code, {
-    loader: f.loader,
-    jsx: "transform",
-    jsxFactory: "React.createElement",
-    jsxFragment: "React.Fragment",
-    minifyWhitespace: true,
-    minifySyntax: true,
-    minifyIdentifiers: false,
-    target: "es2019",
-  });
-  out += `\n/* ${f.src} */\n${res.code}`;
-}
-
-mkdirSync("assets", { recursive: true });
+// Normalize CRLF→LF so the committed bytes (and their hash) are identical to
+// what GitHub Pages serves, and stable if the repo is built on Linux/macOS too.
+const out = readFileSync("assets/app.bundle.js", "utf8").replace(/\r\n/g, "\n");
 writeFileSync("assets/app.bundle.js", out);
 console.log(`Built assets/app.bundle.js — ${(out.length / 1024).toFixed(1)} KB`);
 
@@ -41,8 +34,6 @@ console.log(`Built assets/app.bundle.js — ${(out.length / 1024).toFixed(1)} KB
 // when the file changes, so caches stay warm yet every deploy is picked up at once.
 const hash = (s) => createHash("sha256").update(s).digest("hex").slice(0, 8);
 const bundleV = hash(out);
-// Normalize CRLF→LF so the hash is identical to the committed (LF) bytes
-// GitHub Pages serves, and stable if the repo is built on Linux/macOS too.
 const cssV = hash(readFileSync("styles.css", "utf8").replace(/\r\n/g, "\n"));
 const html = readFileSync("index.html", "utf8")
   .replace(/(href=")styles\.css(?:\?v=[a-f0-9]+)?(")/g, `$1styles.css?v=${cssV}$2`)
