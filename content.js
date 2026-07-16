@@ -342,7 +342,7 @@ export const CONTENT = {
         year: "2026",
         authors: "Yang, Y. C. E., & Chiou, W.",
         status: "Published",
-        authorNote: "Second author of two; author order shown as published, never obscured.",
+        authorNote: "Second author of two.",
       },
       // Reserved slot: the Journal of Taiwan Agricultural Engineering forest paper does not
       // ship until CONFIRM #10 resolves its title/year/author-position conflict.

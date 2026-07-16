@@ -36,10 +36,10 @@ const SCOPE = [
   "content.js",
   "seo.js", // created at S4 — missing file is only fatal in strict mode (strict flips at S4)
   "scripts/canonical-strings.json",
-  "app.jsx",    // promoted at S5 (feat(app): homepage blocks — app.jsx rewrite landed)
-  "styles.css", // promoted at S5 (rewritten token/component styles)
-  // "template.html",  // enable at S8 (feat(prerender): template replaces index.html as source)
-  // "**/index.html",  // enable at S8 (built static HTML for all 9 routes)
+  "app.jsx",       // promoted at S5 (feat(app): homepage blocks — app.jsx rewrite landed)
+  "styles.css",    // promoted at S5 (rewritten token/component styles)
+  "template.html", // promoted at S8 (feat(prerender): template replaces index.html as source)
+  "**/index.html", // promoted at S8 (built static HTML for all 9 routes)
   // "cv/*.html",      // enable at S10 (feat(cv): CV/resume HTML sources)
   // "pdf:assets/Wenyu_Chiou_Academic_CV.pdf",        // enable at S10 (generated PDF, text via pdftotext)
   // "pdf:assets/Wenyu_Chiou_AI_Research_Resume.pdf", // enable at S10 (generated PDF, text via pdftotext)
@@ -48,8 +48,6 @@ const SCOPE = [
 // Future-scope debt watch: same entries as the commented SCOPE block above,
 // scanned in BOTH modes but never fatal until promoted into SCOPE.
 const FUTURE_SCOPE = [
-  "template.html",
-  "**/index.html",
   "cv/*.html",
   "pdf:assets/Wenyu_Chiou_Academic_CV.pdf",
   "pdf:assets/Wenyu_Chiou_AI_Research_Resume.pdf",
