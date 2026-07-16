@@ -226,11 +226,33 @@ function scanText(label, text) {
     if (!inside) push(SUMMER.name, m.index, m[0]);
   }
 
-  // 4. byte-identity drift: canonical prefix present, continuation differs
+  // 4. byte-identity drift: canonical prefix present, continuation differs.
+  // DECOMPOSITION_ALLOWLIST: exact component strings that legitimately share a
+  // canonical string's prefix because structured data splits the canonical
+  // value into fields (e.g. an `authors` field holds only the author list of
+  // the WRR citation; JSON-LD jobTitle omits the university, which lives in
+  // the separate affiliation field). A match is allowed ONLY when the text at
+  // the match position equals the allowlisted string followed by a
+  // non-word character (a delimiter — quote, newline, comma). Any other
+  // divergence is still drift.
+  const DECOMPOSITION_ALLOWLIST = [
+    "Yang, Y. C. E., & Chiou, W.",
+    "Ph.D. Candidate, Civil & Environmental Engineering",
+  ];
   for (const [key, canon] of DRIFT_KEYS) {
     const prefix = canon.slice(0, DRIFT_PREFIX_LEN);
     for (let i = text.indexOf(prefix); i !== -1; i = text.indexOf(prefix, i + 1)) {
       const got = text.slice(i, i + canon.length);
+      const decomposed = DECOMPOSITION_ALLOWLIST.some((a) => {
+        if (!a.startsWith(prefix)) return false;
+        if (text.slice(i, i + a.length) !== a) return false;
+        // Only a STRING DELIMITER ends a legitimate decomposition; a space or
+        // punctuation means the text continues (e.g. a drifted full citation
+        // sharing the author-list prefix) and must face the drift check.
+        const next = text[i + a.length];
+        return next === undefined || next === String.fromCharCode(34) || next === String.fromCharCode(39) || next === String.fromCharCode(96) || next === String.fromCharCode(10) || next === String.fromCharCode(13);
+      });
+      if (decomposed) continue;
       if (got !== canon) {
         let d = 0;
         while (d < canon.length && got[d] === canon[d]) d++;

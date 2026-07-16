@@ -12,10 +12,10 @@ import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 
 // Copy linter strictness: false = warn-only (violations reported, build passes).
-// flipped to true at S4 (content rewrite lands; scripts/check-copy.mjs then
+// S4: strict — check-copy.mjs now
 // fails the build on any banned string, drifted canonical string, or leaked
 // [CONFIRM] placeholder in its strict SCOPE).
-const STRICT_COPY = false;
+const STRICT_COPY = true;
 
 await esbuild.build({
   entryPoints: ["entry.jsx"],

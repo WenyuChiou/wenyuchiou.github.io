@@ -1,495 +1,576 @@
-// Real content for Wenyu Chiou — sourced from WenyuChiou/Wenyu-Portfolio
-const CONTENT = {
-  nav: {
-    about:    { en: "About",        zh: "關於" },
-    research: { en: "Experience",   zh: "經歷" },
-    projects: { en: "Projects",     zh: "專案" },
-    pubs:     { en: "Publications", zh: "著作" },
-    repos:    { en: "Open Source",  zh: "開源" },
-    contact:  { en: "Contact",      zh: "聯絡" },
+// content.js — canonical content model (S4 staging draft, workcell W1).
+// Ground truth order: docs/strategy/canonical-facts.md > positioning-strategy.md >
+// audience-analysis.md > content-information-architecture.md (IA) > implementation-plan.md.
+// Canonical strings are reused verbatim; they mirror scripts/canonical-strings.json,
+// which is regenerated from canonical-facts.md and never edited ad hoc.
+// English-only (IA §1.2). Status labels use only the canonical vocabulary:
+// Published / Under review / Preprint / In preparation / Research prototype /
+// Maintained open-source tool / Archived.
+
+export const CONTENT = {
+  meta: {
+    name: "Wenyu Chiou",
+    titleLine: "Ph.D. Candidate, Civil & Environmental Engineering, Lehigh University",
+    email: "wec324@lehigh.edu",
+    siteUrl: "https://wenyuchiou.github.io",
+    github: "https://github.com/WenyuChiou",
+    orcid: "https://orcid.org/0009-0005-8006-1288",
   },
 
   hero: {
-    eyebrow:   { en: "Ph.D. Candidate · Lehigh University · Center for Catastrophe Modeling & Resilience", zh: "博士候選人 · 理海大學 · 災害建模與韌性中心" },
-    title_line1: { en: "Modeling how people", zh: "以語言模型驅動的智能體" },
-    title_em:    { en: "decide",               zh: "模擬人類" },
-    title_line2: { en: " under", zh: "在風險下的" },
-    title_mark:  { en: "risk", zh: "決策行為" },
-    title_tail:  { en: "—", zh: "—" },
-    title_line3: { en: "and how cities adapt.", zh: "以及城市如何調適。" },
-    lede: {
-      en: "Advancing human-flood modeling from empirical foundations to LLM-based agent simulation — coupling agent-based models with catastrophe flood simulators to study long-term household adaptation.",
-      zh: "推進「人—洪水」建模——從實證基礎到 LLM 驅動的智能體模擬，並將智能體模型與災害洪水模型耦合，探討家戶長期的調適行為。"
+    umbrella: "Verified simulation of human decisions under climate risk",
+    dialect: {
+      industry: "AI evaluation / research engineer with catastrophe-risk domain depth.",
+      academic: "Computational socio-hydrologist developing validated LLM-agent methods on his own empirical data.",
     },
-    stats: [
-      { label: { en: "Research group", zh: "研究團隊" }, value: { en: "Complex Water Adaptive System Group", zh: "複雜水系適應系統研究群" } },
-      { label: { en: "Focus",          zh: "研究重心" }, value_en: ["ABM", "Flood Risk", "LLM Agents"], value_zh: ["智能體", "洪水風險", "LLM 代理"] },
-      { label: { en: "Based in",       zh: "地點" }, value: { en: "Bethlehem, PA · USA", zh: "賓州伯利恆 · 美國" } },
-      { label: { en: "Status",         zh: "狀態" }, value: { en: "Open to 2027 research opportunities & collaborations", zh: "2027 研究機會與合作開放中" } },
+    workingFormulation:
+      "I build empirically grounded simulations of how people decide under flood risk — and the fail-closed validation systems that show when AI agents can (and cannot) stand in for real people.",
+    availability:
+      "Open to Summer 2027 internships in AI evaluation, research engineering, and risk analytics.",
+  },
+
+  // IA §2 Block 3 — fixed order in both modes: science → tool → community verification.
+  pillars: [
+    {
+      id: "wrr",
+      kicker: "Published research",
+      copy: "Yang, Y. C. E., & Chiou, W. (2026). Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions. Water Resources Research, 62(6), e2025WR042111.",
+      href: "https://doi.org/10.1029/2025WR042111",
+      label: "Published · second author of two",
+    },
+    {
+      id: "research-hub",
+      kicker: "Shipped, verified tooling",
+      copy: "research-hub-pipeline v1.1.1 on PyPI — a research-literature pipeline with a fail-closed anti-fabrication gate; CI across 3 OS × 4 Python versions.",
+      href: "https://pypi.org/project/research-hub-pipeline/",
+      caseStudy: "/projects/research-hub/",
+      label: "Maintained open-source tool",
+    },
+    {
+      id: "oss",
+      kicker: "Externally reviewed code",
+      copy: "7 merged pull requests in third-party open-source projects, including a root-caused bug fix with a regression test that fails on main. Verified July 2026.",
+      href: "/engineering/#oss",
+      label: "",
+    },
+  ],
+
+  // IA §2 Block 4 — one-line problem statement, status label, case-study link.
+  // No star counts except the one allowed awesome-agentic-ai-zh string.
+  selectedEngineering: [
+    {
+      slug: "research-hub",
+      name: "research-hub",
+      line: "LLM-assisted literature workflows fabricate references. research-hub places a fail-closed verification gate at the write boundary, so an unverifiable citation fails loudly instead of entering the record.",
+      status: "Maintained open-source tool",
+      href: "/projects/research-hub/",
+    },
+    {
+      slug: "codex-delegate",
+      name: "codex-delegate",
+      line: "Delegating code work to a second AI agent is only economical if the delegate cannot fabricate success. codex-delegate wraps delegation in anti-fabrication contracts, verified from git state rather than the delegate's own report.",
+      status: "Maintained open-source tool",
+      href: "/projects/codex-delegate/",
+    },
+    {
+      slug: "awesome-agentic-ai-zh",
+      name: "awesome-agentic-ai-zh",
+      line: "Chinese-speaking learners lacked a staged path into agentic AI, and hand-mirrored translations drift. This trilingual curriculum keeps its locales verifiably in sync with CI.",
+      status: "Maintained open-source tool",
+      stars: "4.5k+ GitHub stars (July 2026)",
+      href: "/projects/awesome-agentic-ai-zh/",
+    },
+  ],
+
+  // IA §2 Block 5.
+  selectedResearch: [
+    {
+      slug: "floodabm",
+      name: "FLOODABM",
+      line: "Flood-adaptation models usually assert household behavior instead of measuring it. FLOODABM grounds 52,141 simulated households in a 937-household survey and validates losses against observed insurance claims.",
+      status: "Research prototype",
+      href: "/projects/floodabm/",
+    },
+    {
+      slug: "cat-framework",
+      name: "Cat_framework",
+      line: "A loss number without an inspectable validation chain cannot be trusted. This Hazus-based seismic bridge-loss pipeline reports where the recipe fails, not only where it works.",
+      status: "Research prototype",
+      href: "/projects/cat-framework/",
+    },
+  ],
+
+  // IA §2 Block 6 — mode-invariant single string.
+  currentFocus:
+    "Current focus: validation methods that test whether LLM agents reproduce empirically identified human decision pathways — grounded in a 937-household survey I designed and fielded — and governance methods for generative agents, research software now in preparation for release.",
+
+  // IA §2 Block 7 — mode decides primary/secondary in app.jsx.
+  documents: {
+    academic: { file: "/assets/Wenyu_Chiou_Academic_CV.pdf", label: "Academic CV (PDF)" },
+    industry: { file: "/assets/Wenyu_Chiou_AI_Research_Resume.pdf", label: "Industry resume (PDF)" },
+  },
+
+  // IA §2 Block 8 — the single CTA.
+  contact: {
+    availability:
+      "Open to Summer 2027 internships in AI evaluation, research engineering, and risk analytics.",
+    email: "wec324@lehigh.edu",
+    ctaLabel: "Email wec324@lehigh.edu",
+  },
+
+  // /research/ — the five-stage arc (positioning §2.2) + the academic research summary (§4.10, verbatim).
+  research: {
+    programLink: { label: "The full research program", href: "/research/" },
+    arc: [
+      {
+        n: 1,
+        name: "Survey",
+        what: "Designed and fielded a 937-household flood-adaptation survey (557 owners / 379 renters) in New Jersey’s Passaic River Basin.",
+        evidence:
+          "Calibration files in the FLOODABM repository; the empirical grounding of the Water Resources Research paper.",
+        statusNote: "Instrument feeding one published article and manuscripts now under review.",
+      },
+      {
+        n: 2,
+        name: "Decision pathways (SEM)",
+        what: "Identified flood-adaptation decision pathways through structural equation modeling — across owner and renter groups, and across marginalized and non-marginalized groups (the equity strand).",
+        evidence: "First-author manuscript targeting Sustainable Cities and Society.",
+        statusNote: "Under review.",
+      },
+      {
+        n: 3,
+        name: "Coupled ABM–CAT model",
+        what: "Built a Bayesian-calibrated agent-based model of 52,141 households across 27 census tracts, coupled to a catastrophe flood model with National Flood Insurance Program premium, payout, and deductible mechanics and income-normalized equity analysis of who bears flood losses.",
+        evidence:
+          "FLOODABM repository — Zenodo-archived with CITATION.cff, published seed lists, and a candid known-limitations register; first-author manuscript targeting the Journal of Hydrology.",
+        statusNote: "Code: Research prototype, archived. Paper: Under review.",
+      },
+      {
+        n: 4,
+        name: "LLM-agent validity",
+        what: "Substituted LLM agents as the behavioral engine of the simulation, then treated the substitution itself as the validity problem: nothing guarantees a generative agent decides the way real households do, so the question becomes whether LLM personas reproduce empirically identified human decision pathways.",
+        evidence:
+          "Yang, Y. C. E., & Chiou, W. (2026). Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions. Water Resources Research, 62(6), e2025WR042111.",
+        statusNote: "Published.",
+      },
+      {
+        n: 5,
+        name: "Governance methods",
+        what: "Validation architecture for generative agents — hard physical and financial constraints plus behavioral-theory coherence, fail-closed, with audit trails — generalized beyond the flood domain.",
+        evidence:
+          "Research software in preparation for release; public echoes in the fail-closed design of the open-source tooling.",
+        statusNote: "In preparation.",
+      },
     ],
-    cv:       { en: "Download CV", zh: "下載 CV" },
-    contact:  { en: "Get in touch", zh: "聯絡我" },
-    name:     { en: "Wenyu Chiou", zh: "邱文昱" },
-    id:       { en: "PhD · 2024→", zh: "博士生 · 2024→" },
-    currently: {
-      label: { en: "Currently", zh: "目前" },
+    // Academic research summary — positioning-strategy §4.10, 202 words, verbatim.
+    // Recorded ruling (S4 second review): the summary describes the overall SEM work in
+    // owner/renter terms (true of the survey + WRR strand); the SCS manuscript descriptor
+    // below uses canonical-facts §4.2 marginalized/non-marginalized framing verbatim.
+    summary:
+      "My research asks a question generative AI has made urgent: when can a simulated human decision-maker be trusted? I approach it by owning every link of the evidence chain. I designed and fielded a 937-household flood-adaptation survey in New Jersey’s Passaic River Basin, used structural equation modeling to identify how owners and renters actually decide among adaptation actions, and encoded those empirically identified pathways in a Bayesian-calibrated agent-based model of 52,141 households coupled to a catastrophe flood model with National Flood Insurance Program mechanics — including income-normalized equity analysis of who bears flood losses. With my advisor, I published a Water Resources Research article (62(6), e2025WR042111, 2026) substituting large language models as the behavioral engine of such simulations. That substitution creates a validity problem: nothing guarantees a generative agent decides the way real households do. My current work confronts it directly — testing whether LLM personas reproduce the decision pathways identified in my own survey data, and developing governance methods that validate agent behavior against physical constraints and behavioral theory — research software now in preparation for release. First-author manuscripts on the coupled model and on adaptation decision pathways are under review. The longer-term agenda is a validation standard for generative agents in consequential simulation.",
+  },
+
+  // /engineering/ — positioning §3.
+  engineering: {
+    // §3.2 — problems solved, employer language.
+    problems: [
+      {
+        id: "unverified-record",
+        problem: "LLM outputs were entering a permanent record unverified.",
+        response:
+          "I built a research-literature pipeline whose write path is guarded by a fail-closed anti-fabrication gate: references that cannot be verified are quarantined with an explicit failure taxonomy, never silently accepted. Shipped and maintained publicly as research-hub-pipeline on PyPI.",
+      },
+      {
+        id: "no-validity-standard",
+        problem: "Generative agents entered consequential simulation with no validity standard.",
+        response:
+          "I co-authored the Water Resources Research (2026) study substituting LLM agents into a human-water simulation, and now build the evaluation methods that test whether such agents reproduce empirically measured human decisions — with ground truth I collected myself (a 937-household survey).",
+      },
+      {
+        id: "unvalidated-loss",
+        problem: "Catastrophe loss estimates are only as good as their validation.",
+        response:
+          "I built a flood-loss pipeline that publishes its validation honestly — a 52,141-household coupled agent-based and catastrophe model with NFIP financial mechanics, validated against observed insurance claims — and worked on a team-built Hazus-based seismic bridge-loss pipeline validated at three levels against the 1994 Northridge earthquake, with failures reported, not hidden.",
+      },
+    ],
+
+    // §3.3 — the public flagship set.
+    systems: [
+      {
+        name: "research-hub",
+        what: "Local-first research-literature pipeline (Zotero / Obsidian / NotebookLM orchestration) with a fail-closed authenticity gate.",
+        evidence:
+          "PyPI research-hub-pipeline v1.1.1; CI across 3 OS × 4 Python versions; in-repo retrieval-recall evaluation suite against golden fixtures; observed failures recorded as explicit audit baselines; in-repo failure taxonomy.",
+        status: "Maintained open-source tool",
+        href: "/projects/research-hub/",
+        repo: "https://github.com/WenyuChiou/research-hub",
+      },
+      {
+        name: "FLOODABM",
+        what: "52,141-household coupled ABM × catastrophe flood model, Passaic River Basin, NFIP mechanics, calibrated on a 937-household survey I designed and fielded.",
+        evidence:
+          "Public repo; Zenodo archive with CITATION.cff and published seed lists; known-limitations register.",
+        status: "Research prototype",
+        statusDetail: "Archived companion code",
+        href: "/projects/floodabm/",
+        repo: "https://github.com/WenyuChiou/FLOODABM",
+      },
+      {
+        name: "Cat_framework",
+        what: "Team-built Hazus 6.1 seismic bridge-loss pipeline (hazard → exposure → fragility → EP/AAL).",
+        evidence: "Public repo; three-level Northridge validation with honestly reported failures.",
+        status: "Research prototype",
+        statusDetail: "Team capstone",
+        href: "/projects/cat-framework/",
+        repo: "https://github.com/WenyuChiou/Cat_framework",
+      },
+      {
+        name: "codex-delegate",
+        what: "Cross-platform agent-delegation wrapper with anti-fabrication contracts.",
+        evidence: "Public repo; Ubuntu/Windows CI; regression test pinning a real upstream stdin hang.",
+        status: "Maintained open-source tool",
+        href: "/projects/codex-delegate/",
+        repo: "https://github.com/WenyuChiou/codex-delegate",
+      },
+      {
+        name: "awesome-agentic-ai-zh",
+        what: "Trilingual agentic-AI curriculum (community/education line).",
+        evidence:
+          "4.5k+ GitHub stars (July 2026); external contributors; CI-enforced locale parity.",
+        status: "Maintained open-source tool",
+        href: "/projects/awesome-agentic-ai-zh/",
+        repo: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
+      },
+    ],
+    systemsNote: "WAGF — research software in preparation for release.",
+
+    // §3.4 — every item inspectable in a public repo.
+    evalRecord: [
+      {
+        project: "research-hub",
+        item: "In-repo retrieval-recall evaluation suite against golden fixtures; observed failures recorded as explicit audit baselines.",
+      },
+      {
+        project: "research-hub",
+        item: "A fail-closed anti-fabrication module with a transient-vs-permanent failure taxonomy.",
+      },
+      {
+        project: "codex-delegate",
+        item: "A regression test that reproduces a real upstream failure mode and fails without the fix.",
+      },
+      {
+        project: "Cat_framework",
+        item: "Multi-level hazard-model validation with honestly reported misses.",
+      },
+      {
+        project: "FLOODABM",
+        item: "Simulation validation against observed insurance-claims data.",
+      },
+    ],
+    evalThroughLine: "Systems designed so that failure is visible — no silent passes.",
+
+    // §3.6 — the 7 merged third-party PRs, real URLs.
+    oss: {
+      intro: "7 merged pull requests in third-party open-source projects.",
       items: [
-        { dot: "oklch(0.62 0.16 150)", text: { en: "Drafting FLOODABM journal paper", zh: "撰寫 FLOODABM 期刊論文中" } },
-        { dot: "oklch(0.65 0.15 240)", text: { en: "Developing LLM-agent framework + multi-agent system coupled with catastrophe flood model", zh: "開發 LLM 代理框架與多智能體系統，與災害洪水模型耦合" } },
-        { dot: "oklch(0.70 0.14 60)", text: { en: "Open to 2027 research opportunities & collaborations", zh: "開放 2027 研究機會與合作" } },
+        {
+          repo: "BuilderIO/agent-native",
+          number: 1332,
+          url: "https://github.com/BuilderIO/agent-native/pull/1332",
+          desc: "Documentation fix in the development guide.",
+        },
+        {
+          repo: "BuilderIO/agent-native",
+          number: 1333,
+          url: "https://github.com/BuilderIO/agent-native/pull/1333",
+          desc: "Documentation-reference fixes across contributor docs.",
+        },
+        {
+          repo: "BuilderIO/agent-native",
+          number: 1334,
+          url: "https://github.com/BuilderIO/agent-native/pull/1334",
+          desc: "Documentation fix removing broken links from a skill guide.",
+        },
+        {
+          repo: "BuilderIO/agent-native",
+          number: 1362,
+          url: "https://github.com/BuilderIO/agent-native/pull/1362",
+          desc: "Root-caused engine-selection bug fix with a regression test that fails on main.",
+        },
+        {
+          repo: "Nanako0129/coralline",
+          number: 10,
+          url: "https://github.com/Nanako0129/coralline/pull/10",
+          desc: "Pure-bash UTF-8 / East-Asian-width display fix.",
+        },
+        {
+          repo: "ZhuLinsen/daily_stock_analysis",
+          number: 1773,
+          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1773",
+          desc: "Taiwan-market data feature, re-scoped through maintainer review.",
+        },
+        {
+          repo: "NVIDIA/skills",
+          number: 76,
+          url: "https://github.com/NVIDIA/skills/pull/76",
+          desc: "Documentation fix repairing the Skill Catalog link in the contributing guide.",
+        },
       ],
     },
-  },
 
-
-  about: {
-    num: "01",
-    kicker: { en: "About", zh: "關於" },
-    p1: {
-      en: "I am a Ph.D. Candidate at Lehigh University's Department of Civil & Environmental Engineering, and a member of the Center for Catastrophe Modeling and Resilience. My research advances human-flood modeling — from empirical foundations grounded in catastrophe simulation to LLM agents that emulate household decision-making under climate risk.",
-      zh: "我是美國 Lehigh University 土木與環境工程系的博士候選人，隸屬於災害建模與韌性中心 (Center for Catastrophe Modeling and Resilience)。我的研究在推進「人—洪水」建模：從以災害模擬為基礎的實證方法，發展到以 LLM 智能體模擬家戶在氣候風險下的決策行為。"
-    },
-    p2: {
-      en: "Beyond the dissertation, I build open-source agentic AI infrastructure for the research community: an 8-stage trilingual learning roadmap (awesome-agentic-ai-zh, ★ 1.8k), a 5-plugin Claude Code marketplace covering literature triage to manuscript writing (ai-research-skills), and skills for multi-LLM delegation, multi-agent orchestration, and academic writing.",
-      zh: "博士論文之外，我為研究社群打造開源 agentic AI 基礎設施：8 階段三語學習地圖 (awesome-agentic-ai-zh，★ 1.8k)、涵蓋文獻分流到論文寫作的 5-plugin Claude Code 市集 (ai-research-skills)，以及多 LLM 委派、多代理協作、學術寫作等 skills。"
-    },
-    interests_label: { en: "Research keywords", zh: "研究關鍵字" },
-    interests: [
-      { en: "Catastrophe Modeling", zh: "災害建模" },
-      { en: "Agent-Based Models",   zh: "智能體模擬" },
-      { en: "LLM Agents",           zh: "LLM 代理" },
-      { en: "Flood Adaptation",     zh: "洪水調適" },
-      { en: "Bayesian Inference",   zh: "貝氏推論" },
-      { en: "Hydrology",            zh: "水文學" },
-      { en: "Resilience",           zh: "韌性分析" },
+    // §3.6 — artifact-backed capabilities only.
+    capabilities: [
+      "Python",
+      "Testing and CI",
+      "Evaluation design",
+      "MCP and agent tooling",
+      "Git",
+      "Cross-platform (Windows/POSIX) engineering",
+      "Catastrophe-risk stack: FEMA Hazus, fragility functions, exceedance-probability curves, NFIP mechanics",
     ],
   },
 
-  experience: {
-    num: "02",
-    kicker: { en: "Experience", zh: "經歷" },
-    items: [
+  // /publications/ — IA §4.1. Statuses canonical; author order never obscured.
+  publications: {
+    peerReviewed: [
       {
-        date: { en: "Aug 2024 — Present", zh: "2024.08 — 迄今" },
-        role: { en: "Ph.D. Candidate", zh: "博士候選人" },
-        org:  { en: "Lehigh University · Center for Catastrophe Modeling and Resilience", zh: "Lehigh 大學 · 災害建模與韌性中心" },
-        desc: {
-          en: "Advancing human-flood modeling from empirical foundations to LLM-agent simulation, while shipping the open-source infrastructure that supports it.",
-          zh: "從實證基礎推進到 LLM 代理模擬的「人—洪水」建模研究，同時發布支撐這條路徑的開源基礎設施。"
-        },
-        bullets: [
-          {
-            en: "Designed and analysed household-level surveys mapping how owners and renters perceive flood risk and translate it into adaptation decisions; integrated 12 years of NJ Passaic survey + claims data (2011–2023) as empirical ground truth.",
-            zh: "設計並分析家戶層級調查，釐清業主與租屋者如何感知洪水風險、並轉譯為調適決策；整合紐澤西 Passaic 流域 12 年 (2011–2023) 調查與保險理賠資料作為實證基礎。"
-          },
-          {
-            en: "Quantified the two-way interaction between household adaptation actions and flood loss outcomes by building the first coupled ABM × CAT (FEMA Hazus 6.1) framework — captures how individual mitigation choices reshape basin-scale loss distributions across census tracts of the Passaic River Basin (Essex, Morris & Passaic Counties).",
-            zh: "首度將家戶調適行為與洪水損失結果的雙向交互量化：建立首套 ABM × CAT (FEMA Hazus 6.1) 耦合框架，捕捉個別減災選擇如何改寫 Passaic 流域（Essex、Morris、Passaic 三郡）各普查區的損失分布。"
-          },
-          {
-            en: "Developed WAGF — a governed LLM-agent framework letting LLMs act as bounded-rational households. A governed validation pipeline (physical · behavioral · financial · social) catches Logic-Action Gap failures before they propagate; multi-LLM ablation across Claude / GPT-5 / Gemini.",
-            zh: "開發 WAGF——governed LLM 代理框架，讓 LLM 以有限理性 (bounded rationality) 扮演家戶角色；治理式驗證管線（物理 · 行為 · 金融 · 社會）在動作落地前攔截邏輯—行動落差失敗；橫跨 Claude / GPT-5 / Gemini 的多 LLM 對比實驗。"
-          },
-          {
-            en: "Built a multi-agent system coupled with catastrophe models so policy questions previously answered by expert judgement can now be quantified — three reference implementations spanning flood, multi-agent flood, and Colorado irrigation.",
-            zh: "建立多代理系統 × 災害模型耦合架構，把過去依賴專家判斷的政策問題轉為可量化分析；完成洪水、多代理洪水、Colorado 灌溉三套參考實作。"
-          },
-          {
-            en: "Shipped open-source agentic-workflow Skills and learning resources for the research community: ai-research-skills (5-plugin Claude Code marketplace · 15 skills · ★ 82), codex-delegate / agent-collab-skills (multi-LLM orchestration), awesome-agentic-ai-zh (★ 1.8k · 8-stage trilingual learning roadmap).",
-            zh: "為研究社群發布開源 agentic workflow Skills 與學習資源：ai-research-skills (5-plugin Claude Code 市集 · 15 skills · ★ 82)、codex-delegate / agent-collab-skills (多 LLM 協作)、awesome-agentic-ai-zh (★ 1.8k · 8 階段三語學習地圖)。"
-          }
-        ],
-        tags: ["ABM", "CAT Modeling", "LLM Agents", "Multi-Agent", "Open Source"]
-      },
-      {
-        date: { en: "Jan 2024 — Jun 2024", zh: "2024.01 — 2024.06" },
-        role: { en: "Research Assistant", zh: "研究助理" },
-        org:  { en: "National Central University", zh: "國立中央大學" },
-        desc: {
-          en: "Developed 3D groundwater flow simulation models for coastal aquifer systems and contributed to Nature-Based Solutions (NBS) assessment indicators.",
-          zh: "開發沿海含水層 3D 地下水模擬模型，並參與自然為本解方 (NBS) 評估指標的建立。"
-        },
-        tags: ["Groundwater", "NBS", "Modeling"]
-      },
-      {
-        date: { en: "Jul 2022 — Aug 2022", zh: "2022.07 — 2022.08" },
-        role: { en: "Summer Intern", zh: "暑期實習" },
-        org:  { en: "NCDR (National Science and Technology Center for Disaster Reduction)", zh: "國家災害防救科技中心 (NCDR)" },
-        desc: {
-          en: "Conducted research on climate change adaptation strategies and disaster risk reduction (during M.S. studies).",
-          zh: "進行氣候變遷調適策略與災害風險減輕之研究（碩士在學期間）。"
-        },
-        tags: ["Climate Adaptation", "Disaster Risk"]
-      },
-      {
-        date: { en: "Aug 2021 — Jun 2023", zh: "2021.08 — 2023.06" },
-        role: { en: "M.S. Researcher · Hydrological & Oceanic Sciences", zh: "碩士研究員 · 水文與海洋科學" },
-        org:  { en: "National Central University · Department of Hydrological and Oceanic Sciences", zh: "國立中央大學 · 水文與海洋科學系" },
-        desc: {
-          en: "Master's thesis on submarine groundwater discharge along the Taoyuan coastline — built a 3D numerical model of coastal aquifer flow and salinity dynamics, calibrated against electrical resistivity tomography (ERT) surveys and field observations across the Taoyuan Tableland.",
-          zh: "碩士論文聚焦桃園沿岸海底地下水潛流：建立沿海含水層流場與鹽度動態的 3D 數值模型，以電阻率層析成像 (ERT) 探勘與現地觀測資料校正，研究範圍涵蓋整個桃園台地。"
-        },
-        tags: ["Hydrology", "SGD", "MODFLOW", "Field Survey"]
-      },
-      {
-        date: { en: "Jul 2020 — Aug 2020", zh: "2020.07 — 2020.08" },
-        role: { en: "Research Intern", zh: "研究實習" },
-        org:  { en: "Academia Sinica · Institute of Earth Sciences", zh: "中央研究院 · 地球科學研究所" },
-        desc: {
-          en: "Summer internship at IES; analysed seismic data and geological structures.",
-          zh: "於地球科學研究所進行暑期研究，分析地震資料與地質構造。"
-        },
-        tags: ["Seismology", "Data Analysis"]
-      },
-    ],
-  },
-
-  education: {
-    num: "03",
-    kicker: { en: "Education", zh: "學歷" },
-    items: [
-      {
-        date: { en: "Aug 2024 — present", zh: "2024.08 — 迄今" },
-        role: { en: "Ph.D., Civil & Environmental Engineering", zh: "土木與環境工程博士" },
-        org:  { en: "Lehigh University, USA", zh: "Lehigh 大學 · 美國" },
-        desc: { en: "Dissertation direction: LLM-driven agent-based models of household decision-making under flood risk.", zh: "博士論文方向：以 LLM 驅動之智能體模擬，研究家戶面對洪水風險之決策行為。" },
-        tags: ["ABM", "LLM Agents", "Flood"]
-      },
-      {
-        date: { en: "Aug 2021 — Jun 2023", zh: "2021.08 — 2023.06" },
-        role: { en: "M.S., Hydrological & Oceanic Sciences", zh: "水文與海洋科學碩士" },
-        org:  { en: "National Central University, Taiwan", zh: "國立中央大學 · 台灣" },
-        desc: { en: "Thesis: Submarine Groundwater Discharge and Salinity Dynamics in Coastal Taoyuan.", zh: "碩士論文：桃園沿岸地下水潛流與鹽度動態。" },
-        tags: ["Hydrology", "Oceanic Science"]
-      },
-      {
-        date: { en: "Sep 2017 — Jun 2021", zh: "2017.09 — 2021.06" },
-        role: { en: "B.S., Earth Sciences", zh: "地球科學學士" },
-        org:  { en: "National Central University, Taiwan", zh: "國立中央大學 · 台灣" },
-        desc: { en: "Foundations in geophysics, hydrology, seismology and remote sensing; undergraduate research at Academia Sinica IES.", zh: "地球物理、水文、地震學與遙測基礎訓練；於中研院地科所進行大學部研究。" },
-        tags: ["Earth Sciences", "Geophysics", "Hydrology"]
-      },
-    ],
-  },
-
-  skills: {
-    num: "04",
-    kicker: { en: "Skills", zh: "技能" },
-    cats: [
-      {
-        icon: "brain",
-        name: { en: "Research & Modeling", zh: "研究與建模" },
-        items: ["Catastrophe Modeling", "Agent-Based Modeling", "Flood Adaptation", "Flood Risk Management", "Hydrology & Groundwater", "Risk & Resilience Analysis", "Bayesian Inference"]
-      },
-      {
-        icon: "code",
-        name: { en: "Programming & Tools", zh: "程式與工具" },
-        items: ["Python", "Matlab", "R", "QGIS", "ArcGIS", "Git", "Jupyter"]
-      },
-      {
-        icon: "ai",
-        name: { en: "AI & Emerging Tech", zh: "AI 新興技術" },
-        items: ["LLM-Enabled Agents", "Prompt Engineering", "Multi-Agent Systems", "Automated Workflows", "RAG", "MCP"]
-      },
-      {
-        icon: "flow",
-        name: { en: "AI-Native Workflows", zh: "AI 原生工作流" },
-        items: ["Claude Code", "Cursor", "Windsurf", "Antigravity", "Codex", "Gemini CLI"]
-      },
-      {
-        icon: "data",
-        name: { en: "Data & Viz", zh: "資料與視覺化" },
-        items: ["pandas", "NumPy", "scikit-learn", "matplotlib", "GeoPandas", "QGIS"]
-      },
-      {
-        icon: "write",
-        name: { en: "Writing & Comm.", zh: "寫作與溝通" },
-        items: ["LaTeX", "Academic Writing", "中文", "English", "Conference Talks"]
-      },
-    ]
-  },
-
-  projects: {
-    num: "05",
-    kicker: { en: "Flagship Case Studies", zh: "旗艦案例研究" },
-    intro: { en: "Four projects I designed, built and maintain end-to-end — from a dissertation safety framework to a 1.8k-star community roadmap. The complete repository index follows in Open Source below.", zh: "以下四個專案由我獨立設計、開發並維護——從博士論文的安全框架到 1.8k star 的社群學習地圖。完整儲存庫索引見下方「開源」。" },
-    items: [
-      {
-        image: "assets/wagf-framework.png",
-        featured: true,
-        meta: { en: "Multi-Agent LLM Governance · 2026", zh: "多代理 LLM 治理 · 2026" },
-        title: { en: "WAGF — Water Agent Governance Framework", zh: "WAGF — 水資源代理治理框架" },
-        desc: {
-          en: "Formalizing safety for LLM agents in consequential simulations. The first governed validation pipeline (physical · behavioral · financial · social) that catches Logic-Action Gap failures — hallucination, logical drift, unsafe state mutation — before they propagate. Three reference implementations across flood, multi-agent flood, and Colorado irrigation; multi-LLM ablation. Paper in progress.",
-          zh: "為高風險模擬中的 LLM 智能體建立安全機制。首套治理式驗證管線（物理 · 行為 · 金融 · 社會），在動作落地前攔截「邏輯—行動落差」失敗——幻覺、邏輯偏移、不安全的狀態變更。涵蓋洪水、多代理洪水、Colorado 灌溉三套參考實作；多 LLM 對比實驗。論文撰寫中。"
-        },
-        role: "lead",
-        stack: ["Python", "LangGraph", "Claude", "GPT-5"],
-        tags: ["LLM Agents", "Multi-Agent", "Agent Safety"],
-        href: "https://github.com/WenyuChiou/WAGF",
-        foot: { en: "github.com/WenyuChiou/WAGF", zh: "github.com/WenyuChiou/WAGF" }
-      },
-      {
-        image: "assets/agu2025-poster.jpg",
-        featured: true,
-        meta: { en: "AGU 2025 · Poster NH41E-0449", zh: "AGU 2025 · 海報 NH41E-0449" },
-        title: { en: "Agent-Based Flood Adaptation Model", zh: "家戶洪水調適智能體模型" },
-        tldr: {
-          en: "Couples FEMA Hazus 6.1 with household-level ABM; calibrated on 12 years of NJ survey + claims data.",
-          zh: "FEMA Hazus 6.1 × 家戶層級 ABM 耦合，以紐澤西 12 年調查與理賠資料校正。"
-        },
-        desc: {
-          en: "First framework to couple FEMA Hazus 6.1 catastrophe modeling with an agent-based model of household-level flood adaptation. Each agent is one Passaic River Basin household; decisions are calibrated against 12 years of NJ survey and claims data (2011–2023), accounting for social heterogeneity between owners and renters.",
-          zh: "首度將 FEMA Hazus 6.1 災害模型與家戶層級的智能體模擬耦合。每個 agent 對應一戶 Passaic 流域家庭，決策以紐澤西 12 年 (2011–2023) 的調查與保險理賠資料校正，並涵蓋業主與租屋者間的社會異質性。"
-        },
-        role: "lead",
-        stack: ["Python", "Mesa", "GeoPandas", "PyMC"],
-        tags: ["ABM", "Flood Risk", "Adaptation"],
-        href: "https://github.com/WenyuChiou/FLOODABM",
-        foot: { en: "github.com/WenyuChiou/FLOODABM", zh: "github.com/WenyuChiou/FLOODABM" }
-      },
-      {
-        image: "assets/ai-research-skills-preview.jpg",
-        featured: true,
-        stars: 82,
-        meta: { en: "Claude Code marketplace · 2026", zh: "Claude Code 市集 · 2026" },
-        title: { en: "AI Research Skills — Claude Code Marketplace", zh: "AI Research Skills — Claude Code 市集" },
-        tldr: {
-          en: "5-plugin Claude Code marketplace · 15 skills from literature triage to manuscript writing.",
-          zh: "5-plugin Claude Code 市集，15 個 skill 覆蓋文獻分流到論文撰寫。"
-        },
-        desc: {
-          en: "Productizing the research workflow as composable AI infrastructure. A 5-plugin Claude Code marketplace shipping 15 skills that cover literature triage → research design → project context → manuscript writing → multi-LLM delegation. One command installs everything; works alongside Codex CLI, Gemini CLI, Cursor, or any host that loads SKILL.md.",
-          zh: "把研究工作流產品化成可組合的 AI 基礎設施。5-plugin 的 Claude Code 市集，15 個 skill 覆蓋文獻分流 → 研究設計 → 專案 context → 論文撰寫 → 多 LLM 委派的整條流水線。一條指令安裝完成；也支援 Codex CLI、Gemini CLI、Cursor 等任何能載入 SKILL.md 的 host。"
-        },
-        role: "lead",
-        stack: ["Claude Code", "Marketplace", "MCP", "CLI"],
-        tags: ["Skills", "Open Source"],
-        href: "https://github.com/WenyuChiou/ai-research-skills",
-        foot: { en: "github.com/WenyuChiou/ai-research-skills · ★ 82", zh: "github.com/WenyuChiou/ai-research-skills · ★ 82" }
-      },
-      {
-        image: "assets/awesome-agentic-ai-zh-preview.jpg",
-        featured: true,
-        stars: 1803,
-        meta: { en: "Open source · Trending 2026", zh: "開源 · 2026 Trending" },
-        title: { en: "awesome-agentic-ai-zh — 8-Stage Learning Roadmap", zh: "awesome-agentic-ai-zh — 8 階段學習地圖" },
-        tldr: {
-          en: "Trilingual 8-stage roadmap from LLM basics to multi-agent production · 240+ curated projects.",
-          zh: "三語 8 階段路線圖，從 LLM 基礎到多代理 production · 240+ curated projects。"
-        },
-        desc: {
-          en: "Bridging the agentic AI knowledge gap for the bilingual community. An 8-stage trilingual learning roadmap (zh-TW canonical · zh-CN · English) from LLM basics to multi-agent production. 240+ curated projects, hands-on exercises per stage, 2 tracks (CLI Power User · Agent Builder), 5 audience-segmented branches. ★ 1.8k and 200+ forks across a growing bilingual community.",
-          zh: "為中文社群彌合 agentic AI 知識落差。8 階段三語學習地圖 (zh-TW canonical · zh-CN · English)，從 LLM 基礎一路到多代理 production。240+ curated projects、每階段都有 hands-on 練習、2 條學習軌 (CLI Power User · Agent Builder)、5 條依使用者分流的延伸路線。★ 1.8k、200+ forks，社群持續成長中。"
-        },
-        role: "lead",
-        stack: ["Markdown", "mdBook", "GitHub Pages", "Python"],
-        tags: ["Open Source", "Curriculum", "Community"],
-        href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
-        foot: { en: "github.com/WenyuChiou/awesome-agentic-ai-zh · ★ 1.8k · trilingual", zh: "github.com/WenyuChiou/awesome-agentic-ai-zh · ★ 1.8k · 三語" }
-      },
-    ],
-  },
-
-  pubs: {
-    num: "06",
-    kicker: { en: "Publications & Posters", zh: "論文與會議海報" },
-    intro: { en: "Peer-reviewed papers, conference posters and selected preprints. Highlighted names are mine.", zh: "已發表論文、會議海報與精選預印本；標黃為本人。" },
-    items: [
-      {
-        title: { en: "Leveraging Large Language Models for Agent-Based Simulation of Human-Water System Interactions", zh: "運用大型語言模型進行人—水系統互動的智能體模擬" },
-        authors: "Yang, Y.C.E., Chiou, W.-Y.",
-        venue: "Water Resources Research",
-        venue_short: "WRR",
-        year: "2026",
-        type: "journal",
-        quartile: "Q1",
+        citation:
+          "Yang, Y. C. E., & Chiou, W. (2026). Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions. Water Resources Research, 62(6), e2025WR042111.",
         doi: "10.1029/2025WR042111",
-        abstract: { en: "A proof-of-concept LLM-agent-based-model (LLM-ABM) framework that simulates household flood adaptation — buying insurance, elevating, relocating, or doing nothing — in a synthetic flood-prone city. Households are initialized with trust levels and narrative-style memory, with Protection Motivation Theory structuring their decisions. LLM-driven agents produce memory-mediated, narrative-driven behavioral shifts — in contrast to the threshold-driven, utility-mediated shifts of a traditional stochastic ABM — and year-by-year natural-language appraisals make the agents' reasoning interpretable and diagnosable.", zh: "以大型語言模型驅動的智能體模型 (LLM-ABM) 概念驗證框架，模擬合成洪災城市中家戶的洪水調適——投保、墊高、搬遷或不行動。家戶以信任程度與敘事式記憶初始化，並以保護動機理論 (PMT) 引導決策。LLM 驅動的智能體展現由記憶與敘事中介的行為調整——有別於傳統隨機式 ABM 的門檻／效用驅動轉變——逐年的自然語言評估也讓智能體的推理具可解釋性與可診斷性。" },
+        doiUrl: "https://doi.org/10.1029/2025WR042111",
+        venue: "Water Resources Research",
+        year: "2026",
+        authors: "Yang, Y. C. E., & Chiou, W.",
+        status: "Published",
+        authorNote: "Second author of two; author order shown as published, never obscured.",
+      },
+      // Reserved slot: the Journal of Taiwan Agricultural Engineering forest paper does not
+      // ship until CONFIRM #10 resolves its title/year/author-position conflict.
+    ],
+
+    softwareNote: "WAGF — research software in preparation for release.",
+
+    // Descriptor entries only — exact titles are inserted after CONFIRM #3 resolves; nothing
+    // is inflated beyond "Under review". The LLM-persona validity study is not listed at all
+    // until its status resolves (CONFIRM #3).
+    underReview: [
+      {
+        descriptor:
+          "First-author manuscript — coupled agent-based × catastrophe-model flood adaptation (FLOODABM companion).",
+        target: "Journal of Hydrology",
+        status: "Under review",
       },
       {
-        title: { en: "Modeling Long-Term Household Flood Adaptation under Social Heterogeneity: A Coupled Agent-Based Modeling Framework", zh: "社會異質性下的家戶長期洪水調適建模：耦合式智能體框架" },
-        authors: "Chiou, W.-Y., et al.",
-        venue: "Journal article",
-        venue_short: "Journal",
-        type: "journal",
-        status: "under review",
-        lead: true,
-        code: "https://github.com/WenyuChiou/FLOODABM",
-        abstract: { en: "The journal extension of the AGU 2025 study: a multilevel agent-based model coupled with a catastrophe model (exposure · hazard · vulnerability · finance) simulating long-term household flood adaptation across the Passaic River Basin. Owners and renters choose insurance, elevation, buyout or relocation via a Bayesian decision model driven by threat/coping/stakeholder perceptions and tract-level social heterogeneity, with 2011–2023 peak flood depths from the 1K-DHM distributed hydrologic model.", zh: "AGU 2025 研究的期刊延伸版：多層級智能體模型與災害模型（暴險 · 危害 · 脆弱度 · 財務）耦合，模擬 Passaic 流域家戶的長期洪水調適。屋主與租客依威脅／因應／利害關係人感知與普查區社會異質性，透過貝氏決策模型選擇投保、墊高、買斷或搬遷；危害以 1K-DHM 分布式水文模型的 2011–2023 尖峰淹水深度驅動。" },
+        descriptor:
+          "First-author manuscript — flood-adaptation decision pathways across marginalized and non-marginalized groups (structural equation modeling).",
+        target: "Sustainable Cities and Society",
+        status: "Under review",
+      },
+    ],
+
+    // Verified facts only: venue + presentation ID. Exact titles are gated (CONFIRM #2/#12
+    // and canonical-facts §4.3) and never invented.
+    presentations: [
+      {
+        venue: "ISHC 2025, Tokyo, Japan",
+        detail: "Oral presentation 38-03, July 2025.",
+        note: "Co-authors across Lehigh, FAU, Kyoto, and the University of Tokyo.",
+        href: "https://pub.confit.atlas.jp/en/event/ishc2025/presentation/38-03",
       },
       {
-        title: { en: "Modeling Long-Term Household Flood Adaptation under Social Heterogeneity: A Coupled Agent-Based Modeling Framework", zh: "社會異質性下的家戶長期洪水調適建模：耦合式智能體框架" },
-        authors: "Chiou, W.-Y., et al.",
-        venue: "AGU Fall Meeting",
-        venue_short: "AGU '25",
-        year: "2025",
-        type: "poster",
-        featured: true,
-        pdf: "assets/AGU2025_poster_Wenyu_Chiou.pdf",
-          abstract: { en: "Couples a multilevel agent-based model with a catastrophe model (exposure · hazard · vulnerability · finance) to simulate long-term household flood adaptation across census tracts of the Passaic River Basin (Essex, Morris & Passaic Counties). Owners and renters choose insurance, elevation, buyout or relocation through a Bayesian decision model driven by threat/coping/stakeholder perceptions and tract-level social heterogeneity, with 2011–2023 peak flood depths from the 1K-DHM distributed hydrologic model. Adaptation yields a 35% payout advantage for owners and 43% for renters, with renters shifting toward relocation over time.", zh: "將多層級智能體模型 (ABM) 與災害模型（暴險 · 危害 · 脆弱度 · 財務）耦合，模擬 Passaic 流域（Essex、Morris、Passaic 三郡）各普查區的家戶長期洪水調適。屋主與租客依威脅／因應／利害關係人感知與普查區社會異質性，透過貝氏決策模型選擇投保、墊高、買斷或搬遷；危害以 1K-DHM 分布式水文模型的 2011–2023 尖峰淹水深度驅動。調適為屋主帶來 35%、租客 43% 的理賠優勢，租客並隨時間轉向搬遷。" },
+        venue: "AGU Fall Meeting 2025",
+        detail: "Poster NH41E-0449.",
+        note: "With co-authors at Lehigh and Kyoto University's Disaster Prevention Research Institute.",
       },
       {
-        title: { en: "Integrating Electrical Resistivity Tomography, Field Observations, and Numerical Simulations to Investigate Submarine Groundwater Discharge of the Taoyuan Tableland, Taiwan", zh: "以電阻率層析成像、現地觀測與數值模擬探討桃園台地之海底地下水潛流動態" },
-        authors: "Li, M.-H., Chiou, W.-Y., Chen, C.-C.",
-        venue: "AGU Fall Meeting",
-        venue_short: "AGU '23",
-        year: "2023",
-        type: "poster",
-        abstract: { en: "Quantifies submarine groundwater discharge (SGD) along the Taoyuan coastline by integrating electrical resistivity tomography (ERT), water-quality and water-table observations, and coupled density-dependent flow-and-transport simulation. Estimates more than 0.5 Mt/day of fresh groundwater discharging to the sea, with a shallow clay layer retarding seawater intrusion while sustaining seaward freshwater outflow.", zh: "整合電阻率層析成像 (ERT)、水質與水位觀測，以及密度相依的耦合流動—傳輸模擬，量化桃園海岸的海底地下水潛流 (SGD)；估計每日逾 0.5 Mt 淡水向海洋潛流，並發現淺層黏土層延緩海水入侵、同時維持向海的淡水外流。" },
+        venue: "AGU Fall Meeting 2023",
+        detail:
+          "Abstract — submarine groundwater discharge study combining electrical resistivity tomography, field observation, and numerical simulation.",
       },
-      {
-        title: { en: "Long-term variation of water isotope composition in Feitsui Reservoir", zh: "翡翠水庫水體同位素組成的長期變化" },
-        authors: "Chiou, W.-Y., et al.",
-        venue: "Academia Sinica — IES Summer Research",
-        venue_short: "IES '20",
-        year: "2020",
-        type: "report",
-        abstract: { en: "A biweekly δ18O/δ2H record of Feitsui Reservoir (Sep 2014 – May 2019), analyzed with EEMD. The seasonal isotope cycle (continental-moisture winters, tropical-moisture summers) is clear until early 2017 then vanishes, while a multi-year deuterium-excess cycle mirrors Taipei rainwater and tracks ENSO.", zh: "翡翠水庫 2014/9–2019/5 的雙週 δ18O/δ2H 同位素觀測，以 EEMD 分析；水同位素季節循環（冬季偏陸源、夏季偏熱帶水氣）在 2017 年初前清楚、之後消失，而 d-excess 的多年週期與台北雨水一致，歸因於 ENSO。" },
-      },
-      {
-        title: { en: "Seasonal variations of water and energy budget of evergreen broad-leaved forest in central Taiwan", zh: "台灣中部常綠闊葉林之水量與能量收支季節變化" },
-        authors: "Chiou, W.-Y., et al.",
-        venue: "Journal of Taiwan Agricultural Engineering",
-        venue_short: "JTAE",
-        year: "2021",
-        type: "journal",
-        quartile: "Q3",
-        abstract: { en: "Uses 2010–2020 eddy-covariance flux and micrometeorological observations at the Lianhuachi station to contrast dry- and wet-season water and energy budgets of a central-Taiwan evergreen broad-leaved forest. Classifying seasons by the 3-month Standardized Precipitation Index (SPI3), it finds the forest sustains evapotranspiration from soil moisture through mild-to-moderate drought.", zh: "以蓮華池站 2010–2020 年渦度共變通量與微氣象觀測，比較台灣中部常綠闊葉林乾、濕季的水與能量收支；以三個月標準化降水指數 (SPI3) 分類季節，發現森林在輕至中度乾旱期間仍能由土壤水分支撐蒸發散。" },
-      },
-    ]
+      // NO fourth slot is rendered: the fourth presentation is reserved pending CONFIRM #4
+      // and ships only once identified. Do not add a placeholder entry.
+    ],
   },
 
-  repos: {
-    num: "07",
-    kicker: { en: "Open Source", zh: "開源專案" },
-    intro: { en: "Every public repository from github.com/WenyuChiou, grouped by what it does — research code, AI-agent skills, learning resources, and trading infrastructure. The four flagship case studies above are marked ★.", zh: "github.com/WenyuChiou 的所有公開儲存庫，依用途分組——研究程式碼、AI 代理技能包、學習資源與交易系統。上方四個旗艦案例以 ★ 標示。" },
-    items: [
-      { name: "awesome-agentic-ai-zh", desc: { en: "Trilingual 8-stage learning roadmap for agentic AI — 240+ curated projects, hands-on exercises per stage, 2 tracks, 5 audience-segmented branches.", zh: "三語 8 階段 agentic AI 學習地圖——240+ curated projects、每階段 hands-on 練習、2 條學習軌、5 條依使用者分流的延伸路線。" }, lang: "Markdown", color: "oklch(0.55 0.18 280)", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh", stars: 1803, forks: 206, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "ai-research-skills", desc: { en: "5-plugin Claude Code marketplace — 15 research skills, one-command install, bilingual.", zh: "5-plugin Claude Code 市集——15 個研究 skill、一條指令安裝、中英雙語。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/ai-research-skills", stars: 82, forks: 6, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "codex-delegate", desc: { en: "Claude Code skill — delegate token-heavy coding to Codex CLI; cost-aware routing pattern.", zh: "Claude Code 技能：將繁重程式任務委派給 Codex CLI；建立 cost-aware 路由模式。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/codex-delegate", stars: 59, forks: 5, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "gemini-delegate-skill", desc: { en: "Claude Code skill — delegate large-context synthesis & CJK long-form drafting to Gemini CLI.", zh: "Claude Code 技能：將大 context 統整與中日韓長文撰寫委派給 Gemini CLI。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/gemini-delegate-skill", stars: 37, forks: 9, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "zotero-skills", desc: { en: "Programmatic Zotero skills — search, add, classify, annotate references via Claude Code.", zh: "Zotero 程式化技能：透過 Claude Code 搜尋、新增、分類、註解文獻。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/zotero-skills", stars: 25, forks: 3, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "research-hub", desc: { en: "AI-operable research workspace integrating Zotero + Obsidian + NotebookLM via CLI / MCP / REST.", zh: "AI 可操作的研究 workspace，整合 Zotero + Obsidian + NotebookLM，提供 CLI / MCP / REST 介面。" }, lang: "TypeScript", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/research-hub", stars: 19, forks: 3, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "agent-collab-skills", desc: { en: "Multi-agent orchestration primitives — task splitter, output reconciler, debate, shared memory, acceptance gate.", zh: "多代理協作元件——task splitter、output reconciler、debate、shared memory、acceptance gate。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/agent-collab-skills", stars: 2, forks: 1, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "academic-writing-skills", desc: { en: "Findings-first paper writing skill — banned-word audits, figure-text consistency, submission checklists.", zh: "以 findings-first 為核心的論文寫作 skill——banned-word 稽核、圖文一致性、投稿 checklist。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/academic-writing-skills", stars: 5, forks: 1, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "FLOODABM", desc: { en: "Coupled ABM × catastrophe model — household flood adaptation (Passaic NJ, 2011–2023). AGU 2025 poster.", zh: "智能體 × 災害模型耦合：家戶洪水調適 (NJ Passaic 2011–2023)。AGU 2025 poster。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/FLOODABM", stars: 0, forks: 0, updated: { en: "Mar 2026", zh: "2026.03" }, status: "active" },
-      { name: "WAGF", desc: { en: "Water Agent Governance Framework — first governed validation pipeline catching Logic-Action Gap failures in LLM agents.", zh: "水資源代理治理框架——首套治理式驗證管線，攔截 LLM 智能體的「邏輯—行動落差」失敗。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/WAGF", stars: 0, forks: 0, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "Cat_framework", desc: { en: "FEMA Hazus 6.1 re-implementation for earthquake-induced bridge damage — adds spatial-interpolation + calibration the official tool doesn't expose.", zh: "FEMA Hazus 6.1 重新實作於地震震損橋樑——加入官方工具未開放的空間內插與校正步驟。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/Cat_framework", stars: 0, forks: 0, updated: { en: "Oct 2025", zh: "2025.10" }, status: "active" },
-      { name: "moodring", desc: { en: "Daily sentiment scoring across 5 equity markets (US/TW/JP/KR/EU).", zh: "五大股市的每日情緒評分 (美/台/日/韓/歐)。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/moodring", stars: 10, forks: 5, updated: { en: "May 2026", zh: "2026.05" }, status: "active" },
-      { name: "multi-analyst-desk", desc: { en: "4 AI specialists + chief strategist for ETF options; bilingual reports.", zh: "四位 AI 分析師 + 首席策略師組成的 ETF 選擇權交易桌，雙語報告。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/multi-analyst-desk", stars: 0, forks: 0, updated: { en: "Oct 2025", zh: "2025.10" }, status: "archived" },
-      { name: "ai-trader-ollama", desc: { en: "Autonomous trading system with multiple specialized AI agents and RAG memory.", zh: "多位專門化 AI 代理 + RAG 記憶的自主交易系統。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/ai-trader-ollama", stars: 0, forks: 0, updated: { en: "Sep 2025", zh: "2025.09" }, status: "archived" },
-      { name: "session-sweep", desc: { en: "Claude Code plugin — clean stale git worktrees, reclaim disk.", zh: "Claude Code 外掛：清理 stale git worktrees、回收磁碟空間。" }, lang: "Markdown", color: "oklch(0.55 0.18 220)", href: "https://github.com/WenyuChiou/session-sweep", stars: 0, forks: 0, updated: { en: "Nov 2025", zh: "2025.11" }, status: "active" },
-      { name: "Event-Driven-Strategy", desc: { en: "ML trading inspired by hydraulic-jump fluid dynamics — detects market reversal events.", zh: "以水躍 (hydraulic jump) 流體力學啟發的機器學習交易策略——偵測市場反轉。" }, lang: "Python", color: "oklch(0.55 0.18 250)", href: "https://github.com/WenyuChiou/Event-Driven-Strategy", stars: 0, forks: 0, updated: { en: "Jul 2024", zh: "2024.07" }, status: "archived" },
-    ]
-  },
-
-
-
-  industry: {
-    hero: {
-      eyebrow: {
-        en: ["AI Agent Engineer", "Governed multi-agent systems", "Available Summer 2027"],
-        zh: ["AI 代理工程師", "治理型多代理系統", "2027 開放合作"]
+  // Case studies — IA §3.2–3.6. Each covers all 11 IA §3.1 content fields; on-page rendering
+  // folds them into the 4-section VDS layout (implementation-plan §0.6 deviation 3).
+  caseStudies: {
+    "research-hub": {
+      title: "research-hub — fail-closed literature pipeline",
+      status: "Maintained open-source tool",
+      problem:
+        "LLM-assisted literature workflows fabricate references, and those references were entering a permanent research record (Zotero, Obsidian, NotebookLM) unverified. Nothing in the standard toolchain makes an unverifiable citation fail loudly.",
+      whyItMatters:
+        "A fabricated reference corrupts a knowledge base silently and propagates into manuscripts. The failure mode must be visible at write time, not discovered at submission time.",
+      myRole:
+        "Sole designer and maintainer, end to end — architecture, the authenticity gate, the MCP server, CI design, the evaluation suite, and the release process.",
+      approach:
+        "A local-first pipeline (discover → verify → ingest → brief) with the verification gate placed at the write boundary: references that cannot be verified are quarantined with an explicit failure reason, never silently accepted.",
+      system:
+        "A Python package published to PyPI as research-hub-pipeline v1.1.1 (MIT). The core is a fail-closed anti-fabrication module with a transient-vs-permanent failure taxonomy and quarantine-not-delete handling, plus an MCP server exposing the pipeline to agent hosts.",
+      keyChallenge:
+        "Distinguishing transient metadata-service failures from genuinely unverifiable references, so the gate fails closed without quarantining everything during an upstream outage. The answer is the explicit failure taxonomy, inspectable in the repo.",
+      evaluation:
+        "CI across 3 operating systems × 4 Python versions; in-repo retrieval-recall evaluation suite against golden fixtures; observed failures recorded as explicit audit baselines. The README states honestly that the tool is in daily use by one researcher — the limitation is disclosed, not hidden.",
+      results: "Maintained open-source tool; v1.1.1 live on PyPI with a documented release history.",
+      evidenceLinks: [
+        { label: "PyPI: research-hub-pipeline", href: "https://pypi.org/project/research-hub-pipeline/" },
+        { label: "GitHub repository", href: "https://github.com/WenyuChiou/research-hub" },
+        { label: "CI workflow (3 OS × 4 Python)", href: "https://github.com/WenyuChiou/research-hub/blob/master/.github/workflows/ci.yml" },
+        { label: "Retrieval-recall evaluation suite", href: "https://github.com/WenyuChiou/research-hub/tree/master/tests/evals" },
+        { label: "Changelog", href: "https://github.com/WenyuChiou/research-hub/blob/master/CHANGELOG.md" },
+      ],
+      relevance: {
+        academic:
+          "Reproducibility infrastructure — governance applied to LLM-assisted research practice.",
+        industry:
+          "The write-path gate is the same design problem as production AI-output validation; demonstrates evaluation design, CI-matrix engineering, and release discipline for AI-evaluation and research-engineering roles.",
       },
-      h1: {
-        en: { a: "I build", b: "governed LLM agents", c: "that act in consequential simulations —", d: "flood, catastrophe, and climate-risk decision systems." },
-        zh: { a: "我打造", b: "治理型 LLM 代理", c: "讓它們在高後果模擬中行動——", d: "洪水、災害與氣候風險決策系統。" }
-      },
-      lede: {
-        en: "I build the governance layer that catches LLM agents’ Logic-Action-Gap failures before they propagate — so my agents act inside a FEMA-Hazus-coupled catastrophe model, not a sandbox. Ph.D. researcher at Lehigh; open-source maintainer of agentic-AI infrastructure.",
-        zh: "我打造一層治理機制，在 LLM 代理的「邏輯—行動落差」失敗擴散前攔截它——讓代理在與 FEMA-Hazus 耦合的災害模型中行動，而非沙盒。Lehigh 博士候選人，開源 agentic-AI 基礎設施維護者。"
-      },
-      cta_primary: { en: "Email", zh: "來信" },
-      cta_linkedin: { en: "LinkedIn DM", zh: "LinkedIn 私訊" },
-      currently: {
-        label: { en: "Currently shipping", zh: "目前開發中" },
-        items: [
-          { dot: "oklch(0.62 0.16 150)", text: { en: "Multi-agent flood-catastrophe framework (Lehigh research)", zh: "多智能體洪水—災害耦合框架 (Lehigh 研究)" } },
-          { dot: "oklch(0.65 0.15 240)", text: { en: "WAGF — LLM agent governance framework (open source)", zh: "WAGF — LLM 代理治理框架（開源）" } },
-          { dot: "oklch(0.70 0.14 60)", text: { en: "Open to 2027 ML/AI engineer internships — US & remote", zh: "2027 ML/AI 工程師實習開放中 — 美國/遠端" } }
-        ]
-      },
-      pipeline: {
-        kicker: { en: "WAGF · validation pipeline", zh: "WAGF · 驗證管線" },
-        stages: [
-          { key: "PHYSICAL",   label: { en: "Physical", zh: "物理" }, tip: { en: "Checks each agent action against physical-world constraints before it propagates.", zh: "在動作擴散前，依物理世界限制檢驗每個代理行為。" } },
-          { key: "BEHAVIORAL", label: { en: "Behavioral", zh: "行為" }, signal: true, tip: { en: "Catches the Logic-Action Gap — when an agent’s stated reasoning and its chosen action diverge.", zh: "攔截「邏輯—行動落差」——代理的論述推理與實際選擇行為不一致時。" } },
-          { key: "FINANCIAL",  label: { en: "Financial", zh: "金融" }, tip: { en: "Validates that financial decisions (insurance, buyout, elevation) stay internally consistent.", zh: "驗證金融決策（投保、買斷、墊高）維持內部一致。" } },
-          { key: "SOCIAL",     label: { en: "Social", zh: "社會" }, tip: { en: "Holds agent behavior to the tract-level social heterogeneity the model is calibrated on.", zh: "讓代理行為符合模型校正所依據的普查區社會異質性。" } }
-        ]
-      }
     },
-    skills: {
-      intro: { en: "The stack I actually ship in.", zh: "我真正拿來交付產品的技術棧。" },
-      cats: [
-        {
-          icon: "ai",
-          name: { en: "Agentic Systems & LLMs", zh: "代理系統與 LLM" },
-          items: ["LLM Agents", "Multi-Agent Orchestration", "LangGraph", "MCP", "Claude / GPT-5 / Gemini", "Prompt Engineering", "RAG", "World Models"]
-        },
-        {
-          icon: "code",
-          name: { en: "Production ML & Engineering", zh: "生產級 ML 與工程" },
-          items: ["Python", "PyTorch", "scikit-learn", "NumPy / pandas", "FastAPI", "Docker", "Git / CI-CD", "AWS"]
-        },
-        {
-          icon: "data",
-          name: { en: "Data, Geo & Simulation", zh: "資料 · 地理 · 模擬" },
-          items: ["GeoPandas", "QGIS / ArcGIS", "Mesa (ABM)", "MODFLOW", "Monte Carlo", "Bayesian Inference (PyMC)"]
-        },
-        {
-          icon: "brain",
-          name: { en: "Domain — Water & Catastrophe", zh: "領域 — 水資源與災害" },
-          items: ["Flood Risk", "Reservoir Modeling", "Irrigation / SGD", "FEMA Hazus 6.1", "Hydrology", "Climate Adaptation", "Insurance & Resilience"]
-        },
-        {
-          icon: "flow",
-          name: { en: "AI-Native Workflows", zh: "AI 原生工作流" },
-          items: ["Claude Code", "Cursor", "Codex CLI", "Gemini CLI", "Agent Skills Development", "MCP Servers"]
-        },
-      ]
+
+    floodabm: {
+      title: "FLOODABM — coupled ABM × catastrophe flood model",
+      status: "Research prototype",
+      statusDetail: "Archived companion code",
+      problem:
+        "Flood-adaptation models typically treat households as rule-following automatons with behavior asserted rather than measured. Adaptation and insurance outcomes depend on how real owners and renters actually decide.",
+      whyItMatters:
+        "Policy conclusions and equity analyses drawn from uncalibrated behavior are conclusions about the modeler's assumptions. Grounding agent behavior in primary data is what makes the simulation's claims testable.",
+      myRole:
+        "Sole code owner; the companion manuscript's co-authors are paper collaborators, not committers. I also designed and fielded the survey that calibrates the model.",
+      approach:
+        "A 937-household flood-adaptation survey (Passaic River Basin, NJ) feeds a Bayesian calibration pipeline; the calibrated agent-based model couples to a catastrophe flood model so that individual adaptation decisions and basin-scale losses interact in both directions.",
+      system:
+        "A 52,141-household agent-based model across 27 census tracts with National Flood Insurance Program premium, payout, and deductible mechanics, tenure-differentiated adaptation actions, damage-to-threat-perception feedback, and income-normalized equity analysis of who bears flood losses.",
+      keyChallenge:
+        "Carrying measured psychology into simulation honestly — turning survey constructs into calibrated agent parameters without overfitting, and validating simulated losses against observed insurance-claims data rather than declaring plausibility.",
+      evaluation:
+        "Simulation outcomes validated against observed NFIP claims data (OpenFEMA), and a candid known-limitations register that names the model's silent-failure modes — published judgment, not marketing.",
+      results:
+        "Research prototype — archived companion code to a first-author manuscript under review. Zenodo-archived with citation metadata (CITATION.cff) and published seed lists.",
+      // The exact Zenodo DOI string and archive link are gated on CONFIRM #11 and are not
+      // rendered until resolved.
+      evidenceLinks: [
+        { label: "GitHub repository", href: "https://github.com/WenyuChiou/FLOODABM" },
+        { label: "Known-limitations register", href: "https://github.com/WenyuChiou/FLOODABM/blob/main/docs/KNOWN_LIMITATIONS.md" },
+        { label: "NFIP validation script (simulation vs OpenFEMA claims)", href: "https://github.com/WenyuChiou/FLOODABM/blob/main/scripts/validation/validate_nfip.py" },
+        { label: "Empirical-grounding lineage: Yang & Chiou (2026), Water Resources Research", href: "https://doi.org/10.1029/2025WR042111" },
+      ],
+      relevance: {
+        academic:
+          "The empirical anchor of the dissertation arc — instrument to inference to simulation in one chain.",
+        industry:
+          "Catastrophe-risk vocabulary in working code — AEP curves, NFIP mechanics, loss validation — legible to risk-analytics employers.",
+      },
     },
-    impact: {
-      items: [
-        { num: "WAGF", lbl: { en: "Governed agent pipeline", zh: "治理式代理管線" } },
-        { num: "3", lbl: { en: "LLMs ablated · Claude·GPT-5·Gemini", zh: "LLM 對比 · Claude·GPT-5·Gemini" } },
-        { num: "3", lbl: { en: "Reference systems shipped", zh: "參考系統實作" } },
-        { num: "★ 1.8k", lbl: { en: "Stars · awesome-agentic-ai-zh", zh: "Stars · awesome-agentic-ai-zh" } },
-        { num: "15", lbl: { en: "Skills · research marketplace", zh: "skills · 研究市集" } },
-      ]
-    }
+
+    "cat-framework": {
+      title: "Cat_framework — Hazus seismic bridge-loss pipeline",
+      status: "Research prototype",
+      statusDetail: "Team capstone",
+      problem:
+        "Catastrophe loss models are usually opaque; a loss number without an inspectable validation chain cannot be trusted or taught from. The goal was an open seismic bridge-loss pipeline following FEMA Hazus 6.1 end to end.",
+      whyItMatters:
+        "Loss estimates drive insurance and infrastructure decisions, and they are only as good as their validation. An honest pipeline shows where the recipe fails, not only where it works.",
+      myRole:
+        "Team-built capstone with two collaborators; presented as team work, with no individual claim made beyond team membership.",
+      approach:
+        "Hazard (ShakeMap/GMPE) → exposure (national bridge inventory) → fragility (Hazus 6.1) → loss, exceedance-probability, and average-annual-loss layers, with recalibration against observed data.",
+      system:
+        "A typed, layered Python pipeline implementing Hazus fragility mechanics, ground-motion modeling cross-checked against an independent implementation, and an EP/AAL finance layer.",
+      keyChallenge:
+        "Validating a national-recipe model against a real event. The pipeline is validated at three levels against the 1994 Northridge earthquake, and the failures are reported as findings — the baseline recipe's over-prediction is stated, not smoothed over.",
+      evaluation:
+        "The three-level Northridge validation with honestly reported failures is the centerpiece; recalibration is statistical, with uncertainty reported.",
+      results: "Research prototype — team capstone; no releases.",
+      evidenceLinks: [
+        { label: "GitHub repository", href: "https://github.com/WenyuChiou/Cat_framework" },
+        { label: "Validation & calibration (README)", href: "https://github.com/WenyuChiou/Cat_framework#validation--calibration" },
+      ],
+      relevance: {
+        academic:
+          "Catastrophe-modeling literacy grounding the Lehigh Center for Catastrophe Modeling and Resilience affiliation.",
+        industry:
+          "The catastrophe-risk industry's native language — Hazus, fragility functions, exceedance-probability curves — plus model-validation practice with failures disclosed.",
+      },
+    },
+
+    "codex-delegate": {
+      title: "codex-delegate — agent delegation with anti-fabrication contracts",
+      status: "Maintained open-source tool",
+      problem:
+        "Delegating mechanical coding work to a second AI agent is only economical if the delegate cannot fabricate success. Off-the-shelf delegation had no contract for detecting a fabricated \"done.\"",
+      whyItMatters:
+        "A multi-agent pipeline that trusts unverified completion claims fails silently at exactly the moments it was built to save — the same no-silent-pass problem as generative agents in simulation, in miniature.",
+      myRole: "Sole author — wrappers, contract tests, CI, and release documentation.",
+      approach:
+        "Keep planning and review with the supervising agent; hand execution to the delegate through cross-platform wrappers that return a structured result contract, with change attribution captured from git state rather than the delegate's own report.",
+      system:
+        "Paired bash and PowerShell wrappers with anti-fabrication sentinels, quota-failure fallback handling, and a structured result file the supervisor verifies before accepting work.",
+      keyChallenge:
+        "A real upstream stdin hang. The failure was root-caused, fixed at the wrapper level, and pinned by a regression test that feeds a marker into stdin and asserts the delegate reads nothing — the test fails without the fix.",
+      evaluation:
+        "CI on Ubuntu and Windows across multiple Python versions; contract tests covering the wrappers' failure modes; measurement claims in the repo are labeled with their limitations.",
+      results: "Maintained open-source tool.",
+      evidenceLinks: [
+        { label: "GitHub repository", href: "https://github.com/WenyuChiou/codex-delegate" },
+        { label: "CI workflow (Ubuntu/Windows)", href: "https://github.com/WenyuChiou/codex-delegate/blob/master/.github/workflows/test.yml" },
+        { label: "Test suite", href: "https://github.com/WenyuChiou/codex-delegate/tree/master/tests" },
+        { label: "Changelog", href: "https://github.com/WenyuChiou/codex-delegate/blob/master/CHANGELOG.md" },
+      ],
+      relevance: {
+        academic:
+          "Supervisor/executor separation with audit trails — the governance thesis applied to my own toolchain.",
+        industry:
+          "Incident-driven hardening, cross-platform (Windows/POSIX) correctness, and regression tests that encode real failure modes — directly legible to reliability and evaluation teams.",
+      },
+    },
+
+    "awesome-agentic-ai-zh": {
+      title: "awesome-agentic-ai-zh — trilingual agentic-AI curriculum",
+      status: "Maintained open-source tool",
+      problem:
+        "Chinese-speaking learners lacked a structured, staged path into agentic AI, and multilingual technical content drifts out of sync the moment it is duplicated by hand.",
+      whyItMatters:
+        "Locale drift is a correctness problem, not a translation problem — a curriculum whose language versions disagree teaches different things to different readers. It is solvable with CI, not vigilance.",
+      myRole:
+        "Sole creator and maintainer; external contributors' pull requests have been reviewed and merged.",
+      approach:
+        "A staged trilingual learning roadmap with runnable exercises, maintained under the same engineering discipline as a software project.",
+      system:
+        "A curriculum repository whose CI enforces cross-locale parity, checks link rot, and lints for overclaims — content governance implemented as automation.",
+      keyChallenge:
+        "Keeping three locales verifiably synchronized. The answer is CI-enforced parity checks that fail the build on drift, replacing manual mirroring.",
+      evaluation:
+        "The repo discloses honestly what has been executed versus syntax-checked; external contributions and an externally filed internationalization issue are the community-review signal.",
+      results:
+        "Maintained open-source tool; 4.5k+ GitHub stars (July 2026) — the one star count permitted in public copy, re-verified before each publish.",
+      evidenceLinks: [
+        { label: "GitHub repository", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh" },
+        { label: "CI workflows (locale parity, link checks)", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh/tree/main/.github/workflows" },
+        { label: "Contributors", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh/graphs/contributors" },
+        { label: "trendshift listing", href: "https://trendshift.io/repositories/27540" },
+      ],
+      relevance: {
+        academic:
+          "Near zero, and the page says nothing to pretend otherwise — it is presented as the community/education line.",
+        industry:
+          "CI-enforced content governance and bilingual technical communication; a distribution channel into the Chinese-speaking AI community.",
+      },
+    },
   },
 
-  academic: {
-    signal: {
-      items: [
-        { num: "5", lbl: { en: "Papers & posters", zh: "論文與海報" } },
-        { num: "16", lbl: { en: "Open-source repositories", zh: "開源儲存庫" } },
-        { num: "★ 1.8k+", lbl: { en: "Open-source community", zh: "開源社群" } },
-        { num: "3", lbl: { en: "Research domains · flood · groundwater · agentic AI", zh: "研究領域 · 洪水 · 地下水 · agentic AI" } },
-        { num: "PhD", lbl: { en: "Lehigh · CEE · since 2024", zh: "Lehigh · 土木環境 · 2024 起" } },
-      ]
-    }
-  },
-  contact: {
-    num: "09",
-    kicker: { en: "Contact", zh: "聯絡" },
-    title: { en: "Let's build something thoughtful.", zh: "一起做點有意義的研究吧。" },
-    body: {
-      en: "I'm open to research opportunities, 2027 collaborations & roles, and conversations about LLM agents, agent safety, decision science, or catastrophe modeling.",
-      zh: "歡迎研究合作、2027 研究機會與合作，以及關於 LLM 代理、代理安全、決策科學或災害建模的討論。"
-    },
-    email_label: { en: "Email", zh: "來信" },
-    github_label: { en: "GitHub", zh: "GitHub" },
-    linkedin_label: { en: "LinkedIn", zh: "LinkedIn" },
-    orcid_label: { en: "ORCID", zh: "ORCID" },
-    scholar_label: { en: "Google Scholar", zh: "Google Scholar" },
-  },
-
+  // IA §5.2 — footer, identical on all pages. Google Scholar is added only after the profile
+  // shows "Wenyu Chiou" with the WRR paper attached; LinkedIn only after CONFIRM #6.
   footer: {
-    copy: { en: "© 2026 Wenyu Chiou · Lehigh University", zh: "© 2026 邱文昱 · Lehigh University" },
-    note: { en: "Hydrology × AI × Decision Science", zh: "水文 × AI × 決策科學" }
-  }
+    line1: "Wenyu Chiou — Ph.D. Candidate, Civil & Environmental Engineering, Lehigh University",
+    links: [
+      { label: "GitHub", href: "https://github.com/WenyuChiou" },
+      { label: "ORCID", href: "https://orcid.org/0009-0005-8006-1288" },
+      { label: "Academic CV (PDF)", href: "/assets/Wenyu_Chiou_Academic_CV.pdf" },
+      { label: "Industry resume (PDF)", href: "/assets/Wenyu_Chiou_AI_Research_Resume.pdf" },
+    ],
+    email: "wec324@lehigh.edu",
+    copyright: "© Wenyu Chiou",
+  },
 };
-window.CONTENT = CONTENT;
