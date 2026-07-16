@@ -1,40 +1,42 @@
-# Wenyu Chiou — Portfolio
+# wenyuchiou.github.io
 
-Personal site for Wenyu Chiou, PhD candidate at Lehigh University (Catastrophe Modeling & Resilience).
+Personal site of Wenyu Chiou — Ph.D. candidate, Civil & Environmental Engineering, Lehigh University.
 
-Bilingual (English / 繁中). Research focus: **LLM-agent frameworks
-and multi-agent systems coupled with catastrophe flood models** for
-long-term household adaptation under risk.
+Static multi-page site: React 18 prerendered to 9 HTML routes with esbuild, no CDN dependencies (fonts and scripts self-hosted), fail-closed content linting on every build.
 
-**Live site:** https://wenyuchiou.github.io/
-
-## What's in here
-
-Site source — `index.html` + `content.js` + the `*.jsx` components +
-`styles.css`. The browser loads a **precompiled bundle**
-(`assets/app.bundle.js`), so after editing source you MUST rebuild and
-commit the bundle or the live site serves stale code.
+## Build
 
 ```bash
-git clone -b standalone-portfolio https://github.com/WenyuChiou/wenyuchiou.github.io
-cd wenyuchiou.github.io
-npm ci                      # first time only (installs esbuild)
-# ...edit content.js / icons.jsx / covers.jsx / app.jsx ...
-npm run build               # regenerates assets/app.bundle.js
-git add -A && git commit -m "..." && git push   # Pages refreshes within a minute
+npm ci
+npm run build     # bundle -> prerender 9 routes -> sitemap/robots -> hash-stamp -> copy linter (strict)
 ```
 
-To just preview locally without editing: `python -m http.server 8000`.
+The build **fails** if `scripts/check-copy.mjs` finds any banned pattern, drifted canonical string, or leaked `[CONFIRM` placeholder in source files, built HTML, or the extracted text of the two PDFs. Canonical strings live in `scripts/canonical-strings.json` and are regenerated from the (private) strategy workspace — never edit that file ad hoc.
 
-## Stack
+## CV / resume PDFs
 
-Plain JSX + CSS, **precompiled by [esbuild](https://esbuild.github.io/)**
-into a single `assets/app.bundle.js` (classic `React.createElement`,
-React/ReactDOM from the unpkg CDN — production builds, no in-browser
-Babel). No Vite, no CI: `npm run build` locally, commit the bundle, push.
+```bash
+npm run pdf       # cv/build-pdf.mjs -> assets/Wenyu_Chiou_Academic_CV.pdf + assets/Wenyu_Chiou_AI_Research_Resume.pdf
+```
 
-## Deploy
+Requires a local Chrome or Edge (auto-detected; override with `CHROME_PATH`). Sources are `cv/academic.html` and `cv/resume.html` with shared `cv/print.css`. The script refuses to emit PDFs if the banned-string scan fails.
 
-GitHub Pages serves from the `standalone-portfolio` branch (legacy build, root).
+## Serve locally
 
-Live: https://wenyuchiou.github.io/
+```bash
+npx http-server -p 8080    # routes are real directories; no SPA fallback needed
+```
+
+## Deployment
+
+GitHub Pages deploys from the **`standalone-portfolio`** branch (not `main`).
+Deploying = merging the reviewed feature branch into `standalone-portfolio` and pushing — **only with explicit owner approval**. Nothing in this repo auto-deploys.
+
+## Layout
+
+- `content.js` / `seo.js` — all site content + per-route metadata (single source of copy)
+- `app.jsx` — page components (PAGES registry), hydrated per route via `data-page`
+- `template.html` + `prerender.mjs` — static prerendering; `index.html` and `*/index.html` are **generated**
+- `styles.css` — design tokens + components; self-hosted fonts in `assets/fonts/`
+- `cv/` — CV/resume sources + PDF pipeline
+- `scripts/check-copy.mjs` — fail-closed copy linter (runs inside every build)
