@@ -22,29 +22,25 @@
   <!-- Fonts: no external font CDN. Fraunces / Inter / JetBrains Mono are
        self-hosted (Latin woff2 subsets in assets/fonts/, @font-face in styles.css). -->
 
-  <link rel="stylesheet" href="styles.css?v=ab443f3a"/>
+  <link rel="stylesheet" href="styles.css?v=e4f6464c"/>
 
   <!-- React is bundled into assets/app.bundle.js from node_modules (see build.mjs) -->
 
   <script>
-    // Tweak defaults persisted by host editor
-    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-      "theme": "light",
-      "language": "en"
-    }/*EDITMODE-END*/;
-  </script>
-  <script>
-    // Apply persisted theme/mode/lang before first paint (no FOUC; correct lang for AT)
+    // Apply persisted theme + reading-path mode before first paint (no flash).
+    // Mode precedence (IA §7.2): ?path= URL param > localStorage wy-mode > industry default.
     try {
       var __t = localStorage.getItem('wy-theme'); if (__t) document.documentElement.setAttribute('data-theme', __t);
-      var __m = localStorage.getItem('wy-mode'); if (__m) document.documentElement.setAttribute('data-mode', __m);
-      var __l = localStorage.getItem('wy-lang'); if (__l) document.documentElement.lang = (__l === 'zh' ? 'zh-TW' : 'en');
+      var __p = new URLSearchParams(location.search).get('path');
+      var __m = __p === 'research' ? 'academic' : __p === 'engineering' ? 'industry' : localStorage.getItem('wy-mode');
+      if (__m !== 'academic' && __m !== 'industry') __m = 'industry';
+      document.documentElement.setAttribute('data-mode', __m);
     } catch (e) {}
   </script>
 </head>
 <body>
   <div id="root"></div>
 
-  <script src="assets/app.bundle.js?v=6e18ec31"></script>
+  <script src="assets/app.bundle.js?v=142e1b3e"></script>
 </body>
 </html>

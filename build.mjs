@@ -1,10 +1,9 @@
 // Bundle the site into a single self-contained IIFE so the browser never
 // ships Babel and never touches a CDN: React + ReactDOM are bundled from
-// node_modules instead of loaded from unpkg. entry.jsx imports content.js /
-// icons.jsx / covers.jsx (side effects: window.CONTENT / window.Icons /
-// window.Covers) and then app.jsx, which reads them + renders.
-// JSX uses the automatic runtime (react/jsx-runtime), so icons.jsx and
-// covers.jsx need no explicit React import.
+// node_modules instead of loaded from unpkg. entry.jsx imports app.jsx, which
+// imports { CONTENT } from content.js and { Icons } from icons.jsx as ES
+// modules (no window globals) and mounts the PAGES registry onto #root.
+// JSX uses the automatic runtime (react/jsx-runtime).
 // Run: npm run build   (then commit assets/app.bundle.js)
 import esbuild from "esbuild";
 import { readFileSync, writeFileSync } from "node:fs";

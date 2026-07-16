@@ -1,1250 +1,584 @@
-// Wenyu Chiou — personal site (v2 editorial)
-import React, { useState, useEffect, useRef } from "react";
+// app.jsx — page components + client interactivity.
+// S5: homepage blocks 1–8 (IA §2), nav + footer (IA §5), components per VDS §5.6.
+// S6: ModeSwitch v2 (IA §7) — URL param > stored preference > industry default.
+//
+// Every rendered content string comes from CONTENT (content.js). This file holds
+// only markup shape, UI-chrome labels, and behavior — never canonical copy.
+//
+// MPA architecture: PAGES is a registry keyed by the data-page attribute on
+// <body> (or #root), defaulting to "home". Each route is a full page load;
+// React hydrates interactivity. S7 adds Research / Engineering / Publications /
+// CaseStudy components to the registry.
+
+import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-const T = (val, lang) => (typeof val === "string" ? val : val?.[lang] ?? "");
+import { CONTENT } from "./content.js";
+import { Icons } from "./icons.jsx";
 
-// Mode-specific CV downloads: ACADEMIC and INDUSTRY versions
-const CV_FILES = {
-  academic: "assets/Wenyu_Chiou_CV_Academic.pdf",
-  industry: "assets/Wenyu_Chiou_CV_Industry.pdf",
+/* ---------------------------------------------------------------------------
+ * Mode model (IA §7). Two reading paths; internal ids industry / academic.
+ * Audience-facing labels name the content, not the reader's employer.
+ * Precedence: ?path= URL param > localStorage "wy-mode" > default "industry".
+ * The stored preference is written ONLY when the user toggles (IA §7.2).
+ * ------------------------------------------------------------------------- */
+const MODES = ["industry", "academic"];
+const PATH_PARAM_TO_MODE = { research: "academic", engineering: "industry" };
+const MODE_LABELS = {
+  academic: { full: "Research & Academic Work", short: "Research & Academic" },
+  industry: { full: "AI, Engineering & Systems", short: "AI & Engineering" },
 };
 
-// Reveal-on-scroll. Content is NEVER allowed to depend on JS to be visible:
-// the effect re-runs whenever `deps` change (e.g. mode/lang swap remounts
-// sections) and a scroll listener re-sweeps so fast scrolling can't outrun
-// the reveal. prefers-reduced-motion → reveal everything immediately.
-function useScrollReveal(deps = []) {
-  useEffect(() => {
-    const reveal = (el) => {
-      el.classList.add("in");
-      el.getAnimations().forEach(a => a.finish());
-    };
-    const all = () => document.querySelectorAll(".reveal:not(.in), .reveal-stagger:not(.in)");
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      all().forEach(reveal);
-      return;
-    }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); } });
-    }, { threshold: 0.05, rootMargin: "0px 0px -10% 0px" });
-    const sweep = () => {
-      all().forEach(el => {
-        const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight * 0.95 && r.bottom > 0) reveal(el);
-        else io.observe(el);
-      });
-    };
-    requestAnimationFrame(sweep);
-    const timers = [250, 800, 1500].map(ms => setTimeout(sweep, ms));
-    // Fail-safe: re-sweep on scroll so a fast flick never leaves a section blank.
-    let raf = 0;
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; sweep(); }); };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      io.disconnect();
-      timers.forEach(clearTimeout);
-      window.removeEventListener("scroll", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, deps);
+function resolveInitialMode() {
+  try {
+    const param = new URLSearchParams(window.location.search).get("path");
+    if (param && PATH_PARAM_TO_MODE[param]) return PATH_PARAM_TO_MODE[param];
+    const stored = window.localStorage.getItem("wy-mode");
+    if (MODES.indexOf(stored) !== -1) return stored;
+  } catch (e) { /* storage/URL unavailable — fall through to default */ }
+  return "industry";
 }
 
-function useActiveSection(ids) {
-  const [active, setActive] = useState(ids[0]);
-  useEffect(() => {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
-    }, { rootMargin: "-40% 0px -55% 0px" });
-    ids.forEach(id => { const el = document.getElementById(id); if (el) io.observe(el); });
-    return () => io.disconnect();
-  }, [ids.join(",")]);
-  return active;
+function resolveInitialTheme() {
+  try {
+    const stored = window.localStorage.getItem("wy-theme");
+    if (stored === "dark" || stored === "light") return stored;
+  } catch (e) { /* storage unavailable */ }
+  return "light";
 }
 
-function nowMs() { return new Date().getTime(); }
-
-// Map a GitHub repo URL -> "owner/repo" slug's repo name (or null).
-function repoFromHref(href) {
-  const m = (href || "").match(/github\.com\/[^/]+\/([^/?#]+)/);
-  return m ? m[1].replace(/\/$/, "") : null;
-}
-
-// Live GitHub star/fork counts, cached in localStorage for 6h. Returns a map
-// { repoName: {stars, forks} } or null (loading / error -> consumers fall back
-// to the hardcoded counts in content.js). Never blocks render.
-function useGitHubStars(user = "WenyuChiou") {
-  const [data, setData] = useState(() => {
-    try {
-      const c = JSON.parse(localStorage.getItem("wy-gh-stars") || "null");
-      if (c && c.data && nowMs() - c.ts < 6 * 3600 * 1000) return c.data;
-    } catch (e) {}
-    return null;
-  });
-  useEffect(() => {
-    try {
-      const c = JSON.parse(localStorage.getItem("wy-gh-stars") || "null");
-      if (c && c.data && nowMs() - c.ts < 6 * 3600 * 1000) return; // fresh cache
-    } catch (e) {}
-    let alive = true;
-    fetch(`https://api.github.com/users/${user}/repos?per_page=100&sort=pushed`)
-      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then(repos => {
-        if (!alive || !Array.isArray(repos)) return;
-        const map = {};
-        repos.forEach(r => { map[r.name] = { stars: r.stargazers_count, forks: r.forks_count }; });
-        setData(map);
-        try { localStorage.setItem("wy-gh-stars", JSON.stringify({ ts: nowMs(), data: map })); } catch (e) {}
-      })
-      .catch(() => {}); // keep fallback
-    return () => { alive = false; };
-  }, [user]);
-  return data;
-}
-
-// Counts up 0 -> end when scrolled into view; respects reduced motion; restarts
-// when `end` changes (e.g. the live GitHub value resolves after first paint).
-function CountUp({ end, format }) {
-  const [val, setVal] = useState(end);
-  const ref = useRef(null);
-  const seen = useRef(false);
-  const fmt = format || ((n) => String(n));
-  useEffect(() => {
-    const target = Number(end) || 0;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setVal(target); return; }
-    const run = () => {
-      const dur = 900, t0 = performance.now();
-      const tick = (t) => {
-        const p = Math.min(1, (t - t0) / dur);
-        const eased = 1 - Math.pow(1 - p, 3);
-        setVal(Math.round(target * eased));
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    };
-    if (seen.current) { run(); return; } // already visible: animate to new target
-    const el = ref.current;
-    if (!el) { setVal(target); return; }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) { seen.current = true; run(); io.disconnect(); } });
-    }, { threshold: 0.1 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [end]);
-  return <span ref={ref}>{fmt(val)}</span>;
-}
-
-// Per-mode section ordering (W3 part 2). Industry leads with shipped work +
-// proof (Projects/Skills first); academic leads with research identity + papers.
-// Numbers in the section heads + nav are derived from position, not hardcoded.
-const SECTION_ORDER = {
-  industry: ["projects", "skills", "research", "pubs", "repos", "about", "contact"],
-  academic: ["about", "research", "pubs", "projects", "skills", "repos", "contact"],
+/* ---------------------------------------------------------------------------
+ * Homepage section table. Ids double as scroll targets for the command
+ * palette. Selected-engineering / selected-research swap order with the mode
+ * (IA §7.3); everything else is order-invariant. Pillar order NEVER changes.
+ * ------------------------------------------------------------------------- */
+const SEC = {
+  top: { id: "top", label: "Identity" },
+  pillars: { id: "pillars", label: "Proof" },
+  engineering: { id: "selected-engineering", label: "Selected engineering" },
+  research: { id: "selected-research", label: "Selected research" },
+  focus: { id: "focus", label: "Current focus" },
+  documents: { id: "documents", label: "Documents" },
+  contact: { id: "contact", label: "Contact" },
 };
 
-// Single source of truth for section id -> {en,zh} label, shared by the top
-// Nav and the SectionRail so the two can never drift. Reuses window.CONTENT.nav.
-function sectionLabel(id) {
-  const C = window.CONTENT.nav;
-  const map = {
-    about: C.about, research: C.research, projects: C.projects,
-    skills: { en: "Skills", zh: "技能" }, pubs: C.pubs, repos: C.repos, contact: C.contact,
-  };
-  return map[id] || { en: id, zh: id };
+function selectedOrder(mode) {
+  return mode === "academic" ? [SEC.research, SEC.engineering] : [SEC.engineering, SEC.research];
 }
 
-function Nav({ lang, setLang, theme, setTheme, active, mode = "industry", setMode, onCmdK }) {
-  const C = window.CONTENT.nav;
-  const [menuOpen, setMenuOpen] = useState(false);
-  useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (e) => { if (e.key === "Escape") setMenuOpen(false); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [menuOpen]);
-  const cvFile = CV_FILES[mode] || CV_FILES.industry;
-  const cvName = (mode === "academic" ? "Wenyu_Chiou_CV_Academic.pdf" : "Wenyu_Chiou_CV_Industry.pdf");
-  const links = (SECTION_ORDER[mode] || SECTION_ORDER.academic)
-    .map((id, i) => [id, sectionLabel(id), String(i + 1).padStart(2, "0")]);
+function homeSections(mode) {
+  return [SEC.top, SEC.pillars, ...selectedOrder(mode), SEC.focus, SEC.documents, SEC.contact];
+}
+
+/* --------------------------------- primitives ---------------------------- */
+
+// The evidence link — the site's signature device (VDS §5.6.2): mono, --signal,
+// trailing arrow, underline on hover only.
+function EvidenceLink({ href, children }) {
+  const external = /^https?:/.test(href);
   return (
-    <nav className="nav">
-      <div className="wrap nav-row">
-        <a href="#top" className="brand">
-          <div className="brand-mark"><span>w</span></div>
-          <div className="brand-name">
-            Wenyu Chiou
-            <span className="zh">{lang === "en" ? "邱文昱" : "Wenyu"}</span>
-          </div>
-        </a>
-        <div className="nav-links">
-          {links.map(([id, label, num]) => (
-            <a key={id} href={`#${id}`} data-num={num} className={active === id ? "active" : ""}>{T(label, lang)}</a>
-          ))}
-        </div>
-        <div className="nav-tools">
-          {setMode && <div className="nav-mode"><ModeSwitch mode={mode} setMode={setMode} lang={lang}/></div>}
-          <button className="nav-cmdk" onClick={onCmdK} title={lang === "en" ? "Quick nav (⌘K)" : "快速導覽 (⌘K)"} aria-label={lang === "en" ? "Open quick navigation" : "開啟快速導覽"}>
-            {window.Icons.search}<span className="nav-cmdk-keys mono">⌘K</span>
-          </button>
-          <a className="nav-cv" href={cvFile} download={cvName} title={T(window.CONTENT.hero.cv, lang)}>{window.Icons.download}<span>CV</span></a>
-          <button className="icon-btn" onClick={() => setLang(lang === "en" ? "zh" : "en")} title="Language" aria-label={lang === "en" ? "切換至中文 · Switch to Chinese" : "Switch to English · 切換至英文"}>
-            <span style={{fontFamily: "var(--serif)", fontStyle: "italic", fontSize: 14}}>{lang === "en" ? "中" : "EN"}</span>
-          </button>
-          <button className="icon-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} title="Theme" aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}>
-            {theme === "dark" ? window.Icons.sun : window.Icons.moon}
-          </button>
-          <button className="icon-btn nav-burger" onClick={() => setMenuOpen(o => !o)} aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen ? "true" : "false"} aria-controls="mobile-nav-menu">
-            {menuOpen ? window.Icons.close : window.Icons.menu}
-          </button>
-        </div>
-      </div>
-      {menuOpen && (
-        <div className="nav-menu" id="mobile-nav-menu">
-          <div className="wrap nav-menu-list">
-            {setMode && <div className="nav-menu-mode"><ModeSwitch mode={mode} setMode={setMode} lang={lang}/></div>}
-            {links.map(([id, label, num]) => (
-              <a key={id} href={`#${id}`} className={active === id ? "active" : ""} onClick={() => setMenuOpen(false)}>
-                <span className="nav-menu-num">{num}</span>{T(label, lang)}
-              </a>
-            ))}
-            <a className="nav-menu-cv" href={cvFile} download={cvName} onClick={() => setMenuOpen(false)}>
-              {window.Icons.download}{T(window.CONTENT.hero.cv, lang)}
-            </a>
-          </div>
-        </div>
-      )}
-    </nav>
+    <a className="evidence-link" href={href} rel={external ? "noopener" : undefined}>
+      {children}
+      <span className="evidence-arrow" aria-hidden="true">↗</span>
+    </a>
   );
 }
 
-function Hero({ lang, mode = "academic" }) {
-  const C = window.CONTENT.hero;
-  const I = window.CONTENT.industry?.hero;
-  if (mode === "industry" && I) return <HeroIndustry lang={lang} C={C} I={I}/>;
-  return <HeroAcademic lang={lang} C={C}/>;
+// Display text for a pillar's evidence link, derived from its target
+// (labels per VDS §5.6.2's pillar table).
+function evidenceText(href) {
+  if (href.indexOf("https://doi.org/") === 0) return "DOI " + href.slice("https://doi.org/".length);
+  if (href.indexOf("https://pypi.org/") === 0) return "pypi.org listing";
+  if (href.indexOf("/engineering/") === 0) return "merged PRs";
+  try { return new URL(href, "https://wenyuchiou.github.io").host; } catch (e) { return href; }
 }
 
-function HeroIndustry({ lang, C, I }) {
-  const eye = I.eyebrow[lang];
-  const h1 = I.h1[lang];
+// Section head: margin-rail number (mono micro) + serif h2 (VDS §5.7.2).
+function SectionHead({ num, title }) {
   return (
-    <header className="hero-v2 hero-industry" id="top">
-      <div className="wrap hero-v2-grid">
-        <div className="hero-v2-photo reveal" aria-hidden="true">
-          <img src="assets/cover.jpg" alt=""/>
-          <div className="hero-v2-photo-cap">
-            <span className="dot"/>
-            <span>{lang === "en" ? "AGU Fall Meeting 2025 · New Orleans" : "AGU 2025 · 紐奧良"}</span>
-          </div>
-        </div>
-
-        <div className="hero-v2-text">
-          <div className="hero-v2-eyebrow reveal">
-            <span>{eye[0]}</span>
-            <span className="sep"/>
-            <span>{eye[1]}</span>
-            <span className="sep"/>
-            <span className="live">{eye[2]}</span>
-          </div>
-
-          <h1 className="hero-v2-h1 reveal">
-            {h1.a}{" "}<em>{h1.b}</em>{" "}{h1.c}{" "}
-            <span className="serif-italic tail">{h1.d}</span>
-          </h1>
-
-          <p className="hero-v2-lede reveal">{T(I.lede, lang)}</p>
-
-          {I.pipeline && (
-            <div className="wagf-pipeline reveal">
-              <span className="wagf-pipeline-kicker">{T(I.pipeline.kicker, lang)}</span>
-              <ol className="wagf-stages">
-                {I.pipeline.stages.map((s, i) => (
-                  <li className={"wagf-stage" + (s.signal ? " is-signal" : "")} key={s.key}
-                      tabIndex={s.tip ? 0 : undefined}
-                      aria-label={s.tip ? T(s.label, lang) + " — " + T(s.tip, lang) : undefined}>
-                    <span className="wagf-node" aria-hidden="true"/>
-                    <span className="wagf-stage-label">{T(s.label, lang)}</span>
-                    {s.tip && <span className="wagf-tip" aria-hidden="true">{T(s.tip, lang)}</span>}
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-
-          <div className="hero-v2-currently reveal">
-            <span className="hero-currently-label">{T(I.currently.label, lang)}</span>
-            <ul className="hero-currently-list">
-              {I.currently.items.map((it, i) => (
-                <li key={i}><span className="hero-currently-dot" style={{background: it.dot}}/>{T(it.text, lang)}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="hero-v2-cta reveal">
-            <a className="btn primary" href="#contact">{window.Icons.mail}{T(I.cta_primary, lang)}</a>
-            <a className="btn" href={CV_FILES.industry} download="Wenyu_Chiou_CV_Industry.pdf">{window.Icons.download}{T(C.cv, lang)}</a>
-            <a className="btn ghost" href="https://www.linkedin.com/in/wenyu-chiou" target="_blank" rel="noopener noreferrer">{window.Icons.linkedin}{T(I.cta_linkedin, lang)}</a>
-            <a className="btn ghost" href="https://github.com/WenyuChiou" target="_blank" rel="noopener noreferrer">{window.Icons.github}GitHub</a>
-          </div>
-
-          <dl className="hero-v2-facts reveal">
-            <div><dt>{lang === "en" ? "Role sought" : "職位"}</dt><dd>{lang === "en" ? "AI Agent / ML Engineer · Applied Scientist" : "AI 代理 / ML 工程師 · 應用科學家"}</dd></div>
-            <div><dt>{lang === "en" ? "Location" : "地點"}</dt><dd>{lang === "en" ? "US · Taiwan · Remote" : "美國 · 台灣 · 遠端"}</dd></div>
-            <div><dt>{lang === "en" ? "Available" : "可用時程"}</dt><dd>{lang === "en" ? "Summer 2027 (intern) · Full-time 2027–28" : "2027 夏實習 · 2027–28 全職"}</dd></div>
-            <div><dt>{lang === "en" ? "Based in" : "現居"}</dt><dd>Bethlehem, PA · US</dd></div>
-          </dl>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-function HeroAcademic({ lang, C }) {
-  return (
-    <header className="hero-v2" id="top">
-      <div className="wrap hero-v2-grid">
-        <div className="hero-v2-photo reveal" aria-hidden="true">
-          <img src="assets/cover.jpg" alt=""/>
-          <div className="hero-v2-photo-cap">
-            <span className="dot"/>
-            <span>{lang === "en" ? "AGU Fall Meeting 2025 · New Orleans" : "AGU 2025 · 紐奧良"}</span>
-          </div>
-        </div>
-
-        <div className="hero-v2-text">
-          <div className="hero-v2-eyebrow reveal">
-            <span>{lang === "en" ? "Ph.D. Candidate" : "博士候選人"}</span>
-            <span className="sep"/>
-            <span>Lehigh · CEE</span>
-            <span className="sep"/>
-            <span className="live">{lang === "en" ? "Open for 2027" : "2027 開放合作"}</span>
-          </div>
-
-          <h1 className="hero-v2-h1 reveal">
-            {lang === "en" ? (
-              <>Modeling how households <em>decide</em> under <span className="mark">flood risk</span>, <span className="serif-italic tail">and how cities adapt.</span></>
-            ) : (
-              <>以 LLM 智能體模擬家戶面對 <span className="mark">洪水風險</span> 的<em>決策</em>，<span className="serif-italic tail">以及城市如何調適。</span></>
-            )}
-          </h1>
-
-          <p className="hero-v2-lede reveal">{T(C.lede, lang)}</p>
-
-          <div className="hero-v2-currently reveal">
-            <span className="hero-currently-label">{T(C.currently.label, lang)}</span>
-            <ul className="hero-currently-list">
-              {C.currently.items.map((it, i) => (
-                <li key={i}><span className="hero-currently-dot" style={{background: it.dot}}/>{T(it.text, lang)}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="hero-v2-cta reveal">
-            <a className="btn primary" href="#contact">{window.Icons.mail}{T(C.contact, lang)}</a>
-            <a className="btn" href={CV_FILES.academic} download="Wenyu_Chiou_CV_Academic.pdf">{window.Icons.download}{T(C.cv, lang)}</a>
-            <a className="btn ghost" href="https://github.com/WenyuChiou" target="_blank" rel="noopener noreferrer">{window.Icons.github}GitHub</a>
-            <a className="btn ghost" href="#projects">{lang === "en" ? "See work" : "看作品"}{window.Icons.arrow}</a>
-          </div>
-
-          <dl className="hero-v2-facts reveal">
-            <div><dt>{lang === "en" ? "Advisor" : "指導教授"}</dt><dd>Dr. Ethan Yang</dd></div>
-            <div><dt>{lang === "en" ? "Group" : "研究群"}</dt><dd>Complex Water Adaptive System</dd></div>
-            <div><dt>{lang === "en" ? "Center" : "中心"}</dt><dd>{lang === "en" ? "Catastrophe Modeling & Resilience" : "災害建模與韌性中心"}</dd></div>
-            <div><dt>{lang === "en" ? "Focus" : "重心"}</dt><dd>ABM · LLM Agents · Flood Risk</dd></div>
-            <div><dt>{lang === "en" ? "Since" : "起始"}</dt><dd>Aug 2024</dd></div>
-            <div><dt>{lang === "en" ? "Based in" : "地點"}</dt><dd>Bethlehem, PA · US</dd></div>
-          </dl>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-function SectionHead({ num, kicker, lang, sub }) {
-  return (
-    <header className="section-head reveal">
-      <div className="section-head-meta">
-        <span className="section-num">{num}</span>
-        <div className="section-rule reveal"/>
-        {sub && <span className="section-sub">{T(sub, lang)}</span>}
-      </div>
-      <h2 className="section-title">{T(kicker, lang)}</h2>
-    </header>
-  );
-}
-
-function About({ lang, num }) {
-  const C = window.CONTENT.about;
-  return (
-    <section id="about" className="wrap section-pad">
-      <SectionHead num={num} kicker={C.kicker} lang={lang}/>
-
-      <div className="about-v2">
-        <div className="about-v2-lead reveal">
-          <p className="lead-text">
-            {lang === "en" ? (
-              <>I build <span className="lead-uline">agent-based models</span> coupled with catastrophe simulators, and use <em>LLM agents</em> to study long-term household adaptation to flood risk.</>
-            ) : (
-              <>我結合 <span className="lead-uline">智能體模擬 (ABM)</span> 與災害模型，並以 <em>LLM 智能體</em> 研究家戶面對洪水風險的長期調適行為。</>
-            )}
-          </p>
-        </div>
-
-        <div className="about-v2-body reveal">
-          <p>{T(C.p1, lang)}</p>
-          <p>{T(C.p2, lang)}</p>
-        </div>
-
-        <div className="about-keywords reveal">
-          {/* decorative attention/concept-graph — the keywords related to one another,
-              as an interpretability view draws self-attention. Draws once then rests. */}
-          <svg className="keyword-attn" aria-hidden="true" viewBox="0 0 300 200" preserveAspectRatio="none">
-            <g className="kw-edges" fill="none" stroke="var(--accent)" strokeLinecap="round">
-              <path d="M40,46 C110,20 180,70 250,40"/>
-              <path d="M40,46 C90,110 150,120 250,150"/>
-              <path d="M250,40 C200,90 150,80 70,140"/>
-              <path d="M250,40 C260,100 180,150 130,165"/>
-              <path d="M40,46 C120,60 170,40 250,150"/>
-              <path d="M70,140 C140,120 200,130 250,150"/>
-              <path d="M130,165 C90,120 120,70 250,40"/>
-              <path d="M40,46 C30,110 50,150 130,165"/>
-            </g>
-            <g className="kw-nodes" fill="var(--accent)">
-              <circle cx="40" cy="46" r="3.5"/>
-              <circle cx="250" cy="40" r="3.5"/>
-              <circle cx="70" cy="140" r="3"/>
-              <circle cx="250" cy="150" r="3"/>
-              <circle cx="130" cy="165" r="3"/>
-              <circle cx="160" cy="90" r="2.5"/>
-            </g>
-          </svg>
-          <span className="about-keywords-label">{T(C.interests_label, lang)}</span>
-          <div className="interests">
-            {C.interests.map((i, idx) => <span className="chip" key={idx}>{T(i, lang)}</span>)}
-          </div>
-        </div>
-      </div>
-
-      <div className="field-strip reveal-stagger">
-        <figure className="field-item">
-          <img src="assets/ies.jpg" alt="Institute of Earth Sciences internship"/>
-          <figcaption>
-            <span className="y">2020</span>
-            <span className="t">{lang === "en" ? "Academia Sinica — IES Summer Research" : "中研院 · 地科所暑期研究"}</span>
-          </figcaption>
-        </figure>
-        <figure className="field-item">
-          <img src="assets/ncdr.jpg" alt="NCDR summer internship"/>
-          <figcaption>
-            <span className="y">2022</span>
-            <span className="t">{lang === "en" ? "NCDR — Climate Adaptation Internship" : "NCDR · 氣候調適實習"}</span>
-          </figcaption>
-        </figure>
-        <figure className="field-item">
-          <img src="assets/cover.jpg" alt="AGU 2025 poster"/>
-          <figcaption>
-            <span className="y">2025</span>
-            <span className="t">{lang === "en" ? "AGU Fall Meeting — Poster NH41E-0449" : "AGU 年會 · 海報 NH41E-0449"}</span>
-          </figcaption>
-        </figure>
-      </div>
-    </section>
-  );
-}
-
-function Timeline({ items, lang }) {
-  // Vertical fallback (used for Education)
-  return (
-    <div className="timeline reveal-stagger">
-      {items.map((it, i) => (
-        <div className="t-item" key={i}>
-          <div className="t-date">{T(it.date, lang)}</div>
-          <div className="t-dot" aria-hidden="true"></div>
-          <div className="t-body">
-            <h3>{T(it.role, lang)}</h3>
-            <span className="t-org">{T(it.org, lang)}</span>
-            <p>{T(it.desc, lang)}</p>
-            <div className="t-tags">
-              {it.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
-            </div>
-          </div>
-        </div>
-      ))}
+    <div className="section-head">
+      <span className="section-num" aria-hidden="true">{num}</span>
+      <h2 className="section-title">{title}</h2>
     </div>
   );
 }
 
-// Horizontal interactive timeline — industry-facing
-function CareerTrack({ items, lang, mode }) {
-  // items come newest-first from content; reverse so time reads left→right
-  const chrono = [...items].reverse();
-  const defaultIdx = chrono.length - 1; // most recent selected
-  const [sel, setSel] = useState(defaultIdx);
-  const [hover, setHover] = useState(null);
-  const active = hover != null ? hover : sel;
-  const cur = chrono[active];
+function QuietLinks() {
+  const M = CONTENT.meta;
+  return (
+    <p className="quiet-links">
+      <a className="quiet-link" href={M.github} rel="noopener">GitHub</a>
+      <span className="link-sep" aria-hidden="true">·</span>
+      <a className="quiet-link" href={M.orcid} rel="noopener">ORCID</a>
+    </p>
+  );
+}
 
-  // Short year label for axis (e.g. "2020", "2024")
-  const yearOf = (it) => {
-    const d = T(it.date, "en");
-    const m = d.match(/(19|20)\d{2}/);
-    return m ? m[0] : "";
-  };
-  const shortRole = (it) => {
-    const r = T(it.role, "en");
-    // abbreviations suitable for the tick labels
-    if (/Ph\.?D/i.test(r)) return "Ph.D.";
-    if (/Candidate/i.test(r)) return "Ph.D.";
-    if (/Summer Intern/i.test(r)) return "Intern";
-    if (/Research Intern/i.test(r)) return "Intern";
-    if (/Research Assistant/i.test(r)) return "RA";
-    return r.split(" ")[0];
-  };
-  const shortOrg = (it) => {
-    const o = T(it.org, "en");
-    if (/Lehigh/.test(o)) return "Lehigh";
-    if (/National Central/.test(o)) return "NCU";
-    if (/NCDR/.test(o)) return "NCDR";
-    if (/Academia Sinica/.test(o)) return "IES";
-    return o.split(/[·,]/)[0].trim();
-  };
+/* ------------------------------- mode switch ----------------------------- */
+// Accessible radiogroup (VDS §5.6.8): two options, roving tabindex, arrow-key
+// navigation (selection follows focus, WAI-ARIA radio-group pattern).
+// aria-labels carry the full locked path names; visible labels are short at
+// desktop widths and full-length inside the mobile menu (CSS swaps the spans).
+function ModeSwitch({ mode, onModeChange }) {
+  const refs = useRef({});
+  const options = ["academic", "industry"]; // Research & Academic Work | AI, Engineering & Systems
 
-  const nodeRefs = useRef([]);
-  const onKey = (e) => {
-    let ni;
-    if (e.key === "ArrowRight") ni = Math.min(chrono.length - 1, sel + 1);
-    else if (e.key === "ArrowLeft") ni = Math.max(0, sel - 1);
-    else return;
-    e.preventDefault();
-    setSel(ni);
-    const n = nodeRefs.current[ni]; if (n) n.focus();
+  const move = (delta) => {
+    const idx = options.indexOf(mode);
+    const next = options[(idx + delta + options.length) % options.length];
+    onModeChange(next);
+    const el = refs.current[next];
+    if (el) el.focus();
+  };
+  const onKeyDown = (e) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); move(1); }
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); move(-1); }
   };
 
   return (
-    <div className="career" onKeyDown={onKey}>
-      {/* Axis with nodes + a ghost "next" node on the right */}
-      <div className="career-axis" role="tablist" aria-label={lang === "en" ? "Career timeline" : "職涯時間軸"}>
-        <div className="career-line"/>
-        {chrono.map((it, i) => (
+    <div className="mode-switch" role="radiogroup" aria-label="Reading path">
+      {options.map((value) => {
+        const active = mode === value;
+        return (
           <button
-            key={i}
-            ref={el => { nodeRefs.current[i] = el; }}
-            className={"career-node" + (active === i ? " is-active" : "") + (sel === i ? " is-selected" : "")}
-            role="tab"
-            tabIndex={sel === i ? 0 : -1}
-            aria-selected={sel === i ? "true" : "false"}
-            onClick={() => setSel(i)}
-            onMouseEnter={() => setHover(i)}
-            onMouseLeave={() => setHover(null)}
+            key={value}
+            ref={(el) => { refs.current[value] = el; }}
+            type="button"
+            role="radio"
+            aria-checked={active}
+            aria-label={MODE_LABELS[value].full}
+            tabIndex={active ? 0 : -1}
+            className={"mode-option" + (active ? " is-active" : "")}
+            onClick={() => onModeChange(value)}
+            onKeyDown={onKeyDown}
           >
-            <span className="node-dot" aria-hidden="true"></span>
-            <span className="node-year mono">{yearOf(it)}</span>
-            <span className="node-label">
-              <span className="node-role">{shortRole(it)}</span>
-              <span className="node-org">{shortOrg(it)}</span>
-            </span>
+            <span className="mode-label-short" aria-hidden="true">{MODE_LABELS[value].short}</span>
+            <span className="mode-label-full" aria-hidden="true">{MODE_LABELS[value].full}</span>
           </button>
-        ))}
-        <div className="career-node career-node-next" aria-hidden="true">
-          <span className="node-dot node-dot-future"></span>
-          <span className="node-year mono">2026</span>
-          <span className="node-label">
-            <span className="node-role">{lang === "en" ? "Next" : "下一步"}</span>
-            <span className="node-org">{mode === "academic" ? (lang === "en" ? "Dissertation" : "博士論文") : (lang === "en" ? "Industry" : "業界")}</span>
-          </span>
-        </div>
-      </div>
+        );
+      })}
+    </div>
+  );
+}
 
-      {/* Detail panel */}
-      <div className="career-panel" key={active}>
-        <div className="career-panel-head">
-          <span className="career-date mono">{T(cur.date, lang)}</span>
-          <span className="career-org-line">{T(cur.org, lang)}</span>
-        </div>
-        <h3 className="career-role">{T(cur.role, lang)}</h3>
-        <p className="career-desc">{T(cur.desc, lang)}</p>
-        {cur.bullets && cur.bullets.length > 0 && (
-          <ul className="career-bullets">
-            {cur.bullets.map((b, j) => (
-              <li key={j} className="career-bullet">
-                <span className="career-bullet-num mono">{String(j + 1).padStart(2, "0")}</span>
-                <span className="career-bullet-text">{T(b, lang)}</span>
+function ThemeToggle({ theme, onThemeChange }) {
+  const dark = theme === "dark";
+  return (
+    <button
+      type="button"
+      className="theme-toggle"
+      aria-pressed={dark}
+      aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+      onClick={() => onThemeChange(dark ? "light" : "dark")}
+    >
+      {dark ? Icons.sun : Icons.moon}
+    </button>
+  );
+}
+
+/* ------------------------------- nav / footer ---------------------------- */
+// Header per IA §5.1: wordmark, three nav links, mode toggle, single mailto CTA.
+// The CTA is outline-styled — the page's ONE filled .btn-primary is the contact
+// block's button (VDS §5.6.7 component invariant).
+function Nav({ mode, onModeChange, theme, onThemeChange }) {
+  const M = CONTENT.meta;
+  const [open, setOpen] = useState(false);
+  const links = [
+    { label: "Research", href: "/research/", anchor: "academic" },
+    { label: "Engineering", href: "/engineering/", anchor: "industry" },
+    { label: "Publications", href: "/publications/" },
+  ];
+  return (
+    <header className="site-header">
+      <a className="skip-link" href="#main">Skip to content</a>
+      <div className="wrap nav-inner">
+        <a className="wordmark" href="/">{M.name}</a>
+        <nav className={"site-nav" + (open ? " is-open" : "")} aria-label="Site">
+          <ul className="nav-links">
+            {links.map((l) => (
+              <li key={l.href}>
+                <a
+                  className={"nav-link" + (l.anchor === mode ? " is-path-primary" : "")}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                >
+                  {l.label}
+                </a>
               </li>
             ))}
           </ul>
-        )}
-        <div className="career-tags">
-          {cur.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="career-controls">
-        <button className="career-btn" onClick={() => setSel(i => Math.max(0, i - 1))} disabled={sel === 0} aria-label="Previous">←</button>
-        <span className="career-count mono">{String(sel + 1).padStart(2, "0")} / {String(chrono.length).padStart(2, "0")}</span>
-        <button className="career-btn" onClick={() => setSel(i => Math.min(chrono.length - 1, i + 1))} disabled={sel === chrono.length - 1} aria-label="Next">→</button>
-      </div>
-    </div>
-  );
-}
-
-function Research({ lang, num, mode }) {
-  const E = window.CONTENT.experience;
-  const D = window.CONTENT.education;
-  return (
-    <section id="research" className="wrap section-pad">
-      <SectionHead num={num} kicker={E.kicker} lang={lang} sub={mode === "academic" ? {en: "Research trajectory & training", zh: "研究歷程與訓練"} : {en: "Career trajectory · open for 2027 industry roles", zh: "職涯軌跡 · 2027 業界機會開放中"}}/>
-      <CareerTrack items={E.items} lang={lang} mode={mode}/>
-      <div className="edu-compact reveal-stagger">
-        <h4 className="col-title">{lang === "en" ? "Education" : "學歷"}</h4>
-        <ul className="edu-list">
-          {D.items.map((it, i) => (
-            <li className="edu-row" key={i}>
-              <span className="edu-date mono">{T(it.date, lang)}</span>
-              <div className="edu-body">
-                <span className="edu-role">{T(it.role, lang)}</span>
-                <span className="edu-org">{T(it.org, lang)}</span>
-              </div>
-              <div className="edu-tags">{it.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}</div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-function Projects({ lang, gh, num }) {
-  const C = window.CONTENT.projects;
-  const [open, setOpen] = useState(null);     // expanded compact card key
-  const [lightbox, setLightbox] = useState(null); // {src, alt} or null
-
-  // Live star count for a project (by repo slug), falling back to hardcoded.
-  const liveStars = (p) => {
-    const n = repoFromHref(p.href);
-    const l = n && gh && gh[n];
-    return (l ? l.stars : p.stars) || 0;
-  };
-
-  // Derive a short compact-card name from the project's URL (repo slug)
-  // and fall back to the first 1–2 words of the title.
-  const compactName = (p) => {
-    const url = p.href || "";
-    const m = url.match(/github\.com\/[^/]+\/([^/?#]+)/) ||
-              url.match(/wenyuchiou\.github\.io\/([^/?#]+)/);
-    if (m && m[1]) return m[1].replace(/\/$/, "");
-    const title = (p.title.en || "").split(" — ")[0];
-    return title.split(" ").slice(0, 2).join(" ");
-  };
-
-  // Star highlight threshold — items with stars >= this get a visible badge
-  const STAR_HIGHLIGHT = 30;
-
-  const renderCompact = (p, i) => {
-    const key = p.href + i;
-    const isOpen = open === key;
-    const stars = liveStars(p);
-    const did = ("projd-" + (p.href || compactName(p))).replace(/[^a-zA-Z0-9_-]/g, "-");
-    return (
-      <article className={"proj-compact" + (isOpen ? " open" : "")} key={i}>
-        <div className="proj-compact-trigger" role="button" tabIndex={0}
-             aria-expanded={isOpen ? "true" : "false"} aria-controls={isOpen ? did : undefined}
-             title={lang === "en" ? "Click for details" : "點擊看詳情"}
-             onClick={() => setOpen(isOpen ? null : key)}
-             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(isOpen ? null : key); } }}>
-          <div className="proj-compact-head">
-            <span className="proj-compact-name">{compactName(p)}</span>
-            {stars >= STAR_HIGHLIGHT
-              ? <span className="proj-compact-stars" title={stars + " stars"}>★ <CountUp end={stars}/></span>
-              : <span className="proj-compact-chevron" aria-hidden="true">{isOpen ? "–" : "+"}</span>}
+          <div className="nav-menu-extras">
+            <ModeSwitch mode={mode} onModeChange={onModeChange} />
+            <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
           </div>
-          <div className="proj-compact-meta">{T(p.meta, lang)}</div>
-          {p.tldr && <p className="proj-compact-tldr">{T(p.tldr, lang)}</p>}
-          <div className="proj-compact-tags">
-            {(p.tags || []).slice(0, 3).map((t, j) => <span className="chip chip-sm" key={j}>{t}</span>)}
-          </div>
+        </nav>
+        <div className="nav-tools">
+          <ModeSwitch mode={mode} onModeChange={onModeChange} />
+          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
         </div>
-        {isOpen && (
-          <div className="proj-detail" id={did}>
-            {p.desc && <p className="proj-detail-desc">{T(p.desc, lang)}</p>}
-            {p.image && (
-              <button className="proj-detail-poster" onClick={() => setLightbox({ src: p.image, alt: T(p.title, lang) })}
-                      aria-label={lang === "en" ? "Enlarge image" : "放大圖片"}>
-                <img src={p.image} alt={T(p.title, lang)} loading="lazy"/>
-              </button>
-            )}
-            <a className="proj-detail-link" href={p.href} target="_blank" rel="noopener noreferrer">
-              {window.Icons.github}<span>{lang === "en" ? "View on GitHub" : "前往 GitHub"} ↗</span>
-            </a>
-          </div>
-        )}
-      </article>
-    );
-  };
-
-  const renderFlagship = (p, i) => {
-   const fstars = liveStars(p);
-   return (
-    <div className={"proj-flagship reveal" + (p.image ? " has-media" : "")} key={i}>
-      <div className="proj-flagship-main">
-        <div className="proj-flagship-head">
-          <span className="proj-flagship-star">{String(i + 1).padStart(2, "0")}</span>
-          <span className="proj-flagship-tag">{lang === "en" ? "CASE STUDY" : "案例研究"}</span>
-          <span className="proj-flagship-meta">{T(p.meta, lang)}</span>
-        </div>
-        <h3 className="proj-flagship-title">{T(p.title, lang)}</h3>
-        {p.stack && (
-          <div className="proj-flagship-subtitle">
-            {p.stack.slice(0, 4).map((s, j) => (
-              <React.Fragment key={j}>
-                {j > 0 && <span className="proj-flagship-dot"> · </span>}
-                <span>{s}</span>
-              </React.Fragment>
-            ))}
-          </div>
-        )}
-        <p className="proj-flagship-desc">{T(p.desc, lang)}</p>
-        <div className="proj-flagship-tags">
-          {p.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
-        </div>
-        <div className="proj-flagship-foot">
-          {fstars >= STAR_HIGHLIGHT && <span className="proj-flagship-stars">★ <CountUp end={fstars}/></span>}
-          <div className="proj-flagship-links">
-            <a className="proj-flagship-btn primary" href={p.href} target="_blank" rel="noopener noreferrer">
-              {window.Icons.github}
-              <span>{lang === "en" ? "View on GitHub" : "前往 GitHub"} ↗</span>
-            </a>
-          </div>
-        </div>
-      </div>
-      {p.image && (
-        <button className="proj-flagship-poster" onClick={() => setLightbox({ src: p.image, alt: T(p.title, lang) })}
-                aria-label={lang === "en" ? "Enlarge image" : "放大圖片"}>
-          <img src={p.image} alt={T(p.title, lang)} loading="lazy"/>
+        <a className="btn btn-outline nav-cta" href={"mailto:" + M.email}>Email me</a>
+        <button
+          type="button"
+          className="nav-menu-btn"
+          aria-expanded={open}
+          aria-label={open ? "Close menu" : "Menu"}
+          onClick={() => setOpen(!open)}
+        >
+          {open ? Icons.close : Icons.menu}
         </button>
-      )}
-    </div>
-   );
-  };
-
-  return (
-    <section id="projects" className="wrap section-pad">
-      <SectionHead num={num} kicker={C.kicker} lang={lang} sub={{en: "Four flagship case studies", zh: "四個旗艦案例"}}/>
-      <p className="reveal section-intro">{T(C.intro, lang)}</p>
-
-      <div className="proj-flagships">
-        {C.items.filter(p => p.featured).map((p, i) => renderFlagship(p, i))}
       </div>
-      {C.items.some(p => !p.featured) && (
-        <div className="proj-compact-grid reveal-stagger">
-          {C.items.filter(p => !p.featured).map((p, i) => renderCompact(p, i))}
-        </div>
-      )}
-      <a className="proj-crosslink reveal" href="#repos">
-        <span>{lang === "en"
-          ? "See all " + window.CONTENT.repos.items.length + " repositories in Open Source"
-          : "查看「開源」中全部 " + window.CONTENT.repos.items.length + " 個儲存庫"}</span>
-        <span className="proj-crosslink-arrow" aria-hidden="true">↓</span>
-      </a>
-      {lightbox && <Lightbox {...lightbox} onClose={() => setLightbox(null)} lang={lang}/>}
-    </section>
+    </header>
   );
 }
 
-// Dimmed full-image overlay. Esc / click-outside / close button dismisses;
-// focus moves to the close button and the page scroll is locked while open.
-function Lightbox({ src, alt, onClose, lang }) {
-  const btn = useRef(null);
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-      else if (e.key === "Tab") { e.preventDefault(); if (btn.current) btn.current.focus(); } // trap focus
-    };
-    document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    if (btn.current) btn.current.focus();
-    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
-  }, [onClose]);
+// Footer per IA §5.2 — identical on all pages; links are navigation, not CTAs.
+function Footer() {
+  const F = CONTENT.footer;
   return (
-    <div className="lightbox" role="dialog" aria-modal="true" aria-label={alt} onClick={onClose}>
-      <button ref={btn} className="lightbox-close" onClick={onClose} aria-label={lang === "en" ? "Close" : "關閉"}>{window.Icons.close}</button>
-      <img className="lightbox-img" src={src} alt={alt} onClick={(e) => e.stopPropagation()}/>
-    </div>
-  );
-}
-
-// Cmd/Ctrl-K quick-nav palette: jump to a section or fire an action. Filter by
-// typing, Arrow-Up/Down to move, Enter to run, Esc / click-outside to close.
-function CommandPalette({ open, onClose, lang, mode, setLang, setTheme, setMode }) {
-  const [q, setQ] = useState("");
-  const [sel, setSel] = useState(0);
-  const inputRef = useRef(null);
-  const restore = useRef(null);
-
-  const go = (id) => { onClose(); requestAnimationFrame(() => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: "smooth" }); }); };
-  const ext = (url) => { onClose(); window.open(url, "_blank", "noopener,noreferrer"); };
-  const sections = (SECTION_ORDER[mode] || SECTION_ORDER.academic).map((id, i) => ({
-    label: sectionLabel(id),
-    hint: String(i + 1).padStart(2, "0"),
-    run: () => go(id),
-  }));
-  const items = [
-    ...sections,
-    { label: { en: "Download CV", zh: "下載 CV" }, hint: "↓", run: () => { onClose(); window.location.href = CV_FILES[mode] || CV_FILES.industry; } },
-    { label: { en: "Email Wenyu", zh: "寄信給我" }, run: () => { onClose(); window.location.href = "mailto:wec324@lehigh.edu"; } },
-    { label: { en: "GitHub", zh: "GitHub" }, run: () => ext("https://github.com/WenyuChiou") },
-    { label: { en: "LinkedIn profile", zh: "LinkedIn 個人頁" }, run: () => ext("https://www.linkedin.com/in/wenyu-chiou") },
-    { label: { en: "Toggle dark / light", zh: "切換深 / 淺色" }, run: () => { onClose(); setTheme(t => t === "dark" ? "light" : "dark"); } },
-    { label: { en: mode === "industry" ? "Switch to Academic view" : "Switch to Industry view", zh: mode === "industry" ? "切換到學術版" : "切換到業界版" }, run: () => { onClose(); setMode(m => m === "industry" ? "academic" : "industry"); } },
-    { label: { en: "Switch language 中/EN", zh: "切換語言 中/EN" }, run: () => { onClose(); setLang(l => l === "en" ? "zh" : "en"); } },
-  ];
-  const shown = items.filter(it => T(it.label, lang).toLowerCase().includes(q.trim().toLowerCase()));
-  const activeOptionId = shown[sel] ? "cmdk-option-" + sel : undefined;
-
-  useEffect(() => {
-    if (!open) return;
-    setQ(""); setSel(0);
-    restore.current = document.activeElement;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    requestAnimationFrame(() => { if (inputRef.current) inputRef.current.focus(); });
-    return () => { document.body.style.overflow = prev; if (restore.current && restore.current.focus) restore.current.focus(); };
-  }, [open]);
-  useEffect(() => { setSel(0); }, [q]);
-
-  if (!open) return null;
-  const onKey = (e) => {
-    if (e.key === "ArrowDown") { e.preventDefault(); setSel(s => Math.min(s + 1, shown.length - 1)); }
-    else if (e.key === "ArrowUp") { e.preventDefault(); setSel(s => Math.max(s - 1, 0)); }
-    else if (e.key === "Enter") { e.preventDefault(); const it = shown[sel]; if (it) it.run(); }
-    else if (e.key === "Escape") { e.preventDefault(); onClose(); }
-    else if (e.key === "Tab") { e.preventDefault(); if (inputRef.current) inputRef.current.focus(); } // trap focus to palette
-  };
-  return (
-    <div className="cmdk-overlay" onClick={onClose}>
-      <div className="cmdk-panel" role="dialog" aria-modal="true" aria-label={lang === "en" ? "Quick navigation" : "快速導覽"} onClick={(e) => e.stopPropagation()}>
-        <input ref={inputRef} className="cmdk-input" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={onKey}
-               aria-controls="cmdk-list" aria-activedescendant={activeOptionId}
-               placeholder={lang === "en" ? "Jump to a section or action…" : "跳到區塊或執行動作…"}
-               aria-label={lang === "en" ? "Search" : "搜尋"} autoComplete="off"/>
-        <ul id="cmdk-list" className="cmdk-list" role="listbox" tabIndex={0} onKeyDown={onKey} aria-label={lang === "en" ? "Quick navigation results" : "快速導覽結果"}>
-          {shown.length === 0 && <li className="cmdk-empty">{lang === "en" ? "No matches" : "無相符項目"}</li>}
-          {shown.map((it, i) => (
-            <li key={i} id={"cmdk-option-" + i} role="option" aria-selected={i === sel ? "true" : "false"}
-                className={"cmdk-item" + (i === sel ? " active" : "")}
-                onMouseEnter={() => setSel(i)} onClick={() => it.run()}>
-              <span>{T(it.label, lang)}</span>
-              {it.hint && <span className="cmdk-hint mono">{it.hint}</span>}
+    <footer className="site-footer">
+      <div className="wrap">
+        <p className="footer-line1">{F.line1}</p>
+        <ul className="footer-links">
+          {F.links.map((l) => (
+            <li key={l.href}>
+              <a href={l.href} rel={/^https?:/.test(l.href) ? "noopener" : undefined}>{l.label}</a>
             </li>
           ))}
         </ul>
-        <div className="cmdk-foot mono">↑↓ {lang === "en" ? "navigate" : "移動"} · ↵ {lang === "en" ? "select" : "選擇"} · esc {lang === "en" ? "close" : "關閉"}</div>
-      </div>
-    </div>
-  );
-}
-
-function Publications({ lang, num }) {
-  const C = window.CONTENT.pubs;
-  const [expanded, setExpanded] = React.useState(null);
-  const [copied, setCopied] = React.useState(null);
-
-  const typeLabel = {
-    journal: lang === "en" ? "Journal" : "期刊",
-    poster:  lang === "en" ? "Poster"  : "海報",
-    report:  lang === "en" ? "Report"  : "報告",
-    preprint: lang === "en" ? "Preprint" : "預印本",
-  };
-
-  const journalCount = C.items.filter(p => p.type === "journal" && !p.status).length;
-  const posterCount = C.items.filter(p => p.type === "poster").length;
-
-  const makeBibtex = (p) => {
-    const first = p.authors.split(",")[0].trim().toLowerCase().replace(/[^a-z]/g, "");
-    const key = `${first}${p.year}`;
-    return `@${p.type === "journal" ? "article" : "misc"}{${key},\n  author = {${p.authors}},\n  title  = {${T(p.title, "en")}},\n  venue  = {${p.venue}},\n  year   = {${p.year}}${p.doi ? `,\n  doi    = {${p.doi}}` : ""}\n}`;
-  };
-
-  const copyBib = (e, p, i) => {
-    e.preventDefault(); e.stopPropagation();
-    navigator.clipboard.writeText(makeBibtex(p));
-    setCopied(i);
-    setTimeout(() => setCopied(null), 1600);
-  };
-
-  return (
-    <section id="pubs" className="wrap section-pad">
-      <SectionHead num={num} kicker={C.kicker} lang={lang}/>
-      <p className="reveal section-intro">{T(C.intro, lang)}</p>
-
-      <div className="pub-summary reveal">
-        <div className="pub-sum-item"><span className="pub-sum-num">{C.items.length}</span><span className="pub-sum-lbl">{lang === "en" ? "Publications" : "著作"}</span></div>
-        <div className="pub-sum-item"><span className="pub-sum-num">{posterCount}</span><span className="pub-sum-lbl">{lang === "en" ? "Conference posters" : "會議海報"}</span></div>
-        <div className="pub-sum-item"><span className="pub-sum-num">{journalCount}</span><span className="pub-sum-lbl">{lang === "en" ? "Journal articles" : "期刊論文"}</span></div>
-      </div>
-
-      <div className="pub-list reveal-stagger">
-        {C.items.map((p, i) => {
-          const meToken = p.meToken || "Chiou, W.-Y.";
-          // case-insensitive split so author highlight never silently drops on format variance
-          const parts = p.authors.split(new RegExp(meToken.replace(/[.*+?^${}()|[\]\\]/g, "\$&"), "i"));
-          const isOpen = expanded === i;
-          return (
-            <article className={"pub" + (p.featured ? " pub-featured" : "") + (isOpen ? " pub-open" : "")} key={i}>
-              <div className="pub-num">{String(i + 1).padStart(2, "0")}</div>
-              <div className="pub-body">
-                <div className="pub-meta-top">
-                  <span className={"pub-type pub-type-" + p.type}>{typeLabel[p.type] || p.type}</span>
-                  {p.status && <span className="pub-status-pill mono">{p.status === "under review" ? (lang === "en" ? "Under review" : "審查中") : p.status === "in prep" ? (lang === "en" ? "In preparation" : "撰寫中") : p.status}</span>}
-                  {p.quartile && <span className="pub-q">{p.quartile}</span>}
-                  {p.featured && <span className="pub-featured-badge">★ {lang === "en" ? "Featured" : "精選"}</span>}
-                  <span className="pub-venue-short mono">{p.venue_short || p.venue}</span>
-                </div>
-                <h3 className="pub-title">
-                  <button type="button" className="pub-title-button" aria-expanded={isOpen ? "true" : "false"} aria-controls={isOpen ? ("puba-" + i) : undefined} onClick={() => setExpanded(isOpen ? null : i)}>
-                    {T(p.title, lang)}
-                  </button>
-                </h3>
-                <div className="pub-authors">
-                  {parts.map((chunk, j) => (
-                    <React.Fragment key={j}>
-                      {chunk}
-                      {j < parts.length - 1 && <span className="me">{meToken}</span>}
-                    </React.Fragment>
-                  ))}
-                </div>
-                {isOpen && p.abstract && (
-                  <p className="pub-abstract" id={"puba-" + i}>{T(p.abstract, lang)}</p>
-                )}
-                <div className="pub-actions">
-                  {p.cites > 0 && (
-                    <span className="pub-cites">
-                      <svg viewBox="0 0 16 16" width="11" height="11" fill="currentColor"><path d="M6 2a1 1 0 000 2h4a1 1 0 100-2H6zM4 6a1 1 0 011-1h6a1 1 0 110 2H5a1 1 0 01-1-1zm-1 4a1 1 0 011-1h8a1 1 0 110 2H4a1 1 0 01-1-1zm1 4a1 1 0 011-1h6a1 1 0 110 2H5a1 1 0 01-1-1z"/></svg>
-                      {lang === "en" ? "Cited by " : "被引用 "}{p.cites}
-                    </span>
-                  )}
-                  {p.pdf && (
-                    <a className="pub-link" href={p.pdf} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()}>
-                      {lang === "en" ? (p.type === "poster" ? "Poster PDF" : "Paper PDF") : (p.type === "poster" ? "海報 PDF" : "論文 PDF")} ↗
-                    </a>
-                  )}
-                  {p.code && (
-                    <a className="pub-link" href={p.code} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()}>
-                      {lang === "en" ? "Code" : "程式碼"} ↗
-                    </a>
-                  )}
-                  {p.doi && (
-                    <a className="pub-link" href={`https://doi.org/${p.doi}`} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()}>
-                      DOI ↗
-                    </a>
-                  )}
-                  {!p.status && (
-                    <button className="pub-link" onClick={(e) => copyBib(e, p, i)}>
-                      {copied === i ? (lang === "en" ? "✓ Copied" : "✓ 已複製") : "BibTeX"}
-                    </button>
-                  )}
-                  <button className="pub-link pub-expand" onClick={(e) => { e.preventDefault(); setExpanded(isOpen ? null : i); }}>
-                    {isOpen ? (lang === "en" ? "Hide abstract ↑" : "收合摘要 ↑") : (lang === "en" ? "Abstract ↓" : "摘要 ↓")}
-                  </button>
-                </div>
-              </div>
-              {!p.status && <div className="pub-year">{p.year}</div>}
-            </article>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function Skills({ lang, mode, num }) {
-  const ind = mode === "industry" && window.CONTENT.industry && window.CONTENT.industry.skills;
-  const C = ind ? { kicker: window.CONTENT.skills.kicker, cats: ind.cats } : window.CONTENT.skills;
-  const iconMap = {
-    brain: window.Icons.brain || window.Icons.repo,
-    code:  window.Icons.code  || window.Icons.repo,
-    ai:    window.Icons.ai    || window.Icons.repo,
-    flow:  window.Icons.flow  || window.Icons.repo,
-    data:  window.Icons.data  || window.Icons.repo,
-    write: window.Icons.write || window.Icons.repo,
-  };
-  return (
-    <section id="skills" className="wrap section-pad">
-      <SectionHead num={num} kicker={C.kicker} lang={lang} sub={ind ? ind.intro : {en: "Methods, tools, and AI-native workflows", zh: "方法、工具與 AI 原生工作流"}}/>
-      <div className="skills-grid reveal-stagger">
-        {C.cats.map((cat, i) => (
-          <div className="skill-card" key={i}>
-            <div className="skill-head">
-              <span className="skill-icon">{iconMap[cat.icon]}</span>
-              <h3>{T(cat.name, lang)}</h3>
-            </div>
-            <div className="skill-items">
-              {cat.items.map((it, j) => <span className="chip" key={j}>{it}</span>)}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function Repos({ lang, gh, num }) {
-  const C = window.CONTENT.repos;
-  // Group repos by theme so the reading flow matches the About story
-  // Repos that have a detailed case study in the Projects section above.
-  const CASE = new Set(["WAGF", "FLOODABM", "ai-research-skills", "awesome-agentic-ai-zh"]);
-  const groups = [
-    {
-      label: { en: "Research code", zh: "研究程式碼" },
-      tag:   { en: "Dissertation & catastrophe modeling", zh: "博士研究與災害建模" },
-      names: ["FLOODABM", "WAGF", "Cat_framework"]
-    },
-    {
-      label: { en: "AI skills & agentic workflows", zh: "AI 技能與代理工作流" },
-      tag:   { en: "Composable tools for researchers", zh: "給研究者的可組合工具" },
-      names: ["ai-research-skills", "codex-delegate", "gemini-delegate-skill", "agent-collab-skills", "zotero-skills", "research-hub", "academic-writing-skills", "session-sweep"]
-    },
-    {
-      label: { en: "Learning & community", zh: "學習資源與社群" },
-      tag:   { en: "Curricula & open-source roadmaps", zh: "課程與開源學習地圖" },
-      names: ["awesome-agentic-ai-zh"]
-    },
-    {
-      label: { en: "Trading & market sensing", zh: "量化與市場感測" },
-      tag:   { en: "Multi-agent desks & sentiment", zh: "多代理交易桌與情緒分析" },
-      names: ["multi-analyst-desk", "ai-trader-ollama", "moodring", "Event-Driven-Strategy"]
-    },
-  ];
-  // Orphan guard — any repo not placed in a group above still renders, so the
-  // index can never silently drop a repository again (the P0-2 missing-repos bug).
-  const claimed = new Set(groups.flatMap(g => g.names));
-  const orphans = C.items.filter(r => !claimed.has(r.name)).map(r => r.name);
-  if (orphans.length) {
-    groups.push({
-      label: { en: "More", zh: "其他" },
-      tag:   { en: "Additional repositories", zh: "其他儲存庫" },
-      names: orphans
-    });
-  }
-  const byName = Object.fromEntries(C.items.map(r => [r.name, r]));
-  return (
-    <section id="repos" className="wrap section-pad">
-      <SectionHead num={num} kicker={C.kicker} lang={lang} sub={{en: "Every public repo, grouped", zh: "所有公開儲存庫 · 依用途分組"}}/>
-      <p className="reveal section-intro">{T(C.intro, lang)}</p>
-      <div className="repo-groups reveal-stagger">
-        {groups.map((g, gi) => (
-          <div className="repo-group" key={gi}>
-            <div className="repo-group-head">
-              <h3 className="repo-group-label">{T(g.label, lang)}</h3>
-              <span className="repo-group-tag">{T(g.tag, lang)}</span>
-            </div>
-            <div className="repo-list">
-              {g.names.map((n, i) => {
-                const r = byName[n]; if (!r) return null;
-                const live = gh && gh[r.name];
-                const stars = live ? live.stars : r.stars;
-                const forks = live ? live.forks : r.forks;
-                const statusLabel = {
-                  active: lang === "en" ? "Active" : "活躍",
-                  experimental: lang === "en" ? "Experimental" : "實驗中",
-                  archived: lang === "en" ? "Archived" : "已封存",
-                }[r.status] || null;
-                return (
-                  <a className="repo-row" key={i} href={r.href} target="_blank" rel="noopener noreferrer">
-                    <span className="repo-row-num mono">{String(i + 1).padStart(2, "0")}</span>
-                    <div className="repo-row-body">
-                      <div className="repo-row-top">
-                        <span className="repo-row-name">{r.name}</span>
-                        {CASE.has(r.name) && <span className="repo-cs-flag" title={lang === "en" ? "Detailed case study in Projects above" : "上方精選專案有詳細案例"}>★ {lang === "en" ? "Case study" : "案例"}</span>}
-                        <span className="repo-row-lang" style={{"--lang-color": r.color}}>{r.lang}</span>
-                        {statusLabel && <span className={"repo-status repo-status-" + r.status}>{statusLabel}</span>}
-                      </div>
-                      <p className="repo-row-desc">{T(r.desc, lang)}</p>
-                      <div className="repo-row-stats">
-                        <span className="repo-stat"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M8 .25l2.39 4.84 5.34.78-3.87 3.77.91 5.32L8 12.48l-4.77 2.48.91-5.32L.27 5.87l5.34-.78z"/></svg>{stars}</span>
-                        <span className="repo-stat"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v5.256a2.251 2.251 0 101.5 0V5.372zM5 13a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm9.75-.75a.75.75 0 110 1.5.75.75 0 010-1.5zM13.25 7a3.251 3.251 0 11-3.25-3.25h.879l-.44-.44a.75.75 0 011.06-1.06l1.72 1.72a.75.75 0 010 1.06l-1.72 1.72a.75.75 0 11-1.06-1.06l.44-.44H10A1.75 1.75 0 0011.75 7z"/></svg>{forks}</span>
-                        <span className="repo-stat repo-stat-date mono">↻ {T(r.updated, lang)}</span>
-                      </div>
-                    </div>
-                    <span className="repo-row-arrow">{window.Icons.external}</span>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function Contact({ lang, num }) {
-  const C = window.CONTENT.contact;
-  return (
-    <section id="contact" className="wrap section-pad contact">
-      <SectionHead num={num} kicker={C.kicker} lang={lang}/>
-      <div className="contact-inner reveal">
-        <h2 className="serif italic">{T(C.title, lang)}</h2>
-        <p>{T(C.body, lang)}</p>
-        <div className="contact-actions">
-          <a className="btn primary" href="mailto:wec324@lehigh.edu">{window.Icons.mail}wec324@lehigh.edu</a>
-          <a className="btn" href="https://github.com/WenyuChiou" target="_blank" rel="noopener noreferrer">{window.Icons.github}{T(C.github_label, lang)}</a>
-          <a className="btn" href="https://www.linkedin.com/in/wenyu-chiou" target="_blank" rel="noopener noreferrer">{window.Icons.linkedin}{T(C.linkedin_label, lang)}</a>
-          <a className="btn" href="https://www.threads.com/@wenyu_chiou" target="_blank" rel="noopener noreferrer">{window.Icons.threads}Threads</a>
-          <a className="btn" href="https://orcid.org/0009-0005-8006-1288" target="_blank" rel="noopener noreferrer">{T(C.orcid_label, lang)}</a>
-          <a className="btn" href="https://scholar.google.com/citations?user=vSQ3zT4AAAAJ" target="_blank" rel="noopener noreferrer">{T(C.scholar_label, lang)}</a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Footer({ lang }) {
-  const C = window.CONTENT.footer;
-  return (
-    <footer className="footer wrap">
-      <div className="footer-row">
-        <span>{T(C.copy, lang)}</span>
-        <span className="mono">{T(C.note, lang)}</span>
+        <p className="footer-line3">
+          <a className="quiet-link" href={"mailto:" + F.email}>{F.email}</a>
+          <span className="link-sep" aria-hidden="true">·</span>
+          <span>{F.copyright}</span>
+        </p>
       </div>
     </footer>
   );
 }
 
-function TweaksPanel({ lang, theme, setTheme, setLang }) {
-  const [active, setActive] = useState(false);
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.data?.type === "__activate_edit_mode") setActive(true);
-      if (e.data?.type === "__deactivate_edit_mode") setActive(false);
-    };
-    window.addEventListener("message", handler);
-    window.parent.postMessage({type: "__edit_mode_available"}, "*");
-    return () => window.removeEventListener("message", handler);
-  }, []);
-  if (!active) return null;
+/* ----------------------------- homepage blocks --------------------------- */
+
+// Blocks 1–2 (IA §2): identity + value proposition. The h1 is the name; the
+// umbrella line is a serif standfirst <p>; the dialect subline is the ONE
+// mode-varying line (both variants canonical). Availability per VDS §5.6.1.
+function Hero({ mode }) {
+  const M = CONTENT.meta;
+  const H = CONTENT.hero;
   return (
-    <div className="tweaks-panel active">
-      <h5>Tweaks</h5>
-      <div className="tweak-row"><span>Theme</span>
-        <div className="seg">
-          <button className={theme === "light" ? "on" : ""} onClick={() => setTheme("light")}>Light</button>
-          <button className={theme === "dark" ? "on" : ""} onClick={() => setTheme("dark")}>Dark</button>
-        </div>
-      </div>
-      <div className="tweak-row"><span>Language</span>
-        <div className="seg">
-          <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
-          <button className={lang === "zh" ? "on" : ""} onClick={() => setLang("zh")}>中文</button>
-        </div>
-      </div>
-    </div>
+    <section id="top" className="wrap hero" aria-label="Identity">
+      <p className="hero-eyebrow">{M.titleLine}</p>
+      <h1 className="hero-name">{M.name}</h1>
+      <p className="hero-standfirst">{H.umbrella}</p>
+      <p className="hero-dialect">{H.dialect[mode] || H.dialect.industry}</p>
+      <p className="hero-lede">{H.workingFormulation}</p>
+      <p className="availability"><span className="signal-dot" aria-hidden="true"></span>{H.availability}</p>
+      <QuietLinks />
+    </section>
   );
 }
 
-function ModeSwitch({ mode, setMode, lang }) {
+// Block 3: three proof pillars — order LOCKED in both modes (IA §7.3 outranks
+// VDS §5.6.2's swap note). No cards, no icons, no fills; 2px top rules only.
+function ProofPillars() {
   return (
-    <div className="mode-switch" role="group" aria-label={lang === "en" ? "Site view: Industry or Academic" : "網站版本：業界或學術"}>
-      <span className="mode-switch-label" aria-hidden="true">{lang === "en" ? "View" : "版本"}</span>
-      <button className={"mode-opt" + (mode === "industry" ? " active" : "")} onClick={() => setMode("industry")} aria-pressed={mode === "industry" ? "true" : "false"}>
-        <span className="mode-dot"/>
-        {lang === "en" ? "Industry" : "業界"}
-      </button>
-      <button className={"mode-opt" + (mode === "academic" ? " active" : "")} onClick={() => setMode("academic")} aria-pressed={mode === "academic" ? "true" : "false"}>
-        <span className="mode-dot"/>
-        {lang === "en" ? "Academic" : "學術"}
-      </button>
-    </div>
-  );
-}
-
-function ImpactStrip({ lang, data, label }) {
-  const I = data || window.CONTENT.industry?.impact;
-  if (!I) return null;
-  return (
-    <section className="impact-strip reveal" aria-label={label || "Key impact numbers"}>
-      <div className="wrap">
-        <div className="impact-grid">
-          {I.items.map((it, i) => (
-            <div className="impact-item" key={i}>
-              <div className="impact-num">{it.num}</div>
-              <div className="impact-lbl">{T(it.lbl, lang)}</div>
-            </div>
-          ))}
-        </div>
+    <section id="pillars" className="wrap pillars" aria-label="Proof">
+      <div className="pillar-row">
+        {CONTENT.pillars.map((p) => (
+          <div className="pillar" key={p.id}>
+            <p className="pillar-kicker">{p.kicker}</p>
+            <p className="pillar-copy">{p.copy}</p>
+            {p.label ? <p className="pillar-status">{p.label}</p> : null}
+            <p className="pillar-links">
+              <EvidenceLink href={p.href}>{evidenceText(p.href)}</EvidenceLink>
+              {p.caseStudy ? (
+                <a className="quiet-link" href={p.caseStudy}>Case study<span aria-hidden="true"> →</span></a>
+              ) : null}
+            </p>
+          </div>
+        ))}
       </div>
     </section>
   );
 }
 
-// Fixed right-edge vertical dot rail: one dot per section (in per-mode order),
-// the active dot tracks the same `active` the nav uses, a static spine line
-// connects the dots, and a bilingual label pill appears on hover/focus. Hidden
-// ≤1024px (the burger covers mobile). Reuses --accent family only (never --mark).
-function SectionRail({ lang, mode, active }) {
-  const order = SECTION_ORDER[mode] || SECTION_ORDER.academic;
+// Project card per VDS §5.6.3 — status label + one-line problem statement +
+// case-study link. Stars appear only as the one allowed plain-text string.
+function ProjectCard({ item }) {
   return (
-    <nav className="section-rail" aria-label={lang === "en" ? "Section navigation" : "區塊導覽"}>
-      <span className="rail-spine" aria-hidden="true"/>
-      {order.map((id, i) => {
-        const isActive = active === id;
-        return (
-          <a key={id} className={"rail-dot" + (isActive ? " is-active" : "")} href={"#" + id}
-             aria-current={isActive ? "location" : undefined}>
-            <span className="rail-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-            <span className="rail-tick" aria-hidden="true"/>
-            <span className="rail-label">{T(sectionLabel(id), lang)}</span>
-          </a>
-        );
-      })}
-      <a className="rail-dot rail-top" href="#top">
-        <span className="rail-tick" aria-hidden="true"/>
-        <span className="rail-label">{lang === "en" ? "Top" : "回頂端"}</span>
-      </a>
-    </nav>
+    <article className="card">
+      <div className="card-head">
+        <h3 className="card-name">{item.name}</h3>
+        <p className="card-status">{item.status}</p>
+      </div>
+      <p className="card-problem">{item.line}</p>
+      {item.stars ? <p className="card-fact">{item.stars}</p> : null}
+      <p className="card-links">
+        <a className="card-link" href={item.href}>Case study<span aria-hidden="true"> →</span></a>
+      </p>
+    </article>
   );
 }
 
-function App() {
-  const [lang, setLang] = useState(() => localStorage.getItem("wy-lang") || "en");
-  const [theme, setTheme] = useState(() => localStorage.getItem("wy-theme") || "light");
-  const [mode, setMode] = useState(() => localStorage.getItem("wy-mode") || "industry");
-  useEffect(() => { localStorage.setItem("wy-lang", lang); document.documentElement.lang = lang === "zh" ? "zh-TW" : "en"; }, [lang]);
-  useEffect(() => { localStorage.setItem("wy-theme", theme); document.documentElement.setAttribute("data-theme", theme); }, [theme]);
-  useEffect(() => { localStorage.setItem("wy-mode", mode); document.documentElement.setAttribute("data-mode", mode); }, [mode]);
-  useScrollReveal([mode, lang]);
-  const gh = useGitHubStars();
-  const [cmdk, setCmdk] = useState(false);
-  useEffect(() => {
-    const onKey = (e) => {
-      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); setCmdk(true); }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-  const active = useActiveSection(["top","about","research","projects","skills","pubs","repos","contact"]);
-  const SECTION_COMP = { about: About, research: Research, projects: Projects, skills: Skills, pubs: Publications, repos: Repos, contact: Contact };
-  const order = SECTION_ORDER[mode] || SECTION_ORDER.academic;
+// Block 4 (industry-first): three engineering cards.
+function SelectedEngineering({ num }) {
+  return (
+    <section id={SEC.engineering.id} className="wrap section" data-block="engineering">
+      <SectionHead num={num} title={SEC.engineering.label} />
+      <div className="card-grid cols-3">
+        {CONTENT.selectedEngineering.map((item) => <ProjectCard key={item.slug} item={item} />)}
+      </div>
+    </section>
+  );
+}
+
+// Block 5: two research cards + the full-program text link.
+function SelectedResearch({ num }) {
+  const link = CONTENT.research.programLink;
+  return (
+    <section id={SEC.research.id} className="wrap section" data-block="research">
+      <SectionHead num={num} title={SEC.research.label} />
+      <div className="card-grid cols-2">
+        {CONTENT.selectedResearch.map((item) => <ProjectCard key={item.slug} item={item} />)}
+      </div>
+      <p className="section-more">
+        <a className="quiet-link" href={link.href}>{link.label}<span aria-hidden="true"> →</span></a>
+      </p>
+    </section>
+  );
+}
+
+// Block 6: one short mode-invariant paragraph (single string prevents drift).
+// The string itself opens with its own label, so the section carries an
+// aria-label instead of a redundant visible heading.
+function CurrentFocus() {
+  return (
+    <section id={SEC.focus.id} className="wrap section section-focus" aria-label={SEC.focus.label}>
+      <p className="focus-text">{CONTENT.currentFocus}</p>
+    </section>
+  );
+}
+
+// Block 7: mode-aware documents block (VDS §5.6.6). Accent-outline primary —
+// the page's single filled CTA stays the contact button.
+function DocumentsBlock({ mode, num }) {
+  const docs = CONTENT.documents;
+  const primary = mode === "academic" ? docs.academic : docs.industry;
+  const secondary = mode === "academic" ? docs.industry : docs.academic;
+  return (
+    <section id={SEC.documents.id} className="wrap section" data-block="documents">
+      <SectionHead num={num} title={SEC.documents.label} />
+      <div className="cv-block">
+        <p className="cv-kicker">{mode === "academic" ? "Curriculum vitae" : "Resume"}</p>
+        <a className="btn btn-outline cv-primary" href={primary.file} download>
+          {Icons.download}
+          <span>Download {primary.label}</span>
+        </a>
+        <p className="cv-secondary">
+          Also available: <a className="quiet-link" href={secondary.file} download>{secondary.label}</a>
+        </p>
+      </div>
+    </section>
+  );
+}
+
+// Block 8: the single CTA (VDS §5.6.7) — availability verbatim above the ONE
+// filled button; address also present as selectable mono text.
+function Contact({ num }) {
+  const C = CONTENT.contact;
+  return (
+    <section id={SEC.contact.id} className="wrap section section-contact" data-block="contact">
+      <SectionHead num={num} title={SEC.contact.label} />
+      <p className="availability"><span className="signal-dot" aria-hidden="true"></span>{C.availability}</p>
+      <p className="contact-action">
+        <a className="btn btn-primary" href={"mailto:" + C.email}>{C.ctaLabel}</a>
+      </p>
+      <p className="contact-email">{C.email}</p>
+      <QuietLinks />
+    </section>
+  );
+}
+
+/* --------------------------------- pages --------------------------------- */
+
+function Home({ mode }) {
+  const selected = selectedOrder(mode);
+  let n = 0;
+  const num = () => String(++n).padStart(2, "0");
   return (
     <>
-      <a className="skip-link" href="#main-content">{lang === "en" ? "Skip to content" : "跳至內容"}</a>
-      <Nav lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} active={active} mode={mode} setMode={setMode} onCmdK={() => setCmdk(true)}/>
-      <SectionRail lang={lang} mode={mode} active={active}/>
-      <CommandPalette open={cmdk} onClose={() => setCmdk(false)} lang={lang} mode={mode} setLang={setLang} setTheme={setTheme} setMode={setMode}/>
-      <main id="main-content">
-        <Hero lang={lang} mode={mode}/>
-        {mode === "industry" && <ImpactStrip lang={lang}/>}
-        {mode === "academic" && window.CONTENT.academic?.signal && <ImpactStrip lang={lang} data={window.CONTENT.academic.signal} label={lang === "en" ? "Research at a glance" : "研究一覽"}/>}
-        {order.map((key, i) => {
-          const Comp = SECTION_COMP[key];
-          if (!Comp) return null; // defensive: an unknown key is skipped, never crashes the page
-          return <Comp key={key} lang={lang} mode={mode} gh={gh} num={String(i + 1).padStart(2, "0")}/>;
-        })}
-      </main>
-      <Footer lang={lang}/>
-      <TweaksPanel lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>
+      <Hero mode={mode} />
+      <ProofPillars />
+      {selected.map((sec) =>
+        sec.id === SEC.engineering.id
+          ? <SelectedEngineering key={sec.id} num={num()} />
+          : <SelectedResearch key={sec.id} num={num()} />
+      )}
+      <CurrentFocus />
+      <DocumentsBlock mode={mode} num={num()} />
+      <Contact num={num()} />
     </>
   );
 }
 
-createRoot(document.getElementById("root")).render(<App/>);
+// MPA registry — S7 adds research / engineering / publications / case-study
+// pages; the prerender step stamps data-page onto each route's markup.
+export const PAGES = {
+  home: Home,
+};
+
+/* ----------------------------- command palette --------------------------- */
+// Ctrl/Cmd-K quick-nav (kept per implementation-plan §1.2): jump to a homepage
+// section (current mode's order), open a page, or fire an action.
+function CommandPalette({ open, onClose, mode, onModeChange, onThemeToggle }) {
+  const [q, setQ] = useState("");
+  const [sel, setSel] = useState(0);
+  const inputRef = useRef(null);
+  const restore = useRef(null);
+
+  const go = (id) => {
+    onClose();
+    requestAnimationFrame(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    });
+  };
+  const visit = (href) => { onClose(); window.location.href = href; };
+  const ext = (url) => { onClose(); window.open(url, "_blank", "noopener,noreferrer"); };
+
+  const M = CONTENT.meta;
+  const docs = CONTENT.documents;
+  const primaryDoc = mode === "academic" ? docs.academic : docs.industry;
+  const otherMode = mode === "academic" ? "industry" : "academic";
+  const sections = homeSections(mode).map((s, i) => ({
+    label: s.label,
+    hint: String(i + 1).padStart(2, "0"),
+    run: () => go(s.id),
+  }));
+  const items = [
+    ...sections,
+    { label: "Research page", hint: "/research/", run: () => visit("/research/") },
+    { label: "Engineering page", hint: "/engineering/", run: () => visit("/engineering/") },
+    { label: "Publications page", hint: "/publications/", run: () => visit("/publications/") },
+    { label: "Download " + primaryDoc.label, hint: "PDF", run: () => visit(primaryDoc.file) },
+    { label: CONTENT.contact.ctaLabel, run: () => visit("mailto:" + M.email) },
+    { label: "GitHub", run: () => ext(M.github) },
+    { label: "ORCID", run: () => ext(M.orcid) },
+    { label: "Toggle dark / light", run: () => { onClose(); onThemeToggle(); } },
+    { label: "Reading path: " + MODE_LABELS[otherMode].full, run: () => { onClose(); onModeChange(otherMode); } },
+  ];
+  const shown = items.filter((it) => it.label.toLowerCase().indexOf(q.trim().toLowerCase()) !== -1);
+  const activeOptionId = shown[sel] ? "cmdk-option-" + sel : undefined;
+
+  useEffect(() => {
+    if (!open) return;
+    setQ("");
+    setSel(0);
+    restore.current = document.activeElement;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    requestAnimationFrame(() => { if (inputRef.current) inputRef.current.focus(); });
+    return () => {
+      document.body.style.overflow = prev;
+      if (restore.current && restore.current.focus) restore.current.focus();
+    };
+  }, [open]);
+  useEffect(() => { setSel(0); }, [q]);
+
+  if (!open) return null;
+  const onKey = (e) => {
+    if (e.key === "ArrowDown") { e.preventDefault(); setSel((s) => Math.min(s + 1, shown.length - 1)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setSel((s) => Math.max(s - 1, 0)); }
+    else if (e.key === "Enter") { e.preventDefault(); const it = shown[sel]; if (it) it.run(); }
+    else if (e.key === "Escape") { e.preventDefault(); onClose(); }
+    else if (e.key === "Tab") { e.preventDefault(); if (inputRef.current) inputRef.current.focus(); }
+  };
+  return (
+    <div className="cmdk-overlay" onClick={onClose}>
+      <div className="cmdk-panel" role="dialog" aria-modal="true" aria-label="Quick navigation" onClick={(e) => e.stopPropagation()}>
+        <input
+          ref={inputRef}
+          className="cmdk-input"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          onKeyDown={onKey}
+          aria-controls="cmdk-list"
+          aria-activedescendant={activeOptionId}
+          placeholder="Jump to a section or action…"
+          aria-label="Search"
+          autoComplete="off"
+        />
+        <ul id="cmdk-list" className="cmdk-list" role="listbox" tabIndex={0} onKeyDown={onKey} aria-label="Quick navigation results">
+          {shown.length === 0 && <li className="cmdk-empty">No matches</li>}
+          {shown.map((it, i) => (
+            <li
+              key={it.label}
+              id={"cmdk-option-" + i}
+              role="option"
+              aria-selected={i === sel ? "true" : "false"}
+              className={"cmdk-item" + (i === sel ? " is-active" : "")}
+              onMouseEnter={() => setSel(i)}
+              onClick={() => it.run()}
+            >
+              <span>{it.label}</span>
+              {it.hint ? <span className="cmdk-hint">{it.hint}</span> : null}
+            </li>
+          ))}
+        </ul>
+        <div className="cmdk-foot">↑↓ navigate · ↵ select · esc close</div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------- app ---------------------------------- */
+
+function App({ page }) {
+  const [theme, setTheme] = useState(resolveInitialTheme);
+  const [mode, setModeState] = useState(resolveInitialMode);
+  const [cmdk, setCmdk] = useState(false);
+
+  // Toggling writes the stored preference (IA §7.2); URL-param resolution never does.
+  const onModeChange = (next) => {
+    setModeState(next);
+    try { window.localStorage.setItem("wy-mode", next); } catch (e) { /* storage unavailable */ }
+  };
+  const onThemeChange = (next) => {
+    setTheme(next);
+    try { window.localStorage.setItem("wy-theme", next); } catch (e) { /* storage unavailable */ }
+  };
+
+  useEffect(() => { document.documentElement.setAttribute("data-theme", theme); }, [theme]);
+  useEffect(() => { document.documentElement.setAttribute("data-mode", mode); }, [mode]);
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
+        e.preventDefault();
+        setCmdk((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const Page = PAGES[page] || Home;
+  return (
+    <>
+      <Nav mode={mode} onModeChange={onModeChange} theme={theme} onThemeChange={onThemeChange} />
+      <main id="main">
+        <Page mode={mode} />
+      </main>
+      <Footer />
+      <CommandPalette
+        open={cmdk}
+        onClose={() => setCmdk(false)}
+        mode={mode}
+        onModeChange={onModeChange}
+        onThemeToggle={() => onThemeChange(theme === "dark" ? "light" : "dark")}
+      />
+    </>
+  );
+}
+
+const rootEl = document.getElementById("root");
+if (rootEl) {
+  const page = document.body.getAttribute("data-page") || rootEl.getAttribute("data-page") || "home";
+  createRoot(rootEl).render(<App page={page} />);
+}
