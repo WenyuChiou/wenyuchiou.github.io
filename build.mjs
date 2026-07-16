@@ -9,6 +9,13 @@
 import esbuild from "esbuild";
 import { readFileSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { spawnSync } from "node:child_process";
+
+// Copy linter strictness: false = warn-only (violations reported, build passes).
+// flipped to true at S4 (content rewrite lands; scripts/check-copy.mjs then
+// fails the build on any banned string, drifted canonical string, or leaked
+// [CONFIRM] placeholder in its strict SCOPE).
+const STRICT_COPY = false;
 
 await esbuild.build({
   entryPoints: ["entry.jsx"],
@@ -40,3 +47,16 @@ const html = readFileSync("index.html", "utf8")
   .replace(/(src=")assets\/app\.bundle\.js(?:\?v=[a-f0-9]+)?(")/g, `$1assets/app.bundle.js?v=${bundleV}$2`);
 writeFileSync("index.html", html);
 console.log(`Stamped index.html — styles.css?v=${cssV} · app.bundle.js?v=${bundleV}`);
+
+// Fail-closed copy linter (implementation-plan §1.4). Runs after bundle+stamp
+// so built output is also scannable once the HTML globs enter its SCOPE.
+// In strict mode a nonzero linter exit fails the whole build.
+const check = spawnSync(
+  process.execPath,
+  ["scripts/check-copy.mjs", ...(STRICT_COPY ? ["--strict"] : [])],
+  { stdio: "inherit" },
+);
+if (check.status !== 0) {
+  console.error(`Build FAILED: check-copy.mjs exited ${check.status}`);
+  process.exit(check.status ?? 1);
+}

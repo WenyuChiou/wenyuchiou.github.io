@@ -1,0 +1,24 @@
+{
+  "_comment": "canonical-facts.md wins; regenerate from it, never edit ad hoc. Verbatim transcription of canonical-facts.md §2 strings plus the WRR citation string, title line, and public email. check-copy.mjs asserts byte-identity of these strings across content.js, seo.js, built HTML, and extracted PDF text.",
+  "titleLine": "Ph.D. Candidate, Civil & Environmental Engineering, Lehigh University",
+  "email": "wec324@lehigh.edu",
+  "umbrellaLine": "Verified simulation of human decisions under climate risk",
+  "workingFormulation": "I build empirically grounded simulations of how people decide under flood risk — and the fail-closed validation systems that show when AI agents can (and cannot) stand in for real people.",
+  "academicDialect": "Computational socio-hydrologist developing validated LLM-agent methods on his own empirical data.",
+  "industryDialect": "AI evaluation / research engineer with catastrophe-risk domain depth.",
+  "availability": "Open to Summer 2027 internships in AI evaluation, research engineering, and risk analytics.",
+  "statusVocabulary": [
+    "Published",
+    "Under review",
+    "Preprint",
+    "In preparation",
+    "Research prototype",
+    "Maintained open-source tool",
+    "Archived"
+  ],
+  "oneLineBio": "Wenyu Chiou is a Ph.D. candidate in Civil & Environmental Engineering at Lehigh University who builds empirically grounded simulations of how people decide under flood risk — and the fail-closed validation systems that show when AI agents can (and cannot) stand in for real people.",
+  "wagfOneLiner": "WAGF — research software in preparation for release.",
+  "wrrCitation": "Yang, Y. C. E., & Chiou, W. (2026). Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions. Water Resources Research, 62(6), e2025WR042111.",
+  "wrrDoi": "10.1029/2025WR042111",
+  "wrrDoiUrl": "https://doi.org/10.1029/2025WR042111"
+}
