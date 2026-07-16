@@ -179,8 +179,9 @@ function ThemeToggle({ theme, onThemeChange }) {
 
 /* ------------------------------- nav / footer ---------------------------- */
 // Header per IA §5.1: wordmark, three nav links, mode toggle, single mailto CTA.
-// The CTA is outline-styled — the page's ONE filled .btn-primary is the contact
-// block's button (VDS §5.6.7 component invariant).
+// Exactly ONE filled .btn-primary per page (visual-gate invariant): on home it
+// is the contact block's button (VDS §5.6.7), so the header CTA is outline
+// there; on every other page the header CTA is the filled one.
 function Nav({ page, mode, onModeChange, theme, onThemeChange }) {
   const M = CONTENT.meta;
   const [open, setOpen] = useState(false);
@@ -222,7 +223,9 @@ function Nav({ page, mode, onModeChange, theme, onThemeChange }) {
           <ModeSwitch mode={mode} onModeChange={onModeChange} />
           <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
         </div>
-        <a className="btn btn-outline nav-cta" href={"mailto:" + M.email}>Email me</a>
+        {/* Home's one filled CTA lives in the contact block; every other page's
+            one filled CTA is this header button (visual gate: exactly one per page). */}
+        <a className={"btn nav-cta " + (page === "home" ? "btn-outline" : "btn-primary")} href={"mailto:" + M.email}>Email me</a>
         <button
           type="button"
           className="nav-menu-btn"
