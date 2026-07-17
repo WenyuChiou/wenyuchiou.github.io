@@ -274,13 +274,22 @@ function Hero({ mode }) {
   const H = CONTENT.hero;
   return (
     <section id="top" className="wrap hero" aria-label="Identity">
-      <p className="hero-eyebrow">{M.titleLine}</p>
-      <h1 className="hero-name">{M.name}</h1>
-      <p className="hero-standfirst">{H.umbrella}</p>
-      <p className="hero-dialect">{H.dialect[mode] || H.dialect.industry}</p>
-      <p className="hero-lede">{H.workingFormulation}</p>
-      <p className="availability"><span className="signal-dot" aria-hidden="true"></span>{H.availability}</p>
-      <QuietLinks />
+      <div className="hero-grid">
+        <div className="hero-text">
+          <p className="hero-eyebrow">{M.titleLine}</p>
+          <h1 className="hero-name">{M.name}</h1>
+          <p className="hero-standfirst">{H.umbrella}</p>
+          <p className="hero-dialect">{H.dialect[mode] || H.dialect.industry}</p>
+          <p className="hero-lede">{H.workingFormulation}</p>
+          <p className="availability"><span className="signal-dot" aria-hidden="true"></span>{H.availability}</p>
+          <QuietLinks />
+        </div>
+        {H.portrait ? (
+          <figure className="hero-portrait">
+            <img src={H.portrait.src} alt={H.portrait.alt} width="560" height="751" loading="eager" fetchPriority="high" />
+          </figure>
+        ) : null}
+      </div>
     </section>
   );
 }
@@ -476,6 +485,14 @@ function ResearchPage() {
           <a className="quiet-link" href="/publications/">Publications &amp; talks<span aria-hidden="true"> →</span></a>
         </p>
       </section>
+      {R.photo ? (
+        <section className="wrap page-section" aria-label="At AGU Fall Meeting 2025">
+          <figure className="photo-figure">
+            <img src={R.photo.src} alt={R.photo.alt} width="1108" height="1477" loading="lazy" />
+            <figcaption className="figure-caption">{R.photo.caption}</figcaption>
+          </figure>
+        </section>
+      ) : null}
     </>
   );
 }
@@ -693,6 +710,12 @@ function CaseStudy({ slug }) {
             <p className="case-prose">{cs.system}</p>
             <h3 className="case-subhead">Key challenge</h3>
             <p className="case-prose">{cs.keyChallenge}</p>
+            {cs.figure ? (
+              <figure className="case-figure">
+                <img src={cs.figure.src} alt={cs.figure.alt} loading="lazy" />
+                <figcaption className="figure-caption">{cs.figure.caption}</figcaption>
+              </figure>
+            ) : null}
           </section>
           <section className="case-section" aria-label="Validation and limitations">
             <SectionHead num="03" title="Validation & limitations" />

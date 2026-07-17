@@ -23,6 +23,10 @@ export const CONTENT = {
       industry: "AI evaluation / research engineer with catastrophe-risk domain depth.",
       academic: "Computational socio-hydrologist developing validated LLM-agent methods on his own empirical data.",
     },
+    portrait: {
+      src: "/assets/portrait.jpg",
+      alt: "Wenyu Chiou at the AGU Fall Meeting 2025, beside his research poster.",
+    },
     workingFormulation:
       "I build empirically grounded simulations of how people decide under flood risk — and the fail-closed validation systems that show when AI agents can (and cannot) stand in for real people.",
     availability:
@@ -162,6 +166,12 @@ export const CONTENT = {
         statusNote: "In preparation.",
       },
     ],
+    photo: {
+      src: "/assets/agu2025-photo.jpg",
+      alt: "Wenyu Chiou standing beside his AGU Fall Meeting 2025 poster, NH41E-0449.",
+      caption:
+        "Presenting poster NH41E-0449 — Modeling Long-Term Household Flood Adaptation under Social Heterogeneity — at the AGU Fall Meeting 2025.",
+    },
     // Academic research summary — positioning-strategy §4.10, 202 words, verbatim.
     // Recorded ruling (S4 second review): the summary describes the overall SEM work in
     // owner/renter terms (true of the survey + WRR strand); the SCS manuscript descriptor
@@ -481,6 +491,11 @@ export const CONTENT = {
         "A typed, layered Python pipeline implementing Hazus fragility mechanics, ground-motion modeling cross-checked against an independent implementation, and an EP/AAL finance layer.",
       keyChallenge:
         "Validating a national-recipe model against a real event. The pipeline is validated at three levels against the 1994 Northridge earthquake, and the failures are reported as findings — the baseline recipe's over-prediction is stated, not smoothed over.",
+      figure: {
+        src: "/assets/cat-framework-pipeline.png",
+        alt: "Five-stage pipeline diagram: hazard (ground motion), exposure (bridge assets), vulnerability (fragility curves), loss (financial impact), and visualization (maps and reports), with the Python modules behind each stage.",
+        caption: "The backbone pipeline: hazard → exposure → fragility → loss → visualization.",
+      },
       evaluation:
         "The three-level Northridge validation with honestly reported failures is the centerpiece; recalibration is statistical, with uncertainty reported.",
       results: "Research prototype — team capstone; no releases.",
