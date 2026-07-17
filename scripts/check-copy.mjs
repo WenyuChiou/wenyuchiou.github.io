@@ -75,7 +75,7 @@ const BANNED = [
   { name: "buymeacoffee", re: /buymeacoffee/giu, why: "decision 5 — funding links removed" },
   { name: "funding-yml", re: /\bFUNDING\b/gu, why: "decision 5 — FUNDING.yml references removed (case-sensitive: prose 'funding' is fine)" },
   { name: "gemini-delegate", re: /gemini-delegate/giu, why: "kill list — dead lane" },
-  { name: "banned-year-2028", re: /\b2028\b/gu, why: "decision 3 — no 2028 completion date" },
+  { name: "banned-year-2028", re: /(?<!expected )\b2028\b/giu, why: "graduation year resolved 2026-07-16: ONLY the canonical phrase \'expected 2028\' may carry the year" },
   { name: "banned-may-2027", re: /May 2027/gu, why: "decision 3 — banned date" },
   { name: "banned-range-2024-2027", re: /2024[–-]2027/gu, why: "decision 3 — banned range" },
   { name: "puffery", re: /\b(innovative|visionary|expert|cutting[\s-]edge|passionate)\b/giu, why: "decision 12 — puffery vocabulary" },
@@ -91,7 +91,7 @@ const WINDOWED = { name: "wrr-under-review-window", window: 200, a: /under revie
 
 // Whitelist check: "Summer 2027" allowed ONLY inside the exact availability
 // sentence. (Other 2027-in-a-date usages are generally allowed; the banned
-// set is exactly 2028 / May 2027 / 2024–2027 above.)
+// set is exactly 2028-outside-"expected 2028" / May 2027 / 2024–2027 above.)
 const SUMMER = { name: "summer-2027-outside-availability", re: /Summer 2027/g, why: "'Summer 2027' allowed only inside the verbatim availability sentence" };
 
 // Byte-identity: canonical string prefix present but continuation drifts.

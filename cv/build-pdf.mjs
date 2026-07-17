@@ -132,7 +132,7 @@ const CHECKS = [
   },
   regex('graduation-year leak "2024–2027"', /2024[–-]2027/),
   literal('graduation-year leak "May 2028"', 'May 2028'),
-  regex('graduation-year leak "2028"', /2028/),
+  regex('graduation-year leak "2028" (outside canonical expected-2028)', /(?<!expected )2028/i),
   {
     name: 'second email address (only wec324@lehigh.edu allowed)',
     test(html) {
