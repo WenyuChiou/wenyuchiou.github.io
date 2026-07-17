@@ -379,7 +379,8 @@ export const CONTENT = {
       },
       {
         venue: "AGU Fall Meeting 2025",
-        detail: "Poster NH41E-0449.",
+        detail:
+          "Poster NH41E-0449 — Modeling Long-Term Household Flood Adaptation under Social Heterogeneity: A Coupled Agent-Based Modeling Framework.",
         note: "With co-authors at Lehigh and Kyoto University's Disaster Prevention Research Institute.",
       },
       {
