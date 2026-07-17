@@ -3,155 +3,226 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wenyu Chiou — Academic CV</title>
+  <title>Wenyu Chiou — Curriculum Vitæ</title>
   <link rel="stylesheet" href="print.css">
 </head>
-<body class="doc-cv">
+<body class="doc-cv cv2">
 
-  <!-- 1. Header — no photo, no availability, no visa line, no Scholar/LinkedIn -->
-  <header class="doc-header">
-    <h1>Wenyu Chiou</h1>
-    <p class="title-line">Ph.D. Candidate, Civil &amp; Environmental Engineering, Lehigh University</p>
-    <p class="contact-line">
-      Bethlehem, PA &middot;
-      <a class="u" href="mailto:wec324@lehigh.edu">wec324@lehigh.edu</a> &middot;
-      <a class="u" href="https://wenyuchiou.github.io">wenyuchiou.github.io</a> &middot;
-      <a class="u" href="https://github.com/WenyuChiou">github.com/WenyuChiou</a> &middot;
-      ORCID <a class="u" href="https://orcid.org/0009-0005-8006-1288">0009-0005-8006-1288</a>
-    </p>
+  <!-- Header — original design language: kicker, big serif name, italic positioning
+       statement (owner's original sentence, verbatim), contact rows, photo right. -->
+  <header class="cv2-header">
+    <div class="cv2-head-text">
+      <p class="cv2-kicker">Curriculum Vit&aelig;</p>
+      <h1>Wenyu Chiou</h1>
+      <p class="cv2-subtitle">Ph.D. Candidate &middot; Civil &amp; Environmental Engineering | Complex Adaptive Water Systems (CAWS) Lab, Lehigh University</p>
+      <p class="cv2-positioning">My research develops governed LLM-driven agent and multi-agent systems for coupled human&ndash;water modeling &mdash; bridging empirical behavioral data, interpretable rule-based simulation, and large language models to study human&ndash;flood interaction and decision-making under risk.</p>
+      <p class="cv2-contact">
+        <a class="u" href="mailto:wec324@lehigh.edu">wec324@lehigh.edu</a> &middot;
+        +1 (484) 937-2528 &middot;
+        Bethlehem, PA, USA &middot;
+        ORCID <a class="u" href="https://orcid.org/0009-0005-8006-1288">0009-0005-8006-1288</a>
+      </p>
+      <p class="cv2-contact">
+        <a class="u" href="https://github.com/WenyuChiou">github.com/WenyuChiou</a> &middot;
+        <a class="u" href="https://www.linkedin.com/in/wenyu-chiou">linkedin.com/in/wenyu-chiou</a> &middot;
+        <a class="u" href="https://wenyuchiou.github.io">wenyuchiou.github.io</a>
+      </p>
+    </div>
+    <figure class="cv2-photo"><img src="../assets/portrait.jpg" alt="Wenyu Chiou at the AGU Fall Meeting 2025."></figure>
   </header>
 
-  <!-- 2. Education -->
+  <!-- § 01 Education -->
   <section class="cv-section">
-    <h2>Education</h2>
+    <h2><span class="secnum">&sect; 01</span> Education</h2>
     <ul class="entry-list">
       <li class="entry">
-        <p><strong>Ph.D., Civil &amp; Environmental Engineering</strong>, Lehigh University <span class="dates">2024 &ndash; present &middot; expected 2028</span></p>
-        <p class="detail">Advisor: Dr. Y.C. Ethan Yang &middot; CAWS Lab &middot; Lehigh Center for Catastrophe Modeling and Resilience</p>
+        <p><strong>Ph.D., Civil &amp; Environmental Engineering</strong>, Lehigh University <span class="dates">Aug 2024 &ndash; present &middot; expected 2028</span></p>
+        <p class="detail">Complex Adaptive Water Systems (CAWS) Lab &middot; Advisor: Prof. Y.C. Ethan Yang &middot; Center for Catastrophe Modeling and Resilience (CMR)</p>
+        <p class="detail"><strong>Dissertation:</strong> <em>Advancing Coupled Human-Flood Modeling: From Empirical Foundations to LLM-Driven Multi-Agent Simulation</em></p>
+        <p class="detail">Research: LLM-driven coupled ABM&ndash;catastrophe model framework for household flood adaptation; governed agent framework (WAGF) validating LLM agents against behavioral theory before they act; multi-agent systems for quantitative risk assessment.</p>
       </li>
       <li class="entry">
-        <p><strong>M.S., Hydrological and Oceanic Sciences</strong>, National Central University <span class="dates">Sep 2021 &ndash; Jun 2023</span></p>
-        <p class="detail">GPA 4.3/4.3</p>
+        <p><strong>M.S., Hydrological and Oceanic Sciences</strong>, National Central University (NCU), Taiwan <span class="dates">Sep 2021 &ndash; Jun 2023</span></p>
+        <p class="detail">Surface Hydrology Group &middot; Institute of Hydrological and Oceanic Sciences (IHOS) &middot; GPA 4.3/4.3 &middot; Dean&rsquo;s Award, College of Earth Sciences (Jun 2023). Thesis: groundwater flow characteristics of the Taoyuan coastal zone.</p>
       </li>
       <li class="entry">
-        <p><strong>B.S., Earth Sciences</strong>, National Central University <span class="dates">Sep 2017 &ndash; Jun 2021</span></p>
-        <p class="detail">GPA 3.9/4.3</p>
+        <p><strong>B.S., Earth Sciences</strong>, National Central University (NCU), Taiwan <span class="dates">Sep 2017 &ndash; Jun 2021</span></p>
+        <p class="detail">GPA 3.9/4.3 &middot; Best Undergraduate Student Project and Report (Nov 2020).</p>
       </li>
     </ul>
   </section>
 
-  <!-- 3. Research overview — the 202-word academic research summary, verbatim -->
+  <!-- § 02 Research Experience — AI-agent work leads; earlier hydrology follows chronologically -->
   <section class="cv-section">
-    <h2>Research Overview</h2>
-    <p class="prose">My research asks a question generative AI has made urgent: when can a simulated human decision-maker be trusted? I approach it by owning every link of the evidence chain. I designed and fielded a 937-household flood-adaptation survey in New Jersey&rsquo;s Passaic River Basin, used structural equation modeling to identify how owners and renters actually decide among adaptation actions, and encoded those empirically identified pathways in a Bayesian-calibrated agent-based model of 52,141 households coupled to a catastrophe flood model with National Flood Insurance Program mechanics &mdash; including income-normalized equity analysis of who bears flood losses. With my advisor, I published a Water Resources Research article (62(6), e2025WR042111, 2026) substituting large language models as the behavioral engine of such simulations. That substitution creates a validity problem: nothing guarantees a generative agent decides the way real households do. My current work confronts it directly &mdash; testing whether LLM personas reproduce the decision pathways identified in my own survey data, and developing governance methods that validate agent behavior against physical constraints and behavioral theory &mdash; research software now in preparation for release. First-author manuscripts on the coupled model and on adaptation decision pathways are under review. The longer-term agenda is a validation standard for generative agents in consequential simulation.</p>
-  </section>
-
-  <!-- 4. Peer-reviewed publications — WRR Published, honest author order (own name bold, never reordered) -->
-  <section class="cv-section">
-    <h2>Peer-Reviewed Publications</h2>
+    <h2><span class="secnum">&sect; 02</span> Research Experience</h2>
     <ul class="entry-list">
-      <li class="entry citation">
-        <p>
-          Yang, Y. C. E., &amp; <strong class="self">Chiou, W.</strong> (2026). Leveraging Large Language Models for Agent-Based Simulation of Human&ndash;Water System Interactions. <em>Water Resources Research</em>, 62(6), e2025WR042111.
-          <a class="u" href="https://doi.org/10.1029/2025WR042111">https://doi.org/10.1029/2025WR042111</a>
-          <span class="entry-meta"><span class="status-label">Published</span></span>
-        </p>
+      <li class="entry">
+        <p><strong>Ph.D. Candidate</strong> &mdash; Complex Adaptive Water Systems (CAWS) Lab, Lehigh University <span class="dates">Aug 2024 &ndash; present</span></p>
+        <ul class="bullets">
+          <li>Co-authored the <em>Water Resources Research</em> (2026) article substituting large language models as the behavioral engine of a human&ndash;water simulation &mdash; published; second author of two.</li>
+          <li>Building a governed LLM-agent framework (WAGF) with validation rules, execution control, and audit logs &mdash; agent decisions are checked against physical constraints and behavioral theory before simulation state updates; research software in preparation for release.</li>
+          <li>Built a 52,141-household coupled agent-based &times; catastrophe flood model with NFIP premium, payout, and deductible mechanics; simulated payouts validated against OpenFEMA insurance-claims data.</li>
+          <li>Designed and fielded a 937-household flood-adaptation survey (Passaic River Basin, NJ) and a survey-to-agent parameterization pipeline (structural equation modeling &rarr; Bayesian calibration) that turns empirical data into calibrated agent parameters.</li>
+        </ul>
+      </li>
+      <li class="entry">
+        <p><strong>Research Assistant</strong> &mdash; Surface Hydrology Group, IHOS, National Central University <span class="dates">2023 &ndash; 2024</span></p>
+        <ul class="bullets">
+          <li>2D/3D groundwater numerical modeling and calibration for the Taoyuan coastal zone (HydroGeoChem); evaluated nature-based solutions for groundwater and watershed management.</li>
+        </ul>
+      </li>
+      <li class="entry">
+        <p><strong>Summer Research Intern</strong> &mdash; National Science and Technology Center for Disaster Reduction (NCDR), Taiwan <span class="dates">Summer 2022</span></p>
+        <ul class="bullets">
+          <li>Processed IPCC AR6 downscaled climate-model ensembles for Taiwan; automated multi-model comparison pipelines (Python, MATLAB).</li>
+        </ul>
+      </li>
+      <li class="entry">
+        <p><strong>Undergraduate Research Intern</strong> &mdash; Institute of Earth Sciences, Academia Sinica <span class="dates">Jul &ndash; Aug 2020</span></p>
+        <ul class="bullets">
+          <li>Stable-isotope hydrology (&delta;D/&delta;&sup1;&#8312;O), Feitsui Reservoir.</li>
+        </ul>
       </li>
     </ul>
   </section>
 
-  <!-- 5. Manuscripts in review — two descriptor entries, no invented titles; validity study not listed -->
-  <section class="cv-section" id="manuscripts-in-review">
-    <h2>Manuscripts Under Review</h2>
-    <ul class="entry-list">
+  <!-- § 03 Publications & Presentations — numbered entries, status chips, honest statuses -->
+  <section class="cv-section">
+    <h2><span class="secnum">&sect; 03</span> Publications</h2>
+    <p class="group-label">Peer-reviewed</p>
+    <ul class="entry-list pub-list">
       <li class="entry">
-        <p>First-author manuscript &mdash; coupled agent-based and catastrophe-model simulation of household flood adaptation (FLOODABM companion study). <span class="entry-meta"><span class="status-label">Under review</span> &middot; <em>Journal of Hydrology</em></span></p>
-      </li>
-      <li class="entry">
-        <p>First-author manuscript &mdash; flood-adaptation decision pathways across marginalized and non-marginalized groups, identified via structural equation modeling. <span class="entry-meta"><span class="status-label">Under review</span> &middot; <em>Sustainable Cities and Society</em></span></p>
+        <p><span class="pubnum">[1]</span> Yang, Y. C. E., &amp; <strong class="self">Chiou, W.</strong> (2026). Leveraging Large Language Models for Agent-Based Simulation of Human&ndash;Water System Interactions. <em>Water Resources Research</em>, 62(6), e2025WR042111. <a class="u" href="https://doi.org/10.1029/2025WR042111">doi.org/10.1029/2025WR042111</a> <span class="chip chip-published">Published</span></p>
       </li>
     </ul>
-  </section>
-
-  <!-- 6. Conference presentations — venue + presentation ID + verified facts only; fourth slot not rendered -->
-  <section class="cv-section">
-    <h2>Conference Presentations</h2>
-    <ul class="entry-list">
+    <p class="group-label">Manuscripts under review</p>
+    <ul class="entry-list pub-list">
+      <li class="entry">
+        <p><span class="pubnum">[2]</span> <strong class="self">Chiou, W. Y.</strong>, Yang, Y. C. E., Tanaka, T., Jamrussri, S., &amp; Feng, S. Household flood adaptation and financial outcomes for homeowners and renters: A coupled agent-based and catastrophe flood modeling framework. <em>Journal of Hydrology</em>. <span class="chip chip-review">Under review</span></p>
+      </li>
+      <li class="entry">
+        <p><span class="pubnum">[3]</span> First-author manuscript &mdash; flood-adaptation decision pathways across marginalized and non-marginalized groups, identified via structural equation modeling. <em>Sustainable Cities and Society</em>. <span class="chip chip-review">Under review</span></p>
+      </li>
+    </ul>
+    <p class="group-label">Conference presentations</p>
+    <ul class="entry-list pub-list">
+      <li class="entry">
+        <p><strong class="self">Chiou, W.</strong>, Yang, Y. C. E., Tanaka, T., Jamrussri, S., &amp; Feng, S. &mdash; &ldquo;Modeling Long-Term Household Flood Adaptation under Social Heterogeneity: A Coupled Agent-Based Modeling Framework.&rdquo; Poster NH41E-0449, AGU Fall Meeting 2025.</p>
+      </li>
       <li class="entry">
         <p>ISHC 2025, Tokyo, Japan &mdash; oral presentation 38-03, July 2025; co-authored with collaborators across Lehigh, FAU, Kyoto, and UTokyo.</p>
       </li>
       <li class="entry">
-        <p>Chiou, W., Yang, Y. C. E., Tanaka, T., Jamrussri, S., &amp; Feng, S. &mdash; &ldquo;Modeling Long-Term Household Flood Adaptation under Social Heterogeneity: A Coupled Agent-Based Modeling Framework.&rdquo; Poster NH41E-0449, AGU Fall Meeting 2025.</p>
-      </li>
-      <li class="entry">
-        <p>AGU Fall Meeting 2023 &mdash; abstract; submarine groundwater discharge study combining electrical resistivity tomography (ERT), field observation, and numerical simulation.</p>
+        <p>AGU Fall Meeting 2023 &mdash; abstract; submarine groundwater discharge study combining electrical resistivity tomography, field observation, and numerical simulation.</p>
       </li>
     </ul>
   </section>
 
-  <!-- 7. Thesis -->
+  <!-- § 04 Awards & Fellowships -->
   <section class="cv-section">
-    <h2>Thesis</h2>
+    <h2><span class="secnum">&sect; 04</span> Awards &amp; Fellowships</h2>
+    <ul class="entry-list">
+      <li class="entry"><p>Dean&rsquo;s Award, College of Earth Sciences &mdash; National Central University <span class="dates">Jun 2023</span></p></li>
+      <li class="entry"><p>Interdisciplinary Research Fellowship (Hydrology/Geophysics/Geology) &mdash; NSTC, Taiwan &middot; $4,000 USD/year <span class="dates">2021 &ndash; 2023</span></p></li>
+      <li class="entry"><p>Best Undergraduate Student Project and Report in Earth Sciences &mdash; National Central University <span class="dates">Nov 2020</span></p></li>
+      <li class="entry"><p>Undergraduate Student Research Project Grant &mdash; NSTC, Taiwan &middot; $1,600 USD total <span class="dates">2020 &ndash; 2021</span></p></li>
+    </ul>
+  </section>
+
+  <!-- § 05 / § 06 — two-column: Research Interests | Methods & Tools -->
+  <div class="two-col">
+    <section class="cv-section">
+      <h2><span class="secnum">&sect; 05</span> Research Interests</h2>
+      <ul class="bullets plain">
+        <li>LLM multi-agent systems</li>
+        <li>Agent evaluation &amp; governance</li>
+        <li>Agent-based modeling</li>
+        <li>Catastrophe modeling</li>
+        <li>Human&ndash;water interaction</li>
+        <li>Decision-making under risk</li>
+        <li>Structural equation modeling</li>
+      </ul>
+    </section>
+    <section class="cv-section">
+      <h2><span class="secnum">&sect; 06</span> Methods &amp; Tools</h2>
+      <p class="group-label">Agent systems</p>
+      <p class="detail">LLM agents &middot; multi-agent systems &middot; structured prompting &middot; validation rules &middot; audit logs &middot; simulation coupling</p>
+      <p class="group-label">Programming</p>
+      <p class="detail">Python &middot; TypeScript &middot; R &middot; MATLAB &middot; C++</p>
+      <p class="group-label">Software &amp; tools</p>
+      <p class="detail">Git &middot; Jupyter &middot; SPSS &middot; AMOS &middot; ArcGIS Pro</p>
+      <p class="group-label">AI tooling</p>
+      <p class="detail">Claude Code &middot; Codex CLI &middot; Cursor &middot; Ollama &middot; MCP &middot; plugin/skill development</p>
+    </section>
+  </div>
+
+  <!-- § 07 Research Software & AI Systems — card grid, original design; statuses honest -->
+  <section class="cv-section">
+    <h2><span class="secnum">&sect; 07</span> Research Software &middot; LLM Agent Systems &amp; AI Research Workflows</h2>
+    <div class="card-grid">
+      <div class="card">
+        <p class="card-title">research-hub</p>
+        <p class="card-meta">Research-literature pipeline &middot; PyPI v1.1.1 &middot; Maintained open-source tool</p>
+        <p class="card-body">Local-first Zotero/Obsidian/NotebookLM pipeline with a fail-closed anti-fabrication gate &mdash; unverifiable references are quarantined, never silently accepted. CI across 3 OS &times; 4 Python versions.</p>
+      </div>
+      <div class="card">
+        <p class="card-title">WAGF &mdash; Water Agent Governance Framework</p>
+        <p class="card-meta">Multi-agent LLM governance &middot; In preparation for release</p>
+        <p class="card-body">Validates LLM-agent decisions with domain rules, behavioral-theory checks, retry feedback, and audit logs before simulation state updates.</p>
+      </div>
+      <div class="card">
+        <p class="card-title">FLOODABM</p>
+        <p class="card-meta">Coupled ABM &times; CAT model &middot; Research prototype, archived</p>
+        <p class="card-body">52,141-household flood-adaptation model with NFIP mechanics, calibrated on a 937-household survey; Zenodo-archived companion code with CITATION.cff.</p>
+      </div>
+      <div class="card">
+        <p class="card-title">agent-collab-skills</p>
+        <p class="card-meta">Multi-agent orchestration &middot; Maintained open-source tool</p>
+        <p class="card-body">Task splitting, output reconciliation, adversarial debate, shared memory, and acceptance gates for multi-agent runs.</p>
+      </div>
+      <div class="card">
+        <p class="card-title">codex-delegate</p>
+        <p class="card-meta">AI research workflow tooling &middot; Maintained open-source tool</p>
+        <p class="card-body">Cross-platform agent-delegation wrappers with anti-fabrication contracts; regression-tested against a real upstream failure; CI on Ubuntu and Windows.</p>
+      </div>
+      <div class="card">
+        <p class="card-title">ai-research-skills</p>
+        <p class="card-meta">Research workflow skills &middot; Maintained open-source tool</p>
+        <p class="card-body">Skill catalog for the research workflow &mdash; literature review, gap identification, feasibility scoping, manuscript writing, cross-agent delegation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 08 Professional Service -->
+  <section class="cv-section">
+    <h2><span class="secnum">&sect; 08</span> Professional Service</h2>
+    <ul class="entry-list">
+      <li class="entry"><p>Graduate Student Committee Member &mdash; Lehigh University, Dept. of Civil &amp; Environmental Engineering <span class="dates">2025 &ndash; present</span></p></li>
+    </ul>
+  </section>
+
+  <!-- § 09 Community & Open-Source -->
+  <section class="cv-section">
+    <h2><span class="secnum">&sect; 09</span> Community &amp; Open-Source</h2>
     <ul class="entry-list">
       <li class="entry">
-        <p>M.S. thesis, National Central University, 2023 &mdash; groundwater flow characteristics of the Taoyuan coastal zone.</p>
+        <p><strong>awesome-agentic-ai-zh</strong> <span class="dates">4.5k+ GitHub stars (July 2026)</span></p>
+        <p class="detail">Trilingual structured learning curriculum (zh-TW / zh-Hans / EN) &mdash; a staged roadmap from LLM basics to production multi-agent systems, with CI-enforced locale parity and externally contributed pull requests.</p>
+      </li>
+      <li class="entry">
+        <p><strong>Open-source contributions</strong></p>
+        <p class="detail">7 merged pull requests in third-party open-source projects (BuilderIO/agent-native &times;4, incl. a root-caused bug fix with a regression test; Nanako0129/coralline; ZhuLinsen/daily_stock_analysis; NVIDIA/skills).</p>
       </li>
     </ul>
   </section>
 
-  <!-- 8. Research experience — internships descriptive, never load-bearing -->
-  <section class="cv-section">
-    <h2>Research Experience</h2>
-    <ul class="entry-list">
-      <li class="entry">
-        <p><strong>Research Assistant</strong>, Surface Hydrology Group, Institute of Hydrological and Oceanic Sciences (IHOS), National Central University <span class="dates">2023 &ndash; 2024</span></p>
-        <p class="detail">Two- and three-dimensional groundwater modeling (HydroGeoChem); evaluation of nature-based solutions.</p>
-      </li>
-      <li class="entry">
-        <p><strong>Summer Research Intern</strong>, National Science and Technology Center for Disaster Reduction (NCDR), Taiwan <span class="dates">Summer 2022</span></p>
-        <p class="detail">IPCC AR6 downscaled climate ensembles; Python and MATLAB data pipelines.</p>
-      </li>
-      <li class="entry">
-        <p><strong>Undergraduate Research Intern</strong>, Institute of Earth Sciences, Academia Sinica <span class="dates">Jul &ndash; Aug 2020</span></p>
-        <p class="detail">Stable-isotope hydrology (&delta;D/&delta;&sup1;&#8312;O), Feitsui Reservoir.</p>
-      </li>
-    </ul>
-  </section>
 
-  <!-- 9. Research software — no Zenodo DOI string (CONFIRM-gated); WAGF only as the canonical one-liner -->
-  <section class="cv-section">
-    <h2>Research Software</h2>
-    <ul class="entry-list">
-      <li class="entry">
-        <p><strong>FLOODABM</strong> &mdash; 52,141-household coupled agent-based and catastrophe flood model of the Passaic River Basin, NJ, with National Flood Insurance Program mechanics, calibrated on a 937-household survey. Zenodo-archived companion code with CITATION.cff. <span class="entry-meta"><span class="status-label">Research prototype</span> &middot; archived companion code</span></p>
-      </li>
-      <li class="entry">
-        <p><strong>research-hub-pipeline</strong> &mdash; local-first research-literature pipeline with a fail-closed anti-fabrication gate; v1.1.1 on PyPI; CI across 3 operating systems and 4 Python versions. <span class="entry-meta"><span class="status-label">Maintained open-source tool</span></span></p>
-      </li>
-      <li class="entry">
-        <p>WAGF &mdash; research software in preparation for release.</p>
-      </li>
-    </ul>
-  </section>
 
-  <!-- 10. Honors & awards -->
-  <section class="cv-section">
-    <h2>Honors &amp; Awards</h2>
-    <ul class="entry-list">
-      <li class="entry"><p>Dean&rsquo;s Award, College of Earth Sciences, National Central University <span class="dates">Jun 2023</span></p></li>
-      <li class="entry"><p>NSTC Interdisciplinary Research Fellowship (Hydrology/Geophysics/Geology) <span class="dates">2021 &ndash; 2023</span></p></li>
-      <li class="entry"><p>Best Undergraduate Student Project and Report, National Central University <span class="dates">Nov 2020</span></p></li>
-      <li class="entry"><p>NSTC Undergraduate Student Research Project Grant <span class="dates">2020 &ndash; 2021</span></p></li>
-    </ul>
-  </section>
-
-  <!-- 11. Service -->
-  <section class="cv-section">
-    <h2>Service</h2>
-    <ul class="entry-list">
-      <li class="entry"><p>Graduate Student Committee, Department of Civil &amp; Environmental Engineering, Lehigh University.</p></li>
-    </ul>
-  </section>
+  <!-- § 10 Languages + colophon — one combined final row (page-budget) -->
+  <footer class="cv2-footer lang-foot">
+    <span><strong>Languages</strong>&ensp;Mandarin Chinese &mdash; native &nbsp;&middot;&nbsp; English &mdash; professional</span>
+    <span>Revised July 2026 &middot; wenyuchiou.github.io</span>
+  </footer>
 
 </body>
 </html>

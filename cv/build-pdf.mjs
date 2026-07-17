@@ -108,7 +108,13 @@ const CHECKS = [
       for (const i of ids) {
         for (const j of urs) {
           const gap = j > i ? j - (i + '2025WR042111'.length) : i - (j + 'under review'.length);
-          if (gap < 200) return `distance ${gap} chars (index ${i} vs ${j})`;
+          // Excused only when an explicit "published" label sits between the
+          // DOI and the match (mirrors scripts/check-copy.mjs) - a mislabeled
+          // citation has no intervening Published label. Fail-closed otherwise.
+          const lo = Math.min(i, j);
+          const hi = Math.max(i, j);
+          const excused = /published/i.test(html.slice(lo, hi));
+          if (gap < 200 && !excused) return `distance ${gap} chars (index ${i} vs ${j}, no intervening Published label)`;
         }
       }
       return null;

@@ -210,13 +210,12 @@ function scanText(label, text, isPdf = false) {
     for (const m of text.matchAll(WINDOWED.a)) {
       const nearIds = ids.filter((i) => Math.abs(i - m.index) <= WINDOWED.window);
       if (!nearIds.length) continue;
-      // PDF flat text loses section structure: a following "Manuscripts Under
-      // Review" heading legitimately lands near the DOI in extracted text.
-      // Excused ONLY when "published" appears between the DOI and the match -
-      // a truly mislabeled citation has no intervening Published label.
-      // Fail-closed for every non-PDF surface and for any pair lacking the
-      // intervening label.
-      const excused = isPdf && nearIds.every((i) => {
+      // A following "Manuscripts Under Review" heading legitimately lands near
+      // the DOI (in PDF flat text AND in compact HTML layouts with an explicit
+      // Published chip). Excused ONLY when "published" appears between the DOI
+      // and the match on EVERY near pair - a truly mislabeled citation has no
+      // intervening Published label. Fail-closed otherwise.
+      const excused = nearIds.every((i) => {
         const lo = Math.min(i, m.index);
         const hi = Math.max(i, m.index);
         return /published/i.test(text.slice(lo, hi));
