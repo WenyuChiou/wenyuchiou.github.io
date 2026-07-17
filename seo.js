@@ -27,7 +27,7 @@ export const SEO = {
     "/research/": {
       title: "Research & Academic Work — Wenyu Chiou",
       description:
-        "From a 937-household survey to a 52,141-household coupled agent-based–catastrophe flood model to LLM-agent validation methods — one research program, honest status labels.",
+        "From a 937-household survey to a 52,141-household coupled agent-based–catastrophe flood model to LLM-agent validation methods — one continuous research program.",
       ogType: "website",
       canonical: "https://wenyuchiou.github.io/research/",
     },
