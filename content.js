@@ -53,7 +53,7 @@ export const CONTENT = {
     {
       id: "oss",
       kicker: "Externally reviewed code",
-      copy: "7 merged pull requests in third-party open-source projects, including a root-caused bug fix with a regression test that fails on main. Verified July 2026.",
+      copy: "8 merged pull requests in third-party open-source projects, including a root-caused bug fix with a regression test that fails on main. Verified July 2026.",
       href: "/engineering/#oss",
       label: "",
     },
@@ -279,9 +279,9 @@ export const CONTENT = {
     ],
     evalThroughLine: "Systems designed so that failure is visible — no silent passes.",
 
-    // §3.6 — the 7 merged third-party PRs, real URLs.
+    // §3.6 — the 8 merged third-party PRs, real URLs.
     oss: {
-      intro: "7 merged pull requests in third-party open-source projects.",
+      intro: "8 merged pull requests in third-party open-source projects.",
       items: [
         {
           repo: "BuilderIO/agent-native",
@@ -312,6 +312,12 @@ export const CONTENT = {
           number: 10,
           url: "https://github.com/Nanako0129/coralline/pull/10",
           desc: "Pure-bash UTF-8 / East-Asian-width display fix.",
+        },
+        {
+          repo: "langchain-ai/openwiki",
+          number: 367,
+          url: "https://github.com/langchain-ai/openwiki/pull/367",
+          desc: "Security fix restricting ~/.openwiki permissions on Windows, where chmod is a no-op.",
         },
         {
           repo: "ZhuLinsen/daily_stock_analysis",
