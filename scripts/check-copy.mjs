@@ -67,7 +67,7 @@ const AVAILABILITY = CANON.availability; // the ONE sentence in which "Summer 20
 const BANNED = [
   { name: "first-superlative", re: /\bfirst[\s-]+(framework|governed|coupled)\b/giu, why: "kill list — 'first framework/governed/coupled' superlatives" },
   { name: "banned-multiplier", re: /6[–-]7[×x]|17[–-]22[×x]|token[\s-]+saving/giu, why: "kill list — unverified multipliers" },
-  { name: "stale-star-count", re: /1\.8k/giu, why: "stale star count (only allowed: '4.5k+ GitHub stars (July 2026)')" },
+  { name: "stale-star-count", re: /1\.8k/giu, why: "stale star count (only allowed: '4.7k+ GitHub stars (July 2026)')" },
   { name: "star-glyph", re: /★+/gu, why: "star glyphs banned in copy" },
   // CJK Unified Ideographs: Ext A, base block, compatibility, Ext B–G (astral).
   { name: "cjk-codepoint", re: /[㐀-䶿一-鿿豈-﫿\u{20000}-\u{2FA1F}]+/gu, why: "decision 2 — English-only v1" },

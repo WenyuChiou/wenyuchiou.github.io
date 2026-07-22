@@ -55,7 +55,7 @@ export const CONTENT = {
       kicker: "Community & education",
       copy: "awesome-agentic-ai-zh — a trilingual, CI-verified roadmap for building agentic AI, from LLM basics to production multi-agent systems.",
       href: "/projects/awesome-agentic-ai-zh/",
-      label: "4.5k+ GitHub stars (July 2026)",
+      label: "4.7k+ GitHub stars, 622 forks (July 2026)",
     },
   ],
 
@@ -81,7 +81,7 @@ export const CONTENT = {
       name: "awesome-agentic-ai-zh",
       line: "Chinese-speaking learners lacked a staged path into agentic AI, and hand-mirrored translations drift. This trilingual curriculum keeps its locales verifiably in sync with CI.",
       status: "Maintained open-source tool",
-      stars: "4.5k+ GitHub stars (July 2026)",
+      stars: "4.7k+ GitHub stars (July 2026)",
       href: "/projects/awesome-agentic-ai-zh/",
     },
   ],
@@ -246,7 +246,7 @@ export const CONTENT = {
         name: "awesome-agentic-ai-zh",
         what: "Trilingual agentic-AI curriculum (community/education line).",
         evidence:
-          "4.5k+ GitHub stars (July 2026); external contributors; CI-enforced locale parity.",
+          "4.7k+ GitHub stars (July 2026); external contributors; CI-enforced locale parity.",
         status: "Maintained open-source tool",
         href: "/projects/awesome-agentic-ai-zh/",
         repo: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
@@ -578,7 +578,7 @@ export const CONTENT = {
       evaluation:
         "The repo discloses honestly what has been executed versus syntax-checked; external contributions and an externally filed internationalization issue are the community-review signal.",
       results:
-        "Maintained open-source tool; 4.5k+ GitHub stars (July 2026) — the one star count permitted in public copy, re-verified before each publish.",
+        "Maintained open-source tool; 4.7k+ GitHub stars (July 2026) — the one star count permitted in public copy, re-verified before each publish.",
       evidenceLinks: [
         { label: "GitHub repository", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh" },
         { label: "CI workflows (locale parity, link checks)", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh/tree/main/.github/workflows" },
