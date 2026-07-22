@@ -11,7 +11,7 @@
 
 @page {
   size: Letter;
-  margin: 0.6in 0.65in;
+  margin: 0.55in 0.65in;
 }
 
 :root {
@@ -414,3 +414,15 @@ body.doc-resume li {
 .cv2 .card-body { font-size: 8.4pt; line-height: 1.38; }
 .cv2 .detail { line-height: 1.4; }
 .cv2 .cv-section { margin-bottom: 6.5pt; }
+
+/* Résumé 1-page compaction (2026-07-17, owner: fit one clean page). resume2-only. */
+.resume2 h2 { margin: 6pt 0 4pt; }
+.resume2 .r2-header { padding-bottom: 6pt; margin-bottom: 6pt; }
+.resume2 .r2-lede { margin-top: 2pt; }
+.resume2 .job { margin-bottom: 5pt; }
+.resume2 .job .r2-bullets li { margin-bottom: 1.5pt; line-height: 1.37; }
+.resume2 .r2-bullets li { margin-bottom: 1.5pt; }
+.resume2 .skill-line { margin-bottom: 1.5pt; line-height: 1.37; }
+.resume2 .publine, .resume2 .edu-line { margin-bottom: 1.5pt; }
+
+.resume2 { font-size: 9.5pt; }
