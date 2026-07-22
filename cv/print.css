@@ -426,3 +426,10 @@ body.doc-resume li {
 .resume2 .publine, .resume2 .edu-line { margin-bottom: 1.5pt; }
 
 .resume2 { font-size: 9.5pt; }
+
+/* Résumé final 1-page reclaim after re-adding availability + work-eligibility. */
+.resume2 .r2-avail { margin-bottom: 0; }
+.resume2 .r2-auth { margin: 1pt 0 0; }
+.resume2 .r2-header { margin-bottom: 5pt; padding-bottom: 5pt; }
+.resume2 h2 { margin: 5pt 0 3.5pt; }
+.resume2 .job { margin-bottom: 4pt; }
