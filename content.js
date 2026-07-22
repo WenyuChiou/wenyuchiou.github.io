@@ -36,26 +36,26 @@ export const CONTENT = {
   // IA §2 Block 3 — fixed order in both modes: science → tool → community verification.
   pillars: [
     {
-      id: "wrr",
-      kicker: "Published research",
-      copy: "Yang, Y. C. E., & Chiou, W. (2026). Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions. Water Resources Research, 62(6), e2025WR042111.",
-      href: "https://doi.org/10.1029/2025WR042111",
-      label: "Published · second author of two",
-    },
-    {
       id: "research-hub",
-      kicker: "Shipped, verified tooling",
-      copy: "research-hub-pipeline v1.1.1 on PyPI — an AI-operable research workspace (CLI, MCP server, REST, dashboard) for Zotero, Obsidian, and NotebookLM; listed in Awesome MCP Servers; CI across 3 OS × 4 Python versions.",
+      kicker: "Shipped AI infrastructure",
+      copy: "research-hub — an MCP server and CLI (PyPI: research-hub-pipeline v1.1.1) that makes Zotero, Obsidian, and NotebookLM AI-operable. Listed in Awesome MCP Servers; CI across 3 OS × 4 Python versions.",
       href: "https://pypi.org/project/research-hub-pipeline/",
       caseStudy: "/projects/research-hub/",
       label: "Maintained open-source tool",
     },
     {
-      id: "oss",
-      kicker: "Externally reviewed code",
-      copy: "10 merged pull requests in third-party open-source projects, including a root-caused bug fix with a regression test that fails on main. Verified July 2026.",
-      href: "/engineering/#oss",
-      label: "",
+      id: "agent-stack",
+      kicker: "AI-agent skills & governance",
+      copy: "Open-source agent skills — ai-research-skills (a 15-skill research catalog), agent-collab-skills, and codex-delegate — plus WAGF, a governance framework that constrains LLM agents so agent-driven simulations stay trustworthy.",
+      href: "/engineering/",
+      label: "Maintained open-source tools · WAGF in preparation",
+    },
+    {
+      id: "awesome",
+      kicker: "Community & education",
+      copy: "awesome-agentic-ai-zh — a trilingual, CI-verified roadmap for building agentic AI, from LLM basics to production multi-agent systems.",
+      href: "/projects/awesome-agentic-ai-zh/",
+      label: "4.5k+ GitHub stars (July 2026)",
     },
   ],
 
