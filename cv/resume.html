@@ -3,80 +3,96 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wenyu Chiou — AI Research Resume</title>
+  <title>Wenyu Chiou — AI Agent Infrastructure &amp; Evaluation Engineer</title>
   <link rel="stylesheet" href="print.css">
 </head>
-<body class="doc-resume">
+<body class="doc-resume resume2">
 
-  <!-- 1. Header — single column, no photo, no layout tables; LinkedIn withheld (CONFIRM-gated) -->
-  <header class="doc-header">
+  <!-- Header — single column, no photo, no layout tables; ATS reads top-to-bottom -->
+  <header class="r2-header">
     <h1>Wenyu Chiou</h1>
-    <p class="title-line">Ph.D. Candidate, Civil &amp; Environmental Engineering, Lehigh University</p>
-    <p class="contact-line">
-      Bethlehem, PA &middot;
-      <a class="u" href="mailto:wec324@lehigh.edu">wec324@lehigh.edu</a> &middot;
-      <a class="u" href="https://wenyuchiou.github.io">wenyuchiou.github.io</a> &middot;
-      <a class="u" href="https://github.com/WenyuChiou">github.com/WenyuChiou</a>
-    </p>
+    <p class="r2-role">AI Agent Infrastructure &amp; Evaluation Engineer</p>
+    <p class="r2-contact">Bethlehem, PA &middot; <a class="u" href="mailto:wec324@lehigh.edu">wec324@lehigh.edu</a> &middot; +1 (484) 937-2528 &middot; <a class="u" href="https://github.com/WenyuChiou">github.com/WenyuChiou</a> &middot; <a class="u" href="https://www.linkedin.com/in/wenyu-chiou">linkedin.com/in/wenyu-chiou</a> &middot; <a class="u" href="https://wenyuchiou.github.io">wenyuchiou.github.io</a></p>
+    <p class="r2-lede">I build governed, fail-closed LLM-agent infrastructure &mdash; anti-fabrication gates, delegation contracts, and audit trails &mdash; and the empirical simulations that stress-test whether AI agents can stand in for real decision-makers.</p>
+    <p class="r2-avail">Open to Summer 2027 internships in AI evaluation, research engineering, and risk analytics.</p>
+    <p class="r2-auth">Work authorization: F-1 student &mdash; eligible for internships via CPT; eligible for OPT and STEM OPT extension upon graduation.</p>
   </header>
 
-  <!-- 2. Positioning block — canonical strings verbatim -->
-  <section class="rs-section positioning">
-    <p class="dialect">AI evaluation / research engineer with catastrophe-risk domain depth.</p>
-    <p>Open to Summer 2027 internships in AI evaluation, research engineering, and risk analytics.</p>
-    <p>Work authorization: F-1 student &mdash; eligible for internships via CPT; eligible for OPT and STEM OPT extension upon graduation.</p>
-  </section>
-
-  <!-- 3. Selected systems — decision-11 numbers only -->
-  <section class="rs-section">
+  <!-- Selected systems — agent-infrastructure / harness first -->
+  <section>
     <h2>Selected Systems</h2>
-    <ul>
-      <li><strong>research-hub</strong> &mdash; Local-first research-literature pipeline whose write path is guarded by a fail-closed anti-fabrication gate: references that cannot be verified are quarantined with an explicit failure taxonomy, never silently accepted. Sole designer and maintainer end to end (architecture, authenticity gate, MCP server, CI design, evaluation suite, release process). PyPI: research-hub-pipeline v1.1.1; CI across 3 operating systems and 4 Python versions. Maintained open-source tool.</li>
-      <li><strong>codex-delegate</strong> &mdash; Cross-platform agent-delegation wrapper with anti-fabrication contracts; regression test pins a real upstream stdin hang; CI on Ubuntu and Windows. Maintained open-source tool.</li>
-      <li><strong>FLOODABM</strong> &mdash; 52,141-household agent-based flood-adaptation model coupled to a catastrophe flood model with NFIP premium, payout, and deductible mechanics; calibrated on a self-collected 937-household survey (Passaic River Basin, NJ); simulated payouts validated against OpenFEMA insurance-claims data. Research prototype; archived companion code with citation metadata.</li>
-      <li><strong>awesome-agentic-ai-zh</strong> &mdash; Trilingual agentic-AI curriculum with CI-enforced locale parity; 4.5k+ GitHub stars (July 2026). Maintained open-source tool.</li>
+    <ul class="r2-list">
+      <li class="sys">
+        <p class="sys-head"><strong>research-hub</strong><span class="sys-tag">Maintained open-source tool</span></p>
+        <p class="sys-val">Local-first research-literature pipeline (Zotero / Obsidian / NotebookLM) whose write path is guarded by a fail-closed anti-fabrication gate: references that cannot be verified are quarantined with an explicit failure taxonomy, never silently accepted. Sole designer and maintainer end to end &mdash; architecture, authenticity gate, MCP server, CI design, evaluation suite, release process.</p>
+        <p class="sys-ev">PyPI research-hub-pipeline v1.1.1 &middot; MCP server &middot; CI across 3 OS &times; 4 Python versions &middot; in-repo retrieval-recall evaluation suite against golden fixtures</p>
+      </li>
+      <li class="sys">
+        <p class="sys-head"><strong>fable-method-harness</strong><span class="sys-tag">Maintained open-source tool</span></p>
+        <p class="sys-val">A portable operating harness for AI-assisted work: model/cost routing, honest-failure discipline, and an audit trail for every step. Measured against a benchmark suite rather than asserted; verified across Claude and Codex runtimes with reserved slots for others.</p>
+        <p class="sys-ev">validation CI &middot; benchmark + distillation harness &middot; routing playbook &middot; audit-trail memory</p>
+      </li>
+      <li class="sys">
+        <p class="sys-head"><strong>agent-collab-skills</strong><span class="sys-tag">Maintained open-source tool</span></p>
+        <p class="sys-val">A multi-agent orchestration toolkit: task splitter, output reconciler, adversarial debate, shared memory, and a pre-merge acceptance gate. Composes with the delegation wrappers below to run bounded multi-agent rounds without silent drift.</p>
+        <p class="sys-ev">test suite + CI &middot; catalog &amp; context-policy tests &middot; composes with codex-delegate</p>
+      </li>
+      <li class="sys">
+        <p class="sys-head"><strong>codex-delegate</strong><span class="sys-tag">Maintained open-source tool</span></p>
+        <p class="sys-val">Cross-platform agent-delegation wrappers with anti-fabrication contracts &mdash; change attribution is verified from git state, not the delegate&rsquo;s own report. A regression test pins a real upstream stdin hang and fails without the fix.</p>
+        <p class="sys-ev">CI on Ubuntu and Windows across multiple Python versions &middot; contract + failure-mode tests</p>
+      </li>
+      <li class="sys">
+        <p class="sys-head"><strong>WAGF &mdash; Water Agent Governance Framework</strong><span class="sys-tag">In preparation for release</span></p>
+        <p class="sys-val">A governance layer for LLM-driven agents: agent decisions are validated against physical constraints and behavioral theory, with retry feedback and audit logs, before they update simulation state &mdash; fail-closed, no silent passes.</p>
+        <p class="sys-ev">domain-rule + behavioral-theory validation &middot; retry feedback &middot; audit logs</p>
+      </li>
     </ul>
   </section>
 
-  <!-- 4. Open-source contributions -->
-  <section class="rs-section">
+  <!-- Open-source contributions -->
+  <section>
     <h2>Open-Source Contributions</h2>
-    <ul>
-      <li>7 merged pull requests in third-party open-source projects, including:</li>
-      <li>BuilderIO/agent-native &mdash; four merged PRs, including a root-caused engine-selection bug fix with a regression test that fails on main.</li>
-      <li>Nanako0129/coralline &mdash; pure-bash UTF-8 / East-Asian-width display fix.</li>
-      <li>ZhuLinsen/daily_stock_analysis &mdash; Taiwan-market data feature, re-scoped through maintainer review.</li>
-      <li>NVIDIA/skills &mdash; documentation fix.</li>
+    <ul class="r2-bullets">
+      <li>7 merged pull requests in third-party open-source projects, including a root-caused engine-selection bug fix with a regression test that fails on main (BuilderIO/agent-native &times;4).</li>
+      <li>Pure-bash UTF-8 / East-Asian-width display fix (Nanako0129/coralline); Taiwan-market data feature re-scoped through maintainer review (ZhuLinsen/daily_stock_analysis); documentation fix (NVIDIA/skills).</li>
     </ul>
   </section>
 
-  <!-- 5. Publication -->
-  <section class="rs-section">
+  <!-- Publication -->
+  <section>
     <h2>Publication</h2>
-    <ul>
-      <li>Yang, Y. C. E., &amp; <strong>Chiou, W.</strong> (2026). Leveraging Large Language Models for Agent-Based Simulation of Human&ndash;Water System Interactions. <em>Water Resources Research</em>, 62(6), e2025WR042111. <span class="u">https://doi.org/10.1029/2025WR042111</span> &mdash; Published; second author of two.</li>
-    </ul>
+    <p class="publine">Yang, Y. C. E., &amp; <span class="self">Chiou, W.</span> (2026). Leveraging Large Language Models for Agent-Based Simulation of Human&ndash;Water System Interactions. <em>Water Resources Research</em>, 62(6), e2025WR042111. <a class="u" href="https://doi.org/10.1029/2025WR042111">doi.org/10.1029/2025WR042111</a> <span class="chip-published">Published</span> &middot; second author of two.</p>
   </section>
 
-  <!-- 6. Education — fields spelled out -->
-  <section class="rs-section">
+  <!-- Domain & risk analytics — the problem the infrastructure is applied to -->
+  <section>
+    <h2>Domain &amp; Risk Analytics</h2>
+    <p class="domline"><strong>FLOODABM</strong> &mdash; 52,141-household coupled agent-based &times; catastrophe flood model with NFIP premium, payout, and deductible mechanics; calibrated on a self-collected 937-household survey (Passaic River Basin, NJ) via structural equation modeling and Bayesian calibration; simulated payouts validated against OpenFEMA insurance-claims data. Research prototype, archived.</p>
+    <p class="domline">Catastrophe-risk modeling fluency: NFIP mechanics, exceedance-probability curves, coupled ABM &times; catastrophe modeling.</p>
+  </section>
+
+  <!-- Community -->
+  <section>
+    <h2>Community</h2>
+    <p class="commline"><strong>awesome-agentic-ai-zh</strong> &mdash; trilingual agentic-AI learning curriculum with CI-enforced locale parity and external contributors; 4.5k+ GitHub stars (July 2026).</p>
+  </section>
+
+  <!-- Education — fields spelled out; expected graduation stated -->
+  <section>
     <h2>Education</h2>
-    <ul>
-      <li><strong>Ph.D., Civil &amp; Environmental Engineering</strong>, Lehigh University &mdash; 2024 &ndash; present &middot; expected 2028</li>
-      <li><strong>M.S., Hydrological and Oceanic Sciences</strong>, National Central University &mdash; Sep 2021 &ndash; Jun 2023</li>
-      <li><strong>B.S., Earth Sciences</strong>, National Central University &mdash; Sep 2017 &ndash; Jun 2021</li>
-    </ul>
+    <p class="edu-line"><span><strong>Ph.D., Civil &amp; Environmental Engineering</strong>, Lehigh University</span><span class="d">2024 &ndash; present &middot; expected 2028</span></p>
+    <p class="edu-line"><span><strong>M.S., Hydrological and Oceanic Sciences</strong>, National Central University</span><span class="d">Sep 2021 &ndash; Jun 2023</span></p>
+    <p class="edu-line"><span><strong>B.S., Earth Sciences</strong>, National Central University</span><span class="d">Sep 2017 &ndash; Jun 2021</span></p>
   </section>
 
-  <!-- 7. Skills — artifact-backed only -->
-  <section class="rs-section">
+  <!-- Skills — artifact-backed only -->
+  <section>
     <h2>Skills</h2>
-    <ul>
-      <li>Programming and tooling: Python; testing and CI; Git; cross-platform (Windows/POSIX) engineering</li>
-      <li>AI systems: evaluation design; MCP/agent tooling</li>
-      <li>Statistical modeling: structural equation modeling (SEM); Bayesian calibration</li>
-      <li>Risk analytics: NFIP mechanics, exceedance-probability curves, coupled catastrophe modeling</li>
-    </ul>
+    <p class="skill-line"><span class="skill-k">AI-agent systems:</span> LLM-agent orchestration &middot; multi-agent collaboration &middot; evaluation design &middot; anti-fabrication &amp; governance &middot; MCP / agent tooling &middot; local model deployment (Ollama)</p>
+    <p class="skill-line"><span class="skill-k">Programming &amp; tooling:</span> Python &middot; testing &amp; CI &middot; Git &middot; cross-platform (Windows / POSIX) engineering</p>
+    <p class="skill-line"><span class="skill-k">Statistical modeling:</span> structural equation modeling (SEM) &middot; Bayesian calibration</p>
+    <p class="skill-line"><span class="skill-k">Risk analytics:</span> NFIP mechanics &middot; exceedance-probability curves &middot; coupled catastrophe modeling</p>
   </section>
 
 </body>

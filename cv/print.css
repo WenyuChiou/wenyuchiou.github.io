@@ -342,3 +342,48 @@ body.doc-resume li {
 
 .lang-foot { text-transform: none; letter-spacing: 0.02em; font-size: 8pt; color: #4b5563; }
 .lang-foot strong { color: #1f2937; }
+
+
+/* ============================================================
+   RESUME2 — industry résumé, harness-forward, distinctive-but-ATS-safe
+   (owner directive 2026-07-17: industry track, agent-infrastructure/harness
+   lead, single column so ATS parses cleanly; visual distinction via indigo
+   accent + type hierarchy + left-bordered system blocks — all CSS, never
+   multi-column or table-of-content, so extraction order = reading order).
+   ============================================================ */
+.resume2 { --acc: #2F3A5C; --acc-2: #5B6788; font-family: 'Inter', sans-serif; font-size: 9.5pt; color: #1f2430; }
+
+.r2-header { border-bottom: 2pt solid var(--acc); padding-bottom: 8pt; margin-bottom: 9pt; }
+.resume2 h1 { font-family: 'Fraunces', Georgia, serif; font-weight: 560; font-size: 24pt; letter-spacing: 0.005em; margin: 0 0 1pt; color: #14181f; }
+.r2-role { font-size: 11pt; font-weight: 600; letter-spacing: 0.02em; color: var(--acc); margin: 0 0 5pt; }
+.r2-contact { font-size: 8pt; color: #3d4453; margin: 0 0 6pt; }
+.r2-lede { font-size: 9.5pt; line-height: 1.5; color: #2b3140; margin: 0 0 4pt; }
+.r2-avail { font-size: 8.75pt; color: var(--acc); font-weight: 600; margin: 0 0 1.5pt; }
+.r2-auth { font-size: 8.25pt; color: #4a5162; margin: 0; }
+
+.resume2 h2 { font-family: 'Inter', sans-serif; font-size: 8.75pt; font-weight: 700; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--acc); margin: 9pt 0 5pt; padding-bottom: 2.5pt;
+  border-bottom: 0.75pt solid #C9CEDA; }
+.resume2 h2::before { content: ""; display: inline-block; width: 12pt; height: 3pt; background: var(--acc);
+  vertical-align: middle; margin-right: 6pt; position: relative; top: -1.5pt; }
+
+.sys { border-left: 2pt solid var(--acc-2); padding: 0 0 0 8pt; margin: 0 0 6pt; break-inside: avoid; }
+.sys-head { margin: 0 0 1.5pt; font-size: 9.75pt; }
+.sys-head strong { font-weight: 700; color: #14181f; }
+.sys-tag { font-size: 7pt; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--acc-2); margin-left: 6pt; }
+.sys-val { margin: 0 0 2pt; line-height: 1.42; color: #2b3140; }
+.sys-ev { font-family: 'JetBrains Mono', monospace; font-size: 7.5pt; line-height: 1.4; color: #5a6273; margin: 0; }
+
+.resume2 .r2-list { list-style: none; margin: 0; padding: 0; }
+.resume2 .r2-bullets { margin: 0 0 0 13pt; padding: 0; }
+.resume2 .r2-bullets li { margin: 0 0 2pt; line-height: 1.42; }
+.resume2 .publine, .resume2 .domline, .resume2 .commline { margin: 0 0 3pt; line-height: 1.44; }
+.resume2 .chip-published { font-size: 6.75pt; font-weight: 700; letter-spacing: 0.05em; color: #1F5C31;
+  background: #E6F0E7; border: 0.5pt solid #A9C9AF; border-radius: 2.5pt; padding: 0.5pt 4pt; white-space: nowrap; }
+.resume2 .self { font-weight: 700; }
+.resume2 .edu-line { display: flex; justify-content: space-between; gap: 12pt; margin: 0 0 2pt; line-height: 1.4; }
+.resume2 .edu-line .d { color: #6b7280; font-size: 8.25pt; white-space: nowrap; flex-shrink: 0; }
+.resume2 .skill-line { margin: 0 0 2.5pt; line-height: 1.42; }
+.resume2 .skill-k { font-weight: 700; color: var(--acc); }
+.resume2 .u { color: inherit; text-decoration: none; border-bottom: 0.4pt solid #b9c0cd; }
