@@ -11,7 +11,7 @@
 
 @page {
   size: Letter;
-  margin: 0.7in;
+  margin: 0.6in 0.65in;
 }
 
 :root {
@@ -387,3 +387,16 @@ body.doc-resume li {
 .resume2 .skill-line { margin: 0 0 2.5pt; line-height: 1.42; }
 .resume2 .skill-k { font-weight: 700; color: var(--acc); }
 .resume2 .u { color: inherit; text-decoration: none; border-bottom: 0.4pt solid #b9c0cd; }
+
+/* CV2 reclaim after reframe (2026-07-17): cards slightly denser to hold 3pp. */
+.cv2 { font-size: 9.25pt; }
+.cv2 .card-body { font-size: 7.85pt; line-height: 1.34; }
+.cv2 .card-grid { gap: 5pt 10pt; }
+.cv2 .cv-section { margin-bottom: 5.5pt; }
+.cv2 .detail { line-height: 1.34; }
+
+/* CV2: reclaim the single orphan footer line (2026-07-17). */
+.cv2 .card { padding-top: 1pt; padding-bottom: 1pt; }
+.cv2 .card-grid { gap: 4pt 10pt; }
+.cv2-footer { margin-top: 2pt; padding-top: 3pt; }
+.cv2 .two-col { margin-bottom: 2pt; }

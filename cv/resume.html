@@ -13,39 +13,45 @@
     <h1>Wenyu Chiou</h1>
     <p class="r2-role">AI Agent Infrastructure &amp; Evaluation Engineer</p>
     <p class="r2-contact">Bethlehem, PA &middot; <a class="u" href="mailto:wec324@lehigh.edu">wec324@lehigh.edu</a> &middot; +1 (484) 937-2528 &middot; <a class="u" href="https://github.com/WenyuChiou">github.com/WenyuChiou</a> &middot; <a class="u" href="https://www.linkedin.com/in/wenyu-chiou">linkedin.com/in/wenyu-chiou</a> &middot; <a class="u" href="https://wenyuchiou.github.io">wenyuchiou.github.io</a></p>
-    <p class="r2-lede">I build governed, fail-closed LLM-agent infrastructure &mdash; anti-fabrication gates, delegation contracts, and audit trails &mdash; and the empirical simulations that stress-test whether AI agents can stand in for real decision-makers.</p>
+    <p class="r2-lede">I build AI-agent and research infrastructure &mdash; MCP research pipelines, multi-agent orchestration, and portable agent harnesses &mdash; and governance frameworks that keep LLM-agent simulations of human&ndash;environment systems stable and verifiable.</p>
   </header>
 
-  <!-- Selected systems — agent-infrastructure / harness first -->
+  <!-- Selected systems — research tooling + agent infrastructure first -->
   <section>
     <h2>Selected Systems</h2>
     <ul class="r2-list">
       <li class="sys">
         <p class="sys-head"><strong>research-hub</strong><span class="sys-tag">Maintained open-source tool</span></p>
-        <p class="sys-val">Local-first research-literature pipeline (Zotero / Obsidian / NotebookLM) whose write path is guarded by a fail-closed anti-fabrication gate: references that cannot be verified are quarantined with an explicit failure taxonomy, never silently accepted. Sole designer and maintainer end to end &mdash; architecture, authenticity gate, MCP server, CI design, evaluation suite, release process.</p>
-        <p class="sys-ev">PyPI research-hub-pipeline v1.1.1 &middot; MCP server &middot; CI across 3 OS &times; 4 Python versions &middot; in-repo retrieval-recall evaluation suite against golden fixtures</p>
+        <p class="sys-val">An AI-operable research workspace: gives an AI assistant a CLI, MCP server, REST API, and dashboard to run repeatable literature workflows &mdash; search papers across arXiv, Semantic Scholar, PubMed, and CrossRef, ingest them into Zotero, sync notes to Obsidian, and verify NotebookLM briefs against their sources. Sole designer and maintainer end to end.</p>
+        <p class="sys-ev">PyPI research-hub-pipeline v1.1.1 &middot; listed in Awesome MCP Servers &middot; CI across 3 OS &times; 4 Python versions &middot; CLI + MCP + REST + dashboard</p>
+      </li>
+      <li class="sys">
+        <p class="sys-head"><strong>ai-research-skills</strong><span class="sys-tag">Maintained open-source tool</span></p>
+        <p class="sys-val">A catalog of 15 research-workflow skills, packaged as a five-plugin marketplace with one-command install. It opens with a 3-gate decision dossier &mdash; is the research gap open, a real contribution, and feasible? &mdash; so the downstream stages (design, build, drafting, reviewer response) only run on a vetted topic. The same skill files load across Codex, Cursor, Gemini, and generic API clients.</p>
+        <p class="sys-ev">15 skills &middot; 5-plugin marketplace &middot; cross-runtime SKILL.md contract &middot; MIT</p>
       </li>
       <li class="sys">
         <p class="sys-head"><strong>fable-method-harness</strong><span class="sys-tag">Maintained open-source tool</span></p>
-        <p class="sys-val">A portable operating harness for AI-assisted work: model/cost routing, honest-failure discipline, and an audit trail for every step. Measured against a benchmark suite rather than asserted; verified across Claude and Codex runtimes with reserved slots for others.</p>
+        <p class="sys-val">A portable operating harness for AI-assisted work: model / cost routing, honest-failure discipline, and a per-step audit trail. Measured against a benchmark suite rather than asserted; verified across Claude and Codex runtimes with reserved slots for others.</p>
         <p class="sys-ev">validation CI &middot; benchmark + distillation harness &middot; routing playbook &middot; audit-trail memory</p>
       </li>
       <li class="sys">
-        <p class="sys-head"><strong>agent-collab-skills</strong><span class="sys-tag">Maintained open-source tool</span></p>
-        <p class="sys-val">A multi-agent orchestration toolkit: task splitter, output reconciler, adversarial debate, shared memory, and a pre-merge acceptance gate. Composes with the delegation wrappers below to run bounded multi-agent rounds without silent drift.</p>
-        <p class="sys-ev">test suite + CI &middot; catalog &amp; context-policy tests &middot; composes with codex-delegate</p>
-      </li>
-      <li class="sys">
-        <p class="sys-head"><strong>codex-delegate</strong><span class="sys-tag">Maintained open-source tool</span></p>
-        <p class="sys-val">Cross-platform agent-delegation wrappers with anti-fabrication contracts &mdash; change attribution is verified from git state, not the delegate&rsquo;s own report. A regression test pins a real upstream stdin hang and fails without the fix.</p>
-        <p class="sys-ev">CI on Ubuntu and Windows across multiple Python versions &middot; contract + failure-mode tests</p>
+        <p class="sys-head"><strong>agent-collab-skills</strong> &amp; <strong>codex-delegate</strong><span class="sys-tag">Maintained open-source tools</span></p>
+        <p class="sys-val">Multi-agent orchestration (task splitter, output reconciler, adversarial debate, shared memory, pre-merge acceptance gate) plus cross-platform delegation wrappers whose contracts verify change from git state, not the delegate&rsquo;s own report. A regression test pins a real upstream stdin hang and fails without the fix.</p>
+        <p class="sys-ev">test suites + CI on Ubuntu and Windows &middot; contract + failure-mode tests &middot; composable</p>
       </li>
       <li class="sys">
         <p class="sys-head"><strong>WAGF &mdash; Water Agent Governance Framework</strong><span class="sys-tag">In preparation for release</span></p>
-        <p class="sys-val">A governance layer for LLM-driven agents: agent decisions are validated against physical constraints and behavioral theory, with retry feedback and audit logs, before they update simulation state &mdash; fail-closed, no silent passes.</p>
-        <p class="sys-ev">domain-rule + behavioral-theory validation &middot; retry feedback &middot; audit logs</p>
+        <p class="sys-val">A governance framework for LLM agents in human&ndash;water simulation: agent decisions are constrained by domain rules and behavioral theory, with retry feedback and audit logs, so that the coupled behavioral simulation&rsquo;s outcomes stay stable and physically sensible instead of drifting into implausible states.</p>
+        <p class="sys-ev">domain-rule + behavioral-theory constraints &middot; retry feedback &middot; audit logs</p>
       </li>
     </ul>
+  </section>
+
+  <!-- Community & education — the trilingual learning project -->
+  <section>
+    <h2>Community &amp; Education</h2>
+    <p class="commline"><strong>awesome-agentic-ai-zh</strong> &mdash; a trilingual (zh-TW / zh-Hans / English) 7-stage learning roadmap for building agentic AI, with 240+ curated resources from LLM basics to production multi-agent systems, CI-enforced locale parity, and external contributors. 4.5k+ GitHub stars, 588 forks (July 2026).</p>
   </section>
 
   <!-- Open-source contributions -->
@@ -70,12 +76,6 @@
     <p class="domline">Catastrophe-risk modeling fluency: NFIP mechanics, exceedance-probability curves, coupled ABM &times; catastrophe modeling.</p>
   </section>
 
-  <!-- Community -->
-  <section>
-    <h2>Community</h2>
-    <p class="commline"><strong>awesome-agentic-ai-zh</strong> &mdash; trilingual agentic-AI learning curriculum with CI-enforced locale parity and external contributors; 4.5k+ GitHub stars (July 2026).</p>
-  </section>
-
   <!-- Education — fields spelled out; expected graduation stated -->
   <section>
     <h2>Education</h2>
@@ -87,7 +87,7 @@
   <!-- Skills — artifact-backed only -->
   <section>
     <h2>Skills</h2>
-    <p class="skill-line"><span class="skill-k">AI-agent systems:</span> LLM-agent orchestration &middot; multi-agent collaboration &middot; evaluation design &middot; anti-fabrication &amp; governance &middot; MCP / agent tooling &middot; local model deployment (Ollama)</p>
+    <p class="skill-line"><span class="skill-k">AI-agent &amp; research infrastructure:</span> MCP servers &amp; tooling &middot; LLM-agent orchestration &middot; multi-agent collaboration &middot; agent governance &amp; validation &middot; research-workflow automation (Zotero / Obsidian / NotebookLM) &middot; local model deployment (Ollama)</p>
     <p class="skill-line"><span class="skill-k">Programming &amp; tooling:</span> Python &middot; testing &amp; CI &middot; Git &middot; cross-platform (Windows / POSIX) engineering</p>
     <p class="skill-line"><span class="skill-k">Statistical modeling:</span> structural equation modeling (SEM) &middot; Bayesian calibration</p>
     <p class="skill-line"><span class="skill-k">Risk analytics:</span> NFIP mechanics &middot; exceedance-probability curves &middot; coupled catastrophe modeling</p>

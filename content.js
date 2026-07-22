@@ -45,7 +45,7 @@ export const CONTENT = {
     {
       id: "research-hub",
       kicker: "Shipped, verified tooling",
-      copy: "research-hub-pipeline v1.1.1 on PyPI — a research-literature pipeline with a fail-closed anti-fabrication gate; CI across 3 OS × 4 Python versions.",
+      copy: "research-hub-pipeline v1.1.1 on PyPI — an AI-operable research workspace (CLI, MCP server, REST, dashboard) for Zotero, Obsidian, and NotebookLM; listed in Awesome MCP Servers; CI across 3 OS × 4 Python versions.",
       href: "https://pypi.org/project/research-hub-pipeline/",
       caseStudy: "/projects/research-hub/",
       label: "Maintained open-source tool",
@@ -65,7 +65,7 @@ export const CONTENT = {
     {
       slug: "research-hub",
       name: "research-hub",
-      line: "LLM-assisted literature workflows fabricate references. research-hub places a fail-closed verification gate at the write boundary, so an unverifiable citation fails loudly instead of entering the record.",
+      line: "Literature workflows are repetitive and easy to get subtly wrong across tools. research-hub turns Zotero, Obsidian, and NotebookLM into one AI-operable workspace — searching, ingesting, and syncing papers through a single CLI, MCP server, and REST API.",
       status: "Maintained open-source tool",
       href: "/projects/research-hub/",
     },
@@ -208,9 +208,9 @@ export const CONTENT = {
     systems: [
       {
         name: "research-hub",
-        what: "Local-first research-literature pipeline (Zotero / Obsidian / NotebookLM orchestration) with a fail-closed authenticity gate.",
+        what: "AI-operable research workspace: a CLI, MCP server, REST API, and dashboard that drive repeatable literature workflows across Zotero, Obsidian, and NotebookLM.",
         evidence:
-          "PyPI research-hub-pipeline v1.1.1; CI across 3 OS × 4 Python versions; in-repo retrieval-recall evaluation suite against golden fixtures; observed failures recorded as explicit audit baselines; in-repo failure taxonomy.",
+          "PyPI research-hub-pipeline v1.1.1; listed in the Awesome MCP Servers catalog; CI across 3 OS × 4 Python versions; in-repo retrieval-recall evaluation suite against golden fixtures.",
         status: "Maintained open-source tool",
         href: "/projects/research-hub/",
         repo: "https://github.com/WenyuChiou/research-hub",
@@ -252,7 +252,7 @@ export const CONTENT = {
         repo: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
       },
     ],
-    systemsNote: "WAGF — research software in preparation for release.",
+    systemsNote: "WAGF — a governance framework for LLM agents in human–water simulation, keeping coupled behavioral outcomes stable and physically sensible; research software in preparation for release.",
 
     // §3.4 — every item inspectable in a public repo.
     evalRecord: [
@@ -376,7 +376,7 @@ export const CONTENT = {
       // ship until CONFIRM #10 resolves its title/year/author-position conflict.
     ],
 
-    softwareNote: "WAGF — research software in preparation for release.",
+    softwareNote: "WAGF — a governance framework for LLM agents in human–water simulation, keeping coupled behavioral outcomes stable and physically sensible; research software in preparation for release.",
 
     // Descriptor entries only — exact titles are inserted after CONFIRM #3 resolves; nothing
     // is inflated beyond "Under review". The LLM-persona validity study is not listed at all
@@ -425,22 +425,22 @@ export const CONTENT = {
   // folds them into the 4-section VDS layout (implementation-plan §0.6 deviation 3).
   caseStudies: {
     "research-hub": {
-      title: "research-hub — fail-closed literature pipeline",
+      title: "research-hub — an AI-operable research workspace",
       status: "Maintained open-source tool",
       problem:
-        "LLM-assisted literature workflows fabricate references, and those references were entering a permanent research record (Zotero, Obsidian, NotebookLM) unverified. Nothing in the standard toolchain makes an unverifiable citation fail loudly.",
+        "A literature workflow is spread across Zotero (references), Obsidian (notes), and NotebookLM (briefs), and moving papers between them by hand is repetitive, error-prone, and impossible for an AI assistant to drive reliably.",
       whyItMatters:
-        "A fabricated reference corrupts a knowledge base silently and propagates into manuscripts. The failure mode must be visible at write time, not discovered at submission time.",
+        "Researchers lose hours to manual copying between tools, and an AI assistant can only help if the whole workflow is exposed through a stable, scriptable interface rather than a pile of one-off clicks.",
       myRole:
-        "Sole designer and maintainer, end to end — architecture, the authenticity gate, the MCP server, CI design, the evaluation suite, and the release process.",
+        "Sole designer and maintainer, end to end — architecture, the CLI, the MCP server, the REST API and dashboard, CI design, the evaluation suite, and the release process.",
       approach:
-        "A local-first pipeline (discover → verify → ingest → brief) with the verification gate placed at the write boundary: references that cannot be verified are quarantined with an explicit failure reason, never silently accepted.",
+        "One AI-operable workspace over all three tools: search papers across arXiv, Semantic Scholar, PubMed, and CrossRef; ingest them into Zotero; sync notes to Obsidian; and verify NotebookLM briefs against their sources — each step available from a CLI, an MCP server, and a REST API so an agent can run the whole pipeline.",
       system:
-        "A Python package published to PyPI as research-hub-pipeline v1.1.1 (MIT). The core is a fail-closed anti-fabrication module with a transient-vs-permanent failure taxonomy and quarantine-not-delete handling, plus an MCP server exposing the pipeline to agent hosts.",
+        "A Python package published to PyPI as research-hub-pipeline v1.1.1 (MIT), exposing a CLI, an MCP server (listed in the Awesome MCP Servers catalog), a REST API, and a dashboard. All three external tools are optional — start with any two.",
       keyChallenge:
-        "Distinguishing transient metadata-service failures from genuinely unverifiable references, so the gate fails closed without quarantining everything during an upstream outage. The answer is the explicit failure taxonomy, inspectable in the repo.",
+        "Making three independent tools behave as one reliable, repeatable pipeline across operating systems — and keeping retrieval quality honest, which is why the repo ships a retrieval-recall evaluation suite against golden fixtures and records observed failures rather than hiding them.",
       evaluation:
-        "CI across 3 operating systems × 4 Python versions; in-repo retrieval-recall evaluation suite against golden fixtures; observed failures recorded as explicit audit baselines. The README states honestly that the tool is in daily use by one researcher — the limitation is disclosed, not hidden.",
+        "CI across 3 operating systems × 4 Python versions; in-repo retrieval-recall evaluation suite against golden fixtures. The README states honestly that the tool is in daily use by one researcher tracking 7+ research clusters — the limitation is disclosed, not hidden.",
       results: "Maintained open-source tool; v1.1.1 live on PyPI with a documented release history.",
       evidenceLinks: [
         { label: "PyPI: research-hub-pipeline", href: "https://pypi.org/project/research-hub-pipeline/" },
@@ -451,9 +451,9 @@ export const CONTENT = {
       ],
       relevance: {
         academic:
-          "Reproducibility infrastructure — governance applied to LLM-assisted research practice.",
+          "Reproducibility infrastructure — a scriptable, testable spine under an everyday literature workflow.",
         industry:
-          "The write-path gate is the same design problem as production AI-output validation; demonstrates evaluation design, CI-matrix engineering, and release discipline for AI-evaluation and research-engineering roles.",
+          "A published MCP server with a CLI, REST API, and CI matrix — directly legible for AI-tooling, agent-infrastructure, and research-engineering roles, with third-party recognition (Awesome MCP Servers).",
       },
     },
 
