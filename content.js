@@ -53,7 +53,7 @@ export const CONTENT = {
     {
       id: "oss",
       kicker: "Externally reviewed code",
-      copy: "8 merged pull requests in third-party open-source projects, including a root-caused bug fix with a regression test that fails on main. Verified July 2026.",
+      copy: "10 merged pull requests in third-party open-source projects, including a root-caused bug fix with a regression test that fails on main. Verified July 2026.",
       href: "/engineering/#oss",
       label: "",
     },
@@ -279,9 +279,9 @@ export const CONTENT = {
     ],
     evalThroughLine: "Systems designed so that failure is visible — no silent passes.",
 
-    // §3.6 — the 8 merged third-party PRs, real URLs.
+    // §3.6 — the 10 merged third-party PRs, real URLs.
     oss: {
-      intro: "8 merged pull requests in third-party open-source projects.",
+      intro: "10 merged pull requests in third-party open-source projects.",
       items: [
         {
           repo: "BuilderIO/agent-native",
@@ -323,7 +323,19 @@ export const CONTENT = {
           repo: "ZhuLinsen/daily_stock_analysis",
           number: 1773,
           url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1773",
-          desc: "Taiwan-market data feature, re-scoped through maintainer review.",
+          desc: "Taiwan market detection and routing.",
+        },
+        {
+          repo: "ZhuLinsen/daily_stock_analysis",
+          number: 1801,
+          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1801",
+          desc: "Made Taiwan a first-class market across the service layer, API schema, and typed frontend.",
+        },
+        {
+          repo: "ZhuLinsen/daily_stock_analysis",
+          number: 1829,
+          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1829",
+          desc: "Taiwan institutional-flow (foreign, trust, and dealer) fetcher over official TWSE/TPEx open data, fail-open.",
         },
         {
           repo: "NVIDIA/skills",
