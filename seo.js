@@ -13,14 +13,14 @@ export const SEO = {
 
   ogImage: {
     file: "/assets/og-card.png",
-    alt: "Wenyu Chiou — Verified simulation of human decisions under climate risk",
+    alt: "Wenyu Chiou — AI Agent Infrastructure & Evaluation Engineer",
   },
 
   routes: {
     "/": {
-      title: "Wenyu Chiou — Verified simulation of human decisions under climate risk",
+      title: "Wenyu Chiou — AI Agent Infrastructure & Evaluation Engineer",
       description:
-        "Ph.D. candidate, Civil & Environmental Engineering, Lehigh University. Empirically grounded simulations of household flood-risk decisions — and fail-closed validation systems for LLM agents.",
+        "AI-agent infrastructure — MCP pipelines, multi-agent orchestration, and agent harnesses — plus the evaluation and governance that make LLM-agent systems trustworthy. Ph.D. candidate at Lehigh University, open to AI internships.",
       ogType: "website",
       canonical: "https://wenyuchiou.github.io/",
     },
@@ -104,7 +104,7 @@ export const SEO = {
       "@context": "https://schema.org",
       "@type": "Person",
       name: "Wenyu Chiou",
-      jobTitle: "Ph.D. Candidate, Civil & Environmental Engineering",
+      jobTitle: "AI Agent Infrastructure & Evaluation Engineer",
       affiliation: {
         "@type": "CollegeOrUniversity",
         name: "Lehigh University",

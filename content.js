@@ -18,7 +18,7 @@ export const CONTENT = {
   },
 
   hero: {
-    umbrella: "Verified simulation of human decisions under climate risk",
+    umbrella: "AI-agent infrastructure, and the science of when to trust it",
     dialect: {
       industry: "AI evaluation / research engineer with catastrophe-risk domain depth.",
       academic: "Computational socio-hydrologist developing validated LLM-agent methods on his own empirical data.",
@@ -28,7 +28,7 @@ export const CONTENT = {
       alt: "Wenyu Chiou at the AGU Fall Meeting 2025, beside his research poster.",
     },
     workingFormulation:
-      "I build empirically grounded simulations of how people decide under flood risk — and the fail-closed validation systems that show when AI agents can (and cannot) stand in for real people.",
+      "I build AI-agent infrastructure — MCP pipelines, multi-agent orchestration, and agent harnesses — and I study when LLM agents can be trusted to stand in for real people, using ground-truth data I collected myself. My testbed is human decision-making under flood risk.",
     availability:
       "Open to Summer 2027 internships in AI evaluation, research engineering, and risk analytics.",
   },
@@ -106,7 +106,7 @@ export const CONTENT = {
 
   // IA §2 Block 6 — mode-invariant single string.
   currentFocus:
-    "Current focus: validation methods that test whether LLM agents reproduce empirically identified human decision pathways — grounded in a 937-household survey I designed and fielded — and governance methods for generative agents, research software now in preparation for release.",
+    "Current focus: evaluation and governance methods for LLM agents — testing whether they reproduce real human decision pathways (grounded in a 937-household survey I designed and fielded) and constraining agent-driven simulations so they stay trustworthy. Research software in preparation for release.",
 
   // IA §2 Block 7 — mode decides primary/secondary in app.jsx.
   documents: {
