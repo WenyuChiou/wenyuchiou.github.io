@@ -400,3 +400,17 @@ body.doc-resume li {
 .cv2 .card-grid { gap: 4pt 10pt; }
 .cv2-footer { margin-top: 2pt; padding-top: 3pt; }
 .cv2 .two-col { margin-bottom: 2pt; }
+
+/* Résumé Experience entries (2026-07-17): dated job headers + bullets, ATS-safe. */
+.resume2 .job { margin: 0 0 8pt; break-inside: avoid; }
+.resume2 .job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12pt; margin: 0 0 2pt; }
+.resume2 .job-head .d { color: #6b7280; font-size: 8.25pt; white-space: nowrap; flex-shrink: 0; }
+.resume2 .job .r2-bullets { margin: 0 0 0 13pt; }
+.resume2 .job .r2-bullets li { margin: 0 0 2.5pt; line-height: 1.42; }
+
+/* CV2: photo removed + font restore per design review (2026-07-17). */
+.cv2-header { grid-template-columns: 1fr; }
+.cv2 { font-size: 9.7pt; }
+.cv2 .card-body { font-size: 8.4pt; line-height: 1.38; }
+.cv2 .detail { line-height: 1.4; }
+.cv2 .cv-section { margin-bottom: 6.5pt; }

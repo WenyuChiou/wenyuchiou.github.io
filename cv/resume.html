@@ -16,62 +16,34 @@
     <p class="r2-lede">I build AI-agent and research infrastructure &mdash; MCP pipelines, multi-agent orchestration, and agent harnesses &mdash; and I study when LLM agents can be trusted to stand in for real people, using behavioral ground-truth data I collected myself.</p>
   </header>
 
-  <!-- Selected systems — one conceptual line + a short evidence tag each -->
+  <!-- Experience — dated roles so ATS captures work history; validity differentiator first -->
   <section>
-    <h2>Selected Systems</h2>
-    <ul class="r2-list">
-      <li class="sys">
-        <p class="sys-head"><strong>research-hub</strong><span class="sys-tag">Maintained open-source tool</span></p>
-        <p class="sys-val">An AI-operable research workspace for Zotero, Obsidian, and NotebookLM &mdash; an AI assistant searches, ingests, and syncs papers through one CLI, MCP server, and REST API.</p>
-        <p class="sys-ev">PyPI research-hub-pipeline v1.1.1 &middot; listed in Awesome MCP Servers &middot; CI (3 OS &times; 4 Python)</p>
-      </li>
-      <li class="sys">
-        <p class="sys-head"><strong>ai-research-skills</strong><span class="sys-tag">Maintained open-source tool</span></p>
-        <p class="sys-val">A 15-skill catalog that first vets whether a research idea is worth doing &mdash; open, a contribution, feasible &mdash; before any downstream work runs.</p>
-        <p class="sys-ev">5-plugin marketplace &middot; cross-runtime SKILL.md contract &middot; MIT</p>
-      </li>
-      <li class="sys">
-        <p class="sys-head"><strong>fable-method-harness</strong><span class="sys-tag">Maintained open-source tool</span></p>
-        <p class="sys-val">A portable operating harness that keeps AI-assisted work cost-aware, honest about failure, and auditable at every step.</p>
-        <p class="sys-ev">benchmark-measured &middot; validation CI &middot; Claude + Codex verified</p>
-      </li>
-      <li class="sys">
-        <p class="sys-head"><strong>agent-collab-skills</strong> &amp; <strong>codex-delegate</strong><span class="sys-tag">Maintained open-source tools</span></p>
-        <p class="sys-val">Multi-agent orchestration and delegation that verify their own work from git state instead of trusting the agent&rsquo;s report; a regression test pins a real upstream stdin hang.</p>
-        <p class="sys-ev">CI on Ubuntu and Windows &middot; contract + failure-mode tests</p>
-      </li>
-      <li class="sys">
-        <p class="sys-head"><strong>WAGF &mdash; Water Agent Governance Framework</strong><span class="sys-tag">In preparation for release</span></p>
-        <p class="sys-val">A general framework for governed LLM agents, demonstrated in human&ndash;water simulation, that keeps coupled behavioral outcomes stable and physically sensible.</p>
-        <p class="sys-ev">domain-rule + behavioral-theory constraints &middot; retry feedback &middot; audit logs</p>
-      </li>
-      <li class="sys">
-        <p class="sys-head"><strong>FLOODABM</strong><span class="sys-tag">Research prototype, archived</span></p>
-        <p class="sys-val">The empirical foundation for my LLM-agent validity work: a 52,141-household simulation calibrated on a survey I designed and fielded, validated against real insurance claims &mdash; the testbed for whether LLM agents reproduce real human decisions.</p>
-        <p class="sys-ev">937-household survey &middot; LLM-agent substitution (WRR 2026) &middot; NFIP mechanics &middot; OpenFEMA-validated</p>
-      </li>
-    </ul>
+    <h2>Experience</h2>
+
+    <div class="job">
+      <p class="job-head"><span><strong>Graduate Research Assistant</strong> &mdash; Complex Adaptive Water Systems Lab, Lehigh University</span><span class="d">Aug 2024 &ndash; present</span></p>
+      <ul class="r2-bullets">
+        <li>Lead an <strong>LLM-agent validity</strong> program &mdash; whether LLM agents reproduce real human decisions &mdash; tested against a <strong>937-household survey I designed and fielded</strong>; co-authored the published <em>Water Resources Research</em> (2026) study that substitutes LLMs as the behavioral engine of the simulation.</li>
+        <li>Building <strong>WAGF</strong>, a governance framework that constrains LLM agents with domain rules and behavioral theory so coupled-simulation outcomes stay stable and physically sensible (in preparation for release).</li>
+        <li>Built <strong>FLOODABM</strong>, a <strong>52,141-household</strong> coupled agent-based &times; catastrophe simulation with NFIP mechanics, validated against OpenFEMA insurance-claims data.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <p class="job-head"><span><strong>Independent Open-Source AI Infrastructure</strong></span><span class="d">2024 &ndash; present</span></p>
+      <ul class="r2-bullets">
+        <li>Built <strong>research-hub</strong>, an <strong>MCP server + CLI</strong> that turns Zotero, Obsidian, and NotebookLM into an AI-operable research workspace: searches arXiv / Semantic Scholar / PubMed / CrossRef, ranks with BM25, and gates retrieval quality with <strong>recall@k evaluation against golden fixtures</strong>. <strong>PyPI research-hub-pipeline v1.1.1</strong>; listed in <strong>Awesome MCP Servers</strong>; CI across <strong>3 OS &times; 4 Python versions</strong>.</li>
+        <li>Built a multi-agent tooling stack &mdash; <strong>ai-research-skills</strong> (15-skill research catalog), <strong>fable-method-harness</strong> (cost-routing + audit-trail harness), and <strong>agent-collab-skills</strong> + <strong>codex-delegate</strong> (orchestration + delegation) &mdash; on the <strong>OpenAI and Anthropic APIs, MCP, and Ollama</strong>, with anti-fabrication contracts verified from git state and CI on Ubuntu and Windows.</li>
+        <li><strong>10 merged pull requests</strong> into third-party open-source projects, including a root-caused engine-selection fix with a regression test that fails on main (BuilderIO/agent-native &times;4) and a Windows file-permissions security fix (langchain-ai/openwiki).</li>
+        <li><strong>awesome-agentic-ai-zh</strong> &mdash; a trilingual agentic-AI learning curriculum with CI-enforced locale parity; <strong>4.5k+ GitHub stars</strong>, 588 forks.</li>
+      </ul>
+    </div>
   </section>
 
-  <!-- Community & education — the trilingual learning project -->
-  <section>
-    <h2>Community &amp; Education</h2>
-    <p class="commline"><strong>awesome-agentic-ai-zh</strong> &mdash; a trilingual (zh-TW / zh-Hans / English) 7-stage roadmap for building agentic AI, with CI-enforced locale parity and external contributors. 4.5k+ GitHub stars, 588 forks (July 2026).</p>
-  </section>
-
-  <!-- Open-source contributions -->
-  <section>
-    <h2>Open-Source Contributions</h2>
-    <ul class="r2-bullets">
-      <li>10 merged pull requests in third-party open-source projects, including a root-caused engine-selection bug fix with a regression test that fails on main (BuilderIO/agent-native &times;4) and a Windows file-permissions security fix (langchain-ai/openwiki).</li>
-      <li>Taiwan-market data features (ZhuLinsen/daily_stock_analysis &times;3); UTF-8 / East-Asian-width display fix (Nanako0129/coralline); documentation fix (NVIDIA/skills).</li>
-    </ul>
-  </section>
-
-  <!-- Publication -->
+  <!-- Publication — neutral citation (author order visible; not flagged) -->
   <section>
     <h2>Publication</h2>
-    <p class="publine">Yang, Y. C. E., &amp; <span class="self">Chiou, W.</span> (2026). Leveraging Large Language Models for Agent-Based Simulation of Human&ndash;Water System Interactions. <em>Water Resources Research</em>, 62(6), e2025WR042111. <a class="u" href="https://doi.org/10.1029/2025WR042111">doi.org/10.1029/2025WR042111</a> <span class="chip-published">Published</span> &middot; second author of two.</p>
+    <p class="publine">Yang, Y. C. E., &amp; <span class="self">Chiou, W.</span> (2026). Leveraging Large Language Models for Agent-Based Simulation of Human&ndash;Water System Interactions. <em>Water Resources Research</em>, 62(6), e2025WR042111. <a class="u" href="https://doi.org/10.1029/2025WR042111">doi.org/10.1029/2025WR042111</a> <span class="chip-published">Published</span></p>
   </section>
 
   <!-- Education — fields spelled out; expected graduation stated -->
@@ -82,11 +54,12 @@
     <p class="edu-line"><span><strong>B.S., Earth Sciences</strong>, National Central University</span><span class="d">Sep 2017 &ndash; Jun 2021</span></p>
   </section>
 
-  <!-- Skills — artifact-backed only; risk-analytics folded in -->
+  <!-- Skills — named, artifact-backed stack only; tools not actually used are deliberately omitted -->
   <section>
     <h2>Skills</h2>
-    <p class="skill-line"><span class="skill-k">AI-agent &amp; research infrastructure:</span> MCP servers &amp; tooling &middot; LLM-agent orchestration &middot; multi-agent collaboration &middot; agent governance &amp; validation &middot; research-workflow automation (Zotero / Obsidian / NotebookLM) &middot; local model deployment (Ollama)</p>
-    <p class="skill-line"><span class="skill-k">Programming &amp; tooling:</span> Python &middot; testing &amp; CI &middot; Git &middot; cross-platform (Windows / POSIX) engineering</p>
+    <p class="skill-line"><span class="skill-k">LLM &amp; agent systems:</span> OpenAI &amp; Anthropic APIs &middot; Model Context Protocol (MCP) &middot; multi-agent orchestration &middot; agent governance &amp; validation &middot; retrieval (BM25) + recall@k evaluation &middot; Ollama (local models)</p>
+    <p class="skill-line"><span class="skill-k">Research automation:</span> Zotero &middot; Obsidian &middot; NotebookLM &middot; arXiv / Semantic Scholar / PubMed / CrossRef</p>
+    <p class="skill-line"><span class="skill-k">Programming &amp; tooling:</span> Python &middot; pytest + property-based testing &middot; CI (GitHub Actions) &middot; Git &middot; cross-platform (Windows / POSIX)</p>
     <p class="skill-line"><span class="skill-k">Modeling &amp; risk analytics:</span> structural equation modeling (SEM) &middot; Bayesian calibration &middot; NFIP mechanics &middot; exceedance-probability curves &middot; coupled ABM &times; catastrophe modeling</p>
   </section>
 
