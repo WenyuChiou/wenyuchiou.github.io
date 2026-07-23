@@ -11,7 +11,7 @@
 
 @page {
   size: Letter;
-  margin: 0.55in 0.65in;
+  margin: 0.45in 0.55in;
 }
 
 :root {
@@ -433,3 +433,39 @@ body.doc-resume li {
 .resume2 .r2-header { margin-bottom: 5pt; padding-bottom: 5pt; }
 .resume2 h2 { margin: 5pt 0 3.5pt; }
 .resume2 .job { margin-bottom: 4pt; }
+
+/* CV2 reclaim after adding fable card + ISDSA (2026-07-17). */
+.cv2 { font-size: 9.45pt; }
+.cv2 .card { padding-top: 0.5pt; padding-bottom: 0.5pt; }
+.cv2 .card-grid { gap: 4pt 9pt; }
+
+/* Résumé re-fit to 1 page after adding ISDSA presentation (2026-07-17). */
+.resume2 { font-size: 9.3pt; }
+.resume2 h2 { margin: 4.5pt 0 3pt; }
+.resume2 .job { margin-bottom: 4pt; }
+.resume2 .job .r2-bullets li { margin-bottom: 1pt; line-height: 1.35; }
+.resume2 .r2-bullets li { margin-bottom: 1pt; line-height: 1.35; }
+.resume2 .skill-line { margin-bottom: 1pt; line-height: 1.35; }
+.resume2 .publine, .resume2 .edu-line { margin-bottom: 1pt; }
+.resume2 .r2-header { margin-bottom: 4pt; padding-bottom: 4pt; }
+.resume2 .r2-avail { margin-bottom: 0; } .resume2 .r2-auth { margin: 0.5pt 0 0; }
+/* CV reclaim */
+.cv2 { font-size: 9.3pt; }
+.resume2 { font-size: 9.15pt; }
+.cv2 { font-size: 9.2pt; }
+.cv2 .cv-section { margin-bottom: 5.5pt; }
+.cv2 { font-size: 9.1pt; }
+
+/* final résumé line-height reclaim */
+.resume2 .job .r2-bullets li, .resume2 .r2-bullets li, .resume2 .skill-line, .resume2 .publine, .resume2 .edu-line { line-height: 1.3; margin-bottom: 0.5pt; }
+.resume2 h2 { margin: 4pt 0 2.5pt; }
+.resume2 .job { margin-bottom: 3pt; }
+.resume2, .resume2 * { hyphens: none; -webkit-hyphens: none; }
+.cv2 .card-grid { gap: 3.5pt 8pt; }
+.cv2 .lang-foot { font-size: 7.5pt; }
+.cv2 .cv-section { margin-bottom: 6pt; }
+.cv2 .cv2-footer { margin-top: 2pt; padding-top: 2.5pt; }
+.cv2 .card { padding: 1pt 0 1pt 7pt; }
+.cv2 h2 { margin-bottom: 3pt; font-size: 10.8pt; }
+.cv2 .two-col { break-inside: auto; page-break-inside: auto; }
+.cv2 .group-label { break-after: avoid; page-break-after: avoid; }

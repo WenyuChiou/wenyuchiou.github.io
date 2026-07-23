@@ -28,7 +28,7 @@ export const CONTENT = {
       alt: "Wenyu Chiou at the AGU Fall Meeting 2025, beside his research poster.",
     },
     workingFormulation:
-      "I build AI-agent infrastructure — MCP pipelines, multi-agent orchestration, and agent harnesses — and I study when LLM agents can be trusted to stand in for real people, using ground-truth data I collected myself. My testbed is human decision-making under flood risk.",
+      "I build AI-agent infrastructure — MCP tooling, multi-agent orchestration, and agent harnesses — and I apply large language models as the behavioral engine of agent-based models of complex human–water systems, grounded in survey data I collected myself, with the governance that keeps agent behavior trustworthy.",
     availability:
       "Open to Summer 2027 internships in AI evaluation, research engineering, and risk analytics.",
   },
@@ -38,7 +38,7 @@ export const CONTENT = {
     {
       id: "research-hub",
       kicker: "Shipped AI infrastructure",
-      copy: "research-hub — an MCP server and CLI (PyPI: research-hub-pipeline v1.1.1) that makes Zotero, Obsidian, and NotebookLM AI-operable. Listed in Awesome MCP Servers; CI across 3 OS × 4 Python versions.",
+      copy: "research-hub — an MCP server and CLI (PyPI: research-hub-pipeline v1.1.1) that makes Zotero, Obsidian, and NotebookLM AI-operable. Listed in Awesome MCP Servers; tested on Windows, macOS, and Linux.",
       href: "https://pypi.org/project/research-hub-pipeline/",
       caseStudy: "/projects/research-hub/",
       label: "Maintained open-source tool",
@@ -53,7 +53,7 @@ export const CONTENT = {
     {
       id: "awesome",
       kicker: "Community & education",
-      copy: "awesome-agentic-ai-zh — a trilingual, CI-verified roadmap for building agentic AI, from LLM basics to production multi-agent systems.",
+      copy: "awesome-agentic-ai-zh — a trilingual roadmap for building agentic AI, from LLM basics to production multi-agent systems, with automated checks that keep all three languages in sync.",
       href: "/projects/awesome-agentic-ai-zh/",
       label: "4.7k+ GitHub stars, 622 forks (July 2026)",
     },
@@ -72,7 +72,7 @@ export const CONTENT = {
     {
       slug: "codex-delegate",
       name: "codex-delegate",
-      line: "Delegating code work to a second AI agent is only economical if the delegate cannot fabricate success. codex-delegate wraps delegation in anti-fabrication contracts, verified from git state rather than the delegate's own report.",
+      line: "Delegating code work to a second AI agent is only economical if the delegate cannot fabricate success. codex-delegate verifies the delegate’s completion from git state rather than from its own report.",
       status: "Maintained open-source tool",
       href: "/projects/codex-delegate/",
     },
@@ -151,8 +151,8 @@ export const CONTENT = {
       },
       {
         n: 4,
-        name: "LLM-agent validity",
-        what: "Substituted LLM agents as the behavioral engine of the simulation, then treated the substitution itself as the validity problem: nothing guarantees a generative agent decides the way real households do, so the question becomes whether LLM personas reproduce empirically identified human decision pathways.",
+        name: "LLMs as the behavioral engine",
+        what: "Applied large language models as the behavioral engine of an agent-based model of a human–water system — the core contribution. Because nothing guarantees a generative agent decides the way real households do, the work also checks LLM personas against empirically identified human decision pathways.",
         evidence:
           "Yang, Y. C. E., & Chiou, W. (2026). Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions. Water Resources Research, 62(6), e2025WR042111.",
         statusNote: "Published.",
@@ -177,7 +177,7 @@ export const CONTENT = {
     // owner/renter terms (true of the survey + WRR strand); the SCS manuscript descriptor
     // below uses canonical-facts §4.2 marginalized/non-marginalized framing verbatim.
     summary:
-      "My research asks a question generative AI has made urgent: when can a simulated human decision-maker be trusted? I approach it by owning every link of the evidence chain. I designed and fielded a 937-household flood-adaptation survey in New Jersey’s Passaic River Basin, used structural equation modeling to identify how owners and renters actually decide among adaptation actions, and encoded those empirically identified pathways in a Bayesian-calibrated agent-based model of 52,141 households coupled to a catastrophe flood model with National Flood Insurance Program mechanics — including income-normalized equity analysis of who bears flood losses. With my advisor, I published a Water Resources Research article (62(6), e2025WR042111, 2026) substituting large language models as the behavioral engine of such simulations. That substitution creates a validity problem: nothing guarantees a generative agent decides the way real households do. My current work confronts it directly — testing whether LLM personas reproduce the decision pathways identified in my own survey data, and developing governance methods that validate agent behavior against physical constraints and behavioral theory — research software now in preparation for release. First-author manuscripts on the coupled model and on adaptation decision pathways are under review. The longer-term agenda is a validation standard for generative agents in consequential simulation.",
+      "My research asks a question generative AI has made urgent: when can a simulated human decision-maker be trusted? I approach it by owning every link of the evidence chain. I designed and fielded a 937-household flood-adaptation survey in New Jersey’s Passaic River Basin, used structural equation modeling to identify how owners and renters actually decide among adaptation actions, and encoded those empirically identified pathways in a Bayesian-calibrated agent-based model of 52,141 households coupled to a catastrophe flood model with National Flood Insurance Program mechanics — including income-normalized equity analysis of who bears flood losses. With my advisor, I published a Water Resources Research article (62(6), e2025WR042111, 2026) substituting large language models as the behavioral engine of such simulations. That substitution is the contribution: large language models become the behavioral engine of the simulation. Because nothing guarantees a generative agent decides the way real households do, my current work pairs it with AI governance — checking LLM personas against the decision pathways identified in my own survey data, and developing governance methods that constrain agent behavior with physical constraints and behavioral theory — research software now in preparation for release. First-author manuscripts on the coupled model and on adaptation decision pathways are under review. The longer-term agenda is a governance standard for generative agents in consequential simulation.",
   },
 
   // /engineering/ — positioning §3.
@@ -188,11 +188,11 @@ export const CONTENT = {
         id: "unverified-record",
         problem: "LLM outputs were entering a permanent record unverified.",
         response:
-          "I built a research-literature pipeline whose write path is guarded by a fail-closed anti-fabrication gate: references that cannot be verified are quarantined with an explicit failure taxonomy, never silently accepted. Shipped and maintained publicly as research-hub-pipeline on PyPI.",
+          "I built an AI-operable research workspace — an MCP server and CLI that lets an AI agent search, ingest, and sync papers across Zotero, Obsidian, and NotebookLM — with references that cannot be verified quarantined under an explicit failure taxonomy rather than silently accepted. Shipped and maintained publicly as research-hub-pipeline on PyPI.",
       },
       {
         id: "no-validity-standard",
-        problem: "Generative agents entered consequential simulation with no validity standard.",
+        problem: "Generative agents entered consequential simulation with no governance standard.",
         response:
           "I co-authored the Water Resources Research (2026) study substituting LLM agents into a human-water simulation, and now build the evaluation methods that test whether such agents reproduce empirically measured human decisions — with ground truth I collected myself (a 937-household survey).",
       },
@@ -210,7 +210,7 @@ export const CONTENT = {
         name: "research-hub",
         what: "AI-operable research workspace: a CLI, MCP server, REST API, and dashboard that drive repeatable literature workflows across Zotero, Obsidian, and NotebookLM.",
         evidence:
-          "PyPI research-hub-pipeline v1.1.1; listed in the Awesome MCP Servers catalog; CI across 3 OS × 4 Python versions; in-repo retrieval-recall evaluation suite against golden fixtures.",
+          "PyPI research-hub-pipeline v1.1.1; listed in the Awesome MCP Servers catalog; tested on Windows, macOS, and Linux; an automated test suite that checks retrieval quality.",
         status: "Maintained open-source tool",
         href: "/projects/research-hub/",
         repo: "https://github.com/WenyuChiou/research-hub",
@@ -236,7 +236,7 @@ export const CONTENT = {
       },
       {
         name: "codex-delegate",
-        what: "Cross-platform agent-delegation wrapper with anti-fabrication contracts.",
+        what: "Cross-platform agent-delegation wrapper whose completion claims are verified from git state.",
         evidence: "Public repo; Ubuntu/Windows CI; regression test pinning a real upstream stdin hang.",
         status: "Maintained open-source tool",
         href: "/projects/codex-delegate/",
@@ -246,7 +246,7 @@ export const CONTENT = {
         name: "awesome-agentic-ai-zh",
         what: "Trilingual agentic-AI curriculum (community/education line).",
         evidence:
-          "4.7k+ GitHub stars (July 2026); external contributors; CI-enforced locale parity.",
+          "4.7k+ GitHub stars, 622 forks (July 2026); external contributors; automated checks keep all three languages in sync.",
         status: "Maintained open-source tool",
         href: "/projects/awesome-agentic-ai-zh/",
         repo: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
@@ -400,6 +400,12 @@ export const CONTENT = {
     // and canonical-facts §4.3) and never invented.
     presentations: [
       {
+        venue: "ISDSA 2026 Annual Meeting",
+        detail:
+          "What Makes AI Believable? Comparing AI and Human Responses in Mental Health Risk Assessment — recorded presentation.",
+        note: "With Hawjeng Chiou, National Taiwan Normal University.",
+      },
+      {
         venue: "ISHC 2025, Tokyo, Japan",
         detail: "Oral presentation 38-03, July 2025.",
         note: "Co-authors across Lehigh, FAU, Kyoto, and the University of Tokyo.",
@@ -416,8 +422,9 @@ export const CONTENT = {
         detail:
           "Abstract — submarine groundwater discharge study combining electrical resistivity tomography, field observation, and numerical simulation.",
       },
-      // NO fourth slot is rendered: the fourth presentation is reserved pending CONFIRM #4
-      // and ships only once identified. Do not add a placeholder entry.
+      // ISDSA 2026 above is fully identified (title + co-author supplied by the owner) and is
+      // therefore NOT the reserved slot. The still-unidentified presentation behind CONFIRM #4
+      // remains unrendered and ships only once identified. Do not add a placeholder entry.
     ],
   },
 
@@ -438,15 +445,20 @@ export const CONTENT = {
       system:
         "A Python package published to PyPI as research-hub-pipeline v1.1.1 (MIT), exposing a CLI, an MCP server (listed in the Awesome MCP Servers catalog), a REST API, and a dashboard. All three external tools are optional — start with any two.",
       keyChallenge:
-        "Making three independent tools behave as one reliable, repeatable pipeline across operating systems — and keeping retrieval quality honest, which is why the repo ships a retrieval-recall evaluation suite against golden fixtures and records observed failures rather than hiding them.",
+        "Making three independent tools behave as one reliable, repeatable pipeline across operating systems — and keeping retrieval quality honest, which is why the repo ships an automated test suite for retrieval quality and records observed failures rather than hiding them.",
+      figure: {
+        src: "/assets/research-hub-dashboard.png",
+        alt: "The research-hub dashboard over a live vault: 786 papers across 11 clusters, with tabs for library, briefings, writing, diagnostics, and management, and a treemap sizing each research cluster by paper count.",
+        caption: "The dashboard over a live vault — 786 papers across 11 clusters, sized by paper count.",
+      },
       evaluation:
-        "CI across 3 operating systems × 4 Python versions; in-repo retrieval-recall evaluation suite against golden fixtures. The README states honestly that the tool is in daily use by one researcher tracking 7+ research clusters — the limitation is disclosed, not hidden.",
+        "Tested on Windows, macOS, and Linux; an automated test suite checks retrieval quality. The README states honestly that the tool is in daily use by one researcher tracking 7+ research clusters — the limitation is disclosed, not hidden.",
       results: "Maintained open-source tool; v1.1.1 live on PyPI with a documented release history.",
       evidenceLinks: [
         { label: "PyPI: research-hub-pipeline", href: "https://pypi.org/project/research-hub-pipeline/" },
         { label: "GitHub repository", href: "https://github.com/WenyuChiou/research-hub" },
-        { label: "CI workflow (3 OS × 4 Python)", href: "https://github.com/WenyuChiou/research-hub/blob/master/.github/workflows/ci.yml" },
-        { label: "Retrieval-recall evaluation suite", href: "https://github.com/WenyuChiou/research-hub/tree/master/tests/evals" },
+        { label: "Cross-platform CI workflow", href: "https://github.com/WenyuChiou/research-hub/blob/master/.github/workflows/ci.yml" },
+        { label: "Retrieval quality tests", href: "https://github.com/WenyuChiou/research-hub/tree/master/tests/evals" },
         { label: "Changelog", href: "https://github.com/WenyuChiou/research-hub/blob/master/CHANGELOG.md" },
       ],
       relevance: {
@@ -530,7 +542,7 @@ export const CONTENT = {
     },
 
     "codex-delegate": {
-      title: "codex-delegate — agent delegation with anti-fabrication contracts",
+      title: "codex-delegate — agent delegation with verified completion",
       status: "Maintained open-source tool",
       problem:
         "Delegating mechanical coding work to a second AI agent is only economical if the delegate cannot fabricate success. Off-the-shelf delegation had no contract for detecting a fabricated \"done.\"",
@@ -544,7 +556,7 @@ export const CONTENT = {
       keyChallenge:
         "A real upstream stdin hang. The failure was root-caused, fixed at the wrapper level, and pinned by a regression test that feeds a marker into stdin and asserts the delegate reads nothing — the test fails without the fix.",
       evaluation:
-        "CI on Ubuntu and Windows across multiple Python versions; contract tests covering the wrappers' failure modes; measurement claims in the repo are labeled with their limitations.",
+        "Tested on Windows and Linux across multiple Python versions; contract tests covering the wrappers' failure modes; measurement claims in the repo are labeled with their limitations.",
       results: "Maintained open-source tool.",
       evidenceLinks: [
         { label: "GitHub repository", href: "https://github.com/WenyuChiou/codex-delegate" },
@@ -572,16 +584,21 @@ export const CONTENT = {
       approach:
         "A staged trilingual learning roadmap with runnable exercises, maintained under the same engineering discipline as a software project.",
       system:
-        "A curriculum repository whose CI enforces cross-locale parity, checks link rot, and lints for overclaims — content governance implemented as automation.",
+        "A curriculum repository whose automated checks keep all three languages in sync, catch link rot, and flag overclaims — content governance implemented as automation.",
       keyChallenge:
-        "Keeping three locales verifiably synchronized. The answer is CI-enforced parity checks that fail the build on drift, replacing manual mirroring.",
+        "Keeping three locales verifiably synchronized. The answer is automated checks that fail the build when the languages drift apart, replacing manual mirroring.",
+      figure: {
+        src: "/assets/awesome-agentic-ai-zh-banner.png",
+        alt: "AI Agent Learning Paths diagram: shared foundations in stages 0 to 2, then two tracks — CLI power user and agent builder — converging on shared hubs for the Claude Code ecosystem and agent interfaces, branching to paths for researchers, developers, teachers, knowledge workers, and everyday users.",
+        caption: "Two tracks over a shared spine, ending in audience-specific paths.",
+      },
       evaluation:
         "The repo discloses honestly what has been executed versus syntax-checked; external contributions and an externally filed internationalization issue are the community-review signal.",
       results:
         "Maintained open-source tool; 4.7k+ GitHub stars (July 2026) — the one star count permitted in public copy, re-verified before each publish.",
       evidenceLinks: [
         { label: "GitHub repository", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh" },
-        { label: "CI workflows (locale parity, link checks)", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh/tree/main/.github/workflows" },
+        { label: "CI workflows (language sync, link checks)", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh/tree/main/.github/workflows" },
         { label: "Contributors", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh/graphs/contributors" },
         { label: "trendshift listing", href: "https://trendshift.io/repositories/27540" },
       ],
@@ -589,7 +606,7 @@ export const CONTENT = {
         academic:
           "Near zero, and the page says nothing to pretend otherwise — it is presented as the community/education line.",
         industry:
-          "CI-enforced content governance and bilingual technical communication; a distribution channel into the Chinese-speaking AI community.",
+          "Automated content governance and bilingual technical communication; a distribution channel into the Chinese-speaking AI community.",
       },
     },
   },

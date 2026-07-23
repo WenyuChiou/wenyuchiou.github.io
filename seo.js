@@ -34,7 +34,7 @@ export const SEO = {
     "/engineering/": {
       title: "AI, Engineering & Systems — Wenyu Chiou",
       description:
-        "Fail-closed AI systems in public repos: research-hub-pipeline v1.1.1 on PyPI with CI across 3 OS × 4 Python versions, regression-tested agent tooling, and 7 merged third-party OSS PRs.",
+        "Fail-closed AI systems in public repos: research-hub-pipeline v1.1.1 on PyPI, tested on Windows, macOS, and Linux, regression-tested agent tooling, and 10 merged third-party OSS PRs.",
       ogType: "website",
       canonical: "https://wenyuchiou.github.io/engineering/",
     },
@@ -46,9 +46,9 @@ export const SEO = {
       canonical: "https://wenyuchiou.github.io/publications/",
     },
     "/projects/research-hub/": {
-      title: "research-hub — fail-closed literature pipeline",
+      title: "research-hub — an AI-operable research workspace",
       description:
-        "A local-first research-literature pipeline whose write path is guarded by a fail-closed anti-fabrication gate. PyPI research-hub-pipeline v1.1.1; CI across 3 OS × 4 Python versions.",
+        "An MCP server and CLI that makes Zotero, Obsidian, and NotebookLM AI-operable — search, ingest, and sync papers through one pipeline. PyPI research-hub-pipeline v1.1.1; tested on Windows, macOS, and Linux.",
       ogType: "article",
       canonical: "https://wenyuchiou.github.io/projects/research-hub/",
     },
@@ -67,16 +67,16 @@ export const SEO = {
       canonical: "https://wenyuchiou.github.io/projects/cat-framework/",
     },
     "/projects/codex-delegate/": {
-      title: "codex-delegate — agent delegation with anti-fabrication contracts",
+      title: "codex-delegate — agent delegation with verified completion",
       description:
-        "A cross-platform agent-delegation wrapper with anti-fabrication contracts and a regression test pinning a real upstream stdin hang. CI on Ubuntu and Windows.",
+        "A cross-platform agent-delegation wrapper whose completion claims are verified from git state, with a regression test pinning a real upstream stdin hang. Tested on Windows and Linux.",
       ogType: "article",
       canonical: "https://wenyuchiou.github.io/projects/codex-delegate/",
     },
     "/projects/awesome-agentic-ai-zh/": {
       title: "awesome-agentic-ai-zh — trilingual agentic-AI curriculum",
       description:
-        "A trilingual agentic-AI curriculum with CI-enforced locale parity and external contributors. 4.5k+ GitHub stars (July 2026).",
+        "A trilingual agentic-AI curriculum with automated checks that keep all three languages in sync, and external contributors. 4.7k+ GitHub stars, 622 forks (July 2026).",
       ogType: "article",
       canonical: "https://wenyuchiou.github.io/projects/awesome-agentic-ai-zh/",
     },

@@ -67,7 +67,10 @@ const AVAILABILITY = CANON.availability; // the ONE sentence in which "Summer 20
 const BANNED = [
   { name: "first-superlative", re: /\bfirst[\s-]+(framework|governed|coupled)\b/giu, why: "kill list — 'first framework/governed/coupled' superlatives" },
   { name: "banned-multiplier", re: /6[–-]7[×x]|17[–-]22[×x]|token[\s-]+saving/giu, why: "kill list — unverified multipliers" },
-  { name: "stale-star-count", re: /1\.8k/giu, why: "stale star count (only allowed: '4.7k+ GitHub stars (July 2026)')" },
+  // Positive enforcement, not a denylist: any "<N>k GitHub stars" that is not the one
+  // approved value is a violation. A denylist of stale values (previously just /1\.8k/)
+  // silently let the NEXT stale bump through — 4.5k shipped live in seo.js under it.
+  { name: "stale-star-count", re: /(?<![\d.])(?!4\.7k\+\s+GitHub\s+stars)\d+(?:\.\d+)?k\+?\s+GitHub\s+stars/giu, why: "stale star count (only allowed: '4.7k+ GitHub stars')" },
   { name: "star-glyph", re: /★+/gu, why: "star glyphs banned in copy" },
   // CJK Unified Ideographs: Ext A, base block, compatibility, Ext B–G (astral).
   { name: "cjk-codepoint", re: /[㐀-䶿一-鿿豈-﫿\u{20000}-\u{2FA1F}]+/gu, why: "decision 2 — English-only v1" },
@@ -186,8 +189,13 @@ function readEntryText(item) {
 // ---------------------------------------------------------------------------
 // scanning
 // ---------------------------------------------------------------------------
-const DASH_CHARS = new RegExp("[" + String.fromCharCode(0x2013) + String.fromCharCode(0x2014) + String.fromCharCode(0xfffd) + "]", "g");
-const dashNorm = (s) => s.replace(DASH_CHARS, "-");
+// PDF text extraction breaks lines AT en/em dashes, inserting a space
+// ("Human–Water" -> "Human– Water"). For PDF drift comparison ONLY,
+// collapse any en/em/replacement dash plus adjacent whitespace to a single
+// hyphen. Plain ASCII hyphens (e.g. "Agent-Based") are untouched, so a real
+// content drift ("Human – EVIL") still fails; only the line-break artifact is normalized.
+const DASH_WS = /\s*[\u2013\u2014\ufffd]\s*/g;
+const dashNorm = (s) => s.replace(DASH_WS, "-");
 
 function scanText(label, text, isPdf = false) {
   const found = []; // {file, name, line, match, detail?}
@@ -250,9 +258,18 @@ function scanText(label, text, isPdf = false) {
     const prefix = canon.slice(0, DRIFT_PREFIX_LEN);
     for (let i = text.indexOf(prefix); i !== -1; i = text.indexOf(prefix, i + 1)) {
       const got = text.slice(i, i + canon.length);
-      // PDF extraction mangles en/em dashes (often to U+FFFD); a dash-normalized
-      // match is identity for PDF surfaces. Any non-dash difference still drifts.
-      if (isPdf && dashNorm(got) === dashNorm(canon)) continue;
+      // PDF extraction mangles en/em dashes (often to U+FFFD) AND inserts a
+      // space when a line breaks at a dash, which shifts a fixed-length window
+      // and truncates the tail. For PDF surfaces, compare with full whitespace
+      // + dash normalization over a slightly LONGER window, and accept when the
+      // normalized canonical is a prefix of the normalized extraction. A real
+      // content drift (different words) still fails; only whitespace/dash
+      // line-break artifacts are absorbed.
+      if (isPdf) {
+        const norm = (s) => dashNorm(s).replace(/\s+/g, " ").trim();
+        const gotLong = norm(text.slice(i, i + canon.length + 24));
+        if (gotLong.startsWith(norm(canon))) continue;
+      }
       const decomposed = DECOMPOSITION_ALLOWLIST.some((a) => {
         if (!a.startsWith(prefix)) return false;
         if (text.slice(i, i + a.length) !== a) return false;
