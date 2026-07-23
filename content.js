@@ -279,9 +279,9 @@ export const CONTENT = {
     ],
     evalThroughLine: "Systems designed so that failure is visible — no silent passes.",
 
-    // §3.6 — the 10 merged third-party PRs, real URLs.
+    // §3.6 — the 18 merged third-party PRs, real URLs.
     oss: {
-      intro: "10 merged pull requests in third-party open-source projects.",
+      intro: "18 merged pull requests in third-party open-source projects.",
       items: [
         {
           repo: "BuilderIO/agent-native",
@@ -342,6 +342,54 @@ export const CONTENT = {
           number: 76,
           url: "https://github.com/NVIDIA/skills/pull/76",
           desc: "Documentation fix repairing the Skill Catalog link in the contributing guide.",
+        },
+        {
+          repo: "ZhuLinsen/daily_stock_analysis",
+          number: 1841,
+          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1841",
+          desc: "Coalesced concurrent institutional-flow fetches so a cold cache cannot trigger a stampede of duplicate requests.",
+        },
+        {
+          repo: "ZhuLinsen/daily_stock_analysis",
+          number: 1855,
+          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1855",
+          desc: "Network-marked drift tests for the institutional-flows fetcher, so an upstream format change fails loudly instead of silently.",
+        },
+        {
+          repo: "ZhuLinsen/daily_stock_analysis",
+          number: 1863,
+          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1863",
+          desc: "Surfaced Taiwan institutional flows in the report's institution block.",
+        },
+        {
+          repo: "ZhuLinsen/daily_stock_analysis",
+          number: 1864,
+          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1864",
+          desc: "Hardened the institutional fetcher with a circuit breaker and an exchange-date guard.",
+        },
+        {
+          repo: "ZhuLinsen/daily_stock_analysis",
+          number: 1866,
+          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1866",
+          desc: "Surfaced Taiwan institutional flows in the report and the LLM prompt, and corrected TWD currency handling.",
+        },
+        {
+          repo: "ZhuLinsen/daily_stock_analysis",
+          number: 1867,
+          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1867",
+          desc: "Fixed a dividend parse that made the trailing-twelve-month yield silently wrong.",
+        },
+        {
+          repo: "ZhuLinsen/daily_stock_analysis",
+          number: 1869,
+          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1869",
+          desc: "Detect the Taiwan closing-auction window (13:25-13:30) as a distinct market phase.",
+        },
+        {
+          repo: "punkpeye/awesome-mcp-servers",
+          number: 6921,
+          url: "https://github.com/punkpeye/awesome-mcp-servers/pull/6921",
+          desc: "Added research-hub to the Research category of the Awesome MCP Servers catalog.",
         },
       ],
     },

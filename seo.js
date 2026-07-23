@@ -34,7 +34,7 @@ export const SEO = {
     "/engineering/": {
       title: "AI, Engineering & Systems — Wenyu Chiou",
       description:
-        "Fail-closed AI systems in public repos: research-hub-pipeline v1.1.1 on PyPI, tested on Windows, macOS, and Linux, regression-tested agent tooling, and 10 merged third-party OSS PRs.",
+        "Fail-closed AI systems in public repos: research-hub-pipeline v1.1.1 on PyPI, tested on Windows, macOS, and Linux, regression-tested agent tooling, and 18 merged third-party OSS PRs.",
       ogType: "website",
       canonical: "https://wenyuchiou.github.io/engineering/",
     },

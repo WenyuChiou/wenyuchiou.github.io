@@ -26,7 +26,7 @@
       <p class="job-head"><span><strong>Graduate Research Assistant</strong> &mdash; Complex Adaptive Water Systems Lab, Lehigh University</span><span class="d">Aug 2024 &ndash; present</span></p>
       <ul class="r2-bullets">
         <li>Apply <strong>LLMs as the behavioral engine of agent-based models</strong> of complex human&ndash;water systems, grounded in a <strong>937-household survey I designed and fielded</strong>; co-authored the published <em>Water Resources Research</em> (2026) study on this LLM-driven agent-based simulation.</li>
-        <li>Building <strong>WAGF</strong>, an <strong>AI-governance framework</strong> that constrains LLM agents with domain rules and behavioral theory so agent-driven simulation outcomes stay stable and physically sensible (in preparation for release).</li>
+        <li>Building <strong>WAGF</strong>, an <strong>AI-governance framework</strong> that screens each LLM-agent decision against domain rules and behavioral theory before it can change simulation state (research software in preparation for release).</li>
         <li>Built <strong>FLOODABM</strong>, a <strong>52,141-household</strong> coupled agent-based &times; catastrophe simulation, statistically calibrated and validated against real OpenFEMA insurance-claims data.</li>
       </ul>
     </div>
@@ -34,9 +34,10 @@
     <div class="job">
       <p class="job-head"><span><strong>Independent Open-Source AI Infrastructure</strong></span><span class="d">2024 &ndash; present</span></p>
       <ul class="r2-bullets">
-        <li>Built <strong>research-hub</strong>, an <strong>MCP server + CLI</strong> that makes Zotero, Obsidian, and NotebookLM AI-operable &mdash; searching scholarly databases and syncing results, with an automated test suite for retrieval quality. <strong>PyPI research-hub-pipeline v1.1.1</strong>; listed in <strong>Awesome MCP Servers</strong>; tested on Windows, macOS, and Linux.</li>
+        <li>Built an <strong>evaluation suite</strong> for research-hub&rsquo;s own literature search that checks whether the papers that should be found actually appear in the top results &mdash; it measured my own system missing nearly all of them, so I <strong>kept that failing result in the repo as a recorded audit baseline</strong> instead of deleting it.</li>
+        <li>Built <strong>research-hub</strong>, an <strong>MCP server + CLI</strong> that makes Zotero, Obsidian, and NotebookLM AI-operable &mdash; searching scholarly databases and syncing results. <strong>PyPI research-hub-pipeline v1.1.1</strong>; listed in <strong>Awesome MCP Servers</strong>; tested on Windows, macOS, and Linux.</li>
         <li>Built a multi-agent tooling stack &mdash; <strong>ai-research-skills</strong>, <strong>fable-method-harness</strong> (cost-routing that matches strong-model quality at <strong>~2.5&times; lower cost</strong> in a pre-registered benchmark), <strong>agent-collab-skills</strong>, and <strong>codex-delegate</strong> &mdash; on the <strong>OpenAI and Anthropic APIs, MCP, and Ollama</strong>; each agent&rsquo;s work is verified from git state, tested on Windows and Linux.</li>
-        <li><strong>10 merged pull requests</strong> into third-party open-source projects, including a root-caused engine-selection fix with a regression test that fails on main (BuilderIO/agent-native &times;4) and a Windows file-permissions security fix (langchain-ai/openwiki).</li>
+        <li><strong>18 merged pull requests</strong> into third-party open source &mdash; including <strong>10 into a 58k-star LLM stock-analysis platform</strong> (end-to-end Taiwan-market support: market routing, institutional-flows fetcher, circuit breaker, drift tests), a Windows file-permissions security fix (langchain-ai/openwiki), and an engine-selection fix with a regression test that fails on main (BuilderIO/agent-native &times;4).</li>
         <li><strong>awesome-agentic-ai-zh</strong> &mdash; a trilingual agentic-AI learning curriculum with automated checks that keep all three languages in sync; <strong>4.7k+ GitHub stars</strong>, 622 forks.</li>
       </ul>
     </div>

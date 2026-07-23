@@ -71,6 +71,9 @@ const BANNED = [
   // approved value is a violation. A denylist of stale values (previously just /1\.8k/)
   // silently let the NEXT stale bump through — 4.5k shipped live in seo.js under it.
   { name: "stale-star-count", re: /(?<![\d.])(?!4\.7k\+\s+GitHub\s+stars)\d+(?:\.\d+)?k\+?\s+GitHub\s+stars/giu, why: "stale star count (only allowed: '4.7k+ GitHub stars')" },
+  // Same positive-enforcement shape as stale-star-count, for the adjectival "<N>k-star"
+  // form used of third-party repos. Kept separate because the allowed value differs.
+  { name: "stale-partner-star-count", re: /(?<![\d.])(?!58k-star)\d+(?:\.\d+)?k-star/giu, why: "stale third-party star count (only allowed: '58k-star', ZhuLinsen/daily_stock_analysis) — re-verify before publishing" },
   { name: "star-glyph", re: /★+/gu, why: "star glyphs banned in copy" },
   // CJK Unified Ideographs: Ext A, base block, compatibility, Ext B–G (astral).
   { name: "cjk-codepoint", re: /[㐀-䶿一-鿿豈-﫿\u{20000}-\u{2FA1F}]+/gu, why: "decision 2 — English-only v1" },
