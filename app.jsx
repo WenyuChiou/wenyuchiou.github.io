@@ -26,9 +26,11 @@ import { Icons } from "./icons.jsx";
 const MODES = ["industry", "academic"];
 const PATH_PARAM_TO_MODE = { research: "academic", engineering: "industry" };
 const MODE_LABELS = {
-  academic: { full: "Research & Academic Work", short: "Research & Academic" },
-  industry: { full: "AI, Engineering & Systems", short: "AI & Engineering" },
+  academic: { full: "Research lens", short: "Research" },
+  industry: { full: "Industry lens", short: "Industry" },
 };
+
+const EVIDENCE_MAP = CONTENT.evidenceMap;
 
 function resolveInitialMode() {
   try {
@@ -55,20 +57,25 @@ function resolveInitialTheme() {
  * ------------------------------------------------------------------------- */
 const SEC = {
   top: { id: "top", label: "Identity" },
-  pillars: { id: "pillars", label: "Proof" },
-  engineering: { id: "selected-engineering", label: "Selected engineering" },
-  research: { id: "selected-research", label: "Selected research" },
-  focus: { id: "focus", label: "Current focus" },
+  evidence: { id: "evidence", label: "Evidence map" },
+  work: { id: "work", label: "Selected work" },
+  now: { id: "now", label: "Current work" },
   documents: { id: "documents", label: "Documents" },
   contact: { id: "contact", label: "Contact" },
 };
 
-function selectedOrder(mode) {
-  return mode === "academic" ? [SEC.research, SEC.engineering] : [SEC.engineering, SEC.research];
+function homeSections(mode) {
+  return [SEC.top, SEC.evidence, SEC.work, SEC.now, SEC.documents, SEC.contact];
 }
 
-function homeSections(mode) {
-  return [SEC.top, SEC.pillars, ...selectedOrder(mode), SEC.focus, SEC.documents, SEC.contact];
+function resolveEvidenceFocus(fallback) {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const focus = new URLSearchParams(window.location.search).get("focus");
+    return EVIDENCE_MAP.nodes.some((node) => node.id === focus) ? focus : fallback;
+  } catch (e) {
+    return fallback;
+  }
 }
 
 /* --------------------------------- primitives ---------------------------- */
@@ -186,8 +193,9 @@ function Nav({ page, mode, onModeChange, theme, onThemeChange }) {
   const M = CONTENT.meta;
   const [open, setOpen] = useState(false);
   const links = [
+    { label: "Evidence", href: "/#evidence" },
+    { label: "Work", href: "/engineering/", page: "engineering", anchor: "industry" },
     { label: "Research", href: "/research/", page: "research", anchor: "academic" },
-    { label: "Engineering", href: "/engineering/", page: "engineering", anchor: "industry" },
     { label: "Publications", href: "/publications/", page: "publications" },
     { label: "Resume", href: CONTENT.documents.industry.file, download: true },
   ];
@@ -275,14 +283,19 @@ function Hero({ mode }) {
   const M = CONTENT.meta;
   const H = CONTENT.hero;
   return (
-    <section id="top" className="wrap hero" aria-label="Identity">
-      <div className="hero-grid">
-        <div className="hero-text">
+    <section id="top" className="wrap hero lab-hero" aria-labelledby="hero-title">
+      <div className="hero-grid lab-hero-grid">
+        <div className="hero-text lab-hero-copy">
           <p className="hero-eyebrow">{M.titleLine}</p>
-          <h1 className="hero-name">{M.name}</h1>
+          <p className="hero-index">01 / RESEARCH ENGINEERING</p>
+          <h1 id="hero-title" className="hero-name">{M.name}</h1>
           <p className="hero-standfirst">{H.umbrella}</p>
           <p className="hero-dialect">{H.dialect[mode] || H.dialect.industry}</p>
           <p className="hero-lede">{H.workingFormulation}</p>
+          <div className="hero-actions">
+            <a className="btn btn-primary" href="#evidence">Explore the evidence<span aria-hidden="true"> ↓</span></a>
+            <a className="btn btn-outline" href={CONTENT.documents.industry.file} download>Industry resume<span aria-hidden="true"> ↗</span></a>
+          </div>
           <p className="availability"><span className="signal-dot" aria-hidden="true"></span>{H.availability}</p>
           <div className="hero-facts" aria-label="Selected evidence">
             {H.facts.map((fact) => (
@@ -295,10 +308,218 @@ function Hero({ mode }) {
           <QuietLinks />
         </div>
         {H.portrait ? (
-          <figure className="hero-portrait">
+          <figure className="hero-portrait lab-portrait">
             <img src={H.portrait.src} alt={H.portrait.alt} width="560" height="751" loading="eager" fetchPriority="high" />
+            <figcaption>Field note / AGU 2025</figcaption>
           </figure>
         ) : null}
+      </div>
+    </section>
+  );
+}
+
+function LabSectionHead({ id, num, title, intro }) {
+  return (
+    <div className="lab-section-head">
+      <p className="lab-section-kicker">{num} / {title}</p>
+      <h2 id={id + "-title"}>{title}</h2>
+      {intro ? <p>{intro}</p> : null}
+    </div>
+  );
+}
+
+function EvidenceMap({ mode }) {
+  const nodes = EVIDENCE_MAP.nodes;
+  const [focus, setFocus] = useState(() => resolveEvidenceFocus(EVIDENCE_MAP.defaultFocus));
+  const tabRefs = useRef({});
+  const active = nodes.find((node) => node.id === focus) || nodes[0];
+
+  const selectNode = (id, shouldFocus) => {
+    setFocus(id);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("focus", id);
+      window.history.replaceState({}, "", url);
+    }
+    if (shouldFocus) {
+      requestAnimationFrame(() => {
+        const button = tabRefs.current[id];
+        if (button) button.focus();
+      });
+    }
+  };
+
+  useEffect(() => {
+    const onPopState = () => setFocus(resolveEvidenceFocus(EVIDENCE_MAP.defaultFocus));
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  const move = (delta) => {
+    const index = nodes.findIndex((node) => node.id === focus);
+    const next = nodes[(index + delta + nodes.length) % nodes.length];
+    selectNode(next.id, true);
+  };
+
+  const onKeyDown = (event) => {
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      event.preventDefault();
+      move(1);
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      event.preventDefault();
+      move(-1);
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      selectNode(nodes[0].id, true);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      selectNode(nodes[nodes.length - 1].id, true);
+    }
+  };
+
+  const lensLabel = mode === "industry" ? "Industry lens" : "Research lens";
+  const relevance = mode === "industry" ? active.industryRelevance : active.academicRelevance;
+  return (
+    <section id="evidence" className="wrap lab-section evidence-map" aria-labelledby="evidence-title">
+      <LabSectionHead
+        id="evidence"
+        num="02"
+        title="Evidence map"
+        intro="A traceable chain from human decision data to behavioral simulation, LLM evaluation, and agent governance. Select a stage to inspect its evidence and relevance."
+      />
+      <div className="evidence-layout">
+        <div className="evidence-track" role="tablist" aria-label="Research evidence chain">
+          {nodes.map((node) => {
+            const selected = node.id === active.id;
+            return (
+              <div className={"evidence-node" + (selected ? " is-active" : "")} key={node.id}>
+                <button
+                  ref={(element) => { tabRefs.current[node.id] = element; }}
+                  id={"evidence-tab-" + node.id}
+                  className="evidence-node-button"
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  aria-controls="evidence-panel"
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => selectNode(node.id, false)}
+                  onKeyDown={onKeyDown}
+                >
+                  <span className="evidence-stage">{node.stage}</span>
+                  <span className="evidence-node-dot" aria-hidden="true"></span>
+                  <span className="evidence-node-title">{node.title}</span>
+                  <span className="evidence-node-metric">{node.metric}</span>
+                  <span className="evidence-node-label">{node.metricLabel}</span>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+        <article id="evidence-panel" className="evidence-panel" role="tabpanel" aria-labelledby={"evidence-tab-" + active.id}>
+          <div className="evidence-panel-topline">
+            <p className="evidence-status">{active.status}</p>
+            <p className="evidence-panel-stage">Stage {active.stage}</p>
+          </div>
+          <div className="evidence-panel-metric">
+            <strong>{active.metric}</strong>
+            <span>{active.metricLabel}</span>
+          </div>
+          <h3>{active.title}</h3>
+          <p className="evidence-summary">{active.summary}</p>
+          <div className="evidence-panel-grid">
+            <div>
+              <p className="evidence-label">Evidence record</p>
+              <p>{active.evidence}</p>
+            </div>
+            <div>
+              <p className="evidence-label">{lensLabel}</p>
+              <p>{relevance}</p>
+            </div>
+          </div>
+          <div className="evidence-panel-links">
+            {active.links.map((link) => <EvidenceLink key={link.href} href={link.href}>{link.label}</EvidenceLink>)}
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function FeaturedWorkExplorer({ mode }) {
+  const [filter, setFilter] = useState(mode === "academic" ? "research" : "engineering");
+  const categories = ["research", "engineering", "community", "all"];
+  const items = [...CONTENT.selectedResearch, ...CONTENT.selectedEngineering];
+  const shown = filter === "all" ? items : items.filter((item) => item.category === filter);
+  const label = (category) => category === "all" ? "All work" : category[0].toUpperCase() + category.slice(1);
+  return (
+    <section id="work" className="wrap lab-section work-explorer" aria-labelledby="work-title">
+      <LabSectionHead
+        id="work"
+        num="03"
+        title="Featured work"
+        intro="Explore the projects by the kind of evidence they contribute: research findings, working systems, or community infrastructure."
+      />
+      <div className="work-filters" role="group" aria-label="Filter featured work">
+        {categories.map((category) => (
+          <button
+            key={category}
+            className="work-filter"
+            type="button"
+            aria-pressed={filter === category}
+            onClick={() => setFilter(category)}
+          >
+            {label(category)}
+          </button>
+        ))}
+      </div>
+      <div className="work-grid">
+        {shown.map((item) => (
+          <article className={"work-card" + (item.featured ? " is-featured" : "")} key={item.slug}>
+            <div className="work-card-topline">
+              <p className="work-card-category">{label(item.category)}</p>
+              <p className="work-card-status">{item.status}</p>
+            </div>
+            <h3>{item.name}</h3>
+            <p className="work-card-line">{item.line}</p>
+            {item.metrics ? (
+              <ul className="work-card-metrics" aria-label={item.name + " metrics"}>
+                {item.metrics.map((metric) => <li key={metric}>{metric}</li>)}
+              </ul>
+            ) : null}
+            <p className="work-card-link"><a className="evidence-link" href={item.href}>Open case study <span className="evidence-arrow" aria-hidden="true">↗</span></a></p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CurrentWork() {
+  const P = CONTENT.publications;
+  return (
+    <section id="now" className="wrap lab-section current-work" aria-labelledby="now-title">
+      <LabSectionHead
+        id="now"
+        num="04"
+        title="Current work"
+        intro="The status interface stays explicit: what is published, what is under revision, and what is being prepared for submission or release."
+      />
+      <div className="current-work-layout">
+        <div className="current-status-list">
+          {P.underReview.map((item) => (
+            <article className="current-status-item" key={item.descriptor}>
+              <p className="current-status">{item.status}</p>
+              <h3>{item.descriptor}</h3>
+              <p className="current-venue">Target venue / {item.target}</p>
+            </article>
+          ))}
+        </div>
+        <div className="current-focus-panel">
+          <p className="evidence-label">Research software / in preparation</p>
+          <p className="current-focus-text">{P.softwareNote}</p>
+          <p className="current-focus-text current-focus-text-small">{CONTENT.currentFocus}</p>
+          <a className="quiet-link" href="/publications/">View publications and presentations <span aria-hidden="true">→</span></a>
+        </div>
       </div>
     </section>
   );
@@ -428,21 +649,14 @@ function Contact({ num }) {
 /* --------------------------------- pages --------------------------------- */
 
 function Home({ mode }) {
-  const selected = selectedOrder(mode);
-  let n = 0;
-  const num = () => String(++n).padStart(2, "0");
   return (
     <>
       <Hero mode={mode} />
-      <ProofPillars />
-      {selected.map((sec) =>
-        sec.id === SEC.engineering.id
-          ? <SelectedEngineering key={sec.id} num={num()} />
-          : <SelectedResearch key={sec.id} num={num()} />
-      )}
-      <CurrentFocus />
-      <DocumentsBlock mode={mode} num={num()} />
-      <Contact num={num()} />
+      <EvidenceMap mode={mode} />
+      <FeaturedWorkExplorer mode={mode} />
+      <CurrentWork />
+      <DocumentsBlock mode={mode} num="05" />
+      <Contact num="06" />
     </>
   );
 }

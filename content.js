@@ -32,10 +32,95 @@ export const CONTENT = {
     facts: [
       { value: "937", label: "household responses" },
       { value: "52,141", label: "simulated households" },
+      { value: "13", label: "evaluation tests" },
       { value: "5K+", label: "GitHub stars" },
     ],
     availability:
       "Open to Summer 2027 internships in AI research, LLM evaluation, agent development, and computational social science.",
+  },
+
+  // Homepage evidence chain — the site's primary interactive proof surface.
+  // Every metric is drawn from the canonical research and project records below.
+  evidenceMap: {
+    defaultFocus: "llm-evaluation",
+    nodes: [
+      {
+        id: "survey",
+        stage: "01",
+        title: "Survey",
+        metric: "937",
+        metricLabel: "household responses",
+        status: "Empirical ground truth",
+        summary:
+          "Designed and fielded a 937-household flood-adaptation survey in New Jersey’s Passaic River Basin, separating owners and renters and preserving social-group comparisons.",
+        evidence:
+          "Calibration files in FLOODABM; empirical grounding for the Water Resources Research lineage and the current LLM evaluation study.",
+        links: [
+          { label: "Research program", href: "/research/" },
+          { label: "FLOODABM", href: "/projects/floodabm/" },
+        ],
+        relatedProjects: ["floodabm", "llm-evaluation"],
+        industryRelevance: "Ground truth before synthetic behavior enters a consequential system.",
+        academicRelevance: "Primary data anchoring the instrument → inference → simulation chain.",
+      },
+      {
+        id: "simulation",
+        stage: "02",
+        title: "Coupled simulation",
+        metric: "52,141",
+        metricLabel: "simulated households",
+        status: "Validated research prototype",
+        summary:
+          "Bayesian-calibrated agent-based modeling across 27 census tracts, coupled to a catastrophe flood model with NFIP mechanics and income-normalized equity analysis.",
+        evidence:
+          "FLOODABM, OpenFEMA/NFIP validation lineage, and the Water Resources Research paper.",
+        links: [
+          { label: "FLOODABM case study", href: "/projects/floodabm/" },
+          { label: "WRR lineage", href: "https://doi.org/10.1029/2025WR042111" },
+        ],
+        relatedProjects: ["floodabm"],
+        industryRelevance: "Behavioral assumptions become inspectable model inputs and validated loss outcomes.",
+        academicRelevance: "Couples survey-grounded behavior with physical and financial consequences.",
+      },
+      {
+        id: "llm-evaluation",
+        stage: "03",
+        title: "LLM evaluation",
+        metric: "13",
+        metricLabel: "regression tests",
+        status: "In preparation",
+        summary:
+          "Compares empirically observed human decision pathways with responses generated from label-blind socioeconomic personas across social groups.",
+        evidence:
+          "937 household records; marginalized n=148, non-marginalized n=789; pilots in Gemma 3 4B and Llama 3.",
+        links: [
+          { label: "LLM evaluation case study", href: "/projects/llm-evaluation/" },
+          { label: "Research program", href: "/research/" },
+        ],
+        relatedProjects: ["llm-evaluation"],
+        industryRelevance: "Tests whether an LLM application reproduces a behavioral signal instead of merely sounding plausible.",
+        academicRelevance: "Human-grounded validity study for generative agents in consequential simulation.",
+      },
+      {
+        id: "governance",
+        stage: "04",
+        title: "Agent governance",
+        metric: "WAGF",
+        metricLabel: "framework in preparation",
+        status: "Research software in preparation",
+        summary:
+          "Constrains agent-driven decisions with physical, financial, and behavioral-theory checks, fail-closed handling, and audit trails.",
+        evidence:
+          "Governance methods in preparation; open-source echoes in research-hub and codex-delegate.",
+        links: [
+          { label: "Engineering record", href: "/engineering/" },
+          { label: "research-hub", href: "/projects/research-hub/" },
+        ],
+        relatedProjects: ["research-hub", "codex-delegate"],
+        industryRelevance: "Turns evaluation findings into runtime constraints and trustworthy agent infrastructure.",
+        academicRelevance: "A general validation architecture beyond the flood domain.",
+      },
+    ],
   },
 
   // IA §2 Block 3 — fixed order in both modes: science → tool → community verification.
@@ -72,6 +157,12 @@ export const CONTENT = {
       name: "research-hub",
       line: "Literature workflows are repetitive and easy to get subtly wrong across tools. research-hub turns Zotero, Obsidian, and NotebookLM into one AI-operable workspace — searching, ingesting, and syncing papers through a single CLI, MCP server, and REST API.",
       status: "Maintained open-source tool",
+      category: "engineering",
+      featured: true,
+      metrics: ["PyPI v1.1.1", "MCP + CLI + REST API"],
+      relatedEvidence: ["governance"],
+      industryRelevance: "Published AI-operable infrastructure with explicit evaluation and cross-platform CI.",
+      academicRelevance: "Reproducibility infrastructure for an everyday literature workflow.",
       href: "/projects/research-hub/",
     },
     {
@@ -79,6 +170,12 @@ export const CONTENT = {
       name: "codex-delegate",
       line: "Delegating code work to a second AI agent is only economical if the delegate cannot fabricate success. codex-delegate verifies the delegate’s completion from git state rather than from its own report.",
       status: "Maintained open-source tool",
+      category: "engineering",
+      featured: true,
+      metrics: ["Ubuntu + Windows CI", "stdin-hang regression test"],
+      relatedEvidence: ["governance"],
+      industryRelevance: "Evidence-based orchestration for agent workflows where completion claims need independent verification.",
+      academicRelevance: "A reproducible control layer for multi-agent research workflows.",
       href: "/projects/codex-delegate/",
     },
     {
@@ -87,6 +184,12 @@ export const CONTENT = {
       line: "Chinese-speaking learners lacked a staged path into agentic AI, and hand-mirrored translations drift. This trilingual curriculum keeps its locales verifiably in sync with CI.",
       status: "Maintained open-source tool",
       stars: "5K+ GitHub stars, 700+ forks (August 2026)",
+      category: "community",
+      featured: false,
+      metrics: ["5K+ GitHub stars", "700+ forks"],
+      relatedEvidence: ["governance"],
+      industryRelevance: "Public teaching infrastructure that makes the agent ecosystem easier to enter and inspect.",
+      academicRelevance: "Community-facing translation of agent-system concepts into a maintained learning path.",
       href: "/projects/awesome-agentic-ai-zh/",
     },
   ],
@@ -98,6 +201,12 @@ export const CONTENT = {
       name: "LLM evaluation study",
       line: "Plausible LLM responses are not evidence that an agent reproduces human decisions. This two-arm study compares human survey pathways with responses generated from label-blind socioeconomic personas across social groups.",
       status: "In preparation",
+      category: "research",
+      featured: true,
+      metrics: ["937 records", "13 regression tests"],
+      relatedEvidence: ["survey", "llm-evaluation"],
+      industryRelevance: "Human-grounded evaluation for agent applications where fluent outputs are not enough.",
+      academicRelevance: "Validity study for generative agents grounded in primary survey data.",
       href: "/projects/llm-evaluation/",
     },
     {
@@ -105,6 +214,12 @@ export const CONTENT = {
       name: "FLOODABM",
       line: "Flood-adaptation models usually assert household behavior instead of measuring it. FLOODABM grounds 52,141 simulated households in a 937-household survey and validates losses against observed insurance claims.",
       status: "Research prototype",
+      category: "research",
+      featured: true,
+      metrics: ["52,141 households", "937-household survey"],
+      relatedEvidence: ["survey", "simulation"],
+      industryRelevance: "A testable behavioral simulation that exposes assumptions before they reach downstream decisions.",
+      academicRelevance: "Couples primary behavioral data with physical and financial outcomes.",
       href: "/projects/floodabm/",
     },
     {
@@ -112,6 +227,12 @@ export const CONTENT = {
       name: "Cat_framework",
       line: "A loss number without an inspectable validation chain cannot be trusted. This Hazus-based seismic bridge-loss pipeline reports where the recipe fails, not only where it works.",
       status: "Research prototype",
+      category: "research",
+      featured: false,
+      metrics: ["Hazus 6.1", "three-level validation"],
+      relatedEvidence: ["simulation"],
+      industryRelevance: "Validation-first modeling with visible failure modes and reproducible inputs.",
+      academicRelevance: "A transparent computational pipeline for inspecting model validity.",
       href: "/projects/cat-framework/",
     },
   ],
