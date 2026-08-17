@@ -18,28 +18,27 @@ export const CONTENT = {
   },
 
   hero: {
-    umbrella: "Behavioral simulation, AI evaluation, and the systems that make agents trustworthy",
+    umbrella: "Quantitative behavioral simulation, psychometric evaluation of LLM behavior, and trustworthy agent systems",
     dialect: {
-      industry: "Research engineer for LLM evaluation, agent systems, and computational social science.",
-      academic: "Computational social scientist building validated LLM agents from human decision data.",
+      industry: "Research engineer building human-grounded behavioral simulations and evaluating LLM agents with psychometric methods.",
+      academic: "I model human decisions as a computational social scientist and test whether LLM agents reproduce them.",
     },
     portrait: {
       src: "/assets/portrait.jpg",
       alt: "Wenyu Chiou at the AGU Fall Meeting 2025, beside his research poster.",
     },
     workingFormulation:
-      "I design evaluation systems for large language model applications and agent-based simulations. My work connects human decision data, computational social science, and fail-closed engineering — from a 937-household survey to 52,141 simulated households and open-source AI tooling.",
+      "I build quantitative simulations of human decision-making and evaluate LLM agents against behavioral and psychometric patterns measured in people. My work moves from a 937-household survey to 52,141 simulated households, then asks whether generated behavior is useful, calibrated, and safe to use.",
     facts: [
       { value: "937", label: "household responses" },
       { value: "52,141", label: "simulated households" },
-      { value: "13", label: "evaluation tests" },
       { value: "5K+", label: "GitHub stars" },
     ],
     availability:
       "Open to Summer 2027 internships in AI research, LLM evaluation, agent development, and computational social science.",
   },
 
-  // Homepage evidence chain — the site's primary interactive proof surface.
+  // Homepage research sequence — the site's primary interactive research surface.
   // Every metric is drawn from the canonical research and project records below.
   evidenceMap: {
     defaultFocus: "llm-evaluation",
@@ -47,10 +46,10 @@ export const CONTENT = {
       {
         id: "survey",
         stage: "01",
-        title: "Survey",
+        title: "Human decision data",
         metric: "937",
         metricLabel: "household responses",
-        status: "Empirical ground truth",
+        status: "Research prototype",
         summary:
           "Designed and fielded a 937-household flood-adaptation survey in New Jersey’s Passaic River Basin, separating owners and renters and preserving social-group comparisons.",
         evidence:
@@ -60,18 +59,18 @@ export const CONTENT = {
           { label: "FLOODABM", href: "/projects/floodabm/" },
         ],
         relatedProjects: ["floodabm", "llm-evaluation"],
-        industryRelevance: "Ground truth before synthetic behavior enters a consequential system.",
+        industryRelevance: "Measured human behavior before synthetic behavior enters a consequential system.",
         academicRelevance: "Primary data anchoring the instrument → inference → simulation chain.",
       },
       {
         id: "simulation",
         stage: "02",
-        title: "Coupled simulation",
+        title: "Quantitative simulation",
         metric: "52,141",
         metricLabel: "simulated households",
-        status: "Validated research prototype",
+        status: "Research prototype",
         summary:
-          "Bayesian-calibrated agent-based modeling across 27 census tracts, coupled to a catastrophe flood model with NFIP mechanics and income-normalized equity analysis.",
+          "Bayesian-calibrated behavioral simulation across 27 census tracts, coupled to a catastrophe flood model with NFIP mechanics and income-normalized equity analysis.",
         evidence:
           "FLOODABM, OpenFEMA/NFIP validation lineage, and the Water Resources Research paper.",
         links: [
@@ -79,35 +78,35 @@ export const CONTENT = {
           { label: "WRR lineage", href: "https://doi.org/10.1029/2025WR042111" },
         ],
         relatedProjects: ["floodabm"],
-        industryRelevance: "Behavioral assumptions become inspectable model inputs and validated loss outcomes.",
+        industryRelevance: "Behavioral assumptions become quantitative model inputs and validated loss outcomes.",
         academicRelevance: "Couples survey-grounded behavior with physical and financial consequences.",
       },
       {
         id: "llm-evaluation",
         stage: "03",
-        title: "LLM evaluation",
-        metric: "13",
-        metricLabel: "regression tests",
+        title: "Psychometric evaluation of LLM behavior",
+        metric: "937",
+        metricLabel: "survey records",
         status: "In preparation",
         summary:
-          "Compares empirically observed human decision pathways with responses generated from label-blind socioeconomic personas across social groups.",
+          "Tests whether label-blind socioeconomic personas reproduce measured decision pathways across social groups.",
         evidence:
-          "937 household records; marginalized n=148, non-marginalized n=789; pilots in Gemma 3 4B and Llama 3.",
+          "A human-versus-LLM design grounded in the 937 survey records; the full study remains in preparation.",
         links: [
           { label: "LLM evaluation case study", href: "/projects/llm-evaluation/" },
           { label: "Research program", href: "/research/" },
         ],
         relatedProjects: ["llm-evaluation"],
-        industryRelevance: "Tests whether an LLM application reproduces a behavioral signal instead of merely sounding plausible.",
-        academicRelevance: "Human-grounded validity study for generative agents in consequential simulation.",
+        industryRelevance: "Tests whether LLM outputs reproduce behavioral and psychometric patterns instead of merely sounding plausible.",
+        academicRelevance: "Human-grounded psychometric study of whether generative agents reproduce measured decision pathways.",
       },
       {
         id: "governance",
         stage: "04",
-        title: "Agent governance",
+        title: "Constrained agent systems",
         metric: "WAGF",
         metricLabel: "framework in preparation",
-        status: "Research software in preparation",
+        status: "In preparation",
         summary:
           "Constrains agent-driven decisions with physical, financial, and behavioral-theory checks, fail-closed handling, and audit trails.",
         evidence:
@@ -117,7 +116,7 @@ export const CONTENT = {
           { label: "research-hub", href: "/projects/research-hub/" },
         ],
         relatedProjects: ["research-hub", "codex-delegate"],
-        industryRelevance: "Turns evaluation findings into runtime constraints and trustworthy agent infrastructure.",
+        industryRelevance: "Turns behavioral testing into runtime constraints and trustworthy agent infrastructure.",
         academicRelevance: "A general validation architecture beyond the flood domain.",
       },
     ],
@@ -199,14 +198,14 @@ export const CONTENT = {
     {
       slug: "llm-evaluation",
       name: "LLM evaluation study",
-      line: "Plausible LLM responses are not evidence that an agent reproduces human decisions. This two-arm study compares human survey pathways with responses generated from label-blind socioeconomic personas across social groups.",
+      line: "Fluent LLM responses are not the same as human behavior. This psychometric study compares measured survey pathways with responses generated from label-blind socioeconomic personas across social groups.",
       status: "In preparation",
       category: "research",
       featured: true,
-      metrics: ["937 records", "13 regression tests"],
+      metrics: ["937 survey records", "Human-grounded comparison"],
       relatedEvidence: ["survey", "llm-evaluation"],
-      industryRelevance: "Human-grounded evaluation for agent applications where fluent outputs are not enough.",
-      academicRelevance: "Validity study for generative agents grounded in primary survey data.",
+      industryRelevance: "Human-grounded behavioral and psychometric testing for agent applications where fluent outputs are not enough.",
+      academicRelevance: "Study of whether generative agents reproduce measured decision pathways from primary survey data.",
       href: "/projects/llm-evaluation/",
     },
     {
@@ -239,7 +238,7 @@ export const CONTENT = {
 
   // IA §2 Block 6 — mode-invariant single string.
   currentFocus:
-    "Current focus: evaluation and governance methods for LLM agents — testing whether they reproduce real human decision pathways (grounded in a 937-household survey I designed and fielded) and constraining agent-driven simulations so they stay trustworthy. Research software in preparation for release.",
+    "Current focus: quantitative behavioral simulation and psychometric evaluation for LLM agents — testing whether they reproduce real human decision pathways (grounded in a 937-household survey I designed and fielded) and constraining agent-driven simulations so they stay trustworthy. Research software in preparation for release.",
 
   // IA §2 Block 7 — mode decides primary/secondary in app.jsx.
   documents: {
@@ -273,7 +272,7 @@ export const CONTENT = {
         what: "Identified flood-adaptation decision pathways through structural equation modeling — across owner and renter groups, and across marginalized and non-marginalized groups (the equity strand).",
           evidence:
             "Flood Adaptation Decision Variables and Pathways across Social Groups: A Comparison between Human Survey Responses and Responses Generated by Large Language Models. Planned submission to Progress in Disaster Science.",
-          statusNote: "In preparation; redesigned elicitation protected by 13 regression tests and piloted with Gemma 3 4B and Llama 3.",
+          statusNote: "In preparation; the redesigned elicitation and study protocol are being validated.",
       },
       {
         n: 3,
@@ -311,7 +310,7 @@ export const CONTENT = {
     // owner/renter terms (true of the survey + WRR strand); the SCS manuscript descriptor
     // below uses canonical-facts §4.2 marginalized/non-marginalized framing verbatim.
     summary:
-      "My research asks a question generative AI has made urgent: when can a simulated human decision-maker be trusted? I approach it by owning every link of the evidence chain. I designed and fielded a 937-household flood-adaptation survey in New Jersey’s Passaic River Basin, used structural equation modeling to identify how owners and renters actually decide among adaptation actions, and encoded those empirically identified pathways in a Bayesian-calibrated agent-based model of 52,141 households coupled to a catastrophe flood model with National Flood Insurance Program mechanics — including income-normalized equity analysis of who bears flood losses. With my advisor, I published a Water Resources Research article (62(6), e2025WR042111, 2026) substituting large language models as the behavioral engine of such simulations. That substitution creates a validity problem: nothing guarantees a generative agent decides the way real households do. My current work addresses it directly through an LLM evaluation study that compares human survey pathways with label-blind synthetic personas across social groups, alongside governance methods that constrain agent behavior with physical constraints and behavioral theory. The household flood-adaptation and financial-outcomes study is under revision following peer review at Water Resources Research; the social-group LLM study is in preparation for planned submission to Progress in Disaster Science. The longer-term agenda is a governance standard for generative agents in consequential simulation.",
+      "My research asks a question generative AI has made urgent: when can a simulated human decision-maker be trusted? I approach it by connecting each stage of the research process. I designed and fielded a 937-household flood-adaptation survey in New Jersey’s Passaic River Basin, used structural equation modeling to identify how owners and renters actually decide among adaptation actions, and encoded those empirically identified pathways in a Bayesian-calibrated agent-based model of 52,141 households coupled to a catastrophe flood model with National Flood Insurance Program mechanics — including income-normalized equity analysis of who bears flood losses. With my advisor, I published a Water Resources Research article (62(6), e2025WR042111, 2026) substituting large language models as the behavioral engine of such simulations. That substitution creates a validity problem: nothing guarantees a generative agent decides the way real households do. My current work addresses it directly through an LLM evaluation study that compares human survey pathways with label-blind synthetic personas across social groups, alongside governance methods that constrain agent behavior with physical constraints and behavioral theory. The household flood-adaptation and financial-outcomes study is under revision following peer review at Water Resources Research; the social-group LLM study is in preparation for planned submission to Progress in Disaster Science. The longer-term agenda is a governance standard for generative agents in consequential simulation.",
   },
 
   // /engineering/ — positioning §3.
@@ -392,7 +391,7 @@ export const CONTENT = {
     evalRecord: [
       {
         project: "LLM evaluation study",
-        item: "Two-arm human-versus-LLM design over 937 survey records (marginalized n=148; non-marginalized n=789), with 13 regression tests protecting the redesigned elicitation and pilots in Gemma 3 4B and Llama 3.",
+        item: "Two-arm human-versus-LLM design grounded in 937 survey records; the study compares generated responses with measured decision pathways while the full analysis remains in preparation.",
       },
       {
         project: "research-hub",
@@ -663,17 +662,17 @@ export const CONTENT = {
       problem:
         "An LLM can produce a fluent answer without reproducing how real households make decisions. The difficult question is not whether a response sounds human; it is whether a synthetic decision-maker preserves empirically observed pathways and meaningful differences between social groups.",
       whyItMatters:
-        "If LLM agents replace human behavior inside consequential simulations, apparent plausibility is not enough. Evaluation needs a human ground truth, a frozen comparison design, and visible limits before synthetic behavior is used as evidence.",
+        "If LLM agents replace human behavior inside consequential simulations, apparent plausibility is not enough. Evaluation needs a human ground truth, a frozen comparison design, and visible limits before synthetic behavior is used as a behavioral claim.",
       myRole:
         "Designed the evaluation scope, redesigned the elicitation protocol, implemented the analysis pipeline, and maintained the regression tests that protect the study from circular persona labels and coding drift.",
       approach:
         "A two-arm design: first establish the corrected human decision pathways with multi-group structural equation modeling, then ask LLMs to respond as label-blind socioeconomic personas drawn from the same survey population. The primary comparison asks whether the generated responses reproduce pathway structure and social-group differences.",
       system:
-        "The study uses 937 household records — marginalized n=148 and non-marginalized n=789 — with a redesigned elicitation covered by 13 regression tests. Pilot runs use Gemma 3 4B and Llama 3; the full run and scope validation remain pending.",
+        "The study is grounded in 937 household records and a redesigned elicitation. Full subgroup and model-pilot details remain private while the study is in preparation.",
       keyChallenge:
         "Keeping the comparison label-blind and non-circular while separating genuine behavioral signal from prompt, coding, and model artifacts. The study records redesign decisions and retracted artifacts instead of carrying an attractive but unsupported finding into the paper.",
       evaluation:
-        "Milestone evidence is the implemented redesign, 13 passing regression tests, corrected human ground truth, and two-model pilots. No final agreement score or subgroup claim is reported here until the preregistered full run and scope validation are complete.",
+        "Current milestones are the implemented redesign and corrected human ground truth. No final agreement score or subgroup claim is reported here until the full run and scope validation are complete.",
       results:
         "In preparation — planned submission to Progress in Disaster Science.",
       evidenceLinks: [

@@ -26,8 +26,8 @@ import { Icons } from "./icons.jsx";
 const MODES = ["industry", "academic"];
 const PATH_PARAM_TO_MODE = { research: "academic", engineering: "industry" };
 const MODE_LABELS = {
-  academic: { full: "Research lens", short: "Research" },
-  industry: { full: "Industry lens", short: "Industry" },
+  academic: { full: "Research view", short: "Research" },
+  industry: { full: "Industry view", short: "Industry" },
 };
 
 const EVIDENCE_MAP = CONTENT.evidenceMap;
@@ -57,15 +57,19 @@ function resolveInitialTheme() {
  * ------------------------------------------------------------------------- */
 const SEC = {
   top: { id: "top", label: "Identity" },
-  evidence: { id: "evidence", label: "Evidence map" },
+  approach: { id: "approach", label: "Research approach" },
   work: { id: "work", label: "Selected work" },
   now: { id: "now", label: "Current work" },
+  // Retained for the older, currently unused homepage block components.
+  engineering: { id: "selected-engineering", label: "Selected engineering" },
+  research: { id: "selected-research", label: "Selected research" },
+  focus: { id: "focus", label: "Current focus" },
   documents: { id: "documents", label: "Documents" },
   contact: { id: "contact", label: "Contact" },
 };
 
 function homeSections(mode) {
-  return [SEC.top, SEC.evidence, SEC.work, SEC.now, SEC.documents, SEC.contact];
+  return [SEC.top, SEC.approach, SEC.work, SEC.now, SEC.documents, SEC.contact];
 }
 
 function resolveEvidenceFocus(fallback) {
@@ -193,9 +197,9 @@ function Nav({ page, mode, onModeChange, theme, onThemeChange }) {
   const M = CONTENT.meta;
   const [open, setOpen] = useState(false);
   const links = [
-    { label: "Evidence", href: "/#evidence" },
-    { label: "Work", href: "/engineering/", page: "engineering", anchor: "industry" },
-    { label: "Research", href: "/research/", page: "research", anchor: "academic" },
+    { label: "Approach", href: "/#approach" },
+    { label: "Work", href: "/engineering/?path=engineering#industry", page: "engineering", anchor: "industry" },
+    { label: "Research", href: "/research/?path=research#academic", page: "research", anchor: "academic" },
     { label: "Publications", href: "/publications/", page: "publications" },
     { label: "Resume", href: CONTENT.documents.industry.file, download: true },
   ];
@@ -293,11 +297,11 @@ function Hero({ mode }) {
           <p className="hero-dialect">{H.dialect[mode] || H.dialect.industry}</p>
           <p className="hero-lede">{H.workingFormulation}</p>
           <div className="hero-actions">
-            <a className="btn btn-primary" href="#evidence">Explore the evidence<span aria-hidden="true"> ↓</span></a>
+            <a className="btn btn-outline" href="#approach">Explore the research<span aria-hidden="true"> ↓</span></a>
             <a className="btn btn-outline" href={CONTENT.documents.industry.file} download>Industry resume<span aria-hidden="true"> ↗</span></a>
           </div>
           <p className="availability"><span className="signal-dot" aria-hidden="true"></span>{H.availability}</p>
-          <div className="hero-facts" aria-label="Selected evidence">
+          <div className="hero-facts" aria-label="Selected metrics">
             {H.facts.map((fact) => (
               <div className="hero-fact" key={fact.label}>
                 <strong>{fact.value}</strong>
@@ -331,6 +335,7 @@ function LabSectionHead({ id, num, title, intro }) {
 function EvidenceMap({ mode }) {
   const nodes = EVIDENCE_MAP.nodes;
   const [focus, setFocus] = useState(() => resolveEvidenceFocus(EVIDENCE_MAP.defaultFocus));
+  const [isVertical, setIsVertical] = useState(() => typeof window !== "undefined" && window.matchMedia("(max-width: 767.98px)").matches);
   const tabRefs = useRef({});
   const active = nodes.find((node) => node.id === focus) || nodes[0];
 
@@ -355,6 +360,18 @@ function EvidenceMap({ mode }) {
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767.98px)");
+    const onChange = () => setIsVertical(media.matches);
+    onChange();
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", onChange);
+      return () => media.removeEventListener("change", onChange);
+    }
+    media.addListener(onChange);
+    return () => media.removeListener(onChange);
+  }, []);
+
   const move = (delta) => {
     const index = nodes.findIndex((node) => node.id === focus);
     const next = nodes[(index + delta + nodes.length) % nodes.length];
@@ -377,18 +394,18 @@ function EvidenceMap({ mode }) {
     }
   };
 
-  const lensLabel = mode === "industry" ? "Industry lens" : "Research lens";
+  const lensLabel = mode === "industry" ? "For AI teams" : "Research contribution";
   const relevance = mode === "industry" ? active.industryRelevance : active.academicRelevance;
   return (
-    <section id="evidence" className="wrap lab-section evidence-map" aria-labelledby="evidence-title">
+    <section id="approach" className="wrap lab-section evidence-map" aria-labelledby="approach-title">
       <LabSectionHead
-        id="evidence"
+        id="approach"
         num="02"
-        title="Evidence map"
-        intro="A traceable chain from human decision data to behavioral simulation, LLM evaluation, and agent governance. Select a stage to inspect its evidence and relevance."
+        title="Research approach"
+        intro="I start with measured human decisions, quantify their pathways, simulate them at scale, and test where LLM-generated behavior agrees or diverges. Select a stage to see the method and why it matters."
       />
       <div className="evidence-layout">
-        <div className="evidence-track" role="tablist" aria-label="Research evidence chain">
+        <div className="evidence-track" role="tablist" aria-orientation={isVertical ? "vertical" : "horizontal"} aria-label="Research sequence">
           {nodes.map((node) => {
             const selected = node.id === active.id;
             return (
@@ -428,7 +445,7 @@ function EvidenceMap({ mode }) {
           <p className="evidence-summary">{active.summary}</p>
           <div className="evidence-panel-grid">
             <div>
-              <p className="evidence-label">Evidence record</p>
+              <p className="evidence-label">Methods / data</p>
               <p>{active.evidence}</p>
             </div>
             <div>
@@ -457,7 +474,7 @@ function FeaturedWorkExplorer({ mode }) {
         id="work"
         num="03"
         title="Featured work"
-        intro="Explore the projects by the kind of evidence they contribute: research findings, working systems, or community infrastructure."
+        intro="Browse the projects by their role in the program: research findings, working systems, or community infrastructure."
       />
       <div className="work-filters" role="group" aria-label="Filter featured work">
         {categories.map((category) => (
@@ -684,7 +701,7 @@ function ResearchPage() {
   return (
     <>
       <PageHead title="Research & Academic Work" />
-      <section className="wrap page-section" aria-label="Research overview">
+      <section id="academic" className="wrap page-section" aria-label="Research overview">
         <p className="prose-lede">{R.summary}</p>
       </section>
       <section className="wrap section" aria-labelledby="arc-title">
@@ -699,7 +716,7 @@ function ResearchPage() {
               <div className="arc-body">
                 <h3 className="arc-name">{s.name}</h3>
                 <p className="arc-what">{s.what}</p>
-                <p className="arc-evidence"><span className="field-label">Evidence</span> {s.evidence}</p>
+                <p className="arc-evidence"><span className="field-label">Methods / source</span> {s.evidence}</p>
                 <p className="arc-status">{s.statusNote}</p>
               </div>
             </li>
@@ -731,7 +748,7 @@ function EngineeringPage() {
   return (
     <>
       <PageHead title="AI, Engineering & Systems" />
-      <section className="wrap section" data-block="problems">
+      <section id="industry" className="wrap section" data-block="problems">
         <SectionHead num={num()} title="Problems solved" />
         <div className="problem-list">
           {E.problems.map((p) => (
@@ -1094,10 +1111,16 @@ export function App({ page }) {
   const [mode, setModeState] = useState(resolveInitialMode);
   const [cmdk, setCmdk] = useState(false);
 
-  // Toggling writes the stored preference (IA §7.2); URL-param resolution never does.
+  // Toggling writes the stored preference and keeps the compatible path query
+  // in sync, so a mode switch survives reloads and shareable URLs.
   const onModeChange = (next) => {
     setModeState(next);
-    try { window.localStorage.setItem("wy-mode", next); } catch (e) { /* storage unavailable */ }
+    try {
+      window.localStorage.setItem("wy-mode", next);
+      const url = new URL(window.location.href);
+      url.searchParams.set("path", next === "academic" ? "research" : "engineering");
+      window.history.replaceState({}, "", url);
+    } catch (e) { /* storage/URL unavailable */ }
   };
   const onThemeChange = (next) => {
     setTheme(next);

@@ -13,14 +13,14 @@ export const SEO = {
 
   ogImage: {
     file: "/assets/og-card.png",
-    alt: "Wenyu Chiou — AI Evaluation & Behavioral Simulation Research Engineer",
+    alt: "Wenyu Chiou — Quantitative Behavioral Simulation & Psychometric LLM Evaluation",
   },
 
   routes: {
     "/": {
-      title: "Wenyu Chiou — AI Evaluation & Behavioral Simulation Research Engineer",
+      title: "Wenyu Chiou — Quantitative Behavioral Simulation & Psychometric LLM Evaluation",
       description:
-        "AI evaluation, LLM-agent development, and behavioral simulation grounded in a 937-household survey, a 52,141-household coupled model, and open-source research tooling. Ph.D. candidate at Lehigh University, open to AI internships.",
+        "Quantitative behavioral simulation and psychometric LLM evaluation grounded in a 937-household survey, a 52,141-household coupled model, and open-source agent tooling. Ph.D. candidate at Lehigh University, open to AI internships.",
       ogType: "website",
       canonical: "https://wenyuchiou.github.io/",
     },
@@ -111,7 +111,7 @@ export const SEO = {
       "@context": "https://schema.org",
       "@type": "Person",
       name: "Wenyu Chiou",
-      jobTitle: "AI Evaluation & Behavioral Simulation Research Engineer",
+      jobTitle: "Research Engineer — Quantitative Behavioral Simulation & Psychometric LLM Evaluation",
       affiliation: {
         "@type": "CollegeOrUniversity",
         name: "Lehigh University",
