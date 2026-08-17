@@ -694,8 +694,18 @@ a:hover { color: var(--accent-strong); }
 p .field-label, span.field-label { display: inline; margin-right: var(--space-2); }
 
 /* --- /research/: five-stage arc (typographic timeline, VDS §5.7.3) -------- */
-.arc-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+.arc-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; position: relative; }
+.arc-list::before {
+  content: "";
+  position: absolute;
+  left: 28px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule-strong);
+}
 .arc-stage {
+  position: relative;
   display: grid;
   grid-template-columns: 56px minmax(0, 1fr);
   gap: var(--space-4);
@@ -703,11 +713,16 @@ p .field-label, span.field-label { display: inline; margin-right: var(--space-2)
   padding: var(--space-5) 0;
 }
 .arc-num {
+  position: relative;
+  z-index: 1;
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   letter-spacing: 0.02em;
   color: var(--ink-3);
   margin: 6px 0 0;
+  width: max-content;
+  padding-right: 8px;
+  background: var(--bg);
 }
 .arc-name { font-size: var(--text-h3); font-weight: 550; line-height: 1.25; margin-bottom: var(--space-2); }
 .arc-what { font-size: var(--text-body); color: var(--ink-2); max-width: var(--measure); margin-bottom: var(--space-3); }
@@ -856,7 +871,8 @@ p .field-label, span.field-label { display: inline; margin-right: var(--space-2)
 }
 @media (max-width: 639.98px) {
   .arc-stage, .eval-item, .oss-item { grid-template-columns: 1fr; gap: var(--space-2); }
-  .arc-num { margin-top: 0; }
+  .arc-list::before { left: 4px; }
+  .arc-num { margin-top: 0; padding-left: 12px; }
 }
 
 /* ==========================================================================
@@ -936,7 +952,7 @@ p .field-label, span.field-label { display: inline; margin-right: var(--space-2)
 :root {
   --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
   --font-sans: Georgia, "Times New Roman", serif;
-  --maxw: 1520px;
+  --maxw: 1800px;
   --gutter: clamp(24px, 3vw, 56px);
   --bg: #F4F1E9;
   --surface: #FCFBF6;
@@ -953,7 +969,12 @@ p .field-label, span.field-label { display: inline; margin-right: var(--space-2)
   --on-accent: #FFFFFF;
   --shadow-card: 3px 3px 0 rgb(24 37 43 / 0.12);
   --grid-line: rgb(24 37 43 / 0.055);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
+
+:root { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
 
 [data-theme="dark"] {
   --bg: #151B1D;
@@ -1089,9 +1110,9 @@ body {
   border-radius: 0;
   padding: var(--space-5);
   box-shadow: var(--shadow-card);
-  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  transition: border-color 180ms ease, box-shadow 180ms var(--ease-out), transform 180ms var(--ease-out);
 }
-.card:hover { border-color: var(--accent); box-shadow: 6px 6px 0 var(--accent-wash); transform: translate(-2px, -2px); }
+.card:focus-within { border-color: var(--accent); box-shadow: 6px 6px 0 var(--accent-wash); }
 .card-name { font-family: var(--font-serif); font-size: 1.2rem; letter-spacing: -0.025em; }
 .card-status { color: var(--signal); text-transform: uppercase; font-size: 0.62rem; letter-spacing: 0.06em; }
 .card-problem { font-size: 0.98rem; line-height: 1.62; }
@@ -1110,6 +1131,52 @@ body {
 .section-contact .section-title::after { background: var(--accent); }
 .site-footer { margin-top: var(--space-7); background: var(--surface-2); }
 
+/* The first proof item is deliberately given more visual weight than the
+   supporting items. This breaks the repeated-card rhythm without introducing
+   a decorative dashboard or inventing a new content hierarchy. */
+.section[data-block="engineering"] .card-grid.cols-3 .card:first-child,
+.section[data-block="research"] .card-grid.cols-3 .card:first-child {
+  grid-column: span 2;
+  background: var(--surface-2);
+}
+
+/* Press feedback is reserved for actual controls; cards use focus-within so
+   keyboard users get the same sense of place without pretending the card is
+   itself a button. */
+.btn,
+.theme-toggle,
+.nav-menu-btn,
+.mode-option {
+  transition-property: color, background-color, border-color, transform;
+  transition-duration: 160ms;
+  transition-timing-function: ease;
+}
+.btn:active,
+.theme-toggle:active,
+.nav-menu-btn:active,
+.mode-option:active { transform: scale(0.97); }
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover { border-color: var(--accent); box-shadow: 6px 6px 0 var(--accent-wash); transform: translate(-2px, -2px); }
+  .btn:hover { transform: translateY(-1px); }
+}
+
+/* A restrained first-load reveal gives each route a clear entrance. It only
+   touches opacity and transform, and the existing reduced-motion rule removes
+   it for visitors who ask for less motion. */
+@keyframes route-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+main { animation: route-in 360ms var(--ease-out) both; }
+
+@keyframes palette-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.cmdk-overlay { animation: route-in 160ms ease-out both; }
+.cmdk-panel { animation: palette-in 180ms var(--ease-out) both; }
+
 /* Dense reading path: large screens should use the available canvas while
    keeping prose inside a comfortable measure. The page should feel edited,
    not padded into a narrow column. */
@@ -1120,9 +1187,23 @@ body {
 .case-section { padding: var(--space-5) 0; }
 .section-focus { padding-top: var(--space-6); padding-bottom: var(--space-6); }
 
+/* Inner-page composition: the lead problem anchors the section, while the
+   remaining problems share the canvas instead of leaving a dead right rail. */
+@media (min-width: 1024px) {
+  .problem-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(32px, 4vw, 80px);
+  }
+  .problem:first-child { grid-column: 1 / -1; }
+  .problem:not(:first-child) { min-height: 220px; }
+}
+
 @media (max-width: 1023.98px) {
   .hero-grid { grid-template-columns: 1fr; }
   .hero-portrait { max-width: 240px; }
+  .section[data-block="engineering"] .card-grid.cols-3 .card:first-child,
+  .section[data-block="research"] .card-grid.cols-3 .card:first-child { grid-column: auto; }
 }
 
 @media (max-width: 767.98px) {
