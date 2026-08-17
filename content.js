@@ -57,6 +57,17 @@ export const CONTENT = {
         status: "Research prototype",
         summary:
           "Designed and fielded a 937-household flood-adaptation survey in New Jersey’s Passaic River Basin, separating owners and renters and preserving social-group comparisons.",
+        methodPoints: [
+          "937-household flood-adaptation survey",
+          "Owners, renters, and social-group comparisons",
+          "Empirical inputs for FLOODABM calibration",
+        ],
+        industryPoints: [
+          "Measure human behavior before synthetic behavior enters a consequential system.",
+        ],
+        academicPoints: [
+          "Primary data anchoring the survey → inference → simulation chain.",
+        ],
         evidence:
           "Calibration files in FLOODABM; empirical grounding for the Water Resources Research lineage and the current LLM evaluation study.",
         links: [
@@ -76,6 +87,17 @@ export const CONTENT = {
         status: "Research prototype",
         summary:
           "Bayesian-calibrated behavioral simulation across 27 census tracts, coupled to a catastrophe flood model with NFIP mechanics and income-normalized equity analysis.",
+        methodPoints: [
+          "Bayesian-calibrated behavioral simulation",
+          "52,141 households across 27 census tracts",
+          "NFIP mechanics and income-normalized equity",
+        ],
+        industryPoints: [
+          "Turn behavioral assumptions into quantitative inputs and validated outcomes.",
+        ],
+        academicPoints: [
+          "Couple survey-grounded behavior with physical and financial consequences.",
+        ],
         evidence:
           "FLOODABM, OpenFEMA/NFIP validation lineage, and the Water Resources Research paper.",
         links: [
@@ -90,11 +112,24 @@ export const CONTENT = {
         id: "llm-evaluation",
         stage: "03",
         title: "Psychometric evaluation of LLM behavior",
+        shortTitle: "LLM behavior testing",
         metric: "937",
         metricLabel: "survey records",
         status: "In preparation",
         summary:
           "Tests whether label-blind socioeconomic personas reproduce measured decision pathways across social groups.",
+        methodPoints: [
+          "Label-blind socioeconomic personas",
+          "Human-versus-LLM pathway comparison",
+          "937 survey records across social groups",
+        ],
+        industryPoints: [
+          "Test behavior, not only fluent text.",
+          "Compare model outputs with measured decision pathways.",
+        ],
+        academicPoints: [
+          "Human-grounded psychometric study of generative-agent behavior.",
+        ],
         evidence:
           "A human-versus-LLM design grounded in the 937 survey records; the full study remains in preparation.",
         links: [
@@ -109,11 +144,23 @@ export const CONTENT = {
         id: "governance",
         stage: "04",
         title: "Constrained agent systems",
+        shortTitle: "Governed agent systems",
         metric: "WAGF",
         metricLabel: "framework in preparation",
         status: "In preparation",
         summary:
           "Constrains agent-driven decisions with physical, financial, and behavioral-theory checks, fail-closed handling, and audit trails.",
+        methodPoints: [
+          "Physical and financial constraints",
+          "Behavioral-theory checks before state updates",
+          "Fail-closed execution and audit trails",
+        ],
+        industryPoints: [
+          "Turn behavioral tests into runtime constraints for agent infrastructure.",
+        ],
+        academicPoints: [
+          "General validation architecture beyond the flood domain.",
+        ],
         evidence:
           "Governance methods in preparation; open-source echoes in research-hub and codex-delegate.",
         links: [
@@ -160,6 +207,11 @@ export const CONTENT = {
       slug: "research-hub",
       name: "research-hub",
       line: "Literature workflows are repetitive and easy to get subtly wrong across tools. research-hub turns Zotero, Obsidian, and NotebookLM into one AI-operable workspace — searching, ingesting, and syncing papers through a single CLI, MCP server, and REST API.",
+      points: [
+        "Zotero → Obsidian → NotebookLM",
+        "MCP + CLI + REST API",
+        "Local-first research automation",
+      ],
       status: "Maintained open-source tool",
       category: "engineering",
       tracks: ["agent-systems", "open-source"],
@@ -174,6 +226,11 @@ export const CONTENT = {
       slug: "codex-delegate",
       name: "codex-delegate",
       line: "Delegating code work to a second AI agent is only economical if the delegate cannot fabricate success. codex-delegate verifies the delegate’s completion from git state rather than from its own report.",
+      points: [
+        "Git-state completion checks",
+        "Ubuntu + Windows CI",
+        "Regression test for a real stdin hang",
+      ],
       status: "Maintained open-source tool",
       category: "engineering",
       tracks: ["agent-systems", "open-source"],
@@ -188,6 +245,11 @@ export const CONTENT = {
       slug: "awesome-agentic-ai-zh",
       name: "awesome-agentic-ai-zh",
       line: "Chinese-speaking learners lacked a staged path into agentic AI, and hand-mirrored translations drift. This trilingual curriculum keeps its locales verifiably in sync with CI.",
+      points: [
+        "Trilingual agentic-AI learning path",
+        "240+ resources and 23 exercises",
+        "5K+ stars and 700+ forks",
+      ],
       status: "Maintained open-source tool",
       stars: "5K+ GitHub stars, 700+ forks (August 2026)",
       category: "community",
@@ -207,6 +269,11 @@ export const CONTENT = {
       slug: "llm-evaluation",
       name: "LLM evaluation study",
       line: "Fluent LLM responses are not the same as human behavior. This psychometric study compares measured survey pathways with responses generated from label-blind socioeconomic personas across social groups.",
+      points: [
+        "Compare generated pathways across social groups",
+        "Use psychometric patterns as evaluation criteria",
+        "Human-grounded LLM behavior study",
+      ],
       status: "In preparation",
       category: "research",
       tracks: ["llm-evaluation", "behavioral"],
@@ -221,6 +288,11 @@ export const CONTENT = {
       slug: "floodabm",
       name: "FLOODABM",
       line: "Flood-adaptation models usually assert household behavior instead of measuring it. FLOODABM grounds 52,141 simulated households in a 937-household survey and validates losses against observed insurance claims.",
+      points: [
+        "Survey-grounded agent parameters",
+        "52,141 household trajectories",
+        "OpenFEMA insurance-claims validation",
+      ],
       status: "Research prototype",
       category: "research",
       tracks: ["behavioral"],
@@ -235,6 +307,11 @@ export const CONTENT = {
       slug: "cat-framework",
       name: "Cat_framework",
       line: "A loss number without an inspectable validation chain cannot be trusted. This Hazus-based seismic bridge-loss pipeline reports where the recipe fails, not only where it works.",
+      points: [
+        "Hazus-based seismic bridge-loss pipeline",
+        "Three-level validation",
+        "Failure modes retained for inspection",
+      ],
       status: "Research prototype",
       category: "research",
       tracks: ["risk-modeling"],
@@ -250,6 +327,16 @@ export const CONTENT = {
   // IA §2 Block 6 — mode-invariant single string.
   currentFocus:
     "Current focus: quantitative behavioral simulation and psychometric evaluation for LLM agents — testing whether they reproduce real human decision pathways (grounded in a 937-household survey I designed and fielded) and constraining agent-driven simulations so they stay trustworthy. Research software in preparation for release.",
+  currentFocusPoints: [
+    "Quantify human decision pathways from a 937-household survey.",
+    "Test LLM behavior against measured pathways across social groups.",
+    "Constrain agent updates with behavioral theory and domain rules.",
+  ],
+  behaviorTrace: {
+    label: "AI behavior trace",
+    note: "human-grounded",
+    steps: ["Human records", "Persona prompt", "Model response", "Psychometric check"],
+  },
 
   // IA §2 Block 7 — mode decides primary/secondary in app.jsx.
   documents: {
@@ -396,7 +483,7 @@ export const CONTENT = {
         repo: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
       },
     ],
-    systemsNote: "WAGF — a governance framework for LLM agents in human–water simulation, keeping coupled behavioral outcomes stable and physically sensible; research software in preparation for release.",
+    systemsNote: "WAGF — governed LLM-agent framework for human–water simulation, with domain checks, fail-closed execution, and audit trails.",
 
     // §3.4 — every item inspectable in a public repo.
     evalRecord: [
@@ -575,7 +662,7 @@ export const CONTENT = {
       // ship until CONFIRM #10 resolves its title/year/author-position conflict.
     ],
 
-    softwareNote: "WAGF — a governance framework for LLM agents in human–water simulation, keeping coupled behavioral outcomes stable and physically sensible; research software in preparation for release.",
+    softwareNote: "WAGF — governed LLM-agent framework for human–water simulation, with domain checks, fail-closed execution, and audit trails.",
 
     // Statuses are intentionally explicit: one study is under revision after peer review;
     // the LLM evaluation study is still being prepared for submission.

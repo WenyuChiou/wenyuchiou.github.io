@@ -400,6 +400,7 @@ function EvidenceMap({ mode }) {
 
   const lensLabel = mode === "industry" ? "For AI teams" : "Research contribution";
   const relevance = mode === "industry" ? active.industryRelevance : active.academicRelevance;
+  const relevancePoints = mode === "industry" ? (active.industryPoints || [relevance]) : (active.academicPoints || [relevance]);
   return (
     <section id="approach" className="wrap lab-section evidence-map" aria-labelledby="approach-title">
       <LabSectionHead
@@ -409,32 +410,35 @@ function EvidenceMap({ mode }) {
         intro="I start with measured human decisions, quantify their pathways, simulate them at scale, and test where LLM-generated behavior agrees or diverges. Select a stage to see the method and why it matters."
       />
       <div className="evidence-layout">
-        <div className="evidence-track" role="tablist" aria-orientation={isVertical ? "vertical" : "horizontal"} aria-label="Research sequence">
-          {nodes.map((node) => {
-            const selected = node.id === active.id;
-            return (
-              <div className={"evidence-node" + (selected ? " is-active" : "")} key={node.id}>
-                <button
-                  ref={(element) => { tabRefs.current[node.id] = element; }}
-                  id={"evidence-tab-" + node.id}
-                  className="evidence-node-button"
-                  type="button"
-                  role="tab"
-                  aria-selected={selected}
-                  aria-controls="evidence-panel"
-                  tabIndex={selected ? 0 : -1}
-                  onClick={() => selectNode(node.id, false)}
-                  onKeyDown={onKeyDown}
-                >
-                  <span className="evidence-stage">{node.stage}</span>
-                  <span className="evidence-node-dot" aria-hidden="true"></span>
-                  <span className="evidence-node-title">{node.title}</span>
-                  <span className="evidence-node-metric">{node.metric}</span>
-                  <span className="evidence-node-label">{node.metricLabel}</span>
-                </button>
-              </div>
-            );
-          })}
+        <div className="evidence-rail">
+          <div className="evidence-track" role="tablist" aria-orientation={isVertical ? "vertical" : "horizontal"} aria-label="Research sequence">
+            {nodes.map((node) => {
+              const selected = node.id === active.id;
+              return (
+                <div className={"evidence-node" + (selected ? " is-active" : "")} key={node.id}>
+                  <button
+                    ref={(element) => { tabRefs.current[node.id] = element; }}
+                    id={"evidence-tab-" + node.id}
+                    className="evidence-node-button"
+                    type="button"
+                    role="tab"
+                    aria-selected={selected}
+                    aria-controls="evidence-panel"
+                    tabIndex={selected ? 0 : -1}
+                    onClick={() => selectNode(node.id, false)}
+                    onKeyDown={onKeyDown}
+                  >
+                    <span className="evidence-stage">{node.stage}</span>
+                    <span className="evidence-node-dot" aria-hidden="true"></span>
+                    <span className="evidence-node-title">{node.shortTitle || node.title}</span>
+                    <span className="evidence-node-metric">{node.metric}</span>
+                    <span className="evidence-node-label">{node.metricLabel}</span>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+          {active.id === "llm-evaluation" ? <BehaviorTrace /> : null}
         </div>
         <article id="evidence-panel" className="evidence-panel" role="tabpanel" aria-labelledby={"evidence-tab-" + active.id}>
           <div className="evidence-panel-topline">
@@ -450,11 +454,15 @@ function EvidenceMap({ mode }) {
           <div className="evidence-panel-grid">
             <div>
               <p className="evidence-label">Methods / data</p>
-              <p>{active.evidence}</p>
+              <ul className="evidence-points">
+                {(active.methodPoints || [active.evidence]).map((point) => <li key={point}>{point}</li>)}
+              </ul>
             </div>
             <div>
               <p className="evidence-label">{lensLabel}</p>
-              <p>{relevance}</p>
+              <ul className="evidence-points">
+                {relevancePoints.map((point) => <li key={point}>{point}</li>)}
+              </ul>
             </div>
           </div>
           <div className="evidence-panel-links">
@@ -462,6 +470,26 @@ function EvidenceMap({ mode }) {
           </div>
         </article>
       </div>
+    </section>
+  );
+}
+
+function BehaviorTrace() {
+  const trace = CONTENT.behaviorTrace;
+  return (
+    <section className="behavior-trace" aria-labelledby="behavior-trace-title">
+      <h3 className="behavior-trace-head" id="behavior-trace-title">
+        <span>{trace.label}</span>
+        <span>{trace.note}</span>
+      </h3>
+      <ol>
+        {trace.steps.map((step, index) => (
+          <li key={step}>
+            <span className="behavior-trace-index">0{index + 1}</span>
+            <span>{step}</span>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }
@@ -509,7 +537,9 @@ function FeaturedWorkExplorer({ mode }) {
               <p className="work-card-status">{item.status}</p>
             </div>
             <h3>{item.name}</h3>
-            <p className="work-card-line">{item.line}</p>
+            <ul className="work-card-points">
+              {(item.points || [item.line]).map((point) => <li key={point}>{point}</li>)}
+            </ul>
             {item.metrics ? (
               <ul className="work-card-metrics" aria-label={item.name + " metrics"}>
                 {item.metrics.map((metric) => <li key={metric}>{metric}</li>)}
@@ -546,7 +576,9 @@ function CurrentWork() {
         <div className="current-focus-panel">
           <p className="evidence-label">Research software / in preparation</p>
           <p className="current-focus-text">{P.softwareNote}</p>
-          <p className="current-focus-text current-focus-text-small">{CONTENT.currentFocus}</p>
+          <ul className="current-focus-list">
+            {(CONTENT.currentFocusPoints || [CONTENT.currentFocus]).map((point) => <li key={point}>{point}</li>)}
+          </ul>
           <a className="quiet-link" href="/publications/">View publications and presentations <span aria-hidden="true">→</span></a>
         </div>
       </div>
