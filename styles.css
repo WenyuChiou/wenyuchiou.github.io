@@ -936,6 +936,8 @@ p .field-label, span.field-label { display: inline; margin-right: var(--space-2)
 :root {
   --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
   --font-sans: Georgia, "Times New Roman", serif;
+  --maxw: 1520px;
+  --gutter: clamp(24px, 3vw, 56px);
   --bg: #F4F1E9;
   --surface: #FCFBF6;
   --surface-2: #E9EEEA;
@@ -992,20 +994,20 @@ body {
 .mode-option { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.65rem; }
 
 .hero {
-  padding-top: clamp(64px, 9vw, 116px);
-  padding-bottom: var(--space-7);
+  padding-top: clamp(48px, 5vw, 72px);
+  padding-bottom: var(--space-6);
 }
 .hero-grid {
-  grid-template-columns: minmax(0, 1fr) 232px;
-  gap: clamp(32px, 7vw, 92px);
-  align-items: end;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: clamp(40px, 5vw, 72px);
+  align-items: start;
 }
-.hero-text { max-width: 790px; }
+.hero-text { max-width: 920px; }
 .hero-eyebrow { color: var(--signal); letter-spacing: 0.08em; }
 .hero-name { font-size: clamp(3.5rem, 8vw, 7.2rem); letter-spacing: -0.055em; }
 .hero-standfirst { max-width: 23ch; font-size: clamp(1.8rem, 3.5vw, 3rem); }
 .hero-dialect { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.02em; color: var(--accent); }
-.hero-lede { max-width: 62ch; font-size: 1.08rem; line-height: 1.68; }
+.hero-lede { max-width: 70ch; font-size: 1.08rem; line-height: 1.62; }
 .hero-portrait {
   position: relative;
   padding: 0 0 12px 14px;
@@ -1033,8 +1035,8 @@ body {
 .hero-facts {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  max-width: 680px;
-  margin: var(--space-6) 0 var(--space-4);
+  max-width: 760px;
+  margin: var(--space-5) 0 var(--space-4);
   border-top: 1px solid var(--rule-strong);
   border-bottom: 1px solid var(--rule-strong);
 }
@@ -1062,12 +1064,12 @@ body {
   color: var(--ink-3);
 }
 
-.pillars { padding-bottom: var(--space-8); }
+.pillars { padding-bottom: var(--space-6); }
 .pillar { border-top-color: var(--accent); }
 .pillar-kicker { color: var(--accent); }
 .pillar-status { color: var(--signal); }
 
-.section { padding-top: clamp(64px, 8vw, 104px); padding-bottom: clamp(64px, 8vw, 104px); }
+.section { padding-top: clamp(48px, 5vw, 72px); padding-bottom: clamp(48px, 5vw, 72px); }
 .section-head { margin-bottom: var(--space-6); }
 .section-num { color: var(--signal); }
 .section-title { font-size: clamp(2rem, 4vw, 3.4rem); letter-spacing: -0.045em; }
@@ -1106,10 +1108,25 @@ body {
 .cv-kicker { color: var(--signal); }
 .section-contact { border-top: 2px solid var(--signal); }
 .section-contact .section-title::after { background: var(--accent); }
-.site-footer { margin-top: var(--space-9); background: var(--surface-2); }
+.site-footer { margin-top: var(--space-7); background: var(--surface-2); }
+
+/* Dense reading path: large screens should use the available canvas while
+   keeping prose inside a comfortable measure. The page should feel edited,
+   not padded into a narrow column. */
+.page-head { padding-top: var(--space-6); padding-bottom: var(--space-3); }
+.page-section { padding-top: var(--space-4); padding-bottom: var(--space-6); }
+.case-study { padding-top: var(--space-6); padding-bottom: var(--space-7); }
+.case-head { margin-bottom: var(--space-5); }
+.case-section { padding: var(--space-5) 0; }
+.section-focus { padding-top: var(--space-6); padding-bottom: var(--space-6); }
+
+@media (max-width: 1023.98px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-portrait { max-width: 240px; }
+}
 
 @media (max-width: 767.98px) {
-  .hero { padding-top: 52px; }
+  .hero { padding-top: 40px; }
   .hero-grid { gap: var(--space-6); }
   .hero-portrait { order: -1; max-width: 180px; padding-left: 10px; }
   .hero-portrait::before { left: 10px; font-size: 0.5rem; }
@@ -1118,6 +1135,7 @@ body {
   .hero-fact + .hero-fact { padding-left: 8px; }
   .hero-fact strong { font-size: 1.35rem; }
   .hero-fact span { font-size: 0.55rem; letter-spacing: 0.02em; }
+  .section, .section-focus { padding-top: var(--space-6); padding-bottom: var(--space-6); }
 }
 
 /* ==========================================================================
