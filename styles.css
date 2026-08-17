@@ -5,49 +5,44 @@
    in this file — components that don't exist can't regrow (VDS §5.7.4). */
 
 /* ==========================================================================
-   Self-hosted fonts (S2) — Latin woff2 subsets, OFL, from @fontsource packages
-   (@fontsource-variable/fraunces, @fontsource/inter, @fontsource/jetbrains-mono).
-   unicode-range transcribed from the fontsource Latin blocks; src rebased to
-   assets/fonts/. font-display: swap per VDS §5.1.
+   Self-hosted fonts — a research-editorial pairing with a compact data voice.
+   Source Serif 4 carries the argument; Hanken Grotesk carries the interface;
+   JetBrains Mono is reserved for identifiers, dates, and links.
    ========================================================================== */
 
-/* fraunces-latin-wght-normal (variable, wght 100–900 — covers 400 and 550) */
 @font-face {
-  font-family: 'Fraunces';
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url("assets/fonts/source-serif-4-latin-wght-normal.woff2") format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url("assets/fonts/source-serif-4-latin-wght-italic.woff2") format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk';
   font-style: normal;
   font-display: swap;
   font-weight: 100 900;
-  src: url("assets/fonts/fraunces-latin-wght-normal.woff2") format('woff2-variations');
+  src: url("assets/fonts/hanken-grotesk-latin-wght-normal.woff2") format('woff2-variations');
   unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 
-/* inter-latin-400-normal */
 @font-face {
-  font-family: 'Inter';
-  font-style: normal;
+  font-family: 'Hanken Grotesk';
+  font-style: italic;
   font-display: swap;
-  font-weight: 400;
-  src: url("assets/fonts/inter-latin-400-normal.woff2") format('woff2');
-  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
-}
-
-/* inter-latin-500-normal */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 500;
-  src: url("assets/fonts/inter-latin-500-normal.woff2") format('woff2');
-  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
-}
-
-/* inter-latin-600-normal */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 600;
-  src: url("assets/fonts/inter-latin-600-normal.woff2") format('woff2');
+  font-weight: 100 900;
+  src: url("assets/fonts/hanken-grotesk-latin-wght-italic.woff2") format('woff2-variations');
   unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 
@@ -76,9 +71,9 @@
    ========================================================================== */
 :root {
   /* §5.1 — three-role type system */
-  --font-serif: "Fraunces", Georgia, "Times New Roman",
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman",
                 "Noto Serif TC", "PMingLiU", serif;                 /* identity voice */
-  --font-sans:  "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+  --font-sans:  "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Arial,
                 "Helvetica Neue", Arial,
                 "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;  /* working voice */
   --font-mono:  "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas,
@@ -93,23 +88,6 @@
   --text-meta: 0.8125rem;
   --text-micro: 0.75rem;
 
-  /* §5.2 — light mode */
-  --bg: #FAFAF7;
-  --surface: #FFFFFF;
-  --surface-2: #F2F3EF;
-  --ink: #1B2130;
-  --ink-2: #454D5F;
-  --ink-3: #5C6474;
-  --rule: #DDDFDA;
-  --rule-strong: #C4C7BF;
-  --accent: #363C8C;
-  --accent-strong: #2A2F6E;
-  --accent-wash: #EEEFF8;
-  --signal: #0E6B65;
-  --on-accent: #FFFFFF;
-  --shadow-card: 0 1px 2px rgb(27 33 48 / 0.06);
-  --grid-line: rgb(27 33 48 / 0.05);
-
   /* §5.3 — spacing, radius, measure */
   --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
   --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
@@ -119,27 +97,6 @@
   --maxw: 1200px;
   --measure: 68ch;
   --gutter: clamp(20px, 4vw, 48px);
-}
-
-/* §5.2 — dark mode: pure token remap ([data-theme="dark"]); print is always light.
-   --accent-strong / --accent-wash have no VDS dark row; values derived to keep
-   hover-lightens and wash-stays-non-text semantics (recorded deviation). */
-[data-theme="dark"] {
-  --bg: #14161C;
-  --surface: #1B1E26;
-  --surface-2: #22262F;
-  --ink: #E9EBF0;
-  --ink-2: #B3B8C4;
-  --ink-3: #9298A6;
-  --rule: #2C303A;
-  --rule-strong: #3A3F4C;
-  --accent: #9BA3EC;
-  --accent-strong: #B4BBF2;
-  --accent-wash: #262B45;
-  --signal: #5FC4BC;
-  --on-accent: #14161C;
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
-  --grid-line: rgb(233 235 240 / 0.05);
 }
 
 /* ==========================================================================
@@ -225,16 +182,15 @@ a:hover { color: var(--accent-strong); }
 .link-sep { color: var(--ink-3); margin: 0 var(--space-2); }
 .quiet-links { display: flex; align-items: center; flex-wrap: wrap; margin-bottom: 0; }
 
-/* The evidence link — the only element besides the availability marker allowed
-   to use --signal (VDS §5.6.2). */
+/* Research links use one restrained accent; status itself stays typographic. */
 .evidence-link {
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   letter-spacing: 0.02em;
-  color: var(--signal);
+  color: var(--accent);
   text-decoration: none;
 }
-.evidence-link:hover { color: var(--signal); text-decoration: underline; text-underline-offset: 3px; }
+.evidence-link:hover { color: var(--accent-strong); text-decoration: underline; text-underline-offset: 3px; }
 .evidence-arrow { margin-left: 2px; }
 
 /* Buttons — exactly ONE filled .btn-primary per page (the contact CTA). */
@@ -260,23 +216,13 @@ a:hover { color: var(--accent-strong); }
 .btn-outline { background: transparent; border-color: var(--accent); color: var(--accent); }
 .btn-outline:hover { background: var(--accent-wash); color: var(--accent-strong); }
 
-/* Availability marker — --signal dot + --ink-2 mono text (VDS §5.6.1). */
+/* Availability is a line of information, not a colored status indicator. */
 .availability {
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   letter-spacing: 0.02em;
   color: var(--ink-2);
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-}
-.signal-dot {
-  flex: none;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--signal);
-  align-self: center;
+  display: block;
 }
 
 /* ==========================================================================
@@ -944,31 +890,30 @@ p .field-label, span.field-label { display: inline; margin-right: var(--space-2)
 }
 
 /* ==========================================================================
-   Portfolio refresh — evidence-first editorial lab notebook.
-   The site uses a paper/ink palette, sharp archive cards, a serif research
-   voice, and mono evidence labels so the work reads as a person-built system,
-   not a generic AI landing page.
+   Research instrument — a quiet paper ground, a strong editorial voice, and
+   one accent reserved for interaction. Status is communicated by language,
+   not by colored lights.
    ========================================================================== */
 :root {
-  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-sans: Georgia, "Times New Roman", serif;
-  --maxw: 1800px;
-  --gutter: clamp(24px, 3vw, 56px);
-  --bg: #F4F1E9;
-  --surface: #FCFBF6;
-  --surface-2: #E9EEEA;
-  --ink: #18252B;
-  --ink-2: #4B585D;
-  --ink-3: #6A7679;
-  --rule: #D8D8CF;
-  --rule-strong: #AEBAB5;
-  --accent: #145A6A;
-  --accent-strong: #0B3F4B;
-  --accent-wash: #E0EEEE;
-  --signal: #B45B35;
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --maxw: 1280px;
+  --gutter: clamp(24px, 4vw, 64px);
+  --bg: oklch(97.6% 0.012 95);
+  --surface: oklch(99.2% 0.008 95);
+  --surface-2: oklch(93.8% 0.018 205);
+  --ink: oklch(24% 0.03 225);
+  --ink-2: oklch(43% 0.03 225);
+  --ink-3: oklch(55% 0.02 225);
+  --rule: oklch(86% 0.018 225);
+  --rule-strong: oklch(74% 0.03 225);
+  --accent: oklch(42% 0.13 245);
+  --accent-strong: oklch(32% 0.11 245);
+  --accent-wash: oklch(93% 0.045 245);
+  --signal: var(--accent);
   --on-accent: #FFFFFF;
-  --shadow-card: 3px 3px 0 rgb(24 37 43 / 0.12);
-  --grid-line: rgb(24 37 43 / 0.055);
+  --shadow-card: 4px 4px 0 oklch(24% 0.03 225 / 0.11);
+  --grid-line: oklch(24% 0.03 225 / 0.07);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
@@ -977,21 +922,21 @@ p .field-label, span.field-label { display: inline; margin-right: var(--space-2)
 [data-theme="dark"] { color-scheme: dark; }
 
 [data-theme="dark"] {
-  --bg: #151B1D;
-  --surface: #1C2527;
-  --surface-2: #243033;
-  --ink: #EEF0E9;
-  --ink-2: #BBC6C2;
-  --ink-3: #8C9A97;
-  --rule: #334043;
-  --rule-strong: #52615F;
-  --accent: #86C3C2;
-  --accent-strong: #A9D8D4;
-  --accent-wash: #233A3C;
-  --signal: #E19A69;
-  --on-accent: #102023;
-  --shadow-card: 3px 3px 0 rgb(0 0 0 / 0.35);
-  --grid-line: rgb(238 240 233 / 0.05);
+  --bg: oklch(19% 0.018 225);
+  --surface: oklch(23% 0.022 225);
+  --surface-2: oklch(28% 0.03 225);
+  --ink: oklch(93% 0.012 95);
+  --ink-2: oklch(77% 0.02 95);
+  --ink-3: oklch(64% 0.018 95);
+  --rule: oklch(35% 0.025 225);
+  --rule-strong: oklch(46% 0.03 225);
+  --accent: oklch(77% 0.10 225);
+  --accent-strong: oklch(86% 0.08 225);
+  --accent-wash: oklch(31% 0.045 225);
+  --signal: var(--accent);
+  --on-accent: oklch(19% 0.018 225);
+  --shadow-card: 4px 4px 0 oklch(5% 0.02 225 / 0.35);
+  --grid-line: oklch(93% 0.012 95 / 0.06);
 }
 
 body {
@@ -1000,58 +945,68 @@ body {
 }
 
 .site-header {
-  background: rgb(244 241 233 / 0.92);
+  background: color-mix(in oklch, var(--bg) 92%, transparent);
   backdrop-filter: blur(14px);
 }
-[data-theme="dark"] .site-header { background: rgb(21 27 29 / 0.92); }
 .nav-inner { min-height: 68px; }
 .wordmark {
   font-family: var(--font-serif);
-  font-size: 1.05rem;
-  letter-spacing: -0.02em;
+  font-size: 1.12rem;
+  letter-spacing: -0.035em;
 }
-.nav-link { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem; }
+.nav-link { text-transform: none; letter-spacing: 0.01em; font-size: 0.78rem; }
 .nav-cta { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.7rem; }
-.mode-option { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.65rem; }
+.mode-option { text-transform: none; letter-spacing: 0.01em; font-size: 0.72rem; }
 
 .hero {
   padding-top: clamp(48px, 5vw, 72px);
   padding-bottom: var(--space-6);
 }
 .hero-grid {
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: clamp(40px, 5vw, 72px);
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.62fr);
+  gap: clamp(40px, 5vw, 76px);
   align-items: start;
 }
-.hero-text { max-width: 920px; }
-.hero-eyebrow { color: var(--signal); letter-spacing: 0.08em; }
-.hero-name { font-size: clamp(3.5rem, 8vw, 7.2rem); letter-spacing: -0.055em; }
-.hero-standfirst { max-width: 23ch; font-size: clamp(1.8rem, 3.5vw, 3rem); }
+.hero-text { max-width: 860px; }
+.hero-eyebrow { color: var(--ink-3); letter-spacing: 0.04em; }
+.hero-name { font-size: clamp(3.5rem, 6.5vw, 6.4rem); letter-spacing: -0.055em; }
+.hero-standfirst { max-width: 25ch; font-size: clamp(1.8rem, 3.1vw, 2.8rem); }
 .hero-dialect { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.02em; color: var(--accent); }
 .hero-lede { max-width: 70ch; font-size: 1.08rem; line-height: 1.62; }
-.hero-portrait {
+.hero-loop {
   position: relative;
-  padding: 0 0 12px 14px;
+  margin: 0;
+  padding: 0 0 18px 18px;
   border-left: 1px solid var(--rule-strong);
 }
-.hero-portrait::before {
-  content: "FIELD NOTE / 2025";
+.hero-loop a {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--rule-strong);
+  background: var(--surface);
+}
+.hero-loop img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 220ms var(--ease-out), filter 220ms ease;
+}
+.hero-loop a:hover img,
+.hero-loop a:focus-visible img {
+  transform: scale(1.015);
+  filter: saturate(0.92) contrast(1.03);
+}
+.hero-loop figcaption {
   position: absolute;
-  left: 14px;
-  bottom: -2px;
-  z-index: 1;
-  padding: 2px 6px;
+  right: 0;
+  bottom: 0;
+  padding: 4px 8px;
   color: var(--surface);
   background: var(--accent);
   font-family: var(--font-mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.08em;
-}
-.hero-portrait img {
-  border-radius: 0;
-  border: 0;
-  filter: saturate(0.72) contrast(1.04);
-  box-shadow: 6px 6px 0 var(--rule-strong);
+  font-size: 0.6rem;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
 }
 .hero-facts {
   display: grid;
@@ -1088,11 +1043,11 @@ body {
 .pillars { padding-bottom: var(--space-6); }
 .pillar { border-top-color: var(--accent); }
 .pillar-kicker { color: var(--accent); }
-.pillar-status { color: var(--signal); }
+.pillar-status { color: var(--ink-3); }
 
 .section { padding-top: clamp(48px, 5vw, 72px); padding-bottom: clamp(48px, 5vw, 72px); }
 .section-head { margin-bottom: var(--space-6); }
-.section-num { color: var(--signal); }
+.section-num { color: var(--ink-3); }
 .section-title { font-size: clamp(2rem, 4vw, 3.4rem); letter-spacing: -0.045em; }
 .section-title::after {
   content: "";
@@ -1100,7 +1055,7 @@ body {
   width: 42px;
   height: 3px;
   margin-top: 13px;
-  background: var(--signal);
+  background: var(--accent);
 }
 
 .card-grid { gap: var(--space-6); }
@@ -1114,7 +1069,7 @@ body {
 }
 .card:focus-within { border-color: var(--accent); box-shadow: 6px 6px 0 var(--accent-wash); }
 .card-name { font-family: var(--font-serif); font-size: 1.2rem; letter-spacing: -0.025em; }
-.card-status { color: var(--signal); text-transform: uppercase; font-size: 0.62rem; letter-spacing: 0.06em; }
+.card-status { color: var(--ink-3); text-transform: uppercase; font-size: 0.62rem; letter-spacing: 0.06em; }
 .card-problem { font-size: 0.98rem; line-height: 1.62; }
 .card-fact { font-family: var(--font-mono); font-size: 0.7rem; line-height: 1.45; color: var(--accent); }
 .card-link { color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.67rem; }
@@ -1126,8 +1081,8 @@ body {
 }
 .focus-text { max-width: 52ch; font-family: var(--font-serif); font-size: clamp(1.4rem, 2.5vw, 2.15rem); line-height: 1.32; color: var(--ink); }
 .cv-block { border-radius: 0; border-color: var(--rule-strong); box-shadow: var(--shadow-card); }
-.cv-kicker { color: var(--signal); }
-.section-contact { border-top: 2px solid var(--signal); }
+.cv-kicker { color: var(--ink-3); }
+.section-contact { border-top: 1px solid var(--rule-strong); }
 .section-contact .section-title::after { background: var(--accent); }
 .site-footer { margin-top: var(--space-7); background: var(--surface-2); }
 
@@ -1220,7 +1175,7 @@ main { animation: route-in 360ms var(--ease-out) both; }
 }
 
 /* ==========================================================================
-   Interactive Research Lab — homepage evidence map and status interface.
+   Interactive Research Lab — homepage research sequence and work index.
    This layer keeps the paper/ink system but gives the homepage a single
    interactive proof surface: rules, nodes, and stateful detail — no dashboard
    ornament and no decorative card wall.
@@ -1230,8 +1185,8 @@ main { animation: route-in 360ms var(--ease-out) both; }
   padding-bottom: clamp(28px, 4vw, 64px);
 }
 .lab-hero-grid {
-  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
-  gap: clamp(44px, 8vw, 128px);
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.62fr);
+  gap: clamp(40px, 5vw, 76px);
 }
 .lab-hero-copy { max-width: 940px; }
 .hero-index,
@@ -1266,8 +1221,8 @@ main { animation: route-in 360ms var(--ease-out) both; }
   max-width: 72ch;
 }
 .lab-hero .hero-facts {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  max-width: 920px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 760px;
 }
 .hero-actions {
   display: flex;
@@ -1309,7 +1264,7 @@ main { animation: route-in 360ms var(--ease-out) both; }
   align-self: start;
   margin: 0;
   padding-top: 0.7rem;
-  color: var(--signal);
+  color: var(--ink-3);
 }
 .lab-section-head h2 {
   max-width: 18ch;
@@ -1325,7 +1280,7 @@ main { animation: route-in 360ms var(--ease-out) both; }
   width: 42px;
   height: 3px;
   margin-top: 16px;
-  background: var(--signal);
+  background: var(--accent);
 }
 .lab-section-head > p:last-child {
   max-width: 62ch;
@@ -1380,7 +1335,7 @@ main { animation: route-in 360ms var(--ease-out) both; }
 .evidence-node + .evidence-node .evidence-node-button { padding-left: 14px; }
 .evidence-node-button:focus-visible,
 .work-filter:focus-visible {
-  outline: 2px solid var(--signal);
+  outline: 2px solid var(--accent);
   outline-offset: 5px;
 }
 .evidence-stage {
@@ -1421,9 +1376,9 @@ main { animation: route-in 360ms var(--ease-out) both; }
   text-transform: uppercase;
 }
 .evidence-node.is-active .evidence-node-dot {
-  border-color: var(--signal);
-  background: var(--signal);
-  box-shadow: 0 0 0 6px var(--accent-wash);
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: none;
 }
 .evidence-node.is-active .evidence-node-title { color: var(--accent-strong); }
 .evidence-panel {
@@ -1439,7 +1394,7 @@ main { animation: route-in 360ms var(--ease-out) both; }
   padding-bottom: var(--space-4);
   border-bottom: 1px solid var(--rule-strong);
 }
-.evidence-status { margin: 0; color: var(--signal); }
+.evidence-status { margin: 0; color: var(--ink-3); }
 .evidence-panel-stage { margin: 0; color: var(--ink-3); }
 .evidence-panel-metric {
   display: flex;
@@ -1499,6 +1454,14 @@ main { animation: route-in 360ms var(--ease-out) both; }
   margin-bottom: var(--space-5);
   border-bottom: 1px solid var(--rule);
 }
+.work-count {
+  margin: calc(var(--space-4) * -1) 0 var(--space-4);
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
 .work-filter {
   padding: 0 0 10px;
   color: var(--ink-3);
@@ -1511,7 +1474,7 @@ main { animation: route-in 360ms var(--ease-out) both; }
   text-transform: uppercase;
   cursor: pointer;
 }
-.work-filter[aria-pressed="true"] { color: var(--accent); border-bottom-color: var(--signal); }
+.work-filter[aria-pressed="true"] { color: var(--accent); border-bottom-color: var(--accent); }
 .work-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1532,7 +1495,7 @@ main { animation: route-in 360ms var(--ease-out) both; }
 .work-card-topline { display: flex; justify-content: space-between; gap: var(--space-3); border-bottom: 1px solid var(--rule); padding-bottom: 12px; }
 .work-card-topline p { margin: 0; }
 .work-card-category { color: var(--accent); }
-.work-card-status { color: var(--signal); text-align: right; }
+.work-card-status { color: var(--ink-3); text-align: right; }
 .work-card h3 {
   margin: var(--space-5) 0 var(--space-3);
   font-family: var(--font-serif);
@@ -1565,7 +1528,7 @@ main { animation: route-in 360ms var(--ease-out) both; }
   border-top: 1px solid var(--rule-strong);
 }
 .current-status-item:last-child { border-bottom: 1px solid var(--rule-strong); }
-.current-status { margin: 0; color: var(--signal); }
+.current-status { margin: 0; color: var(--ink-3); }
 .current-status-item h3 {
   max-width: 58ch;
   margin: var(--space-3) 0;
@@ -1578,7 +1541,7 @@ main { animation: route-in 360ms var(--ease-out) both; }
 .current-focus-panel {
   padding: clamp(22px, 3vw, 34px);
   background: var(--surface-2);
-  border-top: 2px solid var(--signal);
+  border-top: 1px solid var(--rule-strong);
 }
 .current-focus-panel .evidence-label { margin: 0 0 var(--space-4); color: var(--accent); }
 .current-focus-text { margin: 0; font-family: var(--font-serif); font-size: clamp(1.3rem, 2.2vw, 1.9rem); line-height: 1.3; }
@@ -1596,6 +1559,7 @@ main { animation: route-in 360ms var(--ease-out) both; }
 .cmdk-panel { animation: none; }
 
 @media (max-width: 1023.98px) {
+  .lab-hero-grid { grid-template-columns: minmax(0, 1fr) minmax(300px, 0.56fr); gap: var(--space-6); }
   .evidence-layout { grid-template-columns: 1fr; }
   .evidence-panel { max-width: none; }
   .lab-hero .hero-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1605,7 +1569,7 @@ main { animation: route-in 360ms var(--ease-out) both; }
 
 @media (max-width: 767.98px) {
   .lab-hero-grid { grid-template-columns: 1fr; gap: var(--space-6); }
-  .lab-portrait { order: -1; max-width: 190px; }
+  .hero-loop { order: 0; max-width: 100%; padding-left: 10px; }
   .lab-section-head { display: block; }
   .lab-section-kicker { margin-bottom: var(--space-3); }
   .lab-section-head h2 { max-width: none; }

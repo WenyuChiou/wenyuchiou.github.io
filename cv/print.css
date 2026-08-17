@@ -16,8 +16,8 @@
 
 :root {
   /* Brand families first; hard fallbacks render identically without font files. */
-  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: "Times New Roman", Times, serif;
+  --font-sans: "Times New Roman", Times, serif;
   --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace;
 
   /* Ink scale — grayscale-safe; no hue carries meaning. */
@@ -231,54 +231,39 @@ body.doc-resume li {
 
 /* ============================================================
    CV2 — Curriculum Vitæ, original-design-based (owner directive 2026-07-17).
-   Fraunces (site brand serif) for text, Inter for labels/meta. Resume styles
-   above are untouched.
+   Times New Roman throughout for stable, recruiter-readable extraction.
+   Resume styles above are kept in the same document face.
    ============================================================ */
-@font-face {
-  font-family: 'Fraunces';
-  src: url("../assets/fonts/fraunces-latin-wght-normal.woff2") format('woff2-variations');
-  font-weight: 100 900; font-style: normal; font-display: swap;
-}
-@font-face {
-  font-family: 'Inter';
-  src: url("../assets/fonts/inter-latin-400-normal.woff2") format('woff2');
-  font-weight: 400; font-style: normal;
-}
-@font-face {
-  font-family: 'Inter';
-  src: url("../assets/fonts/inter-latin-600-normal.woff2") format('woff2');
-  font-weight: 600; font-style: normal;
-}
 
-.cv2 { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; font-size: 9.75pt; }
+.cv2 { font-family: "Times New Roman", Times, serif; font-size: 9.75pt; }
 
 .cv2-header { display: grid; grid-template-columns: 1fr 100pt; gap: 16pt; align-items: start;
   border-bottom: 1pt solid #B9BCB4; padding-bottom: 10pt; margin-bottom: 12pt; }
-.cv2-kicker { font-family: 'Inter', sans-serif; font-size: 7.5pt; letter-spacing: 0.35em;
+.cv2-kicker { font-family: "Times New Roman", Times, serif; font-size: 7.5pt; letter-spacing: 0.35em;
   text-transform: uppercase; color: #6b7280; margin: 0 0 2pt; }
 .cv2 h1 { font-size: 25pt; font-weight: 560; margin: 0 0 3pt; letter-spacing: 0.005em; }
 .cv2-subtitle { font-style: italic; font-size: 9.75pt; color: #374151; margin: 0 0 5pt; }
 .cv2-positioning { font-style: italic; font-size: 9.25pt; line-height: 1.5; color: #4b5563; margin: 0 0 7pt; max-width: 92%; }
-.cv2-contact { font-family: 'Inter', sans-serif; font-size: 7.75pt; color: #374151; margin: 0 0 2pt; }
+.cv2-contact { font-family: "Times New Roman", Times, serif; font-size: 7.75pt; color: #374151; margin: 0 0 2pt; }
 .cv2-photo { margin: 2pt 0 0; }
 .cv2-photo img { width: 100%; height: auto; border-radius: 4pt; border: 0.5pt solid #c5c8c0; }
 
 .cv2 .cv-section h2 { font-size: 11.5pt; font-weight: 600; border-bottom: 0.75pt solid #9aa0a6;
   padding-bottom: 2.5pt; margin: 0 0 6pt; }
-.secnum { font-family: 'Inter', sans-serif; font-size: 6.75pt; letter-spacing: 0.28em;
+.secnum { font-family: "Times New Roman", Times, serif; font-size: 6.75pt; letter-spacing: 0.28em;
   color: #9aa0a6; margin-right: 5pt; font-weight: 400; }
-.group-label { font-family: 'Inter', sans-serif; font-size: 7.25pt; letter-spacing: 0.18em;
+.group-label { font-family: "Times New Roman", Times, serif; font-size: 7.25pt; letter-spacing: 0.18em;
   text-transform: uppercase; color: #6b7280; margin: 6pt 0 3pt; }
 
 .cv2 .bullets { margin: 3pt 0 0 11pt; padding: 0; }
 .cv2 .bullets li { margin: 0 0 2.5pt; line-height: 1.42; }
 .cv2 .bullets.plain { margin-top: 0; }
 
-.chip { font-family: 'Inter', sans-serif; font-size: 6.75pt; font-weight: 600; letter-spacing: 0.06em;
+.chip { font-family: "Times New Roman", Times, serif; font-size: 6.75pt; font-weight: 600; letter-spacing: 0.06em;
   padding: 0.75pt 5pt 1pt; border-radius: 2.5pt; white-space: nowrap; }
 .chip-published { background: #E6F0E7; color: #1F5C31; border: 0.5pt solid #A9C9AF; }
 .chip-review { background: #FBF2DC; color: #7D5D14; border: 0.5pt solid #DFC98E; }
-.pubnum { font-family: 'Inter', sans-serif; font-size: 8pt; color: #6b7280; }
+.pubnum { font-family: "Times New Roman", Times, serif; font-size: 8pt; color: #6b7280; }
 .pub-list .entry { margin-bottom: 4.5pt; }
 
 .two-col { display: grid; grid-template-columns: 1fr 1.45fr; gap: 0 18pt; }
@@ -286,11 +271,11 @@ body.doc-resume li {
 .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7pt 12pt; }
 .card { border-left: 1.5pt solid #3D4A6B; padding: 2pt 0 2pt 7pt; break-inside: avoid; }
 .card-title { font-weight: 600; font-size: 9.25pt; margin: 0 0 1pt; }
-.card-meta { font-family: 'Inter', sans-serif; font-size: 6.75pt; letter-spacing: 0.04em;
+.card-meta { font-family: "Times New Roman", Times, serif; font-size: 6.75pt; letter-spacing: 0.04em;
   color: #6b7280; margin: 0 0 2pt; }
 .card-body { font-size: 8.5pt; line-height: 1.4; color: #374151; margin: 0; }
 
-.cv2-footer { display: flex; justify-content: space-between; font-family: 'Inter', sans-serif;
+.cv2-footer { display: flex; justify-content: space-between; font-family: "Times New Roman", Times, serif;
   font-size: 7pt; letter-spacing: 0.12em; text-transform: uppercase; color: #9aa0a6;
   border-top: 0.5pt solid #c5c8c0; margin-top: 12pt; padding-top: 5pt; }
 
@@ -303,7 +288,7 @@ body.doc-resume li {
    fractured multi-node citation paragraphs into columns). */
 .cv2 .entry > p:first-child:has(> .dates) { position: relative; padding-right: 92pt; }
 .cv2 .entry > p:first-child > .dates { position: absolute; right: 0; top: 1pt;
-  float: none; white-space: nowrap; font-family: 'Inter', sans-serif;
+  float: none; white-space: nowrap; font-family: "Times New Roman", Times, serif;
   font-size: 7.5pt; color: #6b7280; }
 .cv2 .entry { clear: both; }
 .two-col { break-inside: avoid; }
@@ -351,17 +336,17 @@ body.doc-resume li {
    accent + type hierarchy + left-bordered system blocks — all CSS, never
    multi-column or table-of-content, so extraction order = reading order).
    ============================================================ */
-.resume2 { --acc: #2F3A5C; --acc-2: #5B6788; font-family: 'Inter', sans-serif; font-size: 9.5pt; color: #1f2430; }
+.resume2 { --acc: #2F3A5C; --acc-2: #5B6788; font-family: "Times New Roman", Times, serif; font-size: 9.5pt; color: #1f2430; }
 
 .r2-header { border-bottom: 2pt solid var(--acc); padding-bottom: 8pt; margin-bottom: 9pt; }
-.resume2 h1 { font-family: 'Fraunces', Georgia, serif; font-weight: 560; font-size: 24pt; letter-spacing: 0.005em; margin: 0 0 1pt; color: #14181f; }
+.resume2 h1 { font-family: "Times New Roman", Times, serif; font-weight: 560; font-size: 24pt; letter-spacing: 0.005em; margin: 0 0 1pt; color: #14181f; }
 .r2-role { font-size: 11pt; font-weight: 600; letter-spacing: 0.02em; color: var(--acc); margin: 0 0 5pt; }
 .r2-contact { font-size: 8pt; color: #3d4453; margin: 0 0 6pt; }
 .r2-lede { font-size: 9.5pt; line-height: 1.5; color: #2b3140; margin: 0 0 4pt; }
 .r2-avail { font-size: 8.75pt; color: var(--acc); font-weight: 600; margin: 0 0 1.5pt; }
 .r2-auth { font-size: 8.25pt; color: #4a5162; margin: 0; }
 
-.resume2 h2 { font-family: 'Inter', sans-serif; font-size: 8.75pt; font-weight: 700; letter-spacing: 0.05em;
+.resume2 h2 { font-family: "Times New Roman", Times, serif; font-size: 8.75pt; font-weight: 700; letter-spacing: 0.05em;
   text-transform: uppercase; color: var(--acc); margin: 9pt 0 5pt; padding-bottom: 2.5pt;
   border-bottom: 0.75pt solid #C9CEDA; }
 .resume2 h2::before { content: ""; display: inline-block; width: 12pt; height: 3pt; background: var(--acc);
@@ -498,6 +483,30 @@ body.doc-resume li {
   font-family: "Times New Roman", Times, serif;
 }
 .resume2 .u { font-size: inherit; }
+
+/* Both deliverables use Times New Roman as the stable, recruiter-readable
+   document face. Status labels remain typographic instead of color-coded. */
+.cv2,
+.cv2 *,
+.resume2,
+.resume2 * {
+  font-family: "Times New Roman", Times, serif;
+  letter-spacing: normal;
+}
+.cv2 .chip,
+.resume2 .chip,
+.resume2 .chip-published,
+.resume2 .chip-review {
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  font-family: inherit;
+  font-weight: 600;
+  font-style: italic;
+  white-space: nowrap;
+}
 
 /* Keep the expanded skills line compact enough for the one-page industry layout. */
 .resume2 .skill-line { font-size: 8.75pt; line-height: 1.18; }

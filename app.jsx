@@ -84,8 +84,7 @@ function resolveEvidenceFocus(fallback) {
 
 /* --------------------------------- primitives ---------------------------- */
 
-// The evidence link — the site's signature device (VDS §5.6.2): mono, --signal,
-// trailing arrow, underline on hover only.
+// Research links use the site's single accent, with a quiet trailing arrow.
 function EvidenceLink({ href, children }) {
   const external = /^https?:/.test(href);
   return (
@@ -300,7 +299,7 @@ function Hero({ mode }) {
             <a className="btn btn-outline" href="#approach">Explore the research<span aria-hidden="true"> ↓</span></a>
             <a className="btn btn-outline" href={CONTENT.documents.industry.file} download>Industry resume<span aria-hidden="true"> ↗</span></a>
           </div>
-          <p className="availability"><span className="signal-dot" aria-hidden="true"></span>{H.availability}</p>
+          <p className="availability">{H.availability}</p>
           <div className="hero-facts" aria-label="Selected metrics">
             {H.facts.map((fact) => (
               <div className="hero-fact" key={fact.label}>
@@ -311,10 +310,15 @@ function Hero({ mode }) {
           </div>
           <QuietLinks />
         </div>
-        {H.portrait ? (
-          <figure className="hero-portrait lab-portrait">
-            <img src={H.portrait.src} alt={H.portrait.alt} width="560" height="751" loading="eager" fetchPriority="high" />
-            <figcaption>Field note / AGU 2025</figcaption>
+        {H.visual ? (
+          <figure className="hero-loop">
+            <a href="#approach" aria-label="Open the interactive research sequence">
+              <picture>
+                <source media="(prefers-reduced-motion: reduce)" srcSet="/assets/research-loop-static.svg" />
+                <img src={H.visual.src} alt={H.visual.alt} width="960" height="420" loading="eager" fetchPriority="high" />
+              </picture>
+            </a>
+            <figcaption>{H.visual.caption}</figcaption>
           </figure>
         ) : null}
       </div>
@@ -401,7 +405,7 @@ function EvidenceMap({ mode }) {
       <LabSectionHead
         id="approach"
         num="02"
-        title="Research approach"
+        title="From decisions to agent behavior"
         intro="I start with measured human decisions, quantify their pathways, simulate them at scale, and test where LLM-generated behavior agrees or diverges. Select a stage to see the method and why it matters."
       />
       <div className="evidence-layout">
@@ -463,11 +467,18 @@ function EvidenceMap({ mode }) {
 }
 
 function FeaturedWorkExplorer({ mode }) {
-  const [filter, setFilter] = useState(mode === "academic" ? "research" : "engineering");
-  const categories = ["research", "engineering", "community", "all"];
+  const [filter, setFilter] = useState("behavioral");
   const items = [...CONTENT.selectedResearch, ...CONTENT.selectedEngineering];
-  const shown = filter === "all" ? items : items.filter((item) => item.category === filter);
-  const label = (category) => category === "all" ? "All work" : category[0].toUpperCase() + category.slice(1);
+  const filters = [
+    { id: "all", label: "All work" },
+    { id: "behavioral", label: "Behavioral simulation" },
+    { id: "llm-evaluation", label: "LLM evaluation" },
+    { id: "agent-systems", label: "Agent systems" },
+    { id: "risk-modeling", label: "Risk modeling" },
+    { id: "open-source", label: "Open source" },
+  ];
+  const shown = filter === "all" ? items : items.filter((item) => item.tracks?.includes(filter));
+  const label = (category) => filters.find((item) => item.id === category)?.label || category[0].toUpperCase() + category.slice(1);
   return (
     <section id="work" className="wrap lab-section work-explorer" aria-labelledby="work-title">
       <LabSectionHead
@@ -477,18 +488,19 @@ function FeaturedWorkExplorer({ mode }) {
         intro="Browse the projects by their role in the program: research findings, working systems, or community infrastructure."
       />
       <div className="work-filters" role="group" aria-label="Filter featured work">
-        {categories.map((category) => (
+        {filters.map((category) => (
           <button
-            key={category}
+            key={category.id}
             className="work-filter"
             type="button"
-            aria-pressed={filter === category}
-            onClick={() => setFilter(category)}
+            aria-pressed={filter === category.id}
+            onClick={() => setFilter(category.id)}
           >
-            {label(category)}
+            {category.label}
           </button>
         ))}
       </div>
+      <p className="work-count" aria-live="polite">{shown.length} selected {shown.length === 1 ? "project" : "projects"}</p>
       <div className="work-grid">
         {shown.map((item) => (
           <article className={"work-card" + (item.featured ? " is-featured" : "")} key={item.slug}>
@@ -519,7 +531,7 @@ function CurrentWork() {
         id="now"
         num="04"
         title="Current work"
-        intro="The status interface stays explicit: what is published, what is under revision, and what is being prepared for submission or release."
+        intro="I keep the work legible: what is published, under revision, planned for submission, or in preparation for release."
       />
       <div className="current-work-layout">
         <div className="current-status-list">
@@ -653,7 +665,7 @@ function Contact({ num }) {
   return (
     <section id={SEC.contact.id} className="wrap section section-contact" data-block="contact">
       <SectionHead num={num} title={SEC.contact.label} />
-      <p className="availability"><span className="signal-dot" aria-hidden="true"></span>{C.availability}</p>
+      <p className="availability">{C.availability}</p>
       <p className="contact-action">
         <a className="btn btn-primary" href={"mailto:" + C.email}>{C.ctaLabel}</a>
       </p>

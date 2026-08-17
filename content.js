@@ -18,17 +18,22 @@ export const CONTENT = {
   },
 
   hero: {
-    umbrella: "Quantitative behavioral simulation, psychometric evaluation of LLM behavior, and trustworthy agent systems",
+    umbrella: "Quantitative behavioral simulation and psychometric evaluation for LLM agents",
     dialect: {
-      industry: "Research engineer building human-grounded behavioral simulations and evaluating LLM agents with psychometric methods.",
+      industry: "Research engineer building human-grounded behavioral simulations and testing LLM agents against measured human behavior.",
       academic: "I model human decisions as a computational social scientist and test whether LLM agents reproduce them.",
     },
     portrait: {
       src: "/assets/portrait.jpg",
       alt: "Wenyu Chiou at the AGU Fall Meeting 2025, beside his research poster.",
     },
+    visual: {
+      src: "/assets/research-loop.svg",
+      alt: "Research loop showing human behavior grounding an LLM agent, agent verification, social interaction, and a living water-system model.",
+      caption: "Research loop / human decisions → governed agents",
+    },
     workingFormulation:
-      "I build quantitative simulations of human decision-making and evaluate LLM agents against behavioral and psychometric patterns measured in people. My work moves from a 937-household survey to 52,141 simulated households, then asks whether generated behavior is useful, calibrated, and safe to use.",
+      "I quantify how people make decisions, simulate those patterns at scale, and test whether LLM agents reproduce them before they act in consequential systems. A 937-household survey anchors a 52,141-household coupled model.",
     facts: [
       { value: "937", label: "household responses" },
       { value: "52,141", label: "simulated households" },
@@ -157,6 +162,7 @@ export const CONTENT = {
       line: "Literature workflows are repetitive and easy to get subtly wrong across tools. research-hub turns Zotero, Obsidian, and NotebookLM into one AI-operable workspace — searching, ingesting, and syncing papers through a single CLI, MCP server, and REST API.",
       status: "Maintained open-source tool",
       category: "engineering",
+      tracks: ["agent-systems", "open-source"],
       featured: true,
       metrics: ["PyPI v1.1.1", "MCP + CLI + REST API"],
       relatedEvidence: ["governance"],
@@ -170,6 +176,7 @@ export const CONTENT = {
       line: "Delegating code work to a second AI agent is only economical if the delegate cannot fabricate success. codex-delegate verifies the delegate’s completion from git state rather than from its own report.",
       status: "Maintained open-source tool",
       category: "engineering",
+      tracks: ["agent-systems", "open-source"],
       featured: true,
       metrics: ["Ubuntu + Windows CI", "stdin-hang regression test"],
       relatedEvidence: ["governance"],
@@ -184,6 +191,7 @@ export const CONTENT = {
       status: "Maintained open-source tool",
       stars: "5K+ GitHub stars, 700+ forks (August 2026)",
       category: "community",
+      tracks: ["open-source"],
       featured: false,
       metrics: ["5K+ GitHub stars", "700+ forks"],
       relatedEvidence: ["governance"],
@@ -201,6 +209,7 @@ export const CONTENT = {
       line: "Fluent LLM responses are not the same as human behavior. This psychometric study compares measured survey pathways with responses generated from label-blind socioeconomic personas across social groups.",
       status: "In preparation",
       category: "research",
+      tracks: ["llm-evaluation", "behavioral"],
       featured: true,
       metrics: ["937 survey records", "Human-grounded comparison"],
       relatedEvidence: ["survey", "llm-evaluation"],
@@ -214,6 +223,7 @@ export const CONTENT = {
       line: "Flood-adaptation models usually assert household behavior instead of measuring it. FLOODABM grounds 52,141 simulated households in a 937-household survey and validates losses against observed insurance claims.",
       status: "Research prototype",
       category: "research",
+      tracks: ["behavioral"],
       featured: true,
       metrics: ["52,141 households", "937-household survey"],
       relatedEvidence: ["survey", "simulation"],
@@ -227,6 +237,7 @@ export const CONTENT = {
       line: "A loss number without an inspectable validation chain cannot be trusted. This Hazus-based seismic bridge-loss pipeline reports where the recipe fails, not only where it works.",
       status: "Research prototype",
       category: "research",
+      tracks: ["risk-modeling"],
       featured: false,
       metrics: ["Hazus 6.1", "three-level validation"],
       relatedEvidence: ["simulation"],
