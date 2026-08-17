@@ -1,4 +1,4 @@
-// prerender.mjs — S8: emit the 9 static routes (implementation-plan §1.2).
+// prerender.mjs — S8: emit the static routes (implementation-plan §1.2).
 //
 // react-dom/server renderToStaticMarkup per route; per-route <head> injected
 // into template.html from seo.js: title/description/OG/canonical everywhere,
@@ -72,7 +72,7 @@ const seoRoutes = Object.keys(SEO.routes);
 {
   const missing = seoRoutes.filter((r) => !ROUTE_PAGE[r]);
   const extra = Object.keys(ROUTE_PAGE).filter((r) => !SEO.routes[r]);
-  if (missing.length || extra.length || seoRoutes.length !== 9) {
+  if (missing.length || extra.length || seoRoutes.length !== 10) {
     console.error("prerender: route table mismatch", { missing, extra, seoRouteCount: seoRoutes.length });
     process.exit(1);
   }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wenyu Chiou — AI Agent Infrastructure &amp; Evaluation Engineer</title>
+  <title>Wenyu Chiou — Artificial Intelligence Evaluation &amp; Behavioral Simulation Research Engineer</title>
   <link rel="stylesheet" href="print.css">
 </head>
 <body class="doc-resume resume2">
@@ -11,43 +11,50 @@
   <!-- Header — single column, no photo, no layout tables; ATS reads top-to-bottom -->
   <header class="r2-header">
     <h1>Wenyu Chiou</h1>
-    <p class="r2-role">AI Agent Infrastructure &amp; Evaluation Engineer</p>
+    <p class="r2-role">Artificial Intelligence Evaluation &amp; Behavioral Simulation Research Engineer</p>
     <p class="r2-contact">Bethlehem, PA &middot; <a class="u" href="mailto:wec324@lehigh.edu">wec324@lehigh.edu</a> &middot; +1 (484) 937-2528 &middot; <a class="u" href="https://github.com/WenyuChiou">github.com/WenyuChiou</a> &middot; <a class="u" href="https://www.linkedin.com/in/wenyu-chiou">linkedin.com/in/wenyu-chiou</a> &middot; <a class="u" href="https://wenyuchiou.github.io">wenyuchiou.github.io</a></p>
-    <p class="r2-lede">I build AI-agent and research infrastructure &mdash; MCP tooling, multi-agent orchestration, and agent harnesses &mdash; and I apply LLMs to agent-based models of complex human&ndash;water systems, with the governance that keeps agent behavior trustworthy.</p>
-    <p class="r2-avail">Open to Summer 2027 internships in AI evaluation, research engineering, and risk analytics.</p>
-    <p class="r2-auth">Work eligibility: F-1 student, CPT-eligible for internships (no sponsorship required).</p>
+    <p class="r2-lede">Research engineer building and evaluating artificial intelligence (AI) systems, including large language model (LLM) applications, agentic workflows, and behavioral simulations. Designed and fielded a <strong>937-household</strong> human-behavior survey and built a <strong>52,141-household</strong> coupled simulation; develops reproducible evaluations of whether LLM agents reproduce observed decision pathways across social groups.</p>
+    <p class="r2-avail">Open to Summer 2027 internships in AI research, LLM evaluation, agent development, and computational social science.</p>
+    <p class="r2-auth">Work authorization: F-1 student; CPT-eligible for internships.</p>
   </header>
 
-  <!-- Experience — dated roles so ATS captures work history; validity differentiator first -->
+  <!-- Experience — dated roles so ATS captures work history; behavioral simulation first -->
   <section>
     <h2>Experience</h2>
 
     <div class="job">
       <p class="job-head"><span><strong>Graduate Research Assistant</strong> &mdash; Complex Adaptive Water Systems Lab, Lehigh University</span><span class="d">Aug 2024 &ndash; present</span></p>
       <ul class="r2-bullets">
-        <li>Apply <strong>LLMs as the behavioral engine of agent-based models</strong> of complex human&ndash;water systems, grounded in a <strong>937-household survey I designed and fielded</strong>; co-authored the published <em>Water Resources Research</em> (2026) study on this LLM-driven agent-based simulation.</li>
-        <li>Building <strong>WAGF</strong>, an <strong>AI-governance framework</strong> that screens each LLM-agent decision against domain rules and behavioral theory before it can change simulation state (research software in preparation for release).</li>
-        <li>Built <strong>FLOODABM</strong>, a <strong>52,141-household</strong> coupled agent-based &times; catastrophe simulation, statistically calibrated and validated against real OpenFEMA insurance-claims data.</li>
+        <li>Designed a human-versus-LLM evaluation study of <strong>937</strong> household responses (marginalized <strong>n=148</strong>; non-marginalized <strong>n=789</strong>) using multi-group structural equation modeling (SEM) and label-blind socioeconomic personas; implemented the redesigned elicitation with <strong>13 regression tests</strong> and piloted Gemma 3 4B and Llama 3; planned submission to <em>Progress in Disaster Science</em>.</li>
+        <li>Designed and fielded a <strong>937-household</strong> flood-adaptation survey; used SEM to identify social-group pathway differences and Bayesian calibration to translate observed pathways into agent parameters.</li>
+        <li>Built <strong>FLOODABM</strong>, a <strong>52,141-household</strong> coupled agent-based &times; catastrophe simulation across 27 census tracts and 2011&ndash;2023; simulated outcomes were validated against OpenFEMA insurance-claims data over 50 Monte Carlo runs.</li>
+        <li>Designed and substantially completed experiments for the <strong>Water Agent Governance Framework (WAGF)</strong>, a six-stage governance and evaluation pipeline checking LLM-agent decisions against domain rules and behavioral theory before state updates; research software in preparation for release.</li>
       </ul>
     </div>
 
     <div class="job">
-      <p class="job-head"><span><strong>Independent Open-Source AI Infrastructure</strong></span><span class="d">2024 &ndash; present</span></p>
+      <p class="job-head"><span><strong>Independent Research Engineering &amp; Open Source</strong></span><span class="d">2024 &ndash; present</span></p>
       <ul class="r2-bullets">
-        <li>Built an <strong>evaluation suite</strong> for research-hub&rsquo;s own literature search that checks whether the papers that should be found actually appear in the top results &mdash; it measured my own system missing nearly all of them, so I <strong>kept that failing result in the repo as a recorded audit baseline</strong> instead of deleting it.</li>
-        <li>Built <strong>research-hub</strong>, an <strong>MCP server + CLI</strong> that makes Zotero, Obsidian, and NotebookLM AI-operable &mdash; searching scholarly databases and syncing results. <strong>PyPI research-hub-pipeline v1.1.1</strong>; listed in <strong>Awesome MCP Servers</strong>; tested on Windows, macOS, and Linux.</li>
-        <li>Built a multi-agent tooling stack &mdash; <strong>ai-research-skills</strong>, <strong>fable-method-harness</strong> (cost-routing that matches strong-model quality at <strong>~2.5&times; lower cost</strong> in a pre-registered benchmark), <strong>agent-collab-skills</strong>, and <strong>codex-delegate</strong> &mdash; on the <strong>OpenAI and Anthropic APIs, MCP, and Ollama</strong>; each agent&rsquo;s work is verified from git state, tested on Windows and Linux.</li>
-        <li><strong>18 merged pull requests</strong> into third-party open source &mdash; including <strong>10 into a 58k-star LLM stock-analysis platform</strong> (end-to-end Taiwan-market support: market routing, institutional-flows fetcher, circuit breaker, drift tests), a Windows file-permissions security fix (langchain-ai/openwiki), and an engine-selection fix with a regression test that fails on main (BuilderIO/agent-native &times;4).</li>
-        <li><strong>awesome-agentic-ai-zh</strong> &mdash; a trilingual agentic-AI learning curriculum with automated checks that keep all three languages in sync; <strong>4.7k+ GitHub stars</strong>, 622 forks.</li>
+        <li>Built an <strong>evaluation suite</strong> for research-hub&rsquo;s literature search that checks retrieval recall against expected papers; retained observed failures as explicit audit baselines instead of deleting them.</li>
+        <li>Shipped <strong>research-hub</strong>, a local-first research tool with Model Context Protocol (MCP) and command-line interfaces (CLIs); published <strong>research-hub-pipeline v1.1.1</strong> on PyPI, tested across Windows/macOS/Linux, and contributed <strong>18 merged pull requests</strong> to third-party open source.</li>
+        <li>Created and self-hosted <a class="u" href="https://github.com/WenyuChiou/awesome-agentic-ai-zh">awesome-agentic-ai-zh</a>, a trilingual agentic-AI learning roadmap with <strong>240+ curated resources</strong>, <strong>23 hands-on exercises</strong>, and <strong>77 MCP/Skill entries</strong>; reached <strong>5K+ GitHub stars</strong> and <strong>700+ forks</strong>.</li>
       </ul>
     </div>
   </section>
 
-  <!-- Publication — neutral citation (author order visible; not flagged) -->
+  <!-- Selected research outputs — concise status labels for industry readers -->
   <section>
-    <h2>Publications &amp; Presentations</h2>
-    <p class="publine">Yang, Y. C. E., &amp; <span class="self">Chiou, W.</span> (2026). Leveraging Large Language Models for Agent-Based Simulation of Human&ndash;Water System Interactions. <em>Water Resources Research</em>, 62(6), e2025WR042111. <a class="u" href="https://doi.org/10.1029/2025WR042111">doi.org/10.1029/2025WR042111</a> <span class="chip-published">Published</span></p>
-    <p class="publine"><span class="self">Chiou, W.</span>, &amp; Chiou, H. &mdash; &ldquo;What Makes AI Believable? Comparing AI and Human Responses in Mental Health Risk Assessment.&rdquo; <em>ISDSA 2026 Annual Meeting</em>; recorded presentation.</p>
+    <h2>Selected Research Outputs</h2>
+    <p class="publine">Yang, Y. C. E., &amp; <span class="self">Chiou, W.</span> (2026). Leveraging Large Language Models for Agent-Based Simulation of Human&ndash;Water System Interactions. <em>Water Resources Research</em>, 62(6), e2025WR042111. <a class="u" href="https://doi.org/10.1029/2025WR042111">DOI</a> <span class="chip-published">Published</span></p>
+    <p class="publine"><span class="self">Chiou, W.</span>, et al. Household Flood Adaptation and Financial Outcomes: A Coupled Human&ndash;Flood Modeling Analysis of Homeowners and Renters. <em>Water Resources Research</em>. <span class="chip-review">Under revision following peer review</span></p>
+    <p class="publine"><span class="self">Chiou, W.</span>, et al. Flood Adaptation Decision Variables and Pathways across Social Groups: A Comparison between Human Survey Responses and Responses Generated by Large Language Models. Planned submission to <em>Progress in Disaster Science</em>.</p>
+  </section>
+
+  <section>
+    <h2>Selected Conference Presentations</h2>
+    <p class="publine"><strong>International Society for Data Science and Analytics (ISDSA) 2026 Annual Meeting</strong> &mdash; &ldquo;What Makes AI Believable?&rdquo; Comparing AI and human responses in mental-health risk assessment; recorded presentation.</p>
+    <p class="publine"><strong>American Geophysical Union (AGU) Fall Meeting 2025</strong> &mdash; Poster NH41E-0449: &ldquo;Modeling Long-Term Household Flood Adaptation under Social Heterogeneity: A Coupled Agent-Based Modeling Framework.&rdquo;</p>
+    <p class="publine"><strong>The 2nd International Sociohydrology Conference (ISHC) 2025</strong>, Tokyo &mdash; Oral Presentation 38-03: &ldquo;Investigating the Decision-Making Process and Causal Relationships between Flood Risk Perception and Adaptation Actions.&rdquo;</p>
   </section>
 
   <!-- Education — fields spelled out; expected graduation stated -->
@@ -58,11 +65,12 @@
     <p class="edu-line"><span><strong>B.S., Earth Sciences</strong>, National Central University</span><span class="d">Sep 2017 &ndash; Jun 2021</span></p>
   </section>
 
-  <!-- Skills — named, artifact-backed stack only; tools not actually used are deliberately omitted -->
+  <!-- Skills — methods first; infrastructure tools remain supporting evidence -->
   <section>
-    <h2>Skills</h2>
-    <p class="skill-line"><span class="skill-k">AI &amp; agent systems:</span> OpenAI &amp; Anthropic APIs &middot; Model Context Protocol (MCP) &middot; multi-agent orchestration &middot; agent governance &amp; validation &middot; retrieval &amp; search &middot; Ollama &middot; research automation (Zotero / Obsidian / NotebookLM)</p>
-    <p class="skill-line"><span class="skill-k">Programming &amp; tooling:</span> Python &middot; pytest &amp; CI &middot; Git &middot; cross-platform (Windows / POSIX)</p>
+    <h2>Methods &amp; Technical Skills</h2>
+    <p class="skill-line"><span class="skill-k">LLM / agent systems:</span> LLM application &amp; agent development &middot; AI-system evaluation &middot; evaluation infrastructure &middot; prompt/context engineering &middot; retrieval-augmented generation (RAG) &middot; memory &middot; tool use &middot; multi-agent workflows &middot; MCP</p>
+    <p class="skill-line"><span class="skill-k">Methods:</span> computational social science &middot; behavioral simulation &middot; experimental design &middot; agent-based modeling (ABM) &middot; structural equation modeling (SEM) &middot; Bayesian calibration</p>
+    <p class="skill-line"><span class="skill-k">Tools:</span> Python &middot; R &middot; pytest / continuous integration (CI) &middot; Git &middot; OpenAI / Anthropic APIs &middot; Ollama &middot; Windows / POSIX</p>
   </section>
 
 </body>

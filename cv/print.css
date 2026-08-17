@@ -469,3 +469,43 @@ body.doc-resume li {
 .cv2 h2 { margin-bottom: 3pt; font-size: 10.8pt; }
 .cv2 .two-col { break-inside: auto; page-break-inside: auto; }
 .cv2 .group-label { break-after: avoid; page-break-after: avoid; }
+
+/* Industry resume reframe — restore readable density after reducing the
+   infrastructure inventory and foregrounding behavioral simulation. */
+.resume2 { font-size: 9.4pt; }
+.resume2 .r2-header { padding-bottom: 6pt; margin-bottom: 6pt; }
+.resume2 .r2-lede { line-height: 1.4; margin-bottom: 4pt; }
+.resume2 .r2-auth { margin-top: 2pt; }
+.resume2 h2 { margin: 5pt 0 2.5pt; padding-bottom: 2pt; }
+.resume2 .job { margin-bottom: 4pt; }
+.resume2 .job .r2-bullets li,
+.resume2 .r2-bullets li,
+.resume2 .publine,
+.resume2 .edu-line,
+.resume2 .skill-line { line-height: 1.32; margin-bottom: 1pt; }
+.resume2 .chip-review { font-size: 6.75pt; font-weight: 700; letter-spacing: 0.05em; color: #7D5D14;
+  background: #FBF2DC; border: 0.5pt solid #DFC98E; border-radius: 2.5pt; padding: 0.5pt 4pt; white-space: nowrap; }
+
+/* Industry resume typography — owner request: Times New Roman throughout. */
+.resume2,
+.resume2 * {
+  font-family: "Times New Roman", Times, serif;
+  letter-spacing: normal;
+}
+.resume2 h1,
+.resume2 h2,
+.resume2 .u {
+  font-family: "Times New Roman", Times, serif;
+}
+.resume2 .u { font-size: inherit; }
+
+/* Keep the expanded skills line compact enough for the one-page industry layout. */
+.resume2 .skill-line { font-size: 8.75pt; line-height: 1.18; }
+
+/* Compact evidence metadata after adding the community-adoption project. */
+.resume2 .publine { font-size: 8.7pt; line-height: 1.18; }
+
+/* Reclaim the final line without reducing the evidence sections. */
+.resume2 section:last-child h2 { margin-top: 1pt; margin-bottom: 1pt; }
+.resume2 section:last-child .skill-line { font-size: 8.4pt; line-height: 1.08; }
+.resume2 section:nth-last-child(2) .edu-line { line-height: 1.15; margin-bottom: 0; }

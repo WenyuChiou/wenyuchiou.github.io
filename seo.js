@@ -13,21 +13,21 @@ export const SEO = {
 
   ogImage: {
     file: "/assets/og-card.png",
-    alt: "Wenyu Chiou — AI Agent Infrastructure & Evaluation Engineer",
+    alt: "Wenyu Chiou — AI Evaluation & Behavioral Simulation Research Engineer",
   },
 
   routes: {
     "/": {
-      title: "Wenyu Chiou — AI Agent Infrastructure & Evaluation Engineer",
+      title: "Wenyu Chiou — AI Evaluation & Behavioral Simulation Research Engineer",
       description:
-        "AI-agent infrastructure — MCP pipelines, multi-agent orchestration, and agent harnesses — plus the evaluation and governance that make LLM-agent systems trustworthy. Ph.D. candidate at Lehigh University, open to AI internships.",
+        "AI evaluation, LLM-agent development, and behavioral simulation grounded in a 937-household survey, a 52,141-household coupled model, and open-source research tooling. Ph.D. candidate at Lehigh University, open to AI internships.",
       ogType: "website",
       canonical: "https://wenyuchiou.github.io/",
     },
     "/research/": {
       title: "Research & Academic Work — Wenyu Chiou",
       description:
-        "From a 937-household survey to a 52,141-household coupled agent-based–catastrophe flood model to LLM-agent validation methods — one continuous research program.",
+        "From a 937-household survey to a 52,141-household coupled agent-based–catastrophe flood model to human-grounded LLM evaluation — one continuous research program.",
       ogType: "website",
       canonical: "https://wenyuchiou.github.io/research/",
     },
@@ -41,7 +41,7 @@ export const SEO = {
     "/publications/": {
       title: "Publications — Wenyu Chiou",
       description:
-        "Publications and talks by Wenyu Chiou, including Yang & Chiou (2026), Water Resources Research, 62(6), e2025WR042111 — with accurate statuses for unpublished manuscripts.",
+        "Publications and talks by Wenyu Chiou, including Yang & Chiou (2026), Water Resources Research, 62(6), e2025WR042111 — with explicit statuses for research in progress.",
       ogType: "website",
       canonical: "https://wenyuchiou.github.io/publications/",
     },
@@ -76,9 +76,16 @@ export const SEO = {
     "/projects/awesome-agentic-ai-zh/": {
       title: "awesome-agentic-ai-zh — trilingual agentic-AI curriculum",
       description:
-        "A trilingual agentic-AI curriculum with automated checks that keep all three languages in sync, and external contributors. 4.7k+ GitHub stars, 622 forks (July 2026).",
+        "A trilingual agentic-AI curriculum with automated checks that keep all three languages in sync, and external contributors. 5K+ GitHub stars, 700+ forks (August 2026).",
       ogType: "article",
       canonical: "https://wenyuchiou.github.io/projects/awesome-agentic-ai-zh/",
+    },
+    "/projects/llm-evaluation/": {
+      title: "LLM evaluation study — Wenyu Chiou",
+      description:
+        "A human-grounded evaluation study asking whether LLM-generated responses reproduce decision pathways observed in 937 household survey records across social groups. In preparation; planned submission to Progress in Disaster Science.",
+      ogType: "article",
+      canonical: "https://wenyuchiou.github.io/projects/llm-evaluation/",
     },
   },
 
@@ -104,7 +111,7 @@ export const SEO = {
       "@context": "https://schema.org",
       "@type": "Person",
       name: "Wenyu Chiou",
-      jobTitle: "AI Agent Infrastructure & Evaluation Engineer",
+      jobTitle: "AI Evaluation & Behavioral Simulation Research Engineer",
       affiliation: {
         "@type": "CollegeOrUniversity",
         name: "Lehigh University",

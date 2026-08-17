@@ -67,10 +67,11 @@ const AVAILABILITY = CANON.availability; // the ONE sentence in which "Summer 20
 const BANNED = [
   { name: "first-superlative", re: /\bfirst[\s-]+(framework|governed|coupled)\b/giu, why: "kill list — 'first framework/governed/coupled' superlatives" },
   { name: "banned-multiplier", re: /6[–-]7[×x]|17[–-]22[×x]|token[\s-]+saving/giu, why: "kill list — unverified multipliers" },
-  // Positive enforcement, not a denylist: any "<N>k GitHub stars" that is not the one
-  // approved value is a violation. A denylist of stale values (previously just /1\.8k/)
-  // silently let the NEXT stale bump through — 4.5k shipped live in seo.js under it.
-  { name: "stale-star-count", re: /(?<![\d.])(?!4\.7k\+\s+GitHub\s+stars)\d+(?:\.\d+)?k\+?\s+GitHub\s+stars/giu, why: "stale star count (only allowed: '4.7k+ GitHub stars')" },
+  // Positive enforcement, not a denylist: any "<N>k GitHub stars" that is not the
+  // current re-verified public value is a violation. Keep this value conservative:
+  // GitHub's public page currently renders the project at 5.0k stars, so public copy
+  // uses the durable threshold "5K+" rather than a volatile exact count.
+  { name: "stale-star-count", re: /(?<![\d.])(?!5k\+\s+GitHub\s+stars)\d+(?:\.\d+)?k\+?\s+GitHub\s+stars/giu, why: "stale star count (only allowed: '5K+ GitHub stars')" },
   // Same positive-enforcement shape as stale-star-count, for the adjectival "<N>k-star"
   // form used of third-party repos. Kept separate because the allowed value differs.
   { name: "stale-partner-star-count", re: /(?<![\d.])(?!58k-star)\d+(?:\.\d+)?k-star/giu, why: "stale third-party star count (only allowed: '58k-star', ZhuLinsen/daily_stock_analysis) — re-verify before publishing" },

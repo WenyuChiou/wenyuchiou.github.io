@@ -189,6 +189,7 @@ function Nav({ page, mode, onModeChange, theme, onThemeChange }) {
     { label: "Research", href: "/research/", page: "research", anchor: "academic" },
     { label: "Engineering", href: "/engineering/", page: "engineering", anchor: "industry" },
     { label: "Publications", href: "/publications/", page: "publications" },
+    { label: "Resume", href: CONTENT.documents.industry.file, download: true },
   ];
   return (
     <header className="site-header">
@@ -207,6 +208,7 @@ function Nav({ page, mode, onModeChange, theme, onThemeChange }) {
                   }
                   aria-current={l.page === page ? "page" : undefined}
                   href={l.href}
+                  download={l.download || undefined}
                   onClick={() => setOpen(false)}
                 >
                   {l.label}
@@ -282,6 +284,14 @@ function Hero({ mode }) {
           <p className="hero-dialect">{H.dialect[mode] || H.dialect.industry}</p>
           <p className="hero-lede">{H.workingFormulation}</p>
           <p className="availability"><span className="signal-dot" aria-hidden="true"></span>{H.availability}</p>
+          <div className="hero-facts" aria-label="Selected evidence">
+            {H.facts.map((fact) => (
+              <div className="hero-fact" key={fact.label}>
+                <strong>{fact.value}</strong>
+                <span>{fact.label}</span>
+              </div>
+            ))}
+          </div>
           <QuietLinks />
         </div>
         {H.portrait ? (
@@ -354,7 +364,7 @@ function SelectedResearch({ num }) {
   return (
     <section id={SEC.research.id} className="wrap section" data-block="research">
       <SectionHead num={num} title={SEC.research.label} />
-      <div className="card-grid cols-2">
+      <div className={"card-grid " + (CONTENT.selectedResearch.length > 2 ? "cols-3" : "cols-2")}>
         {CONTENT.selectedResearch.map((item) => <ProjectCard key={item.slug} item={item} />)}
       </div>
       <p className="section-more">
@@ -616,7 +626,7 @@ function PublicationsPage() {
         </ul>
       </section>
       <section className="wrap section" data-block="under-review">
-        <SectionHead num={num()} title="Manuscripts Under Review" />
+        <SectionHead num={num()} title="Research in Progress" />
         <ul className="pub-list">
           {P.underReview.map((m, i) => (
             <li className="pub" key={i}>

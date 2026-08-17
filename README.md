@@ -2,13 +2,13 @@
 
 Personal site of Wenyu Chiou — Ph.D. candidate, Civil & Environmental Engineering, Lehigh University.
 
-Static multi-page site: React 18 prerendered to 9 HTML routes with esbuild, no CDN dependencies (fonts and scripts self-hosted), fail-closed content linting on every build.
+Static multi-page site: React 18 prerendered to 10 HTML routes with esbuild, no CDN dependencies (fonts and scripts self-hosted), fail-closed content linting on every build.
 
 ## Build
 
 ```bash
 npm ci
-npm run build     # bundle -> prerender 9 routes -> sitemap/robots -> hash-stamp -> copy linter (strict)
+npm run build     # bundle -> prerender 10 routes -> sitemap/robots -> hash-stamp -> copy linter (strict)
 ```
 
 The build **fails** if `scripts/check-copy.mjs` finds any banned pattern, drifted canonical string, or leaked `[CONFIRM` placeholder in source files, built HTML, or the extracted text of the two PDFs. Canonical strings live in `scripts/canonical-strings.json` and are regenerated from the (private) strategy workspace — never edit that file ad hoc.

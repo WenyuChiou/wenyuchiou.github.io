@@ -928,6 +928,199 @@ p .field-label, span.field-label { display: inline; margin-right: var(--space-2)
 }
 
 /* ==========================================================================
+   Portfolio refresh — evidence-first editorial lab notebook.
+   The site uses a paper/ink palette, sharp archive cards, a serif research
+   voice, and mono evidence labels so the work reads as a person-built system,
+   not a generic AI landing page.
+   ========================================================================== */
+:root {
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: Georgia, "Times New Roman", serif;
+  --bg: #F4F1E9;
+  --surface: #FCFBF6;
+  --surface-2: #E9EEEA;
+  --ink: #18252B;
+  --ink-2: #4B585D;
+  --ink-3: #6A7679;
+  --rule: #D8D8CF;
+  --rule-strong: #AEBAB5;
+  --accent: #145A6A;
+  --accent-strong: #0B3F4B;
+  --accent-wash: #E0EEEE;
+  --signal: #B45B35;
+  --on-accent: #FFFFFF;
+  --shadow-card: 3px 3px 0 rgb(24 37 43 / 0.12);
+  --grid-line: rgb(24 37 43 / 0.055);
+}
+
+[data-theme="dark"] {
+  --bg: #151B1D;
+  --surface: #1C2527;
+  --surface-2: #243033;
+  --ink: #EEF0E9;
+  --ink-2: #BBC6C2;
+  --ink-3: #8C9A97;
+  --rule: #334043;
+  --rule-strong: #52615F;
+  --accent: #86C3C2;
+  --accent-strong: #A9D8D4;
+  --accent-wash: #233A3C;
+  --signal: #E19A69;
+  --on-accent: #102023;
+  --shadow-card: 3px 3px 0 rgb(0 0 0 / 0.35);
+  --grid-line: rgb(238 240 233 / 0.05);
+}
+
+body {
+  font-family: var(--font-sans);
+  line-height: 1.72;
+}
+
+.site-header {
+  background: rgb(244 241 233 / 0.92);
+  backdrop-filter: blur(14px);
+}
+[data-theme="dark"] .site-header { background: rgb(21 27 29 / 0.92); }
+.nav-inner { min-height: 68px; }
+.wordmark {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+.nav-link { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem; }
+.nav-cta { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.7rem; }
+.mode-option { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.65rem; }
+
+.hero {
+  padding-top: clamp(64px, 9vw, 116px);
+  padding-bottom: var(--space-7);
+}
+.hero-grid {
+  grid-template-columns: minmax(0, 1fr) 232px;
+  gap: clamp(32px, 7vw, 92px);
+  align-items: end;
+}
+.hero-text { max-width: 790px; }
+.hero-eyebrow { color: var(--signal); letter-spacing: 0.08em; }
+.hero-name { font-size: clamp(3.5rem, 8vw, 7.2rem); letter-spacing: -0.055em; }
+.hero-standfirst { max-width: 23ch; font-size: clamp(1.8rem, 3.5vw, 3rem); }
+.hero-dialect { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.02em; color: var(--accent); }
+.hero-lede { max-width: 62ch; font-size: 1.08rem; line-height: 1.68; }
+.hero-portrait {
+  position: relative;
+  padding: 0 0 12px 14px;
+  border-left: 1px solid var(--rule-strong);
+}
+.hero-portrait::before {
+  content: "FIELD NOTE / 2025";
+  position: absolute;
+  left: 14px;
+  bottom: -2px;
+  z-index: 1;
+  padding: 2px 6px;
+  color: var(--surface);
+  background: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+}
+.hero-portrait img {
+  border-radius: 0;
+  border: 0;
+  filter: saturate(0.72) contrast(1.04);
+  box-shadow: 6px 6px 0 var(--rule-strong);
+}
+.hero-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 680px;
+  margin: var(--space-6) 0 var(--space-4);
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.hero-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 11px 14px 10px 0;
+  border-right: 1px solid var(--rule);
+}
+.hero-fact + .hero-fact { padding-left: 14px; }
+.hero-fact:last-child { border-right: 0; }
+.hero-fact strong {
+  font-family: var(--font-serif);
+  font-size: clamp(1.45rem, 2.5vw, 2.15rem);
+  line-height: 1;
+  color: var(--ink);
+}
+.hero-fact span {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  line-height: 1.35;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.pillars { padding-bottom: var(--space-8); }
+.pillar { border-top-color: var(--accent); }
+.pillar-kicker { color: var(--accent); }
+.pillar-status { color: var(--signal); }
+
+.section { padding-top: clamp(64px, 8vw, 104px); padding-bottom: clamp(64px, 8vw, 104px); }
+.section-head { margin-bottom: var(--space-6); }
+.section-num { color: var(--signal); }
+.section-title { font-size: clamp(2rem, 4vw, 3.4rem); letter-spacing: -0.045em; }
+.section-title::after {
+  content: "";
+  display: block;
+  width: 42px;
+  height: 3px;
+  margin-top: 13px;
+  background: var(--signal);
+}
+
+.card-grid { gap: var(--space-6); }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: 0;
+  padding: var(--space-5);
+  box-shadow: var(--shadow-card);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+.card:hover { border-color: var(--accent); box-shadow: 6px 6px 0 var(--accent-wash); transform: translate(-2px, -2px); }
+.card-name { font-family: var(--font-serif); font-size: 1.2rem; letter-spacing: -0.025em; }
+.card-status { color: var(--signal); text-transform: uppercase; font-size: 0.62rem; letter-spacing: 0.06em; }
+.card-problem { font-size: 0.98rem; line-height: 1.62; }
+.card-fact { font-family: var(--font-mono); font-size: 0.7rem; line-height: 1.45; color: var(--accent); }
+.card-link { color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.67rem; }
+
+.section-focus {
+  margin-top: 0;
+  border-top: 2px solid var(--accent);
+  background: var(--surface-2);
+}
+.focus-text { max-width: 52ch; font-family: var(--font-serif); font-size: clamp(1.4rem, 2.5vw, 2.15rem); line-height: 1.32; color: var(--ink); }
+.cv-block { border-radius: 0; border-color: var(--rule-strong); box-shadow: var(--shadow-card); }
+.cv-kicker { color: var(--signal); }
+.section-contact { border-top: 2px solid var(--signal); }
+.section-contact .section-title::after { background: var(--accent); }
+.site-footer { margin-top: var(--space-9); background: var(--surface-2); }
+
+@media (max-width: 767.98px) {
+  .hero { padding-top: 52px; }
+  .hero-grid { gap: var(--space-6); }
+  .hero-portrait { order: -1; max-width: 180px; padding-left: 10px; }
+  .hero-portrait::before { left: 10px; font-size: 0.5rem; }
+  .hero-facts { margin-top: var(--space-5); }
+  .hero-fact { padding-right: 8px; }
+  .hero-fact + .hero-fact { padding-left: 8px; }
+  .hero-fact strong { font-size: 1.35rem; }
+  .hero-fact span { font-size: 0.55rem; letter-spacing: 0.02em; }
+}
+
+/* ==========================================================================
    Print — VDS §5.8.1: light palette forced; nav/toggles/palette/CTAs hidden;
    URLs printed after links; serif body at 11pt
    ========================================================================== */

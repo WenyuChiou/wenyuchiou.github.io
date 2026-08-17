@@ -48,8 +48,8 @@ if (pre.status !== 0) {
 // --- 3. sitemap.xml (all 9 routes, absolute URLs, PDFs excluded — IA §4.2.3)
 // + robots.txt (allow all).
 const locs = Object.values(SEO.routes).map((r) => r.canonical);
-if (locs.length !== 9 || locs.some((u) => !/^https:\/\//.test(u))) {
-  console.error(`Build FAILED: sitemap expects 9 absolute canonical URLs, got ${JSON.stringify(locs)}`);
+if (locs.length !== 10 || locs.some((u) => !/^https:\/\//.test(u))) {
+  console.error(`Build FAILED: sitemap expects 10 absolute canonical URLs, got ${JSON.stringify(locs)}`);
   process.exit(1);
 }
 writeFileSync(

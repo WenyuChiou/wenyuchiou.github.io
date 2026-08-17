@@ -18,19 +18,24 @@ export const CONTENT = {
   },
 
   hero: {
-    umbrella: "AI-agent infrastructure, and the science of when to trust it",
+    umbrella: "Behavioral simulation, AI evaluation, and the systems that make agents trustworthy",
     dialect: {
-      industry: "AI evaluation / research engineer with catastrophe-risk domain depth.",
-      academic: "Computational socio-hydrologist developing validated LLM-agent methods on his own empirical data.",
+      industry: "Research engineer for LLM evaluation, agent systems, and computational social science.",
+      academic: "Computational social scientist building validated LLM agents from human decision data.",
     },
     portrait: {
       src: "/assets/portrait.jpg",
       alt: "Wenyu Chiou at the AGU Fall Meeting 2025, beside his research poster.",
     },
     workingFormulation:
-      "I build AI-agent infrastructure — MCP tooling, multi-agent orchestration, and agent harnesses — and I apply large language models as the behavioral engine of agent-based models of complex human–water systems, grounded in survey data I collected myself, with the governance that keeps agent behavior trustworthy.",
+      "I design evaluation systems for large language model applications and agent-based simulations. My work connects human decision data, computational social science, and fail-closed engineering — from a 937-household survey to 52,141 simulated households and open-source AI tooling.",
+    facts: [
+      { value: "937", label: "household responses" },
+      { value: "52,141", label: "simulated households" },
+      { value: "5K+", label: "GitHub stars" },
+    ],
     availability:
-      "Open to Summer 2027 internships in AI evaluation, research engineering, and risk analytics.",
+      "Open to Summer 2027 internships in AI research, LLM evaluation, agent development, and computational social science.",
   },
 
   // IA §2 Block 3 — fixed order in both modes: science → tool → community verification.
@@ -45,17 +50,17 @@ export const CONTENT = {
     },
     {
       id: "agent-stack",
-      kicker: "AI-agent skills & governance",
-      copy: "Open-source agent skills — ai-research-skills (a 15-skill research catalog), agent-collab-skills, and codex-delegate — plus WAGF, a governance framework that constrains LLM agents so agent-driven simulations stay trustworthy.",
+      kicker: "Evaluation & governance",
+      copy: "WAGF — a governance framework that checks LLM-agent decisions against physical, financial, and behavioral-theory constraints — alongside open-source agent skills and delegation tooling.",
       href: "/engineering/",
-      label: "Maintained open-source tools · WAGF in preparation",
+      label: "Research software in preparation",
     },
     {
       id: "awesome",
       kicker: "Community & education",
       copy: "awesome-agentic-ai-zh — a trilingual roadmap for building agentic AI, from LLM basics to production multi-agent systems, with automated checks that keep all three languages in sync.",
-      href: "/projects/awesome-agentic-ai-zh/",
-      label: "4.7k+ GitHub stars, 622 forks (July 2026)",
+      href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
+      label: "5K+ GitHub stars, 700+ forks (August 2026)",
     },
   ],
 
@@ -81,13 +86,20 @@ export const CONTENT = {
       name: "awesome-agentic-ai-zh",
       line: "Chinese-speaking learners lacked a staged path into agentic AI, and hand-mirrored translations drift. This trilingual curriculum keeps its locales verifiably in sync with CI.",
       status: "Maintained open-source tool",
-      stars: "4.7k+ GitHub stars (July 2026)",
+      stars: "5K+ GitHub stars, 700+ forks (August 2026)",
       href: "/projects/awesome-agentic-ai-zh/",
     },
   ],
 
   // IA §2 Block 5.
   selectedResearch: [
+    {
+      slug: "llm-evaluation",
+      name: "LLM evaluation study",
+      line: "Plausible LLM responses are not evidence that an agent reproduces human decisions. This two-arm study compares human survey pathways with responses generated from label-blind socioeconomic personas across social groups.",
+      status: "In preparation",
+      href: "/projects/llm-evaluation/",
+    },
     {
       slug: "floodabm",
       name: "FLOODABM",
@@ -117,7 +129,7 @@ export const CONTENT = {
   // IA §2 Block 8 — the single CTA.
   contact: {
     availability:
-      "Open to Summer 2027 internships in AI evaluation, research engineering, and risk analytics.",
+      "Open to Summer 2027 internships in AI research, LLM evaluation, agent development, and computational social science.",
     email: "wec324@lehigh.edu",
     ctaLabel: "Email wec324@lehigh.edu",
   },
@@ -138,16 +150,17 @@ export const CONTENT = {
         n: 2,
         name: "Decision pathways (SEM)",
         what: "Identified flood-adaptation decision pathways through structural equation modeling — across owner and renter groups, and across marginalized and non-marginalized groups (the equity strand).",
-        evidence: "First-author manuscript targeting Sustainable Cities and Society.",
-        statusNote: "Under review.",
+          evidence:
+            "Flood Adaptation Decision Variables and Pathways across Social Groups: A Comparison between Human Survey Responses and Responses Generated by Large Language Models. Planned submission to Progress in Disaster Science.",
+          statusNote: "In preparation; redesigned elicitation protected by 13 regression tests and piloted with Gemma 3 4B and Llama 3.",
       },
       {
         n: 3,
         name: "Coupled ABM–CAT model",
         what: "Built a Bayesian-calibrated agent-based model of 52,141 households across 27 census tracts, coupled to a catastrophe flood model with National Flood Insurance Program premium, payout, and deductible mechanics and income-normalized equity analysis of who bears flood losses.",
-        evidence:
-          "FLOODABM repository — Zenodo-archived with CITATION.cff, published seed lists, and a candid known-limitations register; first-author manuscript targeting the Journal of Hydrology.",
-        statusNote: "Code: Research prototype, archived. Paper: Under review.",
+          evidence:
+            "Household Flood Adaptation and Financial Outcomes: A Coupled Human–Flood Modeling Analysis of Homeowners and Renters. Water Resources Research.",
+          statusNote: "Code: Research prototype, archived. Paper: Under revision following peer review.",
       },
       {
         n: 4,
@@ -177,7 +190,7 @@ export const CONTENT = {
     // owner/renter terms (true of the survey + WRR strand); the SCS manuscript descriptor
     // below uses canonical-facts §4.2 marginalized/non-marginalized framing verbatim.
     summary:
-      "My research asks a question generative AI has made urgent: when can a simulated human decision-maker be trusted? I approach it by owning every link of the evidence chain. I designed and fielded a 937-household flood-adaptation survey in New Jersey’s Passaic River Basin, used structural equation modeling to identify how owners and renters actually decide among adaptation actions, and encoded those empirically identified pathways in a Bayesian-calibrated agent-based model of 52,141 households coupled to a catastrophe flood model with National Flood Insurance Program mechanics — including income-normalized equity analysis of who bears flood losses. With my advisor, I published a Water Resources Research article (62(6), e2025WR042111, 2026) substituting large language models as the behavioral engine of such simulations. That substitution is the contribution: large language models become the behavioral engine of the simulation. Because nothing guarantees a generative agent decides the way real households do, my current work pairs it with AI governance — checking LLM personas against the decision pathways identified in my own survey data, and developing governance methods that constrain agent behavior with physical constraints and behavioral theory — research software now in preparation for release. First-author manuscripts on the coupled model and on adaptation decision pathways are under review. The longer-term agenda is a governance standard for generative agents in consequential simulation.",
+      "My research asks a question generative AI has made urgent: when can a simulated human decision-maker be trusted? I approach it by owning every link of the evidence chain. I designed and fielded a 937-household flood-adaptation survey in New Jersey’s Passaic River Basin, used structural equation modeling to identify how owners and renters actually decide among adaptation actions, and encoded those empirically identified pathways in a Bayesian-calibrated agent-based model of 52,141 households coupled to a catastrophe flood model with National Flood Insurance Program mechanics — including income-normalized equity analysis of who bears flood losses. With my advisor, I published a Water Resources Research article (62(6), e2025WR042111, 2026) substituting large language models as the behavioral engine of such simulations. That substitution creates a validity problem: nothing guarantees a generative agent decides the way real households do. My current work addresses it directly through an LLM evaluation study that compares human survey pathways with label-blind synthetic personas across social groups, alongside governance methods that constrain agent behavior with physical constraints and behavioral theory. The household flood-adaptation and financial-outcomes study is under revision following peer review at Water Resources Research; the social-group LLM study is in preparation for planned submission to Progress in Disaster Science. The longer-term agenda is a governance standard for generative agents in consequential simulation.",
   },
 
   // /engineering/ — positioning §3.
@@ -246,7 +259,7 @@ export const CONTENT = {
         name: "awesome-agentic-ai-zh",
         what: "Trilingual agentic-AI curriculum (community/education line).",
         evidence:
-          "4.7k+ GitHub stars, 622 forks (July 2026); external contributors; automated checks keep all three languages in sync.",
+          "5K+ GitHub stars, 700+ forks (August 2026); external contributors; automated checks keep all three languages in sync.",
         status: "Maintained open-source tool",
         href: "/projects/awesome-agentic-ai-zh/",
         repo: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
@@ -256,6 +269,10 @@ export const CONTENT = {
 
     // §3.4 — every item inspectable in a public repo.
     evalRecord: [
+      {
+        project: "LLM evaluation study",
+        item: "Two-arm human-versus-LLM design over 937 survey records (marginalized n=148; non-marginalized n=789), with 13 regression tests protecting the redesigned elicitation and pilots in Gemma 3 4B and Llama 3.",
+      },
       {
         project: "research-hub",
         item: "In-repo retrieval-recall evaluation suite against golden fixtures; observed failures recorded as explicit audit baselines.",
@@ -399,6 +416,9 @@ export const CONTENT = {
       "Python",
       "Testing and CI",
       "Evaluation design",
+      "LLM application and agent development",
+      "Computational social-science methods",
+      "Behavioral simulation",
       "MCP and agent tooling",
       "Git",
       "Cross-platform (Windows/POSIX) engineering",
@@ -426,21 +446,20 @@ export const CONTENT = {
 
     softwareNote: "WAGF — a governance framework for LLM agents in human–water simulation, keeping coupled behavioral outcomes stable and physically sensible; research software in preparation for release.",
 
-    // Descriptor entries only — exact titles are inserted after CONFIRM #3 resolves; nothing
-    // is inflated beyond "Under review". The LLM-persona validity study is not listed at all
-    // until its status resolves (CONFIRM #3).
+    // Statuses are intentionally explicit: one study is under revision after peer review;
+    // the LLM evaluation study is still being prepared for submission.
     underReview: [
       {
         descriptor:
-          "First-author manuscript — coupled agent-based × catastrophe-model flood adaptation (FLOODABM companion).",
-        target: "Journal of Hydrology",
-        status: "Under review",
+          "Household Flood Adaptation and Financial Outcomes: A Coupled Human–Flood Modeling Analysis of Homeowners and Renters.",
+        target: "Water Resources Research",
+        status: "Under revision following peer review",
       },
       {
         descriptor:
-          "First-author manuscript — flood-adaptation decision pathways across marginalized and non-marginalized groups (structural equation modeling).",
-        target: "Sustainable Cities and Society",
-        status: "Under review",
+          "Flood Adaptation Decision Variables and Pathways across Social Groups: A Comparison between Human Survey Responses and Responses Generated by Large Language Models.",
+        target: "Progress in Disaster Science",
+        status: "Planned submission",
       },
     ],
 
@@ -514,6 +533,37 @@ export const CONTENT = {
           "Reproducibility infrastructure — a scriptable, testable spine under an everyday literature workflow.",
         industry:
           "A published MCP server with a CLI, REST API, and CI matrix — directly legible for AI-tooling, agent-infrastructure, and research-engineering roles, with third-party recognition (Awesome MCP Servers).",
+      },
+    },
+
+    "llm-evaluation": {
+      title: "LLM evaluation study — human pathways vs. generated responses",
+      status: "In preparation",
+      problem:
+        "An LLM can produce a fluent answer without reproducing how real households make decisions. The difficult question is not whether a response sounds human; it is whether a synthetic decision-maker preserves empirically observed pathways and meaningful differences between social groups.",
+      whyItMatters:
+        "If LLM agents replace human behavior inside consequential simulations, apparent plausibility is not enough. Evaluation needs a human ground truth, a frozen comparison design, and visible limits before synthetic behavior is used as evidence.",
+      myRole:
+        "Designed the evaluation scope, redesigned the elicitation protocol, implemented the analysis pipeline, and maintained the regression tests that protect the study from circular persona labels and coding drift.",
+      approach:
+        "A two-arm design: first establish the corrected human decision pathways with multi-group structural equation modeling, then ask LLMs to respond as label-blind socioeconomic personas drawn from the same survey population. The primary comparison asks whether the generated responses reproduce pathway structure and social-group differences.",
+      system:
+        "The study uses 937 household records — marginalized n=148 and non-marginalized n=789 — with a redesigned elicitation covered by 13 regression tests. Pilot runs use Gemma 3 4B and Llama 3; the full run and scope validation remain pending.",
+      keyChallenge:
+        "Keeping the comparison label-blind and non-circular while separating genuine behavioral signal from prompt, coding, and model artifacts. The study records redesign decisions and retracted artifacts instead of carrying an attractive but unsupported finding into the paper.",
+      evaluation:
+        "Milestone evidence is the implemented redesign, 13 passing regression tests, corrected human ground truth, and two-model pilots. No final agreement score or subgroup claim is reported here until the preregistered full run and scope validation are complete.",
+      results:
+        "In preparation — planned submission to Progress in Disaster Science.",
+      evidenceLinks: [
+        { label: "Research program", href: "/research/" },
+        { label: "Published WRR lineage", href: "https://doi.org/10.1029/2025WR042111" },
+      ],
+      relevance: {
+        academic:
+          "A validity study for generative agents grounded in primary survey data and explicit social-group comparisons.",
+        industry:
+          "Human-grounded LLM evaluation, regression-protected experiment design, and honest reporting of pending scope — directly legible to evaluation, agent, safety, and research-engineering teams.",
       },
     },
 
@@ -643,7 +693,7 @@ export const CONTENT = {
       evaluation:
         "The repo discloses honestly what has been executed versus syntax-checked; external contributions and an externally filed internationalization issue are the community-review signal.",
       results:
-        "Maintained open-source tool; 4.7k+ GitHub stars (July 2026) — the one star count permitted in public copy, re-verified before each publish.",
+        "Maintained open-source tool; 5K+ GitHub stars, 700+ forks (August 2026) — the one community-adoption count permitted in public copy, re-verified before each publish.",
       evidenceLinks: [
         { label: "GitHub repository", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh" },
         { label: "CI workflows (language sync, link checks)", href: "https://github.com/WenyuChiou/awesome-agentic-ai-zh/tree/main/.github/workflows" },
