@@ -93,19 +93,19 @@ export const CONTENT = {
           "NFIP mechanics and income-normalized equity",
         ],
         industryPoints: [
-          "Turn behavioral assumptions into quantitative inputs and validated outcomes.",
+          "Turn behavioral assumptions into quantitative inputs and modeled outcomes.",
         ],
         academicPoints: [
           "Couple survey-grounded behavior with physical and financial consequences.",
         ],
         evidence:
-          "FLOODABM, OpenFEMA/NFIP validation lineage, and the Water Resources Research paper.",
+          "FLOODABM, NFIP financial mechanics, and the Water Resources Research paper.",
         links: [
           { label: "FLOODABM case study", href: "/projects/floodabm/" },
           { label: "WRR lineage", href: "https://doi.org/10.1029/2025WR042111" },
         ],
         relatedProjects: ["floodabm"],
-        industryRelevance: "Behavioral assumptions become quantitative model inputs and validated loss outcomes.",
+        industryRelevance: "Behavioral assumptions become quantitative model inputs and modeled loss outcomes.",
         academicRelevance: "Couples survey-grounded behavior with physical and financial consequences.",
       },
       {
@@ -143,7 +143,7 @@ export const CONTENT = {
       {
         id: "governance",
         stage: "04",
-        title: "Constrained agent systems",
+        title: "Water Agent Governance Framework",
         shortTitle: "Governed agent systems",
         metric: "WAGF",
         metricLabel: "framework in preparation",
@@ -187,7 +187,7 @@ export const CONTENT = {
     {
       id: "agent-stack",
       kicker: "Evaluation & governance",
-      copy: "WAGF — a governance framework that checks LLM-agent decisions against physical, financial, and behavioral-theory constraints — alongside open-source agent skills and delegation tooling.",
+      copy: "Water Agent Governance Framework (WAGF) — checks LLM-agent decisions against physical, financial, and behavioral-theory constraints — alongside open-source agent skills and delegation tooling.",
       href: "/engineering/",
       label: "Research software in preparation",
     },
@@ -287,11 +287,11 @@ export const CONTENT = {
     {
       slug: "floodabm",
       name: "FLOODABM",
-      line: "Flood-adaptation models usually assert household behavior instead of measuring it. FLOODABM grounds 52,141 simulated households in a 937-household survey and validates losses against observed insurance claims.",
+      line: "Flood-adaptation models usually assert household behavior instead of measuring it. FLOODABM grounds 52,141 simulated households in a 937-household survey and quantifies physical flood damage, insurance payouts, and household out-of-pocket exposure.",
       points: [
         "Survey-grounded agent parameters",
         "52,141 household trajectories",
-        "OpenFEMA insurance-claims validation",
+        "NFIP damage, payout, and out-of-pocket assessment",
       ],
       status: "Research prototype",
       category: "research",
@@ -431,7 +431,7 @@ export const CONTENT = {
         id: "unvalidated-loss",
         problem: "Catastrophe loss estimates are only as good as their validation.",
         response:
-          "I built a flood-loss pipeline that publishes its validation honestly — a 52,141-household coupled agent-based and catastrophe model with NFIP financial mechanics, validated against observed insurance claims — and worked on a team-built Hazus-based seismic bridge-loss pipeline validated at three levels against the 1994 Northridge earthquake, with failures reported, not hidden.",
+          "I built a flood-loss pipeline that assesses physical damage, insurance payouts, and household out-of-pocket exposure — a 52,141-household coupled agent-based and catastrophe model with NFIP financial mechanics — and worked on a team-built Hazus-based seismic bridge-loss pipeline validated at three levels against the 1994 Northridge earthquake, with failures reported, not hidden.",
       },
     ],
 
@@ -483,7 +483,7 @@ export const CONTENT = {
         repo: "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
       },
     ],
-    systemsNote: "WAGF — governed LLM-agent framework for human–water simulation, with domain checks, fail-closed execution, and audit trails.",
+    systemsNote: "Water Agent Governance Framework (WAGF) — checks LLM-agent decisions against physical, financial, and behavioral-theory constraints in human–water simulation; research software in preparation for release.",
 
     // §3.4 — every item inspectable in a public repo.
     evalRecord: [
@@ -509,33 +509,15 @@ export const CONTENT = {
       },
       {
         project: "FLOODABM",
-        item: "Simulation validation against observed insurance-claims data.",
+        item: "Assessment of physical flood damage, insurance payouts, and household out-of-pocket exposure under NFIP mechanics.",
       },
     ],
     evalThroughLine: "Systems designed so that failure is visible — no silent passes.",
 
-    // §3.6 — the 18 merged third-party PRs, real URLs.
+    // §3.6 — selected upstream contributions with concrete engineering impact.
     oss: {
-      intro: "18 merged pull requests in third-party open-source projects.",
+      intro: "Selected upstream contributions with concrete engineering impact.",
       items: [
-        {
-          repo: "BuilderIO/agent-native",
-          number: 1332,
-          url: "https://github.com/BuilderIO/agent-native/pull/1332",
-          desc: "Documentation fix in the development guide.",
-        },
-        {
-          repo: "BuilderIO/agent-native",
-          number: 1333,
-          url: "https://github.com/BuilderIO/agent-native/pull/1333",
-          desc: "Documentation-reference fixes across contributor docs.",
-        },
-        {
-          repo: "BuilderIO/agent-native",
-          number: 1334,
-          url: "https://github.com/BuilderIO/agent-native/pull/1334",
-          desc: "Documentation fix removing broken links from a skill guide.",
-        },
         {
           repo: "BuilderIO/agent-native",
           number: 1362,
@@ -543,22 +525,10 @@ export const CONTENT = {
           desc: "Root-caused engine-selection bug fix with a regression test that fails on main.",
         },
         {
-          repo: "Nanako0129/coralline",
-          number: 10,
-          url: "https://github.com/Nanako0129/coralline/pull/10",
-          desc: "Pure-bash UTF-8 / East-Asian-width display fix.",
-        },
-        {
           repo: "langchain-ai/openwiki",
           number: 367,
           url: "https://github.com/langchain-ai/openwiki/pull/367",
           desc: "Security fix restricting ~/.openwiki permissions on Windows, where chmod is a no-op.",
-        },
-        {
-          repo: "ZhuLinsen/daily_stock_analysis",
-          number: 1773,
-          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1773",
-          desc: "Taiwan market detection and routing.",
         },
         {
           repo: "ZhuLinsen/daily_stock_analysis",
@@ -570,61 +540,7 @@ export const CONTENT = {
           repo: "ZhuLinsen/daily_stock_analysis",
           number: 1829,
           url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1829",
-          desc: "Taiwan institutional-flow (foreign, trust, and dealer) fetcher over official TWSE/TPEx open data, fail-open.",
-        },
-        {
-          repo: "NVIDIA/skills",
-          number: 76,
-          url: "https://github.com/NVIDIA/skills/pull/76",
-          desc: "Documentation fix repairing the Skill Catalog link in the contributing guide.",
-        },
-        {
-          repo: "ZhuLinsen/daily_stock_analysis",
-          number: 1841,
-          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1841",
-          desc: "Coalesced concurrent institutional-flow fetches so a cold cache cannot trigger a stampede of duplicate requests.",
-        },
-        {
-          repo: "ZhuLinsen/daily_stock_analysis",
-          number: 1855,
-          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1855",
-          desc: "Network-marked drift tests for the institutional-flows fetcher, so an upstream format change fails loudly instead of silently.",
-        },
-        {
-          repo: "ZhuLinsen/daily_stock_analysis",
-          number: 1863,
-          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1863",
-          desc: "Surfaced Taiwan institutional flows in the report's institution block.",
-        },
-        {
-          repo: "ZhuLinsen/daily_stock_analysis",
-          number: 1864,
-          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1864",
-          desc: "Hardened the institutional fetcher with a circuit breaker and an exchange-date guard.",
-        },
-        {
-          repo: "ZhuLinsen/daily_stock_analysis",
-          number: 1866,
-          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1866",
-          desc: "Surfaced Taiwan institutional flows in the report and the LLM prompt, and corrected TWD currency handling.",
-        },
-        {
-          repo: "ZhuLinsen/daily_stock_analysis",
-          number: 1867,
-          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1867",
-          desc: "Fixed a dividend parse that made the trailing-twelve-month yield silently wrong.",
-        },
-        {
-          repo: "ZhuLinsen/daily_stock_analysis",
-          number: 1869,
-          url: "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1869",
-          desc: "Detect the Taiwan closing-auction window (13:25-13:30) as a distinct market phase.",
-        },
-        {
-          repo: "punkpeye/awesome-mcp-servers",
-          number: 6921,
-          url: "https://github.com/punkpeye/awesome-mcp-servers/pull/6921",
-          desc: "Added research-hub to the Research category of the Awesome MCP Servers catalog.",
+          desc: "Taiwan institutional-flow fetcher over official TWSE/TPEx open data.",
         },
       ],
     },
@@ -662,7 +578,7 @@ export const CONTENT = {
       // ship until CONFIRM #10 resolves its title/year/author-position conflict.
     ],
 
-    softwareNote: "WAGF — governed LLM-agent framework for human–water simulation, with domain checks, fail-closed execution, and audit trails.",
+    softwareNote: "Water Agent Governance Framework (WAGF) — checks LLM-agent decisions against physical, financial, and behavioral-theory constraints in human–water simulation; research software in preparation for release.",
 
     // Statuses are intentionally explicit: one study is under revision after peer review;
     // the LLM evaluation study is still being prepared for submission.
@@ -800,9 +716,9 @@ export const CONTENT = {
       system:
         "A 52,141-household agent-based model across 27 census tracts with National Flood Insurance Program premium, payout, and deductible mechanics, tenure-differentiated adaptation actions, damage-to-threat-perception feedback, and income-normalized equity analysis of who bears flood losses.",
       keyChallenge:
-        "Carrying measured psychology into simulation honestly — turning survey constructs into calibrated agent parameters without overfitting, and validating simulated losses against observed insurance-claims data rather than declaring plausibility.",
+        "Carrying measured psychology into simulation honestly — turning survey constructs into calibrated agent parameters and connecting them to physical damage, insurance payouts, and household out-of-pocket exposure without overfitting or overstating the model's scope.",
       evaluation:
-        "Simulation outcomes validated against observed NFIP claims data (OpenFEMA), and a candid known-limitations register that names the model's silent-failure modes — published judgment, not marketing.",
+        "The model assesses physical flood damage, insurance payouts, and household out-of-pocket exposure under NFIP mechanics, with a candid known-limitations register that names the model's silent-failure modes — published judgment, not marketing.",
       results:
         "Research prototype — archived companion code to a first-author manuscript under review. Zenodo-archived with citation metadata (CITATION.cff) and published seed lists.",
       // The exact Zenodo DOI string and archive link are gated on CONFIRM #11 and are not
@@ -810,7 +726,6 @@ export const CONTENT = {
       evidenceLinks: [
         { label: "GitHub repository", href: "https://github.com/WenyuChiou/FLOODABM" },
         { label: "Known-limitations register", href: "https://github.com/WenyuChiou/FLOODABM/blob/main/docs/KNOWN_LIMITATIONS.md" },
-        { label: "NFIP validation script (simulation vs OpenFEMA claims)", href: "https://github.com/WenyuChiou/FLOODABM/blob/main/scripts/validation/validate_nfip.py" },
         { label: "Empirical-grounding lineage: Yang & Chiou (2026), Water Resources Research", href: "https://doi.org/10.1029/2025WR042111" },
       ],
       relevance: {
