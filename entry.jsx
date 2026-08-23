@@ -28,8 +28,16 @@ if (root) {
       try { window.localStorage.setItem("wy-theme", next); } catch {}
     });
     root.querySelectorAll(".stage").forEach((stage) => {
-      stage.addEventListener("toggle", (event) => {
-        if (!stage.open || !event.isTrusted) return;
+      const summary = stage.querySelector("summary");
+      let userRequested = false;
+      summary?.addEventListener("pointerdown", () => { userRequested = true; });
+      summary?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") userRequested = true;
+      });
+      stage.addEventListener("toggle", () => {
+        const shouldPosition = stage.open && userRequested;
+        userRequested = false;
+        if (!shouldPosition) return;
         requestAnimationFrame(() => stage.scrollIntoView({ block: "start" }));
       });
     });
