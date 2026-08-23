@@ -390,6 +390,13 @@ export const ZH_TW = {
       overall: "整體研究",
       owners: "屋主視角",
       renters: "租客視角",
+      controlLabel: "路徑比較視角",
+      lensLabel: "此視角的重點",
+      views: {
+        overall: "將完整路徑結構與以問卷為基礎的參照進行比較。",
+        owners: "在不向模型揭露社會群體標籤的前提下，檢視屋主路徑。",
+        renters: "使用相同的測量構念，檢視租客路徑與限制條件相關差異。",
+      },
       note: "研究設計示意圖 · 未包含未發表的係數",
       input: "人物誌輸入",
       constructs: "測量構念",
@@ -399,6 +406,12 @@ export const ZH_TW = {
     timeline: {
       owner: "屋主",
       renter: "租客",
+      controlLabel: "家戶租賃身分視角",
+      lensLabel: "此視角中的變化",
+      views: {
+        owner: "屋主狀態包含房產調適、保險、損害、理賠與自付額回饋。",
+        renter: "租客狀態採用符合租賃身分的選擇與財務曝險，不預設可執行房產層級行動。",
+      },
       note: "系統架構示意圖 · 並非已報告的研究結果",
       start: "家戶狀態",
       choice: "調適選擇",
@@ -407,6 +420,7 @@ export const ZH_TW = {
       repeat: "下一個年度時間步長",
     },
     governance: {
+      controlLabel: "治理流程狀態",
       first: "檢視提案行動",
       repaired: "檢視針對性修正",
       note: "靜態展示 · 無即時模型呼叫",

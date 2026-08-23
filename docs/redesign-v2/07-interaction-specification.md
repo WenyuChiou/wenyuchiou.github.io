@@ -2,12 +2,12 @@
 
 ## Homepage Evidence Chain
 
-Six native `<details>` stages: human evidence, decision pathways, behavioral simulation, LLM evaluation, governance/repair, and external feedback. Each exposes question, input, method, output, validity risk, AI-team relevance, and a case-study link.
+Six native `<details>` stages: human evidence, decision pathways, behavioral simulation, LLM evaluation, governance/repair, and external feedback. Each exposes question, input, method, output, validity risk, AI-team relevance, and a case-study link. The interaction adopts a chapter-based storytelling pattern: one stage is foregrounded at a time, the active chapter receives a persistent visual marker, and the newly opened chapter is repositioned below the sticky header.
 
 - Keyboard: summary elements receive native focus and Enter/Space activation.
 - Mobile: one-column expansion; no horizontal scroll.
 - Static fallback: all stages are present in prerendered HTML and remain operable without JavaScript.
-- Motion: only chevron rotation and native expansion; essential content never depends on animation.
+- Motion: a short content reveal and chevron rotation clarify the state change; `prefers-reduced-motion` reduces both to effectively zero and essential content never depends on animation.
 
 ## LLM Pathway Explorer
 

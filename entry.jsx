@@ -13,11 +13,25 @@ if (root) {
     menu?.addEventListener("click", () => {
       const open = navigation?.classList.toggle("is-open") || false;
       menu.setAttribute("aria-expanded", String(open));
+      menu.setAttribute("aria-label", open ? menu.dataset.closeLabel : menu.dataset.openLabel);
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || menu?.getAttribute("aria-expanded") !== "true") return;
+      navigation?.classList.remove("is-open");
+      menu.setAttribute("aria-expanded", "false");
+      menu.setAttribute("aria-label", menu.dataset.openLabel);
+      menu.focus();
     });
     root.querySelector(".theme-button")?.addEventListener("click", () => {
       const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
       document.documentElement.dataset.theme = next;
-      window.localStorage.setItem("wy-theme", next);
+      try { window.localStorage.setItem("wy-theme", next); } catch {}
+    });
+    root.querySelectorAll(".stage").forEach((stage) => {
+      stage.addEventListener("toggle", (event) => {
+        if (!stage.open || !event.isTrusted) return;
+        requestAnimationFrame(() => stage.scrollIntoView({ block: "start" }));
+      });
     });
   }
 }

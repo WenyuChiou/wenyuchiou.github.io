@@ -12,6 +12,7 @@ const args = Object.fromEntries(process.argv.slice(2).map((arg) => {
 const root = process.cwd();
 const outDir = path.resolve(String(args.out || "screenshots"));
 const routes = args.routes ? String(args.routes).split(",") : Object.keys(SEO.routes);
+const fullPage = args.full !== "false";
 const browserCandidates = [process.env.CHROME_PATH, "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, "Google", "Chrome", "Application", "chrome.exe") : null].filter(Boolean);
 const executablePath = browserCandidates.find((candidate) => fs.existsSync(candidate));
 if (!executablePath) throw new Error("Chrome not found; set CHROME_PATH");
@@ -35,6 +36,7 @@ if (!baseUrl) {
 
 const viewports = {
   desktop: { width: 1440, height: 1000, deviceScaleFactor: 1 },
+  tablet: { width: 768, height: 800, deviceScaleFactor: 1 },
   mobile: { width: 390, height: 844, deviceScaleFactor: 1 },
 };
 const browser = await puppeteer.launch({ executablePath, headless: true });
@@ -49,7 +51,7 @@ try {
       if (!response || response.status() >= 400) throw new Error(`${route} returned HTTP ${response?.status()}`);
       await page.evaluate(() => document.fonts.ready);
       const name = route === "/" ? "home" : route.replace(/^\//, "").replace(/\/$/, "").replaceAll("/", "--");
-      await page.screenshot({ path: path.join(outDir, mode, `${name}.jpg`), type: "jpeg", quality: 82, fullPage: true });
+      await page.screenshot({ path: path.join(outDir, mode, `${name}.jpg`), type: "jpeg", quality: 82, fullPage });
       await page.close();
       count += 1;
     }
