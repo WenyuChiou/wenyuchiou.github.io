@@ -1,0 +1,23 @@
+{
+  "checkedAt": "2026-08-23",
+  "items": [
+    {
+      "type": { "en": "LinkedIn", "zh-TW": "LinkedIn" },
+      "title": { "en": "An open research stack for agentic AI and Model Context Protocol workflows", "zh-TW": "面向代理式 AI 與模型上下文協議工作流的開放研究工具組" },
+      "summary": { "en": "A public note on research-hub, composable research skills, and verified agent workflows.", "zh-TW": "介紹 research-hub、可組合研究技能與可驗證代理工作流的公開貼文。" },
+      "url": "https://www.linkedin.com/posts/wenyu-chiou_aiide-agenticai-modelcontextprotocol-activity-7408822754180755457-pKY5"
+    },
+    {
+      "type": { "en": "Publication", "zh-TW": "期刊論文" },
+      "title": { "en": "Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions", "zh-TW": "Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions" },
+      "summary": { "en": "Published in Water Resources Research, volume 62, issue 6.", "zh-TW": "刊登於 Water Resources Research，第 62 卷第 6 期。" },
+      "url": "https://doi.org/10.1029/2025WR042111"
+    },
+    {
+      "type": { "en": "Presentation", "zh-TW": "會議發表" },
+      "title": { "en": "What Makes AI Believable?", "zh-TW": "What Makes AI Believable?" },
+      "summary": { "en": "ISDSA 2026 presentation comparing AI and human responses in mental-health risk assessment.", "zh-TW": "ISDSA 2026 會議發表，比較 AI 與人類在心理健康風險評估中的回應。" },
+      "url": "https://www.mgt.ntnu.edu.tw/%E9%82%B1%E7%9A%93%E6%94%BF"
+    }
+  ]
+}

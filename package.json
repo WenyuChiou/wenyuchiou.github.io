@@ -2,21 +2,33 @@
   "name": "wenyu-portfolio",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "description": "Personal portfolio site. Source is JSX compiled to a single bundle by esbuild (no in-browser Babel). Run `npm run build` after editing *.jsx / content.js, then commit assets/app.bundle.js.",
   "scripts": {
     "build": "node build.mjs",
-    "pdf": "node cv/build-pdf.mjs"
+    "pdf": "node cv/build-pdf.mjs",
+    "test": "node scripts/verify-site.mjs && node scripts/check-copy.mjs --strict --require-pdfs",
+    "qa:browser": "node scripts/browser-audit.mjs",
+    "qa:lighthouse": "node scripts/lighthouse-audit.mjs",
+    "qa:screenshots": "node scripts/capture-screenshots.mjs",
+    "refresh:github": "node scripts/fetch-github-data.mjs"
   },
   "devDependencies": {
     "@fontsource-variable/fraunces": "^5.2.9",
     "@fontsource/inter": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.2.8",
+    "axe-core": "^4.10.2",
     "esbuild": "^0.24.0",
+    "lighthouse": "^13.4.1",
     "puppeteer-core": "^25.3.0"
   },
   "dependencies": {
     "@fontsource-variable/hanken-grotesk": "^5.3.0",
     "@fontsource-variable/source-serif-4": "^5.3.0",
+    "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   }

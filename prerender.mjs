@@ -1,40 +1,22 @@
-// prerender.mjs — S8: emit the static routes (implementation-plan §1.2).
-//
-// react-dom/server renderToStaticMarkup per route; per-route <head> injected
-// into template.html from seo.js: title/description/OG/canonical everywhere,
-// citation_* tags on /publications/ ONLY (IA §4.2.1/§4.2.4), JSON-LD Person on
-// "/" ONLY and ScholarlyArticle on /publications/ ONLY (IA §4.2.2). Canonical
-// URLs absolute; asset paths root-absolute so subdirectory routes resolve.
-//
-// Invoked by build.mjs AFTER the client bundle is built; sitemap/robots and
-// content-hash stamping of the generated pages happen in build.mjs. Fail-closed:
-// any route/page mismatch, unreplaced placeholder, or h1-less render exits 1.
-
 import esbuild from "esbuild";
+import { createRequire } from "node:module";
 import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import path from "node:path";
 import os from "node:os";
-import { createRequire } from "node:module";
-import { fileURLToPath } from "node:url";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-
-// --- 1. Bundle an SSR module so Node can execute the JSX sources. app.jsx's
-// client mount is guarded (typeof document check), so importing is side-effect
-// free under Node. No extra entry file: the entry lives in this stdin string.
-// CJS output (loaded via createRequire): react-dom/server's CommonJS internals
-// require node builtins ("stream"), which esbuild's ESM output cannot express.
 const tmp = mkdtempSync(path.join(os.tmpdir(), "wy-prerender-"));
 const ssrFile = path.join(tmp, "ssr.cjs");
+
 await esbuild.build({
   stdin: {
     contents: [
-      'import { renderToStaticMarkup } from "react-dom/server";',
+      'import { renderToString } from "react-dom/server";',
       'import { createElement } from "react";',
       'import { App } from "./app.jsx";',
       'export { SEO } from "./seo.js";',
-      'export { CONTENT } from "./content.js";',
-      "export const renderPage = (page) => renderToStaticMarkup(createElement(App, { page }));",
+      'export const renderPage = (page, locale, basePath) => renderToString(createElement(App, { page, locale, basePath }));',
     ].join("\n"),
     resolveDir: ROOT,
     sourcefile: "ssr-entry.jsx",
@@ -43,103 +25,78 @@ await esbuild.build({
   bundle: true,
   platform: "node",
   format: "cjs",
-  target: "node18",
+  target: "node20",
   jsx: "automatic",
   define: { "process.env.NODE_ENV": '"production"' },
   outfile: ssrFile,
   legalComments: "none",
 });
 
-let SEO, CONTENT, renderPage;
+let SEO;
+let renderPage;
 try {
-  ({ SEO, CONTENT, renderPage } = createRequire(import.meta.url)(ssrFile));
+  ({ SEO, renderPage } = createRequire(import.meta.url)(ssrFile));
 } finally {
   rmSync(tmp, { recursive: true, force: true });
 }
 
-// --- 2. Route table: every seo.js route maps 1:1 to a PAGES key. Fail-closed
-// on any mismatch so a route can never ship without metadata or vice versa.
-const ROUTE_PAGE = {
-  "/": "home",
-  "/research/": "research",
-  "/engineering/": "engineering",
-  "/publications/": "publications",
-};
-for (const slug of Object.keys(CONTENT.caseStudies)) {
-  ROUTE_PAGE["/projects/" + slug + "/"] = "project:" + slug;
-}
-const seoRoutes = Object.keys(SEO.routes);
-{
-  const missing = seoRoutes.filter((r) => !ROUTE_PAGE[r]);
-  const extra = Object.keys(ROUTE_PAGE).filter((r) => !SEO.routes[r]);
-  if (missing.length || extra.length || seoRoutes.length !== 10) {
-    console.error("prerender: route table mismatch", { missing, extra, seoRouteCount: seoRoutes.length });
-    process.exit(1);
-  }
-}
-
-// --- 3. Head builders.
-const esc = (s) =>
-  String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-// "<" escaped inside JSON-LD so the block can never close its own <script>.
-const jsonLd = (obj) =>
-  '<script type="application/ld+json">' + JSON.stringify(obj).replace(/</g, "\\u003c") + "</script>";
-
-function headExtra(route) {
-  const parts = [];
-  if (route === "/") parts.push(jsonLd(SEO.jsonLd.person)); // Person on "/" only
-  if (route === SEO.citationMeta.route) {
-    // citation_* tags on /publications/ only; citation_author emits one tag
-    // per author, in published order (IA §4.2.1).
-    for (const [name, v] of Object.entries(SEO.citationMeta.tags)) {
-      for (const val of Array.isArray(v) ? v : [v]) {
-        parts.push('<meta name="' + name + '" content="' + esc(val) + '"/>');
-      }
-    }
-    parts.push(jsonLd(SEO.jsonLd.scholarlyArticle)); // ScholarlyArticle here only
-  }
-  return parts.map((t) => "  " + t).join("\n");
-}
-
-// --- 4. Render + emit each route.
+const esc = (value) => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const jsonLd = (value) => `<script type="application/ld+json">${JSON.stringify(value).replace(/</g, "\\u003c")}</script>`;
 const template = readFileSync(path.join(ROOT, "template.html"), "utf8").replace(/\r\n/g, "\n");
-const GENERATED_BANNER =
-  "<!-- GENERATED from template.html by prerender.mjs (npm run build) — do not edit this file directly. -->";
+const banner = "<!-- GENERATED by prerender.mjs from template.html. Do not edit directly. -->";
 
-for (const route of seoRoutes) {
-  const meta = SEO.routes[route];
-  const page = ROUTE_PAGE[route];
-  const appHtml = renderPage(page);
-  if (!appHtml || appHtml.indexOf("<h1") === -1) {
-    console.error(`prerender: route ${route} (page "${page}") rendered no <h1> — refusing to emit`);
-    process.exit(1);
+function extraHead(meta) {
+  const parts = [];
+  if (meta.page === "home") {
+    parts.push('<link rel="preload" href="/assets/agu2025-photo.webp" as="image" type="image/webp" imagesrcset="/assets/agu2025-photo-mobile.webp 640w, /assets/agu2025-photo.webp 1108w" imagesizes="100vw" fetchpriority="high">');
+    parts.push(jsonLd(SEO.person));
   }
-  const fill = (name, value) => (h) => h.replace(new RegExp("\\{\\{" + name + "\\}\\}", "g"), () => value);
-  let html = template.replace(/<!-- template\.html[\s\S]*?-->/, GENERATED_BANNER);
-  for (const step of [
-    fill("TITLE", esc(meta.title)),
-    fill("DESCRIPTION", esc(meta.description)),
-    fill("CANONICAL", esc(meta.canonical)),
-    fill("OG_TYPE", esc(meta.ogType)),
-    fill("OG_IMAGE", esc(SEO.siteUrl + SEO.ogImage.file)),
-    fill("OG_IMAGE_ALT", esc(SEO.ogImage.alt)),
-    fill("PAGE", esc(page)),
-    fill("APP_HTML", appHtml),
-  ]) html = step(html);
-  // HEAD_EXTRA sits alone on a line; drop the line entirely when empty.
-  const extraBlock = headExtra(route);
-  html = html.replace(/[ \t]*\{\{HEAD_EXTRA\}\}\n/, () => (extraBlock ? extraBlock + "\n" : ""));
-
-  const leftover = html.match(/\{\{[A-Z_]+\}\}/);
-  if (leftover) {
-    console.error(`prerender: unreplaced placeholder ${leftover[0]} in ${route} — refusing to emit`);
-    process.exit(1);
+  if (SEO.citationMeta.paths.includes(meta.path)) {
+    for (const [name, raw] of Object.entries(SEO.citationMeta.tags)) {
+      for (const value of Array.isArray(raw) ? raw : [raw]) parts.push(`<meta name="${name}" content="${esc(value)}">`);
+    }
+    parts.push(jsonLd(SEO.article));
   }
-
-  const rel = route === "/" ? "index.html" : route.slice(1) + "index.html";
-  const outPath = path.join(ROOT, rel);
-  mkdirSync(path.dirname(outPath), { recursive: true });
-  writeFileSync(outPath, html);
-  console.log(`prerendered ${route} -> ${rel} (${(html.length / 1024).toFixed(1)} KB)`);
+  return parts.map((part) => `  ${part}`).join("\n");
 }
-console.log(`prerender: ${seoRoutes.length} routes emitted`);
+
+const generated = [];
+for (const meta of Object.values(SEO.routes)) {
+  const appHtml = renderPage(meta.page, meta.locale, meta.basePath);
+  if (!appHtml.includes("<h1")) throw new Error(`Route ${meta.path} rendered without an h1`);
+  const english = meta.locale === "en" ? meta.canonical : meta.alternate;
+  const chinese = meta.locale === "zh-TW" ? meta.canonical : meta.alternate;
+  const values = {
+    LANG: meta.lang,
+    TITLE: meta.title,
+    DESCRIPTION: meta.description,
+    CANONICAL: meta.canonical,
+    HREFLANG_EN: english,
+    HREFLANG_ZH: chinese,
+    HREFLANG_DEFAULT: meta.xDefault,
+    OG_TYPE: meta.ogType,
+    OG_LOCALE: meta.ogLocale,
+    OG_IMAGE: SEO.siteUrl + SEO.ogImage.file,
+    OG_IMAGE_ALT: SEO.ogImage.alt,
+    HEAD_EXTRA: extraHead(meta),
+    PAGE: meta.page,
+    LOCALE: meta.locale,
+    BASE_PATH: meta.basePath,
+    APP_HTML: appHtml,
+  };
+  let html = template.replace(/<!-- template\.html[^\n]*-->/, banner);
+  for (const [key, raw] of Object.entries(values)) {
+    const value = key === "APP_HTML" || key === "HEAD_EXTRA" ? raw : esc(raw);
+    html = html.replaceAll(`{{${key}}}`, value);
+  }
+  const leftovers = html.match(/\{\{[A-Z_]+\}\}/g);
+  if (leftovers) throw new Error(`Unreplaced placeholders in ${meta.path}: ${leftovers.join(", ")}`);
+  const relative = meta.path === "/" ? "index.html" : `${meta.path.slice(1)}index.html`;
+  const output = path.join(ROOT, relative);
+  mkdirSync(path.dirname(output), { recursive: true });
+  writeFileSync(output, html);
+  generated.push(relative);
+  console.log(`prerendered ${meta.path} -> ${relative}`);
+}
+
+console.log(`prerender: ${generated.length} localized routes emitted`);

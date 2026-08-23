@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wenyu Chiou — 學術履歷</title>
+  <link rel="stylesheet" href="print.css">
+</head>
+<body class="doc-cv cv2 zh-doc">
+
+  <!-- Header — original design language: kicker, big serif name, italic positioning
+       statement (owner's original sentence, verbatim), contact rows, photo right. -->
+  <header class="cv2-header">
+    <div class="cv2-head-text">
+      <p class="cv2-kicker">Curriculum Vit&aelig;</p>
+      <h1>邱文昱 Wenyu Chiou</h1>
+      <p class="cv2-subtitle">博士候選人 &middot; 土木與環境工程學系 | 複雜適應水系統實驗室 (CAWS Lab), 理海大學 (Lehigh University)</p>
+      <p class="cv2-positioning">我的研究旨在開發受治理的 LLM 驅動代理與多代理系統，應用於人類—水系統耦合建模 — 橋接實證行為數據、具解釋力的規則模擬以及大型語言模型，以研究人類—洪災互動與風險下的決策。</p>
+      <p class="cv2-contact">
+        <a class="u" href="mailto:wec324@lehigh.edu">wec324@lehigh.edu</a> &middot;
+        +1 (484) 937-2528 &middot;
+        Bethlehem, PA, USA &middot;
+        ORCID <a class="u" href="https://orcid.org/0009-0005-8006-1288">0009-0005-8006-1288</a>
+      </p>
+      <p class="cv2-contact">
+        <a class="u" href="https://github.com/WenyuChiou">github.com/WenyuChiou</a> &middot;
+        <a class="u" href="https://www.linkedin.com/in/wenyu-chiou">linkedin.com/in/wenyu-chiou</a> &middot;
+        <a class="u" href="https://wenyuchiou.github.io">wenyuchiou.github.io</a> &middot;
+        <a class="u" href="https://scholar.google.com/citations?user=vSQ3zT4AAAAJ&amp;hl=en">Google Scholar</a>
+      </p>
+    </div>
+  </header>
+
+  <!-- § 01 Education -->
+  <section class="cv-section">
+    <h2><span class="secnum">&sect; 01</span> 學歷</h2>
+    <ul class="entry-list">
+      <li class="entry">
+        <p><strong>土木與環境工程博士 (Ph.D.)</strong>, 理海大學 (Lehigh University) <span class="dates">2024 年 8 月 &ndash; 至今 &middot; 預計 2027 年 12 月</span></p>
+        <p class="detail">複雜適應水系統實驗室（CAWS Lab）&middot; 指導教授：Y.C. Ethan Yang 教授 &middot; Center for Catastrophe Modeling and Resilience（CMR）</p>
+        <p class="detail"><strong>博士論文:</strong> <em>Advancing Coupled Human-Flood Modeling: From Empirical Foundations to LLM-Driven Multi-Agent Simulation</em></p>
+        <p class="detail">研究內容：家戶洪災調適的 LLM 驅動耦合 ABM—巨災模型框架；水資源代理治理框架（WAGF），在代理行動前根據物理、財務與行為理論限制檢查 LLM 代理決策；用於量化風險評估的多代理系統。</p>
+      </li>
+      <li class="entry">
+        <p><strong>水文與海洋科學碩士 (M.S.)</strong>, 國立中央大學 (NCU), 台灣 <span class="dates">2021 年 9 月 &ndash; 2023 年 6 月</span></p>
+        <p class="detail">地表水文研究室 &middot; 水文與海洋科學研究所 (IHOS) &middot; GPA 4.3/4.3 &middot; 地球科學學院院長獎 (2023 年 6 月)。論文: 桃園海岸帶地下水流特徵。</p>
+      </li>
+      <li class="entry">
+        <p><strong>地球科學學士 (B.S.)</strong>, 國立中央大學 (NCU), 台灣 <span class="dates">2017 年 9 月 &ndash; 2021 年 6 月</span></p>
+        <p class="detail">GPA 3.9/4.3 &middot; 地球科學系最佳專題研究獎 (2020 年 11 月)。</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- § 02 Research Experience — AI-agent work leads; earlier hydrology follows chronologically -->
+  <section class="cv-section">
+    <h2><span class="secnum">&sect; 02</span> 研究經歷</h2>
+    <ul class="entry-list">
+      <li class="entry">
+        <p><strong>博士候選人</strong> &mdash; 複雜適應水系統實驗室 (CAWS Lab), 理海大學 <span class="dates">2024 年 8 月 &ndash; 至今</span></p>
+        <ul class="bullets">
+          <li>共同撰寫 <em>Water Resources Research</em> (2026) 期刊論文，評估大型語言模型在人類—水系統模擬中作為行為組件的表現 — 已發表；第二作者。</li>
+          <li>設計了一項人類與 LLM 對比研究，使用 937 戶家戶回應、隱藏標籤的社經人物誌、驗證性因素分析、多群體結構方程式模型以及重複執行穩定性檢查，將生成行為與測量路徑進行比較；論文撰寫中。</li>
+          <li>建置<strong>水資源代理治理框架（WAGF）</strong>，包含驗證規則、執行控制與稽核日誌 — 代理決策在模擬狀態更新前，需經過物理、財務與行為理論限制的檢查；研究軟體開發中，尚未公開釋出。</li>
+          <li>建置涵蓋 27 個普查區、2011–2023 年間 52,141 戶家戶的耦合代理人基與災難洪災模型 (每情境 50 次隨機模擬)，包含 NFIP 保費、理賠與自付額機制，以評估實體洪災損害、保險理賠與家戶自付財務風險；行為透過結構方程式模型與貝氏方法進行校準。</li>
+          <li>設計並執行 937 戶洪災調適問卷調查 (紐澤西州 Passaic 河域)，以及從問卷到代理參數化的流程 (結構方程式模型 &rarr; 貝氏校準)，將實證數據轉化為校準的代理參數。</li>
+        </ul>
+      </li>
+      <li class="entry">
+        <p><strong>研究助理</strong> &mdash; 地表水文研究室, 水文與海洋科學研究所, 國立中央大學 <span class="dates">2023 &ndash; 2024</span></p>
+        <ul class="bullets">
+          <li>桃園海岸帶 2D/3D 地下水數值建模與校準 (HydroGeoChem)；評估地下水與流域管理的自然解方 (Nature-based Solutions)。</li>
+        </ul>
+      </li>
+      <li class="entry">
+        <p><strong>暑期研究實習生</strong> &mdash; 國家災害防救科技中心 (NCDR), 台灣 <span class="dates">2022 年夏季</span></p>
+        <ul class="bullets">
+          <li>處理 IPCC AR6 台灣降尺度氣候模型系集；自動化多模型比較流程 (Python, MATLAB)。</li>
+        </ul>
+      </li>
+      <li class="entry">
+        <p><strong>大學部研究實習生</strong> &mdash; 中央研究院地球科學研究所 <span class="dates">2020 年 7 月 &ndash; 8 月</span></p>
+        <ul class="bullets">
+          <li>翡翠水庫穩定同位素水文學 (&delta;D/&delta;&sup1;&#8312;O) 研究。</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <!-- § 03 Publications & Presentations — numbered entries, status chips, honest statuses -->
+  <section class="cv-section">
+    <h2><span class="secnum">&sect; 03</span> 著作與發表</h2>
+    <p class="group-label">同儕審查期刊</p>
+    <ul class="entry-list pub-list">
+      <li class="entry">
+        <p><span class="pubnum">[1]</span> Yang, Y. C. E., &amp; <strong class="self">Chiou, W.</strong> (2026). Leveraging Large Language Models for Agent-Based Simulation of Human&ndash;Water System Interactions. <em>Water Resources Research</em>, 62(6), e2025WR042111. <a class="u" href="https://doi.org/10.1029/2025WR042111">doi.org/10.1029/2025WR042111</a> <span class="chip chip-published">已發表</span></p>
+      </li>
+    </ul>
+    <p class="group-label">審查中與撰寫中論文手稿</p>
+    <ul class="entry-list pub-list">
+      <li class="entry">
+        <p><span class="pubnum">[2]</span> <strong class="self">Chiou, W. Y.</strong>, Yang, Y. C. E., Tanaka, T., Jamrussri, S., &amp; Feng, S. <em>Household Flood Adaptation and Financial Outcomes: A Coupled Human&ndash;Flood Modeling Analysis of Homeowners and Renters.</em> <em>Water Resources Research</em>. <span class="chip chip-review">同儕審查後修改中</span></p>
+      </li>
+      <li class="entry">
+        <p><span class="pubnum">[3]</span> <strong class="self">Chiou, W. Y.</strong> <em>Flood Adaptation Decision Variables and Pathways across Social Groups: A Comparison between Human Survey Responses and Responses Generated by Large Language Models.</em> Planned submission to <em>Progress in Disaster Science</em>. <span class="chip chip-review">撰寫中</span></p>
+      </li>
+    </ul>
+    <p class="group-label">會議發表</p>
+    <ul class="entry-list pub-list">
+      <li class="entry">
+        <p><strong class="self">Chiou, W.</strong>, &amp; Chiou, H. &mdash; &ldquo;What Makes AI Believable? Comparing AI and Human Responses in Mental Health Risk Assessment.&rdquo; ISDSA 2026 Annual Meeting (International Society for Data Science and Analytics); recorded presentation.</p>
+      </li>
+      <li class="entry">
+        <p><strong class="self">Chiou, W.</strong>, Yang, Y. C. E., Tanaka, T., Jamrussri, S., &amp; Feng, S. &mdash; &ldquo;Modeling Long-Term Flood Adaptation Action Across Marginalized and Non-Marginalized Groups: A Coupled Agent-Based Model.&rdquo; Poster NH41E-0449, abstract 1890827, AGU25, New Orleans.</p>
+      </li>
+      <li class="entry">
+        <p>ISHC 2025, Tokyo, Japan &mdash; oral presentation 38-03, July 2025; co-authored with collaborators across Lehigh, FAU, Kyoto, and UTokyo.</p>
+      </li>
+      <li class="entry">
+        <p>AGU Fall Meeting 2023 &mdash; abstract; submarine groundwater discharge study combining electrical resistivity tomography, field observation, and numerical simulation.</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- § 04 Awards & Fellowships -->
+  <section class="cv-section">
+    <h2><span class="secnum">&sect; 04</span> 獲獎與獎學金</h2>
+    <ul class="entry-list">
+      <li class="entry"><p>地球科學學院院長獎 &mdash; 國立中央大學 <span class="dates">2023 年 6 月</span></p></li>
+      <li class="entry"><p>跨領域研究獎學金 (水文/地球物理/地質) &mdash; 國家科學及技術委員會 (NSTC), 台灣 &middot; $4,000 USD/年 <span class="dates">2021 &ndash; 2023</span></p></li>
+      <li class="entry"><p>地球科學系最佳專題研究獎 &mdash; 國立中央大學 <span class="dates">2020 年 11 月</span></p></li>
+      <li class="entry"><p>大專學生研究計畫補助 &mdash; 國家科學及技術委員會 (NSTC), 台灣 &middot; 總計 $1,600 USD <span class="dates">2020 &ndash; 2021</span></p></li>
+    </ul>
+  </section>
+
+  <!-- § 05 / § 06 — two-column: Research Interests | Methods & Tools -->
+  <div class="two-col">
+    <section class="cv-section">
+      <h2><span class="secnum">&sect; 05</span> 研究興趣</h2>
+      <ul class="bullets plain">
+        <li>LLM 多代理系統</li>
+        <li>代理評估與治理</li>
+        <li>代理人基模型 (ABM)</li>
+        <li>巨災模型（Catastrophe modeling）</li>
+        <li>人類—水系統互動</li>
+        <li>風險下的決策行為</li>
+        <li>結構方程式模型 (SEM)</li>
+      </ul>
+    </section>
+    <section class="cv-section">
+      <h2><span class="secnum">&sect; 06</span> 方法與工具</h2>
+      <p class="group-label">代理系統</p>
+      <p class="detail">LLM 代理 &middot; 多代理系統 &middot; 結構化提示詞 &middot; 驗證規則 &middot; 稽核日誌 &middot; 模擬耦合</p>
+      <p class="group-label">程式語言</p>
+      <p class="detail">Python &middot; TypeScript &middot; R &middot; MATLAB &middot; C++</p>
+      <p class="group-label">軟體與工具</p>
+      <p class="detail">Git &middot; Jupyter &middot; SPSS &middot; AMOS &middot; ArcGIS Pro</p>
+      <p class="group-label">AI 開發工具</p>
+      <p class="detail">Claude Code &middot; Codex CLI &middot; Cursor &middot; Ollama &middot; MCP &middot; 擴充套件/技能開發 (plugin/skill development)</p>
+    </section>
+  </div>
+
+  <!-- § 07 Research Software & AI Systems — card grid, original design; statuses honest -->
+  <section class="cv-section">
+    <h2><span class="secnum">&sect; 07</span> 研究軟體 &middot; LLM 代理系統與 AI 研究工作流</h2>
+    <div class="card-grid">
+      <div class="card">
+        <p class="card-title">research-hub</p>
+        <p class="card-meta">AI 可操作的研究工作區 &middot; PyPI v1.1.1 &middot; 持續維護的開源工具</p>
+        <p class="card-body">為 Zotero、Obsidian 與 NotebookLM 打造的 AI 可操作研究工作區 — 透過 CLI、MCP 伺服器與 REST API 進行文獻搜尋、攝取與同步。收錄於 Awesome MCP Servers。</p>
+      </div>
+      <div class="card">
+        <p class="card-title">WAGF &mdash; 水資源代理治理框架</p>
+        <p class="card-meta">LLM 代理模擬治理 &middot; 開發中，尚未公開釋出</p>
+        <p class="card-body">用於人類—水系統模擬的受治理 LLM 代理框架，在模擬狀態更新前檢查代理決策是否符合物理、財務與行為理論限制。</p>
+      </div>
+      <div class="card">
+        <p class="card-title">FLOODABM</p>
+        <p class="card-meta">耦合 ABM &times; CAT 模型 &middot; 研究原型，已封存</p>
+        <p class="card-body">量化人類—洪災互動與保險結果的大規模模擬 (52,141 戶家戶)；附有 CITATION.cff 的 Zenodo 封存程式碼。</p>
+      </div>
+      <div class="card">
+        <p class="card-title">agent-collab-skills</p>
+        <p class="card-meta">多代理編排 &middot; 持續維護的開源工具</p>
+        <p class="card-body">多代理編排 — 任務拆解、輸出協調、對抗辯論、共享記憶體，以及合併前的驗收關卡。</p>
+      </div>
+      <div class="card">
+        <p class="card-title">codex-delegate</p>
+        <p class="card-meta">AI 研究工作流工具 &middot; 持續維護的開源工具</p>
+        <p class="card-body">代理委派封裝工具，透過 git 狀態驗證變更，而非依賴代理自身的報告；透過回歸測試鎖定真實的上游失效問題。支援 Ubuntu 與 Windows 的 CI。</p>
+      </div>
+      <div class="card">
+        <p class="card-title">ai-research-skills</p>
+        <p class="card-meta">研究工作流 &middot; 持續維護的開源工具</p>
+        <p class="card-body">一套完整的研究工作流，用於識別研究缺口、尋找與綜合文獻、設計研究及草稿撰寫 — 支援從想法評估到手稿發展的完整研究生命週期。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 08 Professional Service -->
+  <section class="cv-section">
+    <h2><span class="secnum">&sect; 08</span> 專業服務</h2>
+    <ul class="entry-list">
+      <li class="entry"><p>研究生委員會委員 &mdash; 理海大學土木與環境工程學系 <span class="dates">2025 &ndash; 至今</span></p></li>
+    </ul>
+  </section>
+
+  <!-- § 09 Community & Open-Source -->
+  <section class="cv-section">
+    <h2><span class="secnum">&sect; 09</span> 社群與開源貢獻</h2>
+    <ul class="entry-list">
+      <li class="entry">
+        <p><strong>awesome-agentic-ai-zh</strong> <span class="dates">6K+ GitHub stars (驗證於 2026 年 8 月)</span></p>
+        <p class="detail">三語 (繁中 / 簡中 / 英文) 的 7 階段發展藍圖，從 LLM 基礎到生產環境多代理系統；自動化檢查保持三種語言同步；外部貢獻者參與。</p>
+      </li>
+      <li class="entry">
+        <p><strong>精選開源工程貢獻</strong></p>
+        <p class="detail">在 BuilderIO/agent-native 中找出引擎選擇錯誤的根本原因並加入回歸測試；修正 langchain-ai/openwiki 在 Windows 下的檔案權限處理問題；並在 daily_stock_analysis 中加入對台灣市場與機構資金流資料的完整支援。</p>
+      </li>
+    </ul>
+  </section>
+
+
+
+  <!-- § 10 Languages + colophon — one combined final row (page-budget) -->
+  <footer class="cv2-footer lang-foot">
+    <span><strong>語言</strong>&ensp;中文 (Mandarin Chinese) &mdash; 母語 &nbsp;&middot;&nbsp; 英文 (English) &mdash; 專業流利</span>
+    <span>修訂於 2026 年 8 月 &middot; wenyuchiou.github.io</span>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+name: Validate portfolio
+
+on:
+  pull_request:
+  push:
+    branches: [standalone-portfolio, codex/redesign-v2]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CHROME_PATH: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.19.0
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run pdf
+      - run: npm test
+      - run: npm run qa:browser
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bilingual-cv-pdfs
+          path: |
+            assets/Wenyu_Chiou_Industry_Resume_EN.pdf
+            assets/Wenyu_Chiou_Industry_Resume_zh-TW.pdf
+            assets/Wenyu_Chiou_Academic_CV_EN.pdf
+            assets/Wenyu_Chiou_Academic_CV_zh-TW.pdf
+          if-no-files-found: error

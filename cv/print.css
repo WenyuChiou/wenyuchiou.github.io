@@ -518,3 +518,20 @@ body.doc-resume li {
 .resume2 section:last-child h2 { margin-top: 1pt; margin-bottom: 1pt; }
 .resume2 section:last-child .skill-line { font-size: 8.4pt; line-height: 1.08; }
 .resume2 section:nth-last-child(2) .edu-line { line-height: 1.15; margin-bottom: 0; }
+
+/* Traditional Chinese documents use Taiwan system fonts with complete CJK
+   coverage. English citations and URLs fall back cleanly within the stack. */
+html[lang="zh-Hant-TW"] .zh-doc,
+html[lang="zh-Hant-TW"] .zh-doc * {
+  font-family: "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", "PMingLiU", serif;
+  letter-spacing: 0;
+}
+html[lang="zh-Hant-TW"] .zh-doc .u {
+  font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+}
+html[lang="zh-Hant-TW"] .resume2 { font-size: 8.9pt; line-height: 1.28; }
+html[lang="zh-Hant-TW"] .resume2 .r2-contact { font-size: 7.4pt; }
+html[lang="zh-Hant-TW"] .resume2 .skill-line,
+html[lang="zh-Hant-TW"] .resume2 .publine { font-size: 8.15pt; line-height: 1.16; }
+html[lang="zh-Hant-TW"] .cv2 { font-size: 8.9pt; line-height: 1.36; }
+html[lang="zh-Hant-TW"] .cv2 .card-body { font-size: 7.8pt; }
