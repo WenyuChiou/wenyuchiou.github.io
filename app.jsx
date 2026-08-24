@@ -4,6 +4,7 @@ import {
   ArrowDown,
   ArrowUpRight,
   Check,
+  ChevronDown,
   ChevronRight,
   Download,
   FileText,
@@ -72,6 +73,7 @@ function SiteHeader({ content, locale, page, basePath }) {
     if (!open) return undefined;
     const closeOnEscape = (event) => {
       if (event.key !== "Escape") return;
+      if (document.querySelector(".work-dropdown[open]")) return;
       setOpen(false);
       menuRef.current?.focus();
     };
@@ -94,9 +96,30 @@ function SiteHeader({ content, locale, page, basePath }) {
         </button>
         <nav id="primary-navigation" className={open ? "primary-nav is-open" : "primary-nav"} aria-label="Primary">
           <ul>
-            {content.nav.map((item) => (
-              <li key={item.id}><a href={localizedPath(item.href, locale)} aria-current={page === item.id || (page.startsWith("case:") && item.id === "work") ? "page" : undefined}>{item.label}</a></li>
-            ))}
+            {content.nav.map((item) => {
+              const isCurrent = page === item.id || (page.startsWith("case:") && item.id === "work");
+              if (item.id !== "work") return <li key={item.id}><a href={localizedPath(item.href, locale)} aria-current={isCurrent ? "page" : undefined}>{item.label}</a></li>;
+              return (
+                <li className="work-dropdown-item" key={item.id}>
+                  <details className="work-dropdown" data-work-dropdown>
+                    <summary aria-current={isCurrent ? "page" : undefined}>
+                      <span>{item.label}</span><ChevronDown className="work-dropdown-chevron" aria-hidden="true" size={16} />
+                    </summary>
+                    <div className="work-dropdown-panel">
+                      <SmartLink className="work-dropdown-all" href={item.href} locale={locale}>
+                        <span>{content.labels.allWork}</span><ArrowUpRight aria-hidden="true" size={15} />
+                      </SmartLink>
+                      {content.flagship.items.map((project) => (
+                        <SmartLink className="work-dropdown-project" href={project.href} locale={locale} key={project.slug}>
+                          <span className="work-dropdown-index">{project.index}</span>
+                          <span><strong>{project.title}</strong><small>{project.line}</small></span>
+                        </SmartLink>
+                      ))}
+                    </div>
+                  </details>
+                </li>
+              );
+            })}
           </ul>
           <div className="nav-actions">
             <a className="locale-link" href={otherPath} hrefLang={otherLocale}>{content.switchLabel}</a>
@@ -112,11 +135,6 @@ function SiteHeader({ content, locale, page, basePath }) {
 function Hero({ content, locale }) {
   return (
     <section className="hero" aria-labelledby="hero-name">
-      <picture>
-        <source media="(max-width: 620px)" srcSet="/assets/agu2025-photo-mobile.webp" />
-        <img className="hero-media" src="/assets/agu2025-photo.webp" srcSet="/assets/agu2025-photo-tablet.webp 828w, /assets/agu2025-photo.webp 1108w" sizes="100vw" width="1108" height="1477" alt={content.hero.imageAlt} fetchPriority="high" />
-      </picture>
-      <div className="hero-scrim" aria-hidden="true"></div>
       <div className="hero-content wrap">
         <div className="hero-copy">
           <p className="eyebrow hero-eyebrow">{content.hero.eyebrow}</p>
@@ -129,7 +147,13 @@ function Hero({ content, locale }) {
           </div>
           <p className="hero-availability">{content.hero.availability}</p>
         </div>
-        <p className="hero-caption">{content.hero.imageCaption}</p>
+        <figure className="hero-figure">
+          <picture>
+            <source media="(max-width: 620px)" srcSet="/assets/agu2025-photo-mobile.webp" />
+            <img className="hero-media" src="/assets/agu2025-photo.webp" srcSet="/assets/agu2025-photo-tablet.webp 828w, /assets/agu2025-photo.webp 1108w" sizes="(max-width: 620px) 120px, (max-width: 980px) 260px, 360px" width="1108" height="1477" alt={content.hero.imageAlt} fetchPriority="high" />
+          </picture>
+          <figcaption className="hero-caption">{content.hero.imageCaption}</figcaption>
+        </figure>
       </div>
     </section>
   );
@@ -190,12 +214,20 @@ function FlagshipCards({ content, locale, full = false }) {
   return (
     <section id="selected-work" className="section flagship" aria-labelledby="flagship-title"><div className="wrap">
       <SectionHead eyebrow={F.eyebrow} title={F.title} intro={F.intro} id="flagship-title" />
-      <div className="flagship-list">{F.items.map((item) => <article className="flagship-entry" key={item.slug}>
-        <div className="flagship-meta"><span>{item.index}</span><span>{item.status}</span></div>
-        <div className="flagship-summary"><h3>{item.title}</h3><p>{item.line}</p></div>
-        <div className="flagship-contribution"><p>{item.role}</p><ul>{item.practice.map((practice) => <li key={practice}>{practice}</li>)}</ul></div>
-        <SmartLink className="icon-link" href={item.href} locale={locale}><ArrowUpRight aria-hidden="true" /><span className="sr-only">{content.labels.details}: {item.title}</span></SmartLink>
-      </article>)}</div>
+      <div className="flagship-list">{F.items.map((item, index) => (
+        <details className="flagship-entry" name="selected-work-projects" key={item.slug} open={index === 0}>
+          <summary className="flagship-trigger">
+            <span className="flagship-meta"><span>{item.index}</span><span>{item.status}</span></span>
+            <span className="flagship-summary"><h3>{item.title}</h3><span>{item.line}</span></span>
+            <span className="flagship-capability-preview" aria-hidden="true">{item.practice.join(" · ")}</span>
+            <ChevronDown className="flagship-chevron" aria-hidden="true" size={20} />
+          </summary>
+          <div className="flagship-panel">
+            <div className="flagship-contribution"><p>{item.role}</p><ul>{item.practice.map((practice) => <li key={practice}>{practice}</li>)}</ul></div>
+            <SmartLink className="text-link flagship-case-link" href={item.href} locale={locale}>{content.labels.details}<ArrowUpRight aria-hidden="true" size={16} /><span className="sr-only">: {item.title}</span></SmartLink>
+          </div>
+        </details>
+      ))}</div>
       {full ? null : <div className="section-tail"><SmartLink className="text-link" href="/work/" locale={locale}>{content.workPage.title}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>}
     </div></section>
   );

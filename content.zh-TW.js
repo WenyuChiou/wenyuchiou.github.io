@@ -30,6 +30,7 @@ export const ZH_TW = {
     evidence: "證據",
     limitation: "限制",
     details: "檢視案例研究",
+    allWork: "所有作品",
     repository: "原始碼儲存庫",
     publication: "出版物",
     poster: "海報",
