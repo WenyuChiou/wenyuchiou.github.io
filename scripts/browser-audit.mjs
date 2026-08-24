@@ -131,6 +131,70 @@ const auditMobileMenu = async (route) => {
   await page.close();
 };
 
+const auditWorkDropdown = async (route) => {
+  const desktop = await openPage(route, { width: 1440, height: 1000, deviceScaleFactor: 1 });
+  await desktop.hover(".work-dropdown > summary");
+  const hoverState = await desktop.$eval(".work-dropdown", (details) => ({ open: details.open, visible: getComputedStyle(details.querySelector(".work-dropdown-panel")).display !== "none" }));
+  if (!hoverState.open || !hoverState.visible) failures.push(`${route}: Work dropdown did not open semantically on desktop hover`);
+  await desktop.keyboard.press("Escape");
+  const hoverEscaped = await desktop.$eval(".work-dropdown", (details) => ({ open: details.open, focused: document.activeElement === details.querySelector("summary") }));
+  if (hoverEscaped.open || !hoverEscaped.focused) failures.push(`${route}: Escape did not close an unpinned Work hover preview`);
+  await desktop.hover("main");
+  await desktop.focus(".brand");
+  await desktop.focus(".work-dropdown > summary");
+  await desktop.keyboard.press("Tab");
+  await desktop.keyboard.press("Escape");
+  const focusedEscaped = await desktop.$eval(".work-dropdown", (details) => ({ open: details.open, focused: document.activeElement === details.querySelector("summary") }));
+  if (focusedEscaped.open || !focusedEscaped.focused) failures.push(`${route}: Escape did not close a Work preview from an inner link`);
+  await desktop.click(".work-dropdown > summary");
+  await new Promise((resolve) => setTimeout(resolve, 60));
+  const clickedOpen = await desktop.$eval(".work-dropdown", (details) => ({ open: details.open, preview: details.hasAttribute("data-preview"), explicitAria: details.querySelector("summary")?.hasAttribute("aria-expanded") }));
+  if (!clickedOpen.open || clickedOpen.preview || clickedOpen.explicitAria) failures.push(`${route}: Work dropdown click did not pin its native expanded state`);
+  await desktop.keyboard.press("Escape");
+  const escaped = await desktop.$eval(".work-dropdown", (details) => ({ open: details.open, focused: document.activeElement === details.querySelector("summary") }));
+  if (escaped.open || !escaped.focused) failures.push(`${route}: Escape did not close Work dropdown and restore focus`);
+  await desktop.click(".work-dropdown > summary");
+  await desktop.$eval("main", (main) => main.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true })));
+  if (await desktop.$eval(".work-dropdown", (details) => details.open)) failures.push(`${route}: outside pointer interaction did not close Work dropdown`);
+  await desktop.close();
+
+  const mobile = await openPage(route);
+  await mobile.click(".menu-button");
+  await mobile.focus(".work-dropdown > summary");
+  await mobile.keyboard.press("Space");
+  await new Promise((resolve) => setTimeout(resolve, 60));
+  await mobile.keyboard.press("Tab");
+  const mobileState = await mobile.$eval(".work-dropdown", (details) => ({
+    open: details.open,
+    explicitAria: details.querySelector("summary")?.hasAttribute("aria-expanded"),
+    firstLinkFocused: document.activeElement === details.querySelector(".work-dropdown-all"),
+  }));
+  if (!mobileState.open || mobileState.explicitAria || !mobileState.firstLinkFocused) failures.push(`${route}: mobile Work disclosure is not keyboard-operable`);
+  await mobile.keyboard.press("Escape");
+  const mobileClosed = await mobile.$eval(".work-dropdown", (details) => ({
+    open: details.open,
+    summaryFocused: document.activeElement === details.querySelector("summary"),
+    navOpen: document.querySelector("#primary-navigation")?.classList.contains("is-open"),
+  }));
+  if (mobileClosed.open || !mobileClosed.summaryFocused || !mobileClosed.navOpen) failures.push(`${route}: mobile Escape did not close only the nested Work disclosure`);
+  await mobile.close();
+};
+
+const auditSelectedWork = async (route) => {
+  const page = await openPage(route, { width: 1440, height: 1000, deviceScaleFactor: 1 });
+  const initial = await page.evaluate(() => [...document.querySelectorAll(".flagship-entry")].map((entry) => ({ open: entry.open, explicitAria: entry.querySelector("summary")?.hasAttribute("aria-expanded") })));
+  if (initial.length !== 3 || initial.filter((entry) => entry.open).length !== 1 || !initial[0]?.open || initial.some((entry) => entry.explicitAria)) failures.push(`${route}: Selected Work did not start with exactly the first native disclosure expanded`);
+  await page.$eval(".flagship-entry:nth-child(2)", (entry) => entry.scrollIntoView({ block: "center", behavior: "instant" }));
+  await page.focus(".flagship-entry:nth-child(2) > summary");
+  await page.keyboard.press("Enter");
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  const switched = await page.evaluate(() => [...document.querySelectorAll(".flagship-entry")].map((entry) => entry.open));
+  if (switched.filter(Boolean).length !== 1 || !switched[1]) failures.push(`${route}: Selected Work did not keep a single native disclosure open`);
+  const revealed = await page.$eval(".flagship-entry:nth-child(2)", (entry) => Number.parseFloat(getComputedStyle(entry).opacity) > 0.98 && entry.classList.contains("is-visible"));
+  if (!revealed) failures.push(`${route}: active Selected Work entry remained hidden after entering the viewport`);
+  await page.close();
+};
+
 try {
   for (const route of Object.keys(SEO.routes)) {
     const page = await browser.newPage();
@@ -189,7 +253,27 @@ try {
   if (await themePage.evaluate(() => document.documentElement.dataset.theme) !== "dark") failures.push("/: saved theme did not survive reload");
   await themePage.close();
 
-  for (const route of ["/", "/zh/"]) await auditEvidenceStage(route);
+  for (const route of ["/", "/zh/"]) {
+    await auditWorkDropdown(route);
+    await auditSelectedWork(route);
+    await auditEvidenceStage(route);
+  }
+  await auditWorkDropdown("/work/wagf/");
+
+  const heroPage = await openPage("/", { width: 1440, height: 1000, deviceScaleFactor: 1 });
+  const desktopHero = await heroPage.$eval(".hero-media", (image) => ({ width: image.getBoundingClientRect().width, fit: getComputedStyle(image).objectFit }));
+  if (desktopHero.width < 319 || desktopHero.width > 361 || desktopHero.fit !== "contain") failures.push(`/: contained desktop Hero photo is ${Math.round(desktopHero.width)}px with object-fit ${desktopHero.fit}`);
+  await heroPage.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+  const mobileHeroWidth = await heroPage.$eval(".hero-media", (image) => image.getBoundingClientRect().width);
+  if (mobileHeroWidth < 119 || mobileHeroWidth > 121) failures.push(`/: mobile Hero photo is ${Math.round(mobileHeroWidth)}px, expected 120px`);
+  const articleLabels = await heroPage.$$eval(".update-item .status-label", (labels) => labels.map((label) => label.textContent.trim()));
+  if (!articleLabels.includes("Journal Article") || articleLabels.includes("Publication")) failures.push(`/: Recent Updates does not classify the journal item as Journal Article`);
+  await heroPage.close();
+
+  const zhArticlePage = await openPage("/zh/");
+  const zhArticleLabels = await zhArticlePage.$$eval(".update-item .status-label", (labels) => labels.map((label) => label.textContent.trim()));
+  if (!zhArticleLabels.includes("期刊論文")) failures.push(`/zh/: Recent Updates is missing the 期刊論文 classification`);
+  await zhArticlePage.close();
 
   for (const prefix of ["", "/zh"]) {
     await auditCaseControl(`${prefix}/work/human-grounded-llm-evaluation/`, ".segmented-control button:nth-child(3)", ".pathway-diagram.lens-renters", ".artifact-result");
@@ -232,11 +316,19 @@ try {
 
   for (const route of Object.keys(SEO.routes)) {
     const page = await browser.newPage();
+    await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
     await page.setJavaScriptEnabled(false);
     const response = await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: "load" });
-    const staticState = await page.evaluate(() => ({ h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length }));
+    const staticState = await page.evaluate(() => ({ h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length }));
     const pageType = SEO.routes[route].page;
-    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || (pageType === "home" && staticState.stages !== 6) || (pageType.startsWith("case:") && staticState.artifacts !== 1)) failures.push(`${route}: no-JavaScript fallback incomplete`);
+    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || (pageType === "home" && staticState.stages !== 6) || (pageType.startsWith("case:") && staticState.artifacts !== 1)) failures.push(`${route}: no-JavaScript fallback incomplete`);
+    await page.click(".work-dropdown > summary");
+    if (!(await page.$eval(".work-dropdown", (details) => details.open))) failures.push(`${route}: no-JavaScript Work disclosure did not open natively`);
+    if (pageType === "home") {
+      await page.click(".flagship-entry:nth-child(2) > summary");
+      const openProjects = await page.$$eval(".flagship-entry", (entries) => entries.filter((entry) => entry.open).length);
+      if (openProjects !== 1) failures.push(`${route}: no-JavaScript Selected Work disclosures did not remain mutually exclusive`);
+    }
     await page.close();
   }
 } finally {

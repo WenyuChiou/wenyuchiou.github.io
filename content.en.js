@@ -30,6 +30,7 @@ export const EN = {
     evidence: "Evidence",
     limitation: "Limitation",
     details: "View case study",
+    allWork: "All work",
     repository: "Repository",
     publication: "Publication",
     poster: "Poster",

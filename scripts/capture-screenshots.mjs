@@ -54,6 +54,15 @@ try {
         const response = await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle0", timeout: 60_000 });
         if (!response || response.status() >= 400) throw new Error(`${route} returned HTTP ${response?.status()}`);
         await page.evaluate(() => document.fonts.ready);
+        if (fullPage) await page.evaluate(async () => {
+          const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+          for (let top = 0; top < document.documentElement.scrollHeight; top += Math.max(320, window.innerHeight * 0.8)) {
+            window.scrollTo({ top, behavior: "instant" });
+            await pause(70);
+          }
+          window.scrollTo({ top: 0, behavior: "instant" });
+          await pause(140);
+        });
         const name = route === "/" ? "home" : route.replace(/^\//, "").replace(/\/$/, "").replaceAll("/", "--");
         await page.screenshot({ path: path.join(outDir, theme, mode, `${name}.jpg`), type: "jpeg", quality: 82, fullPage });
         await page.close();
