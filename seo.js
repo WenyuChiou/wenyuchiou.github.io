@@ -1,101 +1,89 @@
-// seo.js — per-route metadata + citation metadata (S4 staging draft, workcell W1).
-// Titles/descriptions transcribed from IA §8; citation metadata from IA §4.2.
-// Deviation (recorded): the /publications/ description ends "…with accurate statuses for
-// unpublished manuscripts." instead of IA §8's "…for work under review.", because the IA
-// string places "under review" within 200 characters of the article identifier and would
-// fail implementation-plan §1.4's grep audit (decision-6 proximity rule). Meaning preserved.
-// JSON-LD Person sameAs: GitHub + ORCID only — Google Scholar is added only after the
-// profile shows "Wenyu Chiou" with the WRR paper attached; LinkedIn only after CONFIRM #6.
-// citation_* tags and ScholarlyArticle markup exist for published work only (IA §4.2.4).
+import { PAGE_DEFINITIONS, localizedPath } from "./content.js";
+
+const siteUrl = "https://wenyuchiou.github.io";
+const checkedAt = "2026-08-23";
+
+const EN_META = {
+  home: {
+    title: "Wenyu Chiou — Human-Grounded LLM Evaluation & Behavioral Simulation",
+    description: "Ph.D. researcher evaluating LLM behavior, building governed agent systems, and modeling decisions in behavioral and human–environment simulations.",
+  },
+  work: {
+    title: "Selected Work — Wenyu Chiou",
+    description: "Case studies in human-grounded LLM evaluation, coupled household simulation, governed agents, and open-source research systems.",
+  },
+  "case:human-grounded-llm-evaluation": {
+    title: "Human-Grounded LLM Evaluation — Wenyu Chiou",
+    description: "A subgroup-aware study comparing LLM-generated decisions with pathways measured in 937 household profiles, with repeated-run stability checks.",
+  },
+  "case:floodabm": {
+    title: "FLOODABM — Wenyu Chiou",
+    description: "A 52,141-household coupled agent-based and catastrophe flood model spanning 27 census tracts, 2011–2023, with 50 runs per scenario.",
+  },
+  "case:wagf": {
+    title: "WAGF Governed Agent System — Wenyu Chiou",
+    description: "An in-preparation framework that parses, checks, repairs, and audits LLM-agent decisions before coupled simulation state updates.",
+  },
+  research: {
+    title: "Research Program — Wenyu Chiou",
+    description: "Research connecting psychometrics, subgroup-aware LLM evaluation, agent-based simulation, governance, and human–environment feedback.",
+  },
+  publications: {
+    title: "Publications & Talks — Wenyu Chiou",
+    description: "Peer-reviewed publications, manuscripts, and presentations including Water Resources Research 2026, ISDSA 2026, AGU25, and ISHC 2025.",
+  },
+  about: {
+    title: "About — Wenyu Chiou",
+    description: "Wenyu Chiou is a Lehigh University Ph.D. candidate working across human decision evidence, LLM evaluation, governed agents, and coupled simulation.",
+  },
+};
+
+const ZH_META = {
+  home: { title: "邱文昱｜以人類行為為基礎的 LLM 評估與行為模擬", description: "理海大學博士候選人，專注於 LLM 行為評估、受治理的代理系統，以及決策在行為與人類—環境模擬中的演變。" },
+  work: { title: "精選工作｜邱文昱", description: "以人類證據為基礎的 LLM 評估、家戶洪水模擬、受治理代理與開源研究系統案例。" },
+  "case:human-grounded-llm-evaluation": { title: "以人類證據為基礎的 LLM 評估｜邱文昱", description: "以 937 份家戶資料為基準，從整體與社會群體路徑比較 LLM 生成決策，並檢查重複執行穩定性。" },
+  "case:floodabm": { title: "FLOODABM｜邱文昱", description: "涵蓋 52,141 個家戶、27 個人口普查區、2011 至 2023 年，且每個情境執行 50 次的耦合代理與巨災模型。" },
+  "case:wagf": { title: "WAGF 受治理代理系統｜邱文昱", description: "在代理決策更新耦合模擬狀態前，進行解析、限制檢查、針對性修正與稽核的開發中框架。" },
+  research: { title: "研究計畫｜邱文昱", description: "串連心理計量、群體感知 LLM 評估、代理模擬、治理與人類—環境回饋的研究計畫。" },
+  publications: { title: "出版與演講｜邱文昱", description: "同儕審查出版、論文與公開發表，包括 2026 Water Resources Research、ISDSA 2026、AGU25 與 ISHC 2025。" },
+  about: { title: "關於邱文昱", description: "理海大學土木與環境工程博士候選人，研究人類決策證據、LLM 評估、受治理代理與耦合模擬。" },
+};
+
+const routes = {};
+for (const locale of ["en", "zh-TW"]) {
+  for (const page of PAGE_DEFINITIONS) {
+    const path = localizedPath(page.path, locale);
+    const meta = (locale === "en" ? EN_META : ZH_META)[page.id];
+    routes[path] = {
+      ...meta,
+      path,
+      basePath: page.path,
+      page: page.id,
+      locale,
+      lang: locale === "en" ? "en" : "zh-Hant-TW",
+      ogLocale: locale === "en" ? "en_US" : "zh_TW",
+      canonical: siteUrl + path,
+      alternate: siteUrl + localizedPath(page.path, locale === "en" ? "zh-TW" : "en"),
+      xDefault: siteUrl + page.path,
+      ogType: page.id.startsWith("case:") ? "article" : "website",
+      lastModified: checkedAt,
+    };
+  }
+}
 
 export const SEO = {
-  siteUrl: "https://wenyuchiou.github.io",
-
+  siteUrl,
+  checkedAt,
+  routes,
   ogImage: {
     file: "/assets/og-card.png",
-    alt: "Wenyu Chiou — Quantitative Behavioral Simulation & Psychometric LLM Evaluation",
+    alt: "Wenyu Chiou — Human-Grounded LLM Evaluation, Governed Agents, and Behavioral Simulation",
   },
-
-  routes: {
-    "/": {
-      title: "Wenyu Chiou — Quantitative Behavioral Simulation & Psychometric LLM Evaluation",
-      description:
-        "Quantitative behavioral simulation and psychometric LLM evaluation grounded in a 937-household survey, a 52,141-household coupled model, and open-source agent tooling. Ph.D. candidate at Lehigh University, open to AI internships.",
-      ogType: "website",
-      canonical: "https://wenyuchiou.github.io/",
-    },
-    "/research/": {
-      title: "Research & Academic Work — Wenyu Chiou",
-      description:
-        "From a 937-household survey to a 52,141-household coupled agent-based–catastrophe flood model to human-grounded LLM evaluation — one continuous research program.",
-      ogType: "website",
-      canonical: "https://wenyuchiou.github.io/research/",
-    },
-    "/engineering/": {
-      title: "AI, Engineering & Systems — Wenyu Chiou",
-      description:
-        "Fail-closed AI systems in public repos: research-hub-pipeline v1.1.1 on PyPI, tested on Windows, macOS, and Linux, regression-tested agent infrastructure, and selected security and reliability contributions.",
-      ogType: "website",
-      canonical: "https://wenyuchiou.github.io/engineering/",
-    },
-    "/publications/": {
-      title: "Publications — Wenyu Chiou",
-      description:
-        "Publications and talks by Wenyu Chiou, including Yang & Chiou (2026), Water Resources Research, 62(6), e2025WR042111 — with explicit statuses for research in progress.",
-      ogType: "website",
-      canonical: "https://wenyuchiou.github.io/publications/",
-    },
-    "/projects/research-hub/": {
-      title: "research-hub — an AI-operable research workspace",
-      description:
-        "An MCP server and CLI that makes Zotero, Obsidian, and NotebookLM AI-operable — search, ingest, and sync papers through one pipeline. PyPI research-hub-pipeline v1.1.1; tested on Windows, macOS, and Linux.",
-      ogType: "article",
-      canonical: "https://wenyuchiou.github.io/projects/research-hub/",
-    },
-    "/projects/floodabm/": {
-      title: "FLOODABM — coupled ABM × catastrophe flood model",
-      description:
-        "A 52,141-household agent-based flood-adaptation model coupled to a catastrophe model with NFIP mechanics, calibrated on a 937-household survey. Research prototype, archived with citation metadata.",
-      ogType: "article",
-      canonical: "https://wenyuchiou.github.io/projects/floodabm/",
-    },
-    "/projects/cat-framework/": {
-      title: "Cat_framework — Hazus seismic bridge-loss pipeline",
-      description:
-        "A team-built Hazus-based seismic bridge-loss pipeline validated at three levels against the 1994 Northridge earthquake, with failures reported, not hidden.",
-      ogType: "article",
-      canonical: "https://wenyuchiou.github.io/projects/cat-framework/",
-    },
-    "/projects/codex-delegate/": {
-      title: "codex-delegate — agent delegation with verified completion",
-      description:
-        "A cross-platform agent-delegation wrapper whose completion claims are verified from git state, with a regression test pinning a real upstream stdin hang. Tested on Windows and Linux.",
-      ogType: "article",
-      canonical: "https://wenyuchiou.github.io/projects/codex-delegate/",
-    },
-    "/projects/awesome-agentic-ai-zh/": {
-      title: "awesome-agentic-ai-zh — trilingual agentic-AI curriculum",
-      description:
-        "A trilingual agentic-AI curriculum with automated checks that keep all three languages in sync, and external contributors. 5K+ GitHub stars, 700+ forks (August 2026).",
-      ogType: "article",
-      canonical: "https://wenyuchiou.github.io/projects/awesome-agentic-ai-zh/",
-    },
-    "/projects/llm-evaluation/": {
-      title: "LLM evaluation study — Wenyu Chiou",
-      description:
-        "A human-grounded evaluation study asking whether LLM-generated responses reproduce decision pathways observed in 937 household survey records across social groups. In preparation; planned submission to Progress in Disaster Science.",
-      ogType: "article",
-      canonical: "https://wenyuchiou.github.io/projects/llm-evaluation/",
-    },
-  },
-
-  // Google-Scholar-style tags — rendered into the <head> of /publications/ only (IA §4.2.1).
   citationMeta: {
-    route: "/publications/",
+    paths: ["/publications/", "/zh/publications/"],
     tags: {
-      citation_title:
-        "Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions",
-      citation_author: ["Y. C. Ethan Yang", "Wenyu Chiou"], // two tags, published order
+      citation_title: "Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions",
+      citation_author: ["Y. C. Ethan Yang", "Wenyu Chiou"],
       citation_publication_date: "2026/06",
       citation_journal_title: "Water Resources Research",
       citation_volume: "62",
@@ -104,51 +92,39 @@ export const SEO = {
       citation_doi: "10.1029/2025WR042111",
     },
   },
-
-  jsonLd: {
-    // Rendered on "/" only (IA §4.2.2b).
-    person: {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      name: "Wenyu Chiou",
-      jobTitle: "Research Engineer — Quantitative Behavioral Simulation & Psychometric LLM Evaluation",
-      affiliation: {
-        "@type": "CollegeOrUniversity",
-        name: "Lehigh University",
-      },
-      email: "mailto:wec324@lehigh.edu",
-      url: "https://wenyuchiou.github.io",
-      sameAs: [
-        "https://github.com/WenyuChiou",
-        "https://orcid.org/0009-0005-8006-1288",
-      ],
-    },
-
-    // Rendered on "/publications/" only (IA §4.2.2a). Published work only.
-    scholarlyArticle: {
-      "@context": "https://schema.org",
-      "@type": "ScholarlyArticle",
-      headline:
-        "Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions",
-      author: [
-        { "@type": "Person", name: "Y. C. Ethan Yang" },
-        { "@type": "Person", name: "Wenyu Chiou" },
-      ],
-      datePublished: "2026-06",
-      pageStart: "e2025WR042111",
-      isPartOf: {
-        "@type": "PublicationIssue",
-        issueNumber: "6",
-        isPartOf: {
-          "@type": "PublicationVolume",
-          volumeNumber: "62",
-          isPartOf: {
-            "@type": "Periodical",
-            name: "Water Resources Research",
-          },
-        },
-      },
-      sameAs: "https://doi.org/10.1029/2025WR042111",
-    },
+  person: {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Wenyu Chiou",
+    alternateName: "邱文昱",
+    jobTitle: "Ph.D. Researcher in Human-Grounded LLM Evaluation, Governed Agents, and Behavioral Simulation",
+    affiliation: { "@type": "CollegeOrUniversity", name: "Lehigh University" },
+    email: "mailto:wec324@lehigh.edu",
+    url: siteUrl,
+    sameAs: [
+      "https://github.com/WenyuChiou",
+      "https://www.linkedin.com/in/wenyu-chiou",
+      "https://scholar.google.com/citations?user=vSQ3zT4AAAAJ&hl=en",
+      "https://orcid.org/0009-0005-8006-1288",
+    ],
   },
+  article: {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    headline: "Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions",
+    author: [{ "@type": "Person", name: "Y. C. Ethan Yang" }, { "@type": "Person", name: "Wenyu Chiou" }],
+    datePublished: "2026-06",
+    isPartOf: { "@type": "Periodical", name: "Water Resources Research" },
+    sameAs: "https://doi.org/10.1029/2025WR042111",
+  },
+};
+
+export const LEGACY_REDIRECTS = {
+  "/engineering/": "/work/",
+  "/projects/llm-evaluation/": "/work/human-grounded-llm-evaluation/",
+  "/projects/floodabm/": "/work/floodabm/",
+  "/projects/research-hub/": "/work/#open-source",
+  "/projects/codex-delegate/": "/work/#open-source",
+  "/projects/awesome-agentic-ai-zh/": "/work/#open-source",
+  "/projects/cat-framework/": "/work/",
 };

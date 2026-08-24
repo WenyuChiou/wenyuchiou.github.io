@@ -2,29 +2,32 @@
 
 Personal site of Wenyu Chiou — Ph.D. candidate, Civil & Environmental Engineering, Lehigh University.
 
-Static multi-page site: React 18 prerendered to 10 HTML routes with esbuild, no CDN dependencies (fonts and scripts self-hosted), fail-closed content linting on every build.
+Static bilingual site: React 18 prerendered to 16 English and Traditional Chinese routes with esbuild, no CDN dependencies (fonts and scripts self-hosted), and fail-closed content linting on every build.
 
 ## Build
 
 ```bash
 npm ci
-npm run build     # bundle -> prerender 10 routes -> sitemap/robots -> hash-stamp -> copy linter (strict)
+npm run build     # bundle -> prerender 16 routes -> sitemap/robots -> hash-stamp -> copy linter
+npm test          # route/locale/metadata/fact/PDF checks
+npm run qa:browser
+npm run qa:lighthouse
 ```
 
-The build **fails** if `scripts/check-copy.mjs` finds any banned pattern, drifted canonical string, or leaked `[CONFIRM` placeholder in source files, built HTML, or the extracted text of the two PDFs. Canonical strings live in `scripts/canonical-strings.json` and are regenerated from the (private) strategy workspace — never edit that file ad hoc.
+The build **fails** if `scripts/check-copy.mjs` finds a banned pattern, drifted canonical fact, leaked placeholder, or status-language violation in source files, built HTML, or the four PDFs.
 
 ## CV / resume PDFs
 
 ```bash
-npm run pdf       # cv/build-pdf.mjs -> assets/Wenyu_Chiou_Academic_CV.pdf + assets/Wenyu_Chiou_AI_Research_Resume.pdf
+npm run pdf       # industry/academic x English/Traditional Chinese
 ```
 
-Requires a local Chrome or Edge (auto-detected; override with `CHROME_PATH`). Sources are `cv/academic.html` and `cv/resume.html` with shared `cv/print.css`. The script refuses to emit PDFs if the banned-string scan fails.
+Requires a local Chrome or Edge (auto-detected; override with `CHROME_PATH`). Sources are the four HTML files under `cv/`, with shared `cv/print.css`. The script enforces one-page industry resumes and academic CV page limits.
 
 ## Serve locally
 
 ```bash
-npx http-server -p 8080    # routes are real directories; no SPA fallback needed
+python -m http.server 4173 --bind 127.0.0.1
 ```
 
 ## Deployment

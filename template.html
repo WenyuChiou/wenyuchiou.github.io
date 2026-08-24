@@ -1,48 +1,34 @@
 <!doctype html>
-<!-- template.html — the SOURCE for every generated route (S8). prerender.mjs
-     replaces the {{…}} placeholders per route from seo.js and writes
-     index.html, research/index.html, engineering/index.html,
-     publications/index.html, and projects/<slug>/index.html ×5.
-     index.html is a GENERATED file from S8 on — edit THIS file, never it.
-     Asset paths are root-absolute so subdirectory routes resolve. -->
-<html lang="en">
+<!-- template.html is the source for all generated route documents. -->
+<html lang="{{LANG}}">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101815">
   <title>{{TITLE}}</title>
-  <meta name="description" content="{{DESCRIPTION}}"/>
-  <link rel="canonical" href="{{CANONICAL}}"/>
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F7F4EC"/>
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#202428"/>
-  <meta property="og:type" content="{{OG_TYPE}}"/>
-  <meta property="og:url" content="{{CANONICAL}}"/>
-  <meta property="og:title" content="{{TITLE}}"/>
-  <meta property="og:description" content="{{DESCRIPTION}}"/>
-  <meta property="og:image" content="{{OG_IMAGE}}"/>
-  <meta property="og:image:alt" content="{{OG_IMAGE_ALT}}"/>
-  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg"/>
+  <meta name="description" content="{{DESCRIPTION}}">
+  <link rel="canonical" href="{{CANONICAL}}">
+  <link rel="alternate" hreflang="en" href="{{HREFLANG_EN}}">
+  <link rel="alternate" hreflang="zh-Hant-TW" href="{{HREFLANG_ZH}}">
+  <link rel="alternate" hreflang="x-default" href="{{HREFLANG_DEFAULT}}">
+  <meta property="og:type" content="{{OG_TYPE}}">
+  <meta property="og:locale" content="{{OG_LOCALE}}">
+  <meta property="og:title" content="{{TITLE}}">
+  <meta property="og:description" content="{{DESCRIPTION}}">
+  <meta property="og:url" content="{{CANONICAL}}">
+  <meta property="og:image" content="{{OG_IMAGE}}">
+  <meta property="og:image:alt" content="{{OG_IMAGE_ALT}}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{TITLE}}">
+  <meta name="twitter:description" content="{{DESCRIPTION}}">
+  <meta name="twitter:image" content="{{OG_IMAGE}}">
 {{HEAD_EXTRA}}
-  <link rel="stylesheet" href="/styles.css"/>
-
-  <!-- Fonts: no external font CDN. Source Serif 4, Hanken Grotesk, and
-       JetBrains Mono are self-hosted for the research-instrument system. -->
-  <!-- React is bundled into assets/app.bundle.js from node_modules (see build.mjs) -->
-
-  <script>
-    // Apply persisted theme + reading-path mode before first paint (no flash).
-    // Mode precedence (IA §7.2): ?path= URL param > localStorage wy-mode > industry default.
-    try {
-      var __t = localStorage.getItem('wy-theme'); if (__t) document.documentElement.setAttribute('data-theme', __t);
-      var __p = new URLSearchParams(location.search).get('path');
-      var __m = __p === 'research' ? 'academic' : __p === 'engineering' ? 'industry' : localStorage.getItem('wy-mode');
-      if (__m !== 'academic' && __m !== 'industry') __m = 'industry';
-      document.documentElement.setAttribute('data-mode', __m);
-    } catch (e) {}
-  </script>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("wy-theme")||"light"}catch(e){}</script>
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/assets/app.bundle.js"></script>
 </head>
-<body data-page="{{PAGE}}">
-  <div id="root">{{APP_HTML}}</div>
-
-  <script src="/assets/app.bundle.js" defer></script>
+<body>
+  <div id="root" data-page="{{PAGE}}" data-locale="{{LOCALE}}" data-base-path="{{BASE_PATH}}">{{APP_HTML}}</div>
 </body>
 </html>
