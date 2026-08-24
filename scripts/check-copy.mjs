@@ -2,6 +2,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { SEO } from "../seo.js";
+import { CONTENT } from "../content.js";
 
 const strict = process.argv.includes("--strict");
 const requirePdfs = process.argv.includes("--require-pdfs");
@@ -36,8 +37,34 @@ for (const file of files) {
 }
 
 const english = readFileSync("content.en.js", "utf8");
-for (const required of ["937", "52,141", "50 stochastic runs per scenario", "2024–Dec 2027 (expected)", "6K+"]) {
+for (const required of ["937", "52,141", "50 stochastic runs per scenario", "2024–Dec 2027 (expected)"]) {
   if (!english.includes(required)) failures.push(`content.en.js: missing canonical evidence string: ${required}`);
+}
+
+for (const [locale, content] of Object.entries(CONTENT)) {
+  const homepageIntroduction = JSON.stringify({
+    hero: content.hero,
+    expertise: content.expertise,
+    flagship: content.flagship,
+    observatory: content.observatory,
+  });
+  for (const metric of ["937", "52,141", "50 stochastic runs per scenario", "每情境 50 次模擬"]) {
+    if (homepageIntroduction.includes(metric)) failures.push(`${locale}: homepage introduction contains research-scale metric: ${metric}`);
+  }
+}
+
+const homepageScalePatterns = [
+  { name: "937", pattern: /\b937\b/gu },
+  { name: "52,141", pattern: /52(?:,)?141/gu },
+  { name: "50 runs", pattern: /\b50\s+(?:stochastic\s+)?(?:runs?|realizations?)\b/giu },
+  { name: "50 次模擬", pattern: /(?:每(?:個)?情境\s*)?50\s*次(?:隨機)?(?:模擬|實現)/gu },
+];
+for (const file of ["index.html", "zh/index.html"]) {
+  const text = readFileSync(file, "utf8");
+  for (const rule of homepageScalePatterns) {
+    rule.pattern.lastIndex = 0;
+    if (rule.pattern.test(text)) failures.push(`${file}: homepage contains research-scale metric: ${rule.name}`);
+  }
 }
 
 const pdfFiles = [

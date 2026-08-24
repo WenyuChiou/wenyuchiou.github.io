@@ -112,26 +112,50 @@ function SiteHeader({ content, locale, page, basePath }) {
 function Hero({ content, locale }) {
   return (
     <section className="hero" aria-labelledby="hero-name">
-      <img className="hero-media" src="/assets/agu2025-photo.webp" srcSet="/assets/agu2025-photo-mobile.webp 640w, /assets/agu2025-photo.webp 1108w" sizes="100vw" width="1108" height="1477" alt={content.hero.imageAlt} fetchPriority="high" />
+      <picture>
+        <source media="(max-width: 620px)" srcSet="/assets/agu2025-photo-mobile.webp" />
+        <img className="hero-media" src="/assets/agu2025-photo.webp" srcSet="/assets/agu2025-photo-tablet.webp 828w, /assets/agu2025-photo.webp 1108w" sizes="100vw" width="1108" height="1477" alt={content.hero.imageAlt} fetchPriority="high" />
+      </picture>
       <div className="hero-scrim" aria-hidden="true"></div>
       <div className="hero-content wrap">
-        <p className="eyebrow hero-eyebrow">{content.hero.eyebrow}</p>
-        <h1 id="hero-name">{content.hero.title}</h1>
-        <p className="hero-headline">{content.hero.headline}</p>
-        <p className="hero-intro">{content.hero.intro}</p>
-        <div className="hero-actions">
-          <a className="button button-light" href={content.hero.primary.href}>{content.hero.primary.label}<ArrowDown aria-hidden="true" size={17} /></a>
-          <SmartLink className="button button-ghost" href={content.hero.secondary.href} locale={locale}>{content.hero.secondary.label}<ArrowUpRight aria-hidden="true" size={17} /></SmartLink>
+        <div className="hero-copy">
+          <p className="eyebrow hero-eyebrow">{content.hero.eyebrow}</p>
+          <h1 id="hero-name">{content.hero.title}</h1>
+          <p className="hero-headline">{content.hero.headline}</p>
+          <p className="hero-intro">{content.hero.intro}</p>
+          <div className="hero-actions">
+            <a className="button button-light" href={content.hero.primary.href}>{content.hero.primary.label}<ArrowDown aria-hidden="true" size={17} /></a>
+            <a className="button button-ghost" href={content.hero.secondary.href}>{content.hero.secondary.label}<ArrowDown aria-hidden="true" size={17} /></a>
+          </div>
+          <p className="hero-availability">{content.hero.availability}</p>
         </div>
-        <p className="hero-availability">{content.hero.availability}</p>
         <p className="hero-caption">{content.hero.imageCaption}</p>
       </div>
     </section>
   );
 }
 
-function ProofStrip({ content }) {
-  return <section className="proof-strip" aria-label="Selected evidence"><div className="wrap proof-grid">{content.proof.map((item) => <div className="proof-item" key={item.label}><strong>{item.value}</strong><span>{item.label}</span></div>)}</div></section>;
+function Expertise({ content }) {
+  const E = content.expertise;
+  return (
+    <section className="section expertise" aria-labelledby="expertise-title">
+      <div className="wrap">
+        <SectionHead eyebrow={E.eyebrow} title={E.title} intro={E.intro} id="expertise-title" />
+        <div className="expertise-layout">
+          <article className="expertise-primary">
+            <p className="section-label">{E.primaryLabel}</p>
+            <h3>{E.primaryTitle}</h3>
+            <p>{E.primaryText}</p>
+          </article>
+          <div className="expertise-supporting">
+            <p className="section-label">{E.supportingLabel}</p>
+            <ol>{E.items.map((item, index) => <li key={item.title}><span>0{index + 1}</span><div><h3>{item.title}</h3><p>{item.text}</p></div></li>)}</ol>
+          </div>
+        </div>
+        <p className="expertise-scope"><span>{E.scopeLabel}</span>{E.scope}</p>
+      </div>
+    </section>
+  );
 }
 
 function Observatory({ content, locale }) {
@@ -164,17 +188,17 @@ function Observatory({ content, locale }) {
 function FlagshipCards({ content, locale, full = false }) {
   const F = content.flagship;
   return (
-    <section className="section flagship" aria-labelledby="flagship-title"><div className="wrap">
+    <section id="selected-work" className="section flagship" aria-labelledby="flagship-title"><div className="wrap">
       <SectionHead eyebrow={F.eyebrow} title={F.title} intro={F.intro} id="flagship-title" />
-      <div className="flagship-grid">{F.items.map((item) => <article className={`flagship-card accent-${item.accent}`} key={item.slug}><div className="card-topline"><span>{item.index}</span><span>{item.status}</span></div><h3>{item.title}</h3><p>{item.line}</p><ul>{item.metrics.map((metric) => <li key={metric}>{metric}</li>)}</ul><SmartLink className="card-link" href={item.href} locale={locale}>{content.labels.details}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></article>)}</div>
+      <div className="flagship-list">{F.items.map((item) => <article className="flagship-entry" key={item.slug}>
+        <div className="flagship-meta"><span>{item.index}</span><span>{item.status}</span></div>
+        <div className="flagship-summary"><h3>{item.title}</h3><p>{item.line}</p></div>
+        <div className="flagship-contribution"><p>{item.role}</p><ul>{item.practice.map((practice) => <li key={practice}>{practice}</li>)}</ul></div>
+        <SmartLink className="icon-link" href={item.href} locale={locale}><ArrowUpRight aria-hidden="true" /><span className="sr-only">{content.labels.details}: {item.title}</span></SmartLink>
+      </article>)}</div>
       {full ? null : <div className="section-tail"><SmartLink className="text-link" href="/work/" locale={locale}>{content.workPage.title}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>}
     </div></section>
   );
-}
-
-function EvidenceLedger({ content, locale }) {
-  const L = content.ledger;
-  return <section className="section ledger-section" aria-labelledby="ledger-title"><div className="wrap"><SectionHead eyebrow={L.eyebrow} title={L.title} id="ledger-title" /><div className="ledger-list">{L.items.map((item, index) => <article className="ledger-row" key={item.title}><span className="ledger-index">0{index + 1}</span><div><p className="status-label">{item.status}</p><h3>{item.title}</h3><p>{item.detail}</p></div><SmartLink className="icon-link" href={item.href} locale={locale}><ArrowUpRight aria-hidden="true" /><span className="sr-only">{content.labels.open}: {item.title}</span></SmartLink></article>)}</div></div></section>;
 }
 
 function formatCount(value, locale) {
@@ -214,7 +238,7 @@ function Contact({ content }) {
 }
 
 function Home({ content, locale }) {
-  return <><Hero content={content} locale={locale} /><ProofStrip content={content} /><Observatory content={content} locale={locale} /><FlagshipCards content={content} locale={locale} /><EvidenceLedger content={content} locale={locale} /><OpenSource content={content} locale={locale} /><PublicationsPreview content={content} locale={locale} /><RecentUpdates content={content} /><Documents content={content} /><Contact content={content} /></>;
+  return <><Hero content={content} locale={locale} /><Expertise content={content} /><FlagshipCards content={content} locale={locale} /><Observatory content={content} locale={locale} /><OpenSource content={content} locale={locale} /><PublicationsPreview content={content} locale={locale} /><RecentUpdates content={content} /><Documents content={content} /><Contact content={content} /></>;
 }
 
 function PageHero({ eyebrow, title, intro }) {

@@ -29,7 +29,7 @@ const internalTargets = new Map();
 const anchorTargets = new Map();
 const origin = `http://127.0.0.1:${port}`;
 const firstFoldSelectors = {
-  home: ".proof-strip",
+  home: ".expertise",
   work: ".flagship",
   research: "main > .section",
   publications: ".publication-groups",

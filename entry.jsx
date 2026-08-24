@@ -34,11 +34,17 @@ if (root) {
       summary?.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") userRequested = true;
       });
+      summary?.addEventListener("keyup", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        window.setTimeout(() => {
+          if (stage.open) summary.scrollIntoView({ block: "start", behavior: "instant" });
+        }, 50);
+      });
       stage.addEventListener("toggle", () => {
         const shouldPosition = stage.open && userRequested;
         userRequested = false;
         if (!shouldPosition) return;
-        requestAnimationFrame(() => stage.scrollIntoView({ block: "start" }));
+        requestAnimationFrame(() => summary?.scrollIntoView({ block: "start", behavior: "instant" }));
       });
     });
   }

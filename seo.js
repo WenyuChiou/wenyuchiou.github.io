@@ -6,7 +6,7 @@ const checkedAt = "2026-08-23";
 const EN_META = {
   home: {
     title: "Wenyu Chiou — Human-Grounded LLM Evaluation & Behavioral Simulation",
-    description: "Ph.D. researcher building human-grounded LLM evaluations, governed agents, and behavioral simulations from 937 human profiles to 52,141 simulated households.",
+    description: "Ph.D. researcher evaluating LLM behavior, building governed agent systems, and modeling decisions in behavioral and human–environment simulations.",
   },
   work: {
     title: "Selected Work — Wenyu Chiou",
@@ -39,7 +39,7 @@ const EN_META = {
 };
 
 const ZH_META = {
-  home: { title: "邱文昱｜以人類證據為基礎的 LLM 評估與行為模擬", description: "理海大學博士候選人，研究以人類證據為基礎的 LLM 評估、受治理代理與行為模擬，涵蓋 937 份人類資料與 52,141 個模擬家戶。" },
+  home: { title: "邱文昱｜以人類行為為基礎的 LLM 評估與行為模擬", description: "理海大學博士候選人，專注於 LLM 行為評估、受治理的代理系統，以及決策在行為與人類—環境模擬中的演變。" },
   work: { title: "精選工作｜邱文昱", description: "以人類證據為基礎的 LLM 評估、家戶洪水模擬、受治理代理與開源研究系統案例。" },
   "case:human-grounded-llm-evaluation": { title: "以人類證據為基礎的 LLM 評估｜邱文昱", description: "以 937 份家戶資料為基準，從整體與社會群體路徑比較 LLM 生成決策，並檢查重複執行穩定性。" },
   "case:floodabm": { title: "FLOODABM｜邱文昱", description: "涵蓋 52,141 個家戶、27 個人口普查區、2011 至 2023 年，且每個情境執行 50 次的耦合代理與巨災模型。" },

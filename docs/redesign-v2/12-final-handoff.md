@@ -8,9 +8,9 @@ Status: candidate implementation and local verification complete. Production has
 |---|---|---|
 | Identity | Global Research/Industry switch | One professional identity; document-specific resumes |
 | Locales | English only | English plus route-parity Traditional Chinese |
-| Hero | Technical category first | Person and human-grounded agent research first, over a real AGU image |
+| Hero | Technical category first | Capability-led LLM behavior evaluation, over a real AGU image |
 | Main interaction | Four-stage mode-dependent map | Six-stage chapter-based evidence chain with mutually exclusive switching, active-state focus, and static fallback |
-| Work hierarchy | Six similarly weighted project pages | Three flagship research systems plus supporting open source |
+| Work hierarchy | Six similarly weighted project pages | Unframed editorial rows for three flagship systems, led by role and problem |
 | Facts | Stale date/count/title conflicts | Owner-approved ledger and automated checks |
 | Updates | Static project copy | Curated LinkedIn updates plus build-time GitHub API snapshot |
 | Documents | Two English PDFs | Industry/academic × English/Traditional Chinese |
@@ -32,7 +32,11 @@ npm run qa:screenshots
 
 ## Concise Changelog
 
-- Reframed the site as the Behavioral Systems Observatory.
+- Reframed the homepage around LLM behavior evaluation, governed agents, and behavioral simulation rather than study-size metrics.
+- Replaced the numeric proof strip with an unframed expertise model and moved Selected Work ahead of the detailed observatory.
+- Removed the repeated homepage evidence ledger; publication status remains in Selected Work and Publications.
+- Replaced the previous font stack with self-hosted Literata, Atkinson Hyperlegible Next, Chiron Sung HK, and Chiron Hei HK subsets.
+- Removed gradients, glass treatment, monospace labels, colored top rules, and equal-height case cards.
 - Added presentation-like chapter switching to the evidence chain, based on the useful structure in the supplied storytelling reference rather than its dark advertising aesthetic.
 - Added eight mirrored routes, three flagship cases, and three evidence-focused interactions.
 - Added a dated GitHub snapshot and curated public-update source.
@@ -41,7 +45,7 @@ npm run qa:screenshots
 
 ## Owner Decisions Still Required
 
-1. Confirm the prepared LinkedIn headline/about update immediately before the public save action; no LinkedIn profile text has been changed yet.
+1. Confirm the prepared LinkedIn About update immediately before the public save action; the headline remains unchanged by design.
 2. Approve or request changes to the final browser/PDF screenshots and pull requests.
 3. Approve merge into `standalone-portfolio` and the separate GitHub Pages deployment step.
 
@@ -49,7 +53,7 @@ npm run qa:screenshots
 
 - Website redesign: `WenyuChiou/wenyuchiou.github.io#1`, targeting `standalone-portfolio`.
 - Daily reviewed data-refresh workflow: `WenyuChiou/wenyuchiou.github.io#2`, targeting `main`.
-- GitHub profile alignment: `WenyuChiou/WenyuChiou#21`.
+- GitHub profile alignment: `WenyuChiou/WenyuChiou#21` (not touched in this revision).
 
 None of these pull requests has been merged. The LinkedIn profile has not been edited.
 
@@ -57,8 +61,8 @@ None of these pull requests has been merged. The LinkedIn profile has not been e
 
 - Codex: architecture, UI implementation, bilingual integration, browser inspection, QA, and release preparation.
 - Independent code reviewer: staged-diff review; identified tablet first-fold coverage, fragment-link validation, and response-body handling gaps, all corrected before the final targeted recheck.
-- No additional model call was used for this final storytelling follow-up; both locales were verified by the same automated and visual gates.
+- A bounded Gemini copy-review attempt failed closed because the installed wrapper used an obsolete CLI flag. No delegate output was applied; both locales were completed and verified locally.
 
 ## Review vs Deploy
 
-Review the PR branch and local preview first. Merge/deploy is a separate owner-approved action; CI and data-refresh workflows do not deploy the site. The daily refresh workflow opens a reviewed pull request and never pushes public data directly to the production branch. See `10-test-report.md` for the 3.6 s mobile lab LCP, one-run performance variance, manual screen-reader release check, and LinkedIn feed limitation.
+Review the PR branch and local preview first. Merge/deploy is a separate owner-approved action; CI and data-refresh workflows do not deploy the site. The daily refresh workflow opens a reviewed pull request and never pushes public data directly to the production branch. See `10-test-report.md` for the 2.9 s zh-TW mobile lab LCP, manual screen-reader release check, and LinkedIn feed limitation.

@@ -38,22 +38,27 @@ const viewports = {
   desktop: { width: 1440, height: 1000, deviceScaleFactor: 1 },
   tablet: { width: 768, height: 800, deviceScaleFactor: 1 },
   mobile: { width: 390, height: 844, deviceScaleFactor: 1 },
+  "narrow-mobile": { width: 360, height: 800, deviceScaleFactor: 1 },
 };
+const themes = ["light", "dark"];
 const browser = await puppeteer.launch({ executablePath, headless: true });
 let count = 0;
 try {
-  for (const [mode, viewport] of Object.entries(viewports)) {
-    fs.mkdirSync(path.join(outDir, mode), { recursive: true });
-    for (const route of routes) {
-      const page = await browser.newPage();
-      await page.setViewport(viewport);
-      const response = await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle0", timeout: 60_000 });
-      if (!response || response.status() >= 400) throw new Error(`${route} returned HTTP ${response?.status()}`);
-      await page.evaluate(() => document.fonts.ready);
-      const name = route === "/" ? "home" : route.replace(/^\//, "").replace(/\/$/, "").replaceAll("/", "--");
-      await page.screenshot({ path: path.join(outDir, mode, `${name}.jpg`), type: "jpeg", quality: 82, fullPage });
-      await page.close();
-      count += 1;
+  for (const theme of themes) {
+    for (const [mode, viewport] of Object.entries(viewports)) {
+      fs.mkdirSync(path.join(outDir, theme, mode), { recursive: true });
+      for (const route of routes) {
+        const page = await browser.newPage();
+        await page.setViewport(viewport);
+        await page.evaluateOnNewDocument((selectedTheme) => localStorage.setItem("wy-theme", selectedTheme), theme);
+        const response = await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle0", timeout: 60_000 });
+        if (!response || response.status() >= 400) throw new Error(`${route} returned HTTP ${response?.status()}`);
+        await page.evaluate(() => document.fonts.ready);
+        const name = route === "/" ? "home" : route.replace(/^\//, "").replace(/\/$/, "").replaceAll("/", "--");
+        await page.screenshot({ path: path.join(outDir, theme, mode, `${name}.jpg`), type: "jpeg", quality: 82, fullPage });
+        await page.close();
+        count += 1;
+      }
     }
   }
 } finally {

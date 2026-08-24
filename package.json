@@ -17,17 +17,16 @@
     "refresh:github": "node scripts/fetch-github-data.mjs"
   },
   "devDependencies": {
-    "@fontsource-variable/fraunces": "^5.2.9",
-    "@fontsource/inter": "^5.2.8",
-    "@fontsource/jetbrains-mono": "^5.2.8",
     "axe-core": "^4.10.2",
     "esbuild": "^0.24.0",
     "lighthouse": "^13.4.1",
     "puppeteer-core": "^25.3.0"
   },
   "dependencies": {
-    "@fontsource-variable/hanken-grotesk": "^5.3.0",
-    "@fontsource-variable/source-serif-4": "^5.3.0",
+    "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
+    "@fontsource-variable/chiron-hei-hk": "^5.3.1",
+    "@fontsource-variable/chiron-sung-hk": "^5.3.1",
+    "@fontsource-variable/literata": "^5.3.0",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
