@@ -55,7 +55,7 @@ npm run qa:screenshots
 - Daily reviewed data-refresh workflow: `WenyuChiou/wenyuchiou.github.io#2`, targeting `main`.
 - GitHub profile alignment: `WenyuChiou/WenyuChiou#21` (not touched in this revision).
 
-None of these pull requests has been merged. The LinkedIn profile has not been edited.
+None of these pull requests has been merged. The LinkedIn About section was updated and verified; the existing headline was preserved, the portfolio URL remains listed, and the Lehigh education end date remains December 2027.
 
 ## Agent and Review Record
 
