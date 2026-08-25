@@ -5,13 +5,14 @@ import path from "node:path";
 import puppeteer from "puppeteer-core";
 import axe from "axe-core";
 import { SEO } from "../seo.js";
+import githubData from "../data/github.json" with { type: "json" };
 
 const root = process.cwd();
 const browserCandidates = [process.env.CHROME_PATH, "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, "Google", "Chrome", "Application", "chrome.exe") : null, "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe", "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe", "/usr/bin/google-chrome", "/usr/bin/google-chrome-stable", "/usr/bin/chromium"].filter(Boolean);
 const executablePath = browserCandidates.find((candidate) => fs.existsSync(candidate));
 if (!executablePath) throw new Error("browser-audit: Chrome/Edge not found; set CHROME_PATH");
 
-const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8", ".wasm": "application/wasm", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".pdf": "application/pdf", ".woff2": "font/woff2" };
+const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8", ".wasm": "application/wasm", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp", ".pdf": "application/pdf", ".woff2": "font/woff2" };
 const server = http.createServer((request, response) => {
   const url = new URL(request.url, "http://127.0.0.1");
   let relative = decodeURIComponent(url.pathname).replace(/^\/+/, "");
@@ -354,6 +355,19 @@ try {
   await auditWorkDropdown("/work/wagf/");
 
   const heroPage = await openPage("/", { width: 1440, height: 1000, deviceScaleFactor: 1 });
+  const expectedPreviews = Object.entries(githubData.repositories).filter(([, repo]) => repo.previewUrl);
+  await heroPage.$eval(".repo-list", (list) => list.scrollIntoView({ block: "center" }));
+  await heroPage.waitForFunction(() => [...document.querySelectorAll(".repo-preview img")].every((image) => image.complete && image.naturalWidth > 0), { timeout: 15000 });
+  const repoPreviews = await heroPage.$$eval(".repo-preview", (previews) => previews.map((preview) => {
+    const image = preview.querySelector("img");
+    const rect = preview.getBoundingClientRect();
+    return { src: image?.src, loaded: image?.complete && image?.naturalWidth > 0, ratio: rect.width / rect.height };
+  }));
+  if (repoPreviews.length !== expectedPreviews.length || repoPreviews.some((preview, index) => new URL(preview.src).pathname !== expectedPreviews[index][1].previewUrl || !preview.loaded || Math.abs(preview.ratio - 2) > 0.03)) failures.push(`/: GitHub social previews are missing, unloaded, misordered, or incorrectly sized: ${JSON.stringify(repoPreviews)}`);
+  await heroPage.$eval(".repo-preview img", (image) => { image.src = "/assets/github/__missing-preview__.webp"; });
+  await heroPage.waitForFunction(() => { const image = document.querySelector(".repo-preview img"); return image?.complete && image.naturalWidth === 0; }, { timeout: 5000 });
+  const previewFallback = await heroPage.$eval(".repo-preview", (preview) => ({ failed: preview.querySelector("img").naturalWidth === 0, fallbackVisible: getComputedStyle(preview.querySelector("svg")).display !== "none" }));
+  if (!previewFallback.failed || !previewFallback.fallbackVisible) failures.push(`/: GitHub social preview failure does not expose its fallback`);
   const expectedSocialLinks = ["https://www.linkedin.com/in/wenyu-chiou", "https://github.com/WenyuChiou", "mailto:wec324@lehigh.edu", "https://www.threads.com/@wenyuchiou"];
   const socialLinks = await heroPage.$$eval(".hero-social-link", (links) => links.map((link) => ({ href: link.getAttribute("href"), name: link.textContent.trim(), title: link.title, width: link.getBoundingClientRect().width, height: link.getBoundingClientRect().height })));
   if (socialLinks.length !== 4 || socialLinks.some((link, index) => link.href !== expectedSocialLinks[index] || !link.name || !link.title || link.width < 44 || link.height < 44)) failures.push(`/: Hero social links are incomplete, misordered, unlabeled, or undersized: ${JSON.stringify(socialLinks)}`);
@@ -369,6 +383,9 @@ try {
   const zhArticlePage = await openPage("/zh/");
   const zhSocialLabels = await zhArticlePage.$$eval(".hero-social-link", (links) => links.map((link) => link.textContent.trim()));
   if (zhSocialLabels.join("|") !== "LinkedIn|GitHub|電子郵件|Threads") failures.push(`/zh/: Hero social links are not localized: ${zhSocialLabels.join("|")}`);
+  const zhPreviewPaths = await zhArticlePage.$$eval(".repo-preview img", (images) => images.map((image) => new URL(image.src).pathname));
+  const expectedPreviewPaths = expectedPreviews.map(([, repo]) => repo.previewUrl);
+  if (zhPreviewPaths.join("|") !== expectedPreviewPaths.join("|")) failures.push(`/zh/: GitHub social previews drifted from the English home page: ${zhPreviewPaths.join("|")}`);
   const zhArticleLabels = await zhArticlePage.$$eval(".update-item .status-label", (labels) => labels.map((label) => label.textContent.trim()));
   if (!zhArticleLabels.includes("期刊論文")) failures.push(`/zh/: Recent Updates is missing the 期刊論文 classification`);
   await zhArticlePage.close();

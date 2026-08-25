@@ -1,31 +1,41 @@
 {
-  "checkedAt": "2026-08-23T19:35:38.778Z",
+  "checkedAt": "2026-08-25T13:39:01.386Z",
   "owner": "WenyuChiou",
   "repositories": {
     "awesome-agentic-ai-zh": {
-      "stars": 6266,
-      "forks": 836,
-      "url": "https://github.com/WenyuChiou/awesome-agentic-ai-zh"
+      "stars": 6386,
+      "forks": 854,
+      "url": "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
+      "previewUrl": "/assets/github/awesome-agentic-ai-zh.webp",
+      "previewSourceUrl": "https://repository-images.githubusercontent.com/1229284184/6b2714ee-67ae-493d-a8ab-581370d76fd8"
     },
     "ai-research-skills": {
-      "stars": 220,
+      "stars": 223,
       "forks": 17,
-      "url": "https://github.com/WenyuChiou/ai-research-skills"
+      "url": "https://github.com/WenyuChiou/ai-research-skills",
+      "previewUrl": "/assets/github/ai-research-skills.webp",
+      "previewSourceUrl": "https://repository-images.githubusercontent.com/1221061473/058c3873-5b00-409c-a859-f84f2f786a6c"
     },
     "research-hub": {
-      "stars": 52,
-      "forks": 8,
-      "url": "https://github.com/WenyuChiou/research-hub"
+      "stars": 53,
+      "forks": 9,
+      "url": "https://github.com/WenyuChiou/research-hub",
+      "previewUrl": null,
+      "previewSourceUrl": null
     },
     "agent-collab-skills": {
-      "stars": 23,
+      "stars": 24,
       "forks": 6,
-      "url": "https://github.com/WenyuChiou/agent-collab-skills"
+      "url": "https://github.com/WenyuChiou/agent-collab-skills",
+      "previewUrl": "/assets/github/agent-collab-skills.webp",
+      "previewSourceUrl": "https://repository-images.githubusercontent.com/1223161782/c6660473-67cb-4271-89b7-80c1db702131"
     },
     "codex-delegate": {
       "stars": 63,
       "forks": 6,
-      "url": "https://github.com/WenyuChiou/codex-delegate"
+      "url": "https://github.com/WenyuChiou/codex-delegate",
+      "previewUrl": null,
+      "previewSourceUrl": null
     }
   }
 }
