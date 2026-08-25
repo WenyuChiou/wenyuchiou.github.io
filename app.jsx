@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   AlertTriangle,
+  AtSign,
   ArrowDown,
   ArrowRight,
   ArrowUpRight,
@@ -11,6 +12,7 @@ import {
   FileText,
   Github,
   GraduationCap,
+  Linkedin,
   Mail,
   Menu,
   Moon,
@@ -27,13 +29,34 @@ import updatesData from "./data/updates.json";
 const isExternal = (href) => /^(https?:)?\/\//.test(href);
 const lp = (href, locale) => (href.startsWith("/assets/") ? href : href.startsWith("/") ? localizedPath(href, locale) : href);
 
-function SmartLink({ href, locale, children, className, download = false }) {
+function SmartLink({ href, locale, children, className, download = false, title }) {
   const resolved = lp(href, locale);
   const external = isExternal(resolved);
   return (
-    <a className={className} href={resolved} download={download || undefined} target={external ? "_blank" : undefined} rel={external ? "noreferrer" : undefined}>
+    <a className={className} href={resolved} download={download || undefined} target={external ? "_blank" : undefined} rel={external ? "noreferrer" : undefined} title={title}>
       {children}
     </a>
+  );
+}
+
+function HeroSocialLinks({ content, locale }) {
+  const links = [
+    { label: content.labels.linkedin, href: "https://www.linkedin.com/in/wenyu-chiou", Icon: Linkedin },
+    { label: content.labels.github, href: "https://github.com/WenyuChiou", Icon: Github },
+    { label: content.labels.email, href: `mailto:${content.contact.email}`, Icon: Mail },
+    { label: content.labels.threads, href: "https://www.threads.com/@wenyuchiou", Icon: AtSign },
+  ];
+  return (
+    <ul className="hero-socials" aria-label={content.labels.socialLinks}>
+      {links.map(({ label, href, Icon }) => (
+        <li key={href}>
+          <SmartLink className="hero-social-link" href={href} locale={locale} title={label}>
+            <Icon aria-hidden="true" size={18} />
+            <span className="sr-only">{label}</span>
+          </SmartLink>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -147,7 +170,10 @@ function Hero({ content, locale }) {
             <a className="button button-light" href={content.hero.primary.href}>{content.hero.primary.label}<ArrowDown aria-hidden="true" size={17} /></a>
             <a className="button button-ghost" href={content.hero.secondary.href}>{content.hero.secondary.label}<ArrowDown aria-hidden="true" size={17} /></a>
           </div>
-          <p className="hero-availability">{content.hero.availability}</p>
+          <div className="hero-meta">
+            <HeroSocialLinks content={content} locale={locale} />
+            <p className="hero-availability">{content.hero.availability}</p>
+          </div>
         </div>
         <figure className="hero-figure">
           <picture>

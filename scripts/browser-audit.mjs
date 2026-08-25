@@ -299,7 +299,7 @@ try {
     for (const violation of result.violations) failures.push(`${route}: axe ${violation.id} (${violation.impact}) on ${violation.nodes.length} node(s): ${violation.nodes.map((node) => node.target.join(" ")).join("; ")}`);
     const initialScrollY = await page.evaluate(() => window.scrollY);
     if (initialScrollY > 1) failures.push(`${route}: page auto-scrolled to ${Math.round(initialScrollY)}px before user interaction`);
-    const layout = await page.evaluate(() => ({ overflow: document.documentElement.scrollWidth - window.innerWidth, h1: document.querySelectorAll("h1").length, undersized: [...document.querySelectorAll(".button,.icon-button,.locale-link,summary,.segmented-control button,.document-link,.icon-link")].filter((element) => { const rect = element.getBoundingClientRect(); const style = getComputedStyle(element); return style.display !== "none" && rect.width > 0 && rect.height > 0 && (rect.width < 44 || rect.height < 44); }).length }));
+    const layout = await page.evaluate(() => ({ overflow: document.documentElement.scrollWidth - window.innerWidth, h1: document.querySelectorAll("h1").length, undersized: [...document.querySelectorAll(".button,.icon-button,.locale-link,summary,.segmented-control button,.document-link,.icon-link,.hero-social-link")].filter((element) => { const rect = element.getBoundingClientRect(); const style = getComputedStyle(element); return style.display !== "none" && rect.width > 0 && rect.height > 0 && (rect.width < 44 || rect.height < 44); }).length }));
     if (layout.overflow > 1) failures.push(`${route}: horizontal overflow ${layout.overflow}px`);
     if (layout.h1 !== 1) failures.push(`${route}: expected 1 h1, found ${layout.h1}`);
     if (layout.undersized) failures.push(`${route}: ${layout.undersized} key target(s) below 44px`);
@@ -354,6 +354,9 @@ try {
   await auditWorkDropdown("/work/wagf/");
 
   const heroPage = await openPage("/", { width: 1440, height: 1000, deviceScaleFactor: 1 });
+  const expectedSocialLinks = ["https://www.linkedin.com/in/wenyu-chiou", "https://github.com/WenyuChiou", "mailto:wec324@lehigh.edu", "https://www.threads.com/@wenyuchiou"];
+  const socialLinks = await heroPage.$$eval(".hero-social-link", (links) => links.map((link) => ({ href: link.getAttribute("href"), name: link.textContent.trim(), title: link.title, width: link.getBoundingClientRect().width, height: link.getBoundingClientRect().height })));
+  if (socialLinks.length !== 4 || socialLinks.some((link, index) => link.href !== expectedSocialLinks[index] || !link.name || !link.title || link.width < 44 || link.height < 44)) failures.push(`/: Hero social links are incomplete, misordered, unlabeled, or undersized: ${JSON.stringify(socialLinks)}`);
   const desktopHero = await heroPage.$eval(".hero-media", (image) => ({ width: image.getBoundingClientRect().width, fit: getComputedStyle(image).objectFit }));
   if (desktopHero.width < 319 || desktopHero.width > 361 || desktopHero.fit !== "contain") failures.push(`/: contained desktop Hero photo is ${Math.round(desktopHero.width)}px with object-fit ${desktopHero.fit}`);
   await heroPage.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
@@ -364,6 +367,8 @@ try {
   await heroPage.close();
 
   const zhArticlePage = await openPage("/zh/");
+  const zhSocialLabels = await zhArticlePage.$$eval(".hero-social-link", (links) => links.map((link) => link.textContent.trim()));
+  if (zhSocialLabels.join("|") !== "LinkedIn|GitHub|電子郵件|Threads") failures.push(`/zh/: Hero social links are not localized: ${zhSocialLabels.join("|")}`);
   const zhArticleLabels = await zhArticlePage.$$eval(".update-item .status-label", (labels) => labels.map((label) => label.textContent.trim()));
   if (!zhArticleLabels.includes("期刊論文")) failures.push(`/zh/: Recent Updates is missing the 期刊論文 classification`);
   await zhArticlePage.close();
