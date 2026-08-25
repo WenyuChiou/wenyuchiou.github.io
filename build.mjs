@@ -22,6 +22,9 @@ for (const article of FEATURE_CONTENT.en.articlesPage.articles) {
   await sharp(Buffer.from(graphic)).png({ compressionLevel: 9 }).toFile(`assets/og/${article.slug}.png`);
 }
 
+const recruiterGraphic = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="630" fill="#10201b"/><path d="M92 98H1108" stroke="#62b7aa" stroke-width="3"/><text x="92" y="158" class="meta">WENYU CHIOU</text><text x="92" y="272" class="title">LLM Evaluation &amp;</text><text x="92" y="354" class="title">AI Research Engineer</text><g class="cap"><text x="92" y="456">01  Human-grounded evaluation</text><text x="92" y="505">02  Governed agent systems</text><text x="92" y="554">03  Behavioral simulation</text></g><text x="1108" y="584" text-anchor="end" class="foot">Recruiter profile · wenyuchiou.github.io/hire/</text><style>.meta,.cap,.foot{font-family:Arial,sans-serif;fill:#9fd5cd}.meta{font-size:25px;font-weight:700}.title{font-family:Georgia,serif;fill:#f3f8f5;font-size:70px;font-weight:600}.cap{font-size:24px;fill:#d6e6e1}.foot{font-size:19px}</style></svg>`;
+await sharp(Buffer.from(recruiterGraphic)).png({ compressionLevel: 9 }).toFile("assets/og/recruiter-brief.png");
+
 const VENDOR_ASSETS = {
   "assets/vendor/transformers-4.2.0.mjs": "034dbecc87ac928f6f9eeb254ffe44f49757c1e5bfda1736fdaff6950e602db4",
   "assets/vendor/onnxruntime/ort-wasm-simd-threaded.asyncify.mjs": "5959c6733039619c9af710d8e1bae8d6e84402787990637be987c2b1bd6c5fa9",

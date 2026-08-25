@@ -31,9 +31,25 @@ export const NAVIGATOR_INDEX = {
     "履歷": "resume curriculum vitae CV documents",
     "學術": "academic research publications CV",
     "實習": "internship availability contact",
+    "招聘": "recruiter hiring role fit resume",
+    "職位": "role fit AI research engineer LLM evaluation",
     "聯絡": "contact email LinkedIn",
   },
   records: [
+    {
+      id: "hire",
+      href: "/hire/",
+      title: { en: "Recruiter brief · LLM Evaluation & AI Research", "zh-TW": "招聘摘要 · LLM 評估與 AI 研究" },
+      summary: {
+        en: "Role fit, verified capabilities, project evidence, Summer 2027 availability, work authorization, resume, and contact.",
+        "zh-TW": "職位匹配、可驗證能力、專案證據、2027 年暑期可任職時間、工作授權、履歷與聯絡方式。",
+      },
+      semantic: "Recruiter hiring profile for Wenyu Chiou as an LLM Evaluation and AI Research Engineer. Human grounded subgroup aware stability aware evaluation, governed agent systems, behavioral simulation, AI for science, Summer 2027 internship, December 2027 graduation, F-1 CPT, resume and contact.",
+      keywords: {
+        en: ["recruiter", "hire", "role fit", "AI Research Engineer", "LLM Evaluation Engineer", "internship", "resume", "CPT", "availability"],
+        "zh-TW": ["招聘", "職位匹配", "AI Research Engineer", "LLM Evaluation", "實習", "履歷", "CPT", "可任職時間"],
+      },
+    },
     {
       id: "expertise",
       href: "/#selected-work",
@@ -72,8 +88,8 @@ export const NAVIGATOR_INDEX = {
       },
       semantic: "Agent governance system with structured outputs, physical financial and behavioral constraints, targeted repair, audit traces, and state update gates for LLM agents.",
       keywords: {
-        en: ["agent governance", "validators", "constraints", "audit", "repair", "structured outputs", "safety"],
-        "zh-TW": ["代理治理", "驗證器", "限制", "稽核", "修正", "結構化輸出", "安全"],
+        en: ["agent governance", "governed agent systems", "validators", "constraints", "audit", "repair", "structured outputs", "safety"],
+        "zh-TW": ["代理治理", "受治理的代理系統", "驗證器", "限制", "稽核", "修正", "結構化輸出", "安全"],
       },
     },
     {

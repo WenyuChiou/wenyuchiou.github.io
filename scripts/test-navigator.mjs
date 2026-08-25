@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 import { createRequestGate, createSemanticRanker, rankLocally, requestNvidiaSummary, toSemanticQuery, validateNavigatorResponse } from "../navigator.js";
+import { NAVIGATOR_INDEX } from "../navigator-data.js";
 
 const cases = [
   ["agent governance constraints", "en", "wagf"],
@@ -10,6 +11,7 @@ const cases = [
   ["找論文", "zh-TW", "publications"],
   ["我想了解你的實習時間", "zh-TW", "contact"],
   ["驗證器與失敗模式文章", "zh-TW", "articles"],
+  ["AI research engineer role fit", "en", "hire"],
 ];
 
 for (const [query, locale, expected] of cases) {
@@ -21,11 +23,11 @@ const expanded = toSemanticQuery("找論文與代理治理");
 assert.match(expanded, /journal articles/);
 assert.match(expanded, /agent governance/);
 
-const dimensions = cases.length + 4;
+const dimensions = NAVIGATOR_INDEX.records.length;
 const corpus = Array.from({ length: dimensions }, (_, index) => (
   Array.from({ length: dimensions }, (__, dimension) => Number(index === dimension))
 ));
-const semanticTarget = 2;
+const semanticTarget = NAVIGATOR_INDEX.records.findIndex((record) => record.id === "wagf");
 let moduleLoads = 0;
 let pipelineLoads = 0;
 let corpusLoads = 0;

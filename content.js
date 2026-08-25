@@ -26,6 +26,7 @@ export const PAGE_DEFINITIONS = [
   { id: "article:evaluating-llm-agents-against-measured-human-behavior", path: "/articles/evaluating-llm-agents-against-measured-human-behavior/" },
   { id: "article:why-governed-agents-need-validators-before-state-changes", path: "/articles/why-governed-agents-need-validators-before-state-changes/" },
   { id: "article:from-individual-decisions-to-system-consequences", path: "/articles/from-individual-decisions-to-system-consequences/" },
+  { id: "hire", path: "/hire/" },
   { id: "about", path: "/about/" },
 ];
 

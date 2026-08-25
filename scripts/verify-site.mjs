@@ -34,6 +34,7 @@ for (const page of PAGE_DEFINITIONS) {
     if (!html.includes(`data-page="${page.id}"`)) errors.push(`${file}: wrong page id`);
     if (!html.includes("<h1")) errors.push(`${file}: no h1`);
     if (!html.includes('hreflang="en"') || !html.includes('hreflang="zh-Hant-TW"')) errors.push(`${file}: incomplete hreflang`);
+    if (page.id !== "home" && !html.includes('"@type":"BreadcrumbList"')) errors.push(`${file}: missing BreadcrumbList JSON-LD`);
     if (html.includes("Research view") || html.includes("Industry view")) errors.push(`${file}: old identity toggle leaked`);
   }
 }
@@ -49,11 +50,25 @@ for (const file of ["index.html", "zh/index.html"]) {
   if (["937", "52,141", "50 runs"].some((value) => html.includes(value))) errors.push(`${file}: research scale leaked onto homepage`);
   for (const selectorCopy of ["selected-work", "decision-provenance", "open-source", "articles-preview-title", "contact"]) if (!html.includes(selectorCopy)) errors.push(`${file}: missing homepage section ${selectorCopy}`);
 }
+const recruiterFiles = ["hire/index.html", "zh/hire/index.html"];
+for (const file of recruiterFiles) {
+  const html = readFileSync(file, "utf8");
+  for (const marker of ["hire-role-title", "hire-own-title", "hire-evidence-title", "hire-fit-title", "hire-availability-title", "hire-ask-title", "hire-contact-title"]) if (!html.includes(marker)) errors.push(`${file}: missing recruiter section ${marker}`);
+  if (!html.includes('"@type":"WebPage"') || !html.includes('"@id":"https://wenyuchiou.github.io/#wenyu-chiou"')) errors.push(`${file}: recruiter identity JSON-LD is incomplete`);
+  if (!html.includes('/assets/og/recruiter-brief.png')) errors.push(`${file}: missing recruiter social preview`);
+  if (!html.includes("data-inline=\"true\"")) errors.push(`${file}: missing inline recruiter navigator`);
+}
+if (!existsSync("assets/og/recruiter-brief.png")) errors.push("missing recruiter social preview asset");
+for (const file of ["about/index.html", "zh/about/index.html"]) {
+  const html = readFileSync(file, "utf8");
+  if (!html.includes('"@type":"ProfilePage"') || !html.includes('"@id":"https://wenyuchiou.github.io/#wenyu-chiou"')) errors.push(`${file}: ProfilePage identity JSON-LD is incomplete`);
+}
 for (const route of routes.filter(({ page }) => page.startsWith("article:"))) {
   const file = `${route.path.slice(1)}index.html`;
   const html = readFileSync(file, "utf8");
   if (!html.includes('"@type":"TechArticle"')) errors.push(`${file}: missing TechArticle JSON-LD`);
   if (!existsSync(route.ogImage.slice(1))) errors.push(`${file}: missing article social preview ${route.ogImage}`);
+  if (!html.includes('class="article-byline"') || !html.includes('href="/about/"') && !html.includes('href="/zh/about/"')) errors.push(`${file}: missing visible author byline`);
 }
 
 const sitemap = existsSync("sitemap.xml") ? readFileSync("sitemap.xml", "utf8") : "";

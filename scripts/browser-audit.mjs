@@ -39,6 +39,7 @@ const firstFoldSelectors = {
   "article:evaluating-llm-agents-against-measured-human-behavior": ".article-body",
   "article:why-governed-agents-need-validators-before-state-changes": ".article-body",
   "article:from-individual-decisions-to-system-consequences": ".article-body",
+  hire: ".hire-role",
   about: ".about-body img",
   "case:human-grounded-llm-evaluation": ".case-overview",
   "case:floodabm": ".case-overview",
@@ -236,6 +237,20 @@ const auditPortfolioNavigator = async (route, query, expectedPath) => {
   await page.close();
 };
 
+const auditRecruiterNavigator = async (route, query, expectedPath) => {
+  const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
+  if (await page.$(".navigator-launch")) failures.push(`${route}: recruiter brief should use the inline navigator instead of a floating launcher`);
+  const sections = await page.$$eval(".hire-page .section", (items) => items.map((item) => item.querySelector("h2")?.textContent.trim()));
+  if (sections.length !== 7 || sections.some((title) => !title)) failures.push(`${route}: recruiter brief does not expose seven ordered sections`);
+  await page.setOfflineMode(true);
+  await page.type(".recruiter-navigator input", query);
+  await page.click(".recruiter-navigator .navigator-submit");
+  await page.waitForSelector(".recruiter-navigator .navigator-results li");
+  const result = await page.$eval(".recruiter-navigator", (shell) => ({ firstPath: new URL(shell.querySelector(".navigator-results a").href).pathname, inline: shell.dataset.inline, mode: shell.querySelector("[data-navigator-mode]").textContent.trim() }));
+  if (result.firstPath !== expectedPath || result.inline !== "true" || !result.mode) failures.push(`${route}: inline recruiter navigator returned ${result.firstPath}, inline=${result.inline}, mode=${result.mode || "unset"}`);
+  await page.close();
+};
+
 const auditProvenance = async (route) => {
   const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
   await page.$eval(".provenance", (section) => section.scrollIntoView({ block: "start", behavior: "instant" }));
@@ -396,6 +411,8 @@ try {
   for (const route of ["/research/", "/zh/research/"]) await auditEvidenceStage(route);
   await auditPortfolioNavigator("/", "agent governance constraints", "/work/wagf/");
   await auditPortfolioNavigator("/zh/", "找洪水模型", "/zh/work/floodabm/");
+  await auditRecruiterNavigator("/hire/", "Which work demonstrates governed agent systems?", "/work/wagf/");
+  await auditRecruiterNavigator("/zh/hire/", "哪項工作呈現受治理的代理系統？", "/zh/work/wagf/");
   await auditSemanticNavigator();
   await auditWorkDropdown("/work/wagf/");
 
@@ -488,9 +505,10 @@ try {
     await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
     await page.setJavaScriptEnabled(false);
     const response = await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: "load" });
-    const staticState = await page.evaluate(() => ({ h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, provenanceStages: document.querySelectorAll(".provenance-stages>li").length, visibleProvenance: [...document.querySelectorAll(".provenance-stages>li>p")].filter((item) => getComputedStyle(item).display !== "none").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length, navigatorVisible: getComputedStyle(document.querySelector(".portfolio-navigator")).display !== "none" }));
+    const staticState = await page.evaluate(() => { const floatingNavigator = document.querySelector(".portfolio-navigator"); const inlineNavigator = document.querySelector(".recruiter-navigator"); const inlineForm = inlineNavigator?.querySelector("form"); return { h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, provenanceStages: document.querySelectorAll(".provenance-stages>li").length, visibleProvenance: [...document.querySelectorAll(".provenance-stages>li>p")].filter((item) => getComputedStyle(item).display !== "none").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, recruiterSections: document.querySelectorAll(".hire-page .section").length, recruiterFallbackLinks: inlineNavigator?.querySelectorAll("[data-navigator-query][href]").length || 0, recruiterFormAction: inlineForm ? new URL(inlineForm.action).pathname : "", explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length, navigatorVisible: floatingNavigator ? getComputedStyle(floatingNavigator).display !== "none" : false, inlineNavigatorVisible: inlineNavigator ? getComputedStyle(inlineNavigator).display !== "none" : false }; });
     const pageType = SEO.routes[route].page;
-    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || staticState.navigatorVisible || (pageType === "home" && (staticState.provenanceStages !== 5 || staticState.visibleProvenance !== 5)) || (pageType.startsWith("case:") && staticState.artifacts !== 1)) failures.push(`${route}: no-JavaScript fallback incomplete`);
+    const expectedWorkPath = route.startsWith("/zh/") ? "/zh/work/" : "/work/";
+    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || staticState.navigatorVisible || (pageType === "home" && (staticState.provenanceStages !== 5 || staticState.visibleProvenance !== 5)) || (pageType.startsWith("case:") && staticState.artifacts !== 1) || (pageType === "hire" && (staticState.recruiterSections !== 7 || !staticState.inlineNavigatorVisible || staticState.recruiterFallbackLinks !== 3 || staticState.recruiterFormAction !== expectedWorkPath))) failures.push(`${route}: no-JavaScript fallback incomplete`);
     await page.click(".work-dropdown > summary");
     if (!(await page.$eval(".work-dropdown", (details) => details.open))) failures.push(`${route}: no-JavaScript Work disclosure did not open natively`);
     if (pageType === "home") {

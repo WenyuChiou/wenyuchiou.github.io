@@ -95,6 +95,24 @@ test("analytics accepts only bounded aggregate fields", async () => {
   assert.equal(limited.status, 429);
 });
 
+test("analytics accepts recruiter funnel events without retaining query text", async () => {
+  const writes = [];
+  const env = baseEnv({ ANALYTICS: { writeDataPoint: (value) => writes.push(value) } });
+  const events = [
+    ["recruiter_brief_open", "hire"],
+    ["recruiter_resume_download", "resume-en"],
+    ["recruiter_contact_click", "email"],
+    ["recruiter_navigator_use", "hire"],
+  ];
+  for (const [event, target] of events) {
+    const response = await handleRequest(request("/v1/events", { event, locale: "en", target, outcome: "success", query: "private recruiting question" }), env);
+    assert.equal(response.status, 204);
+  }
+  assert.equal(writes.length, events.length);
+  assert.deepEqual(writes.map((point) => point.blobs), events.map(([event, target]) => [event, "en", target, "success"]));
+  assert.equal(JSON.stringify(writes).includes("private recruiting question"), false);
+});
+
 test("rejects JSON scalars, arrays, and null bodies with 400", async () => {
   for (const body of [null, [], "query", 7]) {
     const scalarRequest = new Request("https://worker.example/v1/navigate", { method: "POST", headers: { Origin: ORIGIN, "Content-Type": "application/json" }, body: JSON.stringify(body) });

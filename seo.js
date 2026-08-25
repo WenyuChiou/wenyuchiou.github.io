@@ -2,12 +2,13 @@ import { PAGE_DEFINITIONS, localizedPath } from "./content.js";
 import { FEATURE_CONTENT } from "./feature-content.js";
 
 const siteUrl = "https://wenyuchiou.github.io";
-const checkedAt = "2026-08-23";
+const checkedAt = "2026-08-25";
+const personId = `${siteUrl}/#wenyu-chiou`;
 
 const EN_META = {
   home: {
-    title: "Wenyu Chiou — Human-Grounded LLM Evaluation & Behavioral Simulation",
-    description: "Ph.D. researcher evaluating LLM behavior, building governed agent systems, and modeling decisions in behavioral and human–environment simulations.",
+    title: "Wenyu Chiou — LLM Evaluation & AI Research Engineer",
+    description: "LLM behavior evaluation grounded in measured human evidence, governed agents that validate actions before state changes, and behavioral simulation for AI for science.",
   },
   work: {
     title: "Selected Work — Wenyu Chiou",
@@ -40,6 +41,10 @@ const EN_META = {
   "article:evaluating-llm-agents-against-measured-human-behavior": { title: "Evaluating LLM Agents Against Measured Human Behavior — Wenyu Chiou", description: "Why behavioral LLM evaluation should compare decision structure, subgroup patterns, and stability rather than answer similarity alone." },
   "article:why-governed-agents-need-validators-before-state-changes": { title: "Why Governed Agents Need Validators Before State Changes — Wenyu Chiou", description: "A practical architecture that treats LLM outputs as proposals and validates, repairs, and audits them before state mutation." },
   "article:from-individual-decisions-to-system-consequences": { title: "From Individual Decisions to System Consequences — Wenyu Chiou", description: "How coupled simulation traces constrained decisions through environmental damage, updated state, and later behavior." },
+  hire: {
+    title: "Hire Wenyu Chiou — LLM Evaluation & AI Research Engineer",
+    description: "Recruiter brief for Wenyu Chiou: human-grounded LLM evaluation, governed agent systems, behavioral simulation, verified technical fit, availability, resume, and contact.",
+  },
   about: {
     title: "About — Wenyu Chiou",
     description: "Wenyu Chiou is a Lehigh University Ph.D. candidate working across human decision evidence, LLM evaluation, governed agents, and coupled simulation.",
@@ -47,7 +52,7 @@ const EN_META = {
 };
 
 const ZH_META = {
-  home: { title: "邱文昱｜以人類行為為基礎的 LLM 評估與行為模擬", description: "理海大學博士候選人，專注於 LLM 行為評估、受治理的代理系統，以及決策在行為與人類—環境模擬中的演變。" },
+  home: { title: "邱文昱｜LLM Evaluation 與 AI Research Engineer", description: "以實測人類行為為基礎的 LLM 評估、在狀態更新前驗證行動的受治理代理，以及用於 AI for Science 的行為模擬。" },
   work: { title: "精選工作｜邱文昱", description: "以人類證據為基礎的 LLM 評估、家戶洪水模擬、受治理代理與開源研究系統案例。" },
   "case:human-grounded-llm-evaluation": { title: "以人類證據為基礎的 LLM 評估｜邱文昱", description: "以 937 份家戶資料為基準，從整體與社會群體路徑比較 LLM 生成決策，並檢查重複執行穩定性。" },
   "case:floodabm": { title: "FLOODABM｜邱文昱", description: "涵蓋 52,141 個家戶、27 個人口普查區、2011 至 2023 年，且每個情境執行 50 次的耦合代理與巨災模型。" },
@@ -58,6 +63,7 @@ const ZH_META = {
   "article:evaluating-llm-agents-against-measured-human-behavior": { title: "以實測人類行為評估 LLM 代理｜邱文昱", description: "說明為何 LLM 行為評估應比較決策結構、群體差異與穩定性，而不只看答案相似度。" },
   "article:why-governed-agents-need-validators-before-state-changes": { title: "為何代理必須在狀態更新前通過驗證｜邱文昱", description: "把 LLM 輸出視為提案，在改變狀態前完成驗證、針對性修正與稽核。" },
   "article:from-individual-decisions-to-system-consequences": { title: "從個別決策到系統後果｜邱文昱", description: "以耦合模擬追蹤受限決策、環境損害、狀態更新與後續行為。" },
+  hire: { title: "招聘邱文昱｜LLM 評估與 AI 研究職位摘要", description: "邱文昱的招聘摘要：以人類行為為基礎的 LLM 評估、受治理代理、行為模擬、可驗證技術能力、可任職時間、履歷與聯絡方式。" },
   about: { title: "關於邱文昱", description: "理海大學土木與環境工程博士候選人，研究人類決策證據、LLM 評估、受治理代理與耦合模擬。" },
 };
 
@@ -78,11 +84,54 @@ for (const locale of ["en", "zh-TW"]) {
       alternate: siteUrl + localizedPath(page.path, locale === "en" ? "zh-TW" : "en"),
       xDefault: siteUrl + page.path,
       ogType: page.id.startsWith("case:") || page.id.startsWith("article:") ? "article" : "website",
-      ogImage: page.id.startsWith("article:") ? `/assets/og/${page.id.slice(8)}.png` : "/assets/og-card.png",
+      ogImage: page.id === "hire" ? "/assets/og/recruiter-brief.png" : page.id.startsWith("article:") ? `/assets/og/${page.id.slice(8)}.png` : "/assets/og-card.png",
+      ogImageAlt: page.id === "hire" ? (locale === "en" ? "Wenyu Chiou — LLM Evaluation and AI Research Engineer recruiter profile" : "邱文昱 — LLM 評估與 AI 研究職位摘要") : meta.title,
       lastModified: checkedAt,
     };
   }
 }
+
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": personId,
+  name: "Wenyu Chiou",
+  alternateName: "邱文昱",
+  jobTitle: "LLM Evaluation & AI Research Engineer",
+  description: "Research engineer working on human-grounded LLM behavior evaluation, governed agent systems, behavioral simulation, computational social science, and AI for science.",
+  image: { "@type": "ImageObject", url: `${siteUrl}/assets/portrait.jpg`, width: 768, height: 1024 },
+  affiliation: { "@type": "CollegeOrUniversity", "@id": "https://www.lehigh.edu/#organization", name: "Lehigh University", url: "https://www.lehigh.edu/" },
+  email: "mailto:wec324@lehigh.edu",
+  url: siteUrl,
+  knowsAbout: ["LLM evaluation", "Human-grounded AI evaluation", "Agent systems", "AI agent governance", "Behavioral simulation", "Agent-based modeling", "Computational social science", "AI for science", "Research software engineering"],
+  sameAs: [
+    "https://github.com/WenyuChiou",
+    "https://www.linkedin.com/in/wenyu-chiou",
+    "https://scholar.google.com/citations?user=vSQ3zT4AAAAJ&hl=en",
+    "https://orcid.org/0009-0005-8006-1288",
+  ],
+};
+
+const pageSchemas = Object.fromEntries(["en", "zh-TW"].flatMap((locale) => {
+  const language = locale === "en" ? "en" : "zh-Hant-TW";
+  return [
+    [localizedPath("/about/", locale), { "@context": "https://schema.org", "@type": "ProfilePage", "@id": `${siteUrl}${localizedPath("/about/", locale)}#profile`, url: `${siteUrl}${localizedPath("/about/", locale)}`, inLanguage: language, mainEntity: { "@id": personId } }],
+    [localizedPath("/hire/", locale), { "@context": "https://schema.org", "@type": "WebPage", "@id": `${siteUrl}${localizedPath("/hire/", locale)}#page`, url: `${siteUrl}${localizedPath("/hire/", locale)}`, inLanguage: language, about: { "@id": personId }, mainEntity: { "@id": personId } }],
+  ];
+}));
+
+const breadcrumbParents = { "case:human-grounded-llm-evaluation": "/work/", "case:floodabm": "/work/", "case:wagf": "/work/", "article:evaluating-llm-agents-against-measured-human-behavior": "/articles/", "article:why-governed-agents-need-validators-before-state-changes": "/articles/", "article:from-individual-decisions-to-system-consequences": "/articles/" };
+const breadcrumbs = Object.fromEntries(Object.values(routes).filter((route) => route.page !== "home").map((route) => {
+  const homePath = localizedPath("/", route.locale);
+  const parentBase = breadcrumbParents[route.page];
+  const parentPath = parentBase ? localizedPath(parentBase, route.locale) : null;
+  const items = [
+    { "@type": "ListItem", position: 1, name: route.locale === "en" ? "Home" : "首頁", item: siteUrl + homePath },
+    ...(parentPath ? [{ "@type": "ListItem", position: 2, name: routes[parentPath].title, item: siteUrl + parentPath }] : []),
+    { "@type": "ListItem", position: parentPath ? 3 : 2, name: route.title, item: route.canonical },
+  ];
+  return [route.path, { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: items }];
+}));
 
 export const SEO = {
   siteUrl,
@@ -105,27 +154,14 @@ export const SEO = {
       citation_doi: "10.1029/2025WR042111",
     },
   },
-  person: {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: "Wenyu Chiou",
-    alternateName: "邱文昱",
-    jobTitle: "Ph.D. Researcher in Human-Grounded LLM Evaluation, Governed Agents, and Behavioral Simulation",
-    affiliation: { "@type": "CollegeOrUniversity", name: "Lehigh University" },
-    email: "mailto:wec324@lehigh.edu",
-    url: siteUrl,
-    sameAs: [
-      "https://github.com/WenyuChiou",
-      "https://www.linkedin.com/in/wenyu-chiou",
-      "https://scholar.google.com/citations?user=vSQ3zT4AAAAJ&hl=en",
-      "https://orcid.org/0009-0005-8006-1288",
-    ],
-  },
+  person,
+  pageSchemas,
+  breadcrumbs,
   article: {
     "@context": "https://schema.org",
     "@type": "ScholarlyArticle",
     headline: "Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions",
-    author: [{ "@type": "Person", name: "Y. C. Ethan Yang" }, { "@type": "Person", name: "Wenyu Chiou" }],
+    author: [{ "@type": "Person", name: "Y. C. Ethan Yang" }, { "@type": "Person", "@id": personId, name: "Wenyu Chiou" }],
     datePublished: "2026-06",
     isPartOf: { "@type": "Periodical", name: "Water Resources Research" },
     sameAs: "https://doi.org/10.1029/2025WR042111",
@@ -140,7 +176,7 @@ export const SEO = {
       datePublished: article.date,
       dateModified: article.date,
       inLanguage: locale === "en" ? "en" : "zh-Hant-TW",
-      author: { "@type": "Person", name: "Wenyu Chiou", url: siteUrl },
+      author: { "@type": "Person", "@id": personId, name: "Wenyu Chiou", url: siteUrl },
       mainEntityOfPage: siteUrl + path,
       image: `${siteUrl}/assets/og/${article.slug}.png`,
     }];
