@@ -7,7 +7,7 @@ const baseEnv = (overrides = {}) => ({
   ALLOWED_ORIGIN: ORIGIN,
   ALLOWED_HOSTNAME: "wenyuchiou.github.io",
   NVIDIA_API_KEY: "test-only",
-  NVIDIA_MODEL: "meta/llama-3.1-8b-instruct",
+  NVIDIA_MODEL: "deepseek-ai/deepseek-v4-flash-0731",
   TURNSTILE_BYPASS: "true",
   RATE_LIMITER: { limit: async () => ({ success: true }) },
   EVENT_RATE_LIMITER: { limit: async () => ({ success: true }) },

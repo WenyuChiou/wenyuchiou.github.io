@@ -9,6 +9,7 @@ const requirePdfs = process.argv.includes("--require-pdfs");
 const sourceFiles = ["content.en.js", "content.zh-TW.js", "seo.js", "app.jsx", "template.html", "cv/academic.html", "cv/resume.html", "cv/academic.zh-TW.html", "cv/resume.zh-TW.html"];
 const routeFiles = Object.keys(SEO.routes).map((route) => route === "/" ? "index.html" : `${route.slice(1)}index.html`);
 const files = [...sourceFiles, ...routeFiles];
+const publicInfrastructureHosts = ["wenyu-portfolio-navigator.wenyuchiou12.workers.dev"];
 const banned = [
   { name: "human-comparison-reproduce", pattern: /\breproduc(?:e|es|ed|ing|tion)\b/giu },
   { name: "human-substitute", pattern: /stand in for real people|human[- ]equivalent|validated human substitute/giu },
@@ -29,8 +30,11 @@ for (const file of files) {
   const text = readFileSync(file, "utf8");
   for (const rule of banned) {
     if (file === "template.html" && rule.name === "placeholder") continue;
+    const checkedText = rule.name === "private-email"
+      ? publicInfrastructureHosts.reduce((value, host) => value.replaceAll(host, ""), text)
+      : text;
     rule.pattern.lastIndex = 0;
-    for (const match of text.matchAll(rule.pattern)) failures.push(`${file}: ${rule.name}: ${match[0]}`);
+    for (const match of checkedText.matchAll(rule.pattern)) failures.push(`${file}: ${rule.name}: ${match[0]}`);
   }
   const emails = [...text.matchAll(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g)].map((match) => match[0]);
   for (const email of emails) if (email.toLowerCase() !== "wec324@lehigh.edu") failures.push(`${file}: noncanonical email ${email}`);

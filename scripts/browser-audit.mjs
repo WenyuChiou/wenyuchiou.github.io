@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import puppeteer from "puppeteer-core";
 import axe from "axe-core";
+import { DEPLOYMENT_CONFIG } from "../deployment-config.mjs";
 import { SEO } from "../seo.js";
 import githubData from "../data/github.json" with { type: "json" };
 
@@ -250,20 +251,47 @@ const auditProvenance = async (route) => {
 const auditSemanticNavigator = async () => {
   const route = "/";
   const query = "Which work demonstrates governed LLM agents? private-query-marker";
+  const eventsEndpoint = new URL("/v1/events", DEPLOYMENT_CONFIG.aiEndpoint).href;
   const page = await browser.newPage();
   await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
   const requests = [];
   const failedResponses = [];
   const consoleErrors = [];
-  page.on("request", (request) => requests.push({ url: request.url(), type: request.resourceType() }));
+  await page.setRequestInterception(true);
+  page.on("request", (request) => {
+    requests.push({ url: request.url(), type: request.resourceType() });
+    if (request.url() === eventsEndpoint) {
+      request.respond({
+        status: 204,
+        headers: {
+          "access-control-allow-origin": origin,
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-allow-headers": "Content-Type",
+        },
+      }).catch((error) => consoleErrors.push(`event mock failed: ${error.message}`));
+      return;
+    }
+    request.continue().catch((error) => consoleErrors.push(`request continuation failed: ${error.message}`));
+  });
   page.on("response", (response) => { if (response.status() >= 400) failedResponses.push(`${response.status()} ${response.url()}`); });
   page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
   page.on("pageerror", (error) => consoleErrors.push(error.message));
   const response = await page.goto(`${origin}${route}`, { waitUntil: "networkidle0" });
   if (!response || response.status() !== 200) failures.push(`${route}: semantic navigator HTTP ${response?.status()}`);
+  const renderedConfig = await page.evaluate(() => ({
+    aiEndpoint: document.querySelector('meta[name="portfolio-ai-endpoint"]')?.content,
+    turnstileSiteKey: document.querySelector('meta[name="turnstile-site-key"]')?.content,
+  }));
+  if (renderedConfig.aiEndpoint !== DEPLOYMENT_CONFIG.aiEndpoint || renderedConfig.turnstileSiteKey !== DEPLOYMENT_CONFIG.turnstileSiteKey) {
+    failures.push(`${route}: rendered navigator deployment config is stale`);
+  }
   const csp = await page.$eval('meta[http-equiv="Content-Security-Policy"]', (meta) => meta.content);
   const scriptPolicy = csp.split(";").find((directive) => directive.trim().startsWith("script-src")) || "";
-  if (!scriptPolicy.includes("'self'") || /https?:/.test(scriptPolicy)) failures.push(`${route}: CSP script-src does not restrict executable code to this site`);
+  const externalScriptSources = scriptPolicy.trim().split(/\s+/).filter((source) => /^https?:/.test(source));
+  const unexpectedScriptSources = externalScriptSources.filter((source) => source !== "https://challenges.cloudflare.com");
+  if (!scriptPolicy.includes("'self'") || !externalScriptSources.includes("https://challenges.cloudflare.com") || unexpectedScriptSources.length) {
+    failures.push(`${route}: CSP script-src is not restricted to this site and Cloudflare Turnstile`);
+  }
   await page.click(".navigator-launch");
   await page.type("#navigator-query", query);
   await page.click(".navigator-submit");
@@ -278,7 +306,7 @@ const auditSemanticNavigator = async () => {
   }
   const firstPath = await page.$eval(".navigator-results a", (link) => new URL(link.href).pathname);
   if (firstPath !== "/work/wagf/") failures.push(`${route}: semantic navigator ranked ${firstPath} instead of /work/wagf/`);
-  const remoteScripts = requests.filter(({ url, type }) => type === "script" && !url.startsWith(origin));
+  const remoteScripts = requests.filter(({ url, type }) => type === "script" && !url.startsWith(origin) && !url.startsWith("https://challenges.cloudflare.com/") && !url.startsWith("blob:https://challenges.cloudflare.com/"));
   if (remoteScripts.length) failures.push(`${route}: semantic navigator loaded remote executable code: ${remoteScripts.map(({ url }) => url).join(", ")}`);
   const leakedQuery = requests.some(({ url }) => decodeURIComponent(url).toLocaleLowerCase().includes("private-query-marker"));
   if (leakedQuery) failures.push(`${route}: semantic navigator included visitor query text in a network request`);
@@ -297,7 +325,7 @@ if (process.argv.includes("--semantic-only")) {
     failures.forEach((failure) => console.error(`- ${failure}`));
     process.exit(1);
   }
-  console.log("browser-audit: semantic navigator passed CSP, local-runtime, privacy, and routing checks");
+  console.log("browser-audit: semantic navigator passed CSP, approved-runtime, privacy, and routing checks");
   process.exit(0);
 }
 

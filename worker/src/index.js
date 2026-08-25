@@ -69,7 +69,7 @@ async function askNvidia(query, locale, env, fetchImpl) {
   const response = await fetchImpl(NVIDIA_URL, {
     method: "POST",
     headers: { Authorization: `Bearer ${env.NVIDIA_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: env.NVIDIA_MODEL || "meta/llama-3.1-8b-instruct", messages: [{ role: "system", content: system }, { role: "user", content: JSON.stringify({ question: query }) }], temperature: 0.1, max_tokens: 220, response_format: { type: "json_object" } }),
+    body: JSON.stringify({ model: env.NVIDIA_MODEL || "deepseek-ai/deepseek-v4-flash-0731", messages: [{ role: "system", content: system }, { role: "user", content: JSON.stringify({ question: query }) }], temperature: 0.1, max_tokens: 220, response_format: { type: "json_object" } }),
     signal: AbortSignal.timeout(8000),
   });
   if (!response.ok) throw new Error(`nvidia_${response.status}`);
