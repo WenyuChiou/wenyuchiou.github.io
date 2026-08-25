@@ -36,7 +36,7 @@ export const NAVIGATOR_INDEX = {
   records: [
     {
       id: "expertise",
-      href: "/#expertise-title",
+      href: "/#selected-work",
       title: { en: "Core expertise", "zh-TW": "核心專長" },
       summary: {
         en: "Human-grounded LLM evaluation, governed agents, behavioral simulation, and reproducible research systems.",
@@ -119,6 +119,14 @@ export const NAVIGATOR_INDEX = {
       },
     },
     {
+      id: "articles",
+      href: "/articles/",
+      title: { en: "Methods articles", "zh-TW": "方法文章" },
+      summary: { en: "Practical writing on LLM evaluation, agent validators, and coupled decision consequences.", "zh-TW": "LLM 評估、代理驗證與耦合決策後果的實務文章。" },
+      semantic: "Technical articles explaining human grounded LLM evaluation, governed agent validation and targeted repair, and feedback from individual decisions to system consequences.",
+      keywords: { en: ["articles", "methods", "failure modes", "engineering judgment", "validators"], "zh-TW": ["文章", "方法", "失敗模式", "工程判斷", "驗證器"] },
+    },
+    {
       id: "open-source",
       href: "/#open-source",
       title: { en: "Open-source systems", "zh-TW": "開源研究系統" },
@@ -134,7 +142,7 @@ export const NAVIGATOR_INDEX = {
     },
     {
       id: "documents",
-      href: "/#documents-title",
+      href: "/about/#documents-title",
       title: { en: "Resume and academic CV", "zh-TW": "業界履歷與學術 CV" },
       summary: {
         en: "Download the industry resume or academic CV in English or Traditional Chinese.",

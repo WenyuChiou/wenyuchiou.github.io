@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
-import { createRequestGate, createSemanticRanker, rankLocally, toSemanticQuery } from "../navigator.js";
+import { createRequestGate, createSemanticRanker, rankLocally, requestNvidiaSummary, toSemanticQuery, validateNavigatorResponse } from "../navigator.js";
 
 const cases = [
   ["agent governance constraints", "en", "wagf"],
@@ -9,6 +9,7 @@ const cases = [
   ["找洪水模型", "zh-TW", "floodabm"],
   ["找論文", "zh-TW", "publications"],
   ["我想了解你的實習時間", "zh-TW", "contact"],
+  ["驗證器與失敗模式文章", "zh-TW", "articles"],
 ];
 
 for (const [query, locale, expected] of cases) {
@@ -95,5 +96,24 @@ const staleRequest = gate.next();
 const currentRequest = gate.next();
 assert.equal(gate.isCurrent(staleRequest), false, "stale semantic results must not replace a newer query");
 assert.equal(gate.isCurrent(currentRequest), true);
+
+const validated = validateNavigatorResponse({ mode: "nvidia", answer: "Start with the governance case.", matches: [{ id: "wagf", reason: "It shows validators." }] });
+assert.equal(validated.matches[0].record.id, "wagf");
+assert.throws(() => validateNavigatorResponse({ mode: "nvidia", answer: "Unknown", matches: [{ id: "invented", reason: "No" }] }));
+
+let nvidiaRequest;
+const nvidia = await requestNvidiaSummary({
+  endpoint: "https://worker.example/v1/navigate",
+  query: "agent governance",
+  locale: "en",
+  turnstileToken: "test-token",
+  fetchImpl: async (_url, init) => {
+    nvidiaRequest = JSON.parse(init.body);
+    return new Response(JSON.stringify({ mode: "nvidia", answer: "See WAGF.", matches: [{ id: "wagf", reason: "Governance evidence." }] }), { status: 200, headers: { "Content-Type": "application/json" } });
+  },
+});
+assert.equal(nvidiaRequest.query, "agent governance");
+assert.equal(nvidiaRequest.turnstileToken, "test-token");
+assert.equal(nvidia.matches[0].record.id, "wagf");
 
 console.log(`navigator-test: ${cases.length} bilingual routes, semantic loading, retry, and race handling passed`);

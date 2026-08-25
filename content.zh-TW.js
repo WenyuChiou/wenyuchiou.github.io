@@ -61,7 +61,7 @@ export const ZH_TW = {
     primaryLabel: "核心專長",
     primaryTitle: "以人類行為為基礎的 LLM 行為評估",
     primaryText: "我設計能比較模型生成決策與實測人類路徑的評估方法，找出社會群體差異與不穩定性，並清楚說明效度邊界。",
-    supportingLabel: "相連能力",
+    supportingLabel: "延伸能力",
     items: [
       { title: "受治理的代理系統", text: "我建構結構化決策流程，在行動改變系統狀態前執行限制檢查、針對性修正，並留下可稽核軌跡。" },
       { title: "行為與耦合模擬", text: "我模擬決策如何隨時間累積，以及它們如何與物理、制度與財務過程互動。" },

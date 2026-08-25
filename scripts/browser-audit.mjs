@@ -30,10 +30,14 @@ const internalTargets = new Map();
 const anchorTargets = new Map();
 const origin = `http://127.0.0.1:${port}`;
 const firstFoldSelectors = {
-  home: ".expertise",
+  home: ".flagship",
   work: ".flagship",
   research: "main > .section",
   publications: ".publication-groups",
+  articles: ".articles-index",
+  "article:evaluating-llm-agents-against-measured-human-behavior": ".article-body",
+  "article:why-governed-agents-need-validators-before-state-changes": ".article-body",
+  "article:from-individual-decisions-to-system-consequences": ".article-body",
   about: ".about-body img",
   "case:human-grounded-llm-evaluation": ".case-overview",
   "case:floodabm": ".case-overview",
@@ -231,6 +235,18 @@ const auditPortfolioNavigator = async (route, query, expectedPath) => {
   await page.close();
 };
 
+const auditProvenance = async (route) => {
+  const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
+  await page.$eval(".provenance", (section) => section.scrollIntoView({ block: "start", behavior: "instant" }));
+  const initial = await page.$eval(".provenance-stages", (list) => ({ current: list.querySelector('[aria-current="step"]')?.textContent, activePaths: document.querySelectorAll(".coupled-flow .is-active").length, title: document.querySelector(".coupled-flow title")?.textContent, desc: document.querySelector(".coupled-flow desc")?.textContent }));
+  if (!initial.current || !initial.activePaths || !initial.title || !initial.desc) failures.push(`${route}: provenance SVG lacks initial state or accessible text`);
+  await page.click('.provenance-lenses button:nth-child(2)');
+  await page.click('.provenance-stages li:nth-child(4) button');
+  const changed = await page.$eval(".provenance", (section) => ({ lens: section.querySelector('.provenance-lenses button:nth-child(2)')?.getAttribute("aria-pressed"), step: section.querySelector('.provenance-stages li:nth-child(4) button')?.getAttribute("aria-current"), text: section.querySelector('.provenance-stages li:nth-child(4)>p')?.textContent.trim() }));
+  if (changed.lens !== "true" || changed.step !== "step" || !changed.text) failures.push(`${route}: provenance lens and keyboard-readable stage did not update`);
+  await page.close();
+};
+
 const auditSemanticNavigator = async () => {
   const route = "/";
   const query = "Which work demonstrates governed LLM agents? private-query-marker";
@@ -347,8 +363,9 @@ try {
   for (const route of ["/", "/zh/"]) {
     await auditWorkDropdown(route);
     await auditSelectedWork(route);
-    await auditEvidenceStage(route);
+    await auditProvenance(route);
   }
+  for (const route of ["/research/", "/zh/research/"]) await auditEvidenceStage(route);
   await auditPortfolioNavigator("/", "agent governance constraints", "/work/wagf/");
   await auditPortfolioNavigator("/zh/", "找洪水模型", "/zh/work/floodabm/");
   await auditSemanticNavigator();
@@ -376,8 +393,8 @@ try {
   await heroPage.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
   const mobileHeroWidth = await heroPage.$eval(".hero-media", (image) => image.getBoundingClientRect().width);
   if (mobileHeroWidth < 119 || mobileHeroWidth > 121) failures.push(`/: mobile Hero photo is ${Math.round(mobileHeroWidth)}px, expected 120px`);
-  const articleLabels = await heroPage.$$eval(".update-item .status-label", (labels) => labels.map((label) => label.textContent.trim()));
-  if (!articleLabels.includes("Journal Article") || articleLabels.includes("Publication")) failures.push(`/: Recent Updates does not classify the journal item as Journal Article`);
+  const articleTitles = await heroPage.$$eval(".article-preview-list h3", (titles) => titles.map((title) => title.textContent.trim()));
+  if (articleTitles.length !== 3 || articleTitles.some((title) => !title)) failures.push(`/: homepage does not expose all three articles`);
   await heroPage.close();
 
   const zhArticlePage = await openPage("/zh/");
@@ -386,8 +403,8 @@ try {
   const zhPreviewPaths = await zhArticlePage.$$eval(".repo-preview img", (images) => images.map((image) => new URL(image.src).pathname));
   const expectedPreviewPaths = expectedPreviews.map(([, repo]) => repo.previewUrl);
   if (zhPreviewPaths.join("|") !== expectedPreviewPaths.join("|")) failures.push(`/zh/: GitHub social previews drifted from the English home page: ${zhPreviewPaths.join("|")}`);
-  const zhArticleLabels = await zhArticlePage.$$eval(".update-item .status-label", (labels) => labels.map((label) => label.textContent.trim()));
-  if (!zhArticleLabels.includes("期刊論文")) failures.push(`/zh/: Recent Updates is missing the 期刊論文 classification`);
+  const zhArticleTitles = await zhArticlePage.$$eval(".article-preview-list h3", (titles) => titles.map((title) => title.textContent.trim()));
+  if (zhArticleTitles.length !== 3 || zhArticleTitles.some((title) => !title)) failures.push(`/zh/: homepage does not expose all three localized articles`);
   await zhArticlePage.close();
 
   const publicationCopyPage = await openPage("/publications/");
@@ -443,9 +460,9 @@ try {
     await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
     await page.setJavaScriptEnabled(false);
     const response = await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: "load" });
-    const staticState = await page.evaluate(() => ({ h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length, navigatorVisible: getComputedStyle(document.querySelector(".portfolio-navigator")).display !== "none" }));
+    const staticState = await page.evaluate(() => ({ h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, provenanceStages: document.querySelectorAll(".provenance-stages>li").length, visibleProvenance: [...document.querySelectorAll(".provenance-stages>li>p")].filter((item) => getComputedStyle(item).display !== "none").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length, navigatorVisible: getComputedStyle(document.querySelector(".portfolio-navigator")).display !== "none" }));
     const pageType = SEO.routes[route].page;
-    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || staticState.navigatorVisible || (pageType === "home" && staticState.stages !== 6) || (pageType.startsWith("case:") && staticState.artifacts !== 1)) failures.push(`${route}: no-JavaScript fallback incomplete`);
+    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || staticState.navigatorVisible || (pageType === "home" && (staticState.provenanceStages !== 5 || staticState.visibleProvenance !== 5)) || (pageType.startsWith("case:") && staticState.artifacts !== 1)) failures.push(`${route}: no-JavaScript fallback incomplete`);
     await page.click(".work-dropdown > summary");
     if (!(await page.$eval(".work-dropdown", (details) => details.open))) failures.push(`${route}: no-JavaScript Work disclosure did not open natively`);
     if (pageType === "home") {

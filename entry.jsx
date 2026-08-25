@@ -1,7 +1,7 @@
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { App } from "./app.jsx";
-import { initPortfolioNavigator } from "./navigator.js";
+import { initPortfolioNavigator, trackPortfolioEvent } from "./navigator.js";
 
 document.documentElement.classList.add("js");
 const root = document.getElementById("root");
@@ -97,7 +97,7 @@ function initProgressiveEnhancement() {
 
 if (root) {
   const page = root.dataset.page || "home";
-  if (page.startsWith("case:")) {
+  if (page === "home" || page.startsWith("case:")) {
     hydrateRoot(root, <App page={page} locale={root.dataset.locale || "en"} basePath={root.dataset.basePath || "/"} />);
   } else {
     const menu = root.querySelector(".menu-button");
@@ -144,3 +144,24 @@ if (root) {
   initProgressiveEnhancement();
   initPortfolioNavigator(root);
 }
+
+document.addEventListener("click", (event) => {
+  const link = event.target.closest?.("a[href]");
+  if (!link) return;
+  const href = link.getAttribute("href") || "";
+  const locale = root?.dataset.locale === "zh-TW" ? "zh-TW" : "en";
+  let payload;
+  if (link.closest(".hero-actions") && href === "#selected-work") payload = ["hero_work_click", "home"];
+  else if (href.includes("Industry_Resume_EN")) payload = ["industry_resume_download", "resume-en"];
+  else if (href.includes("Industry_Resume_zh-TW")) payload = ["industry_resume_download", "resume-zh"];
+  else if (href.includes("Academic_CV_EN")) payload = ["academic_cv_download", "resume-en"];
+  else if (href.includes("Academic_CV_zh-TW")) payload = ["academic_cv_download", "resume-zh"];
+  else if (href.includes("human-grounded-llm-evaluation")) payload = ["case_open", "human-grounded-llm-evaluation"];
+  else if (href.includes("/work/floodabm")) payload = ["case_open", "floodabm"];
+  else if (href.includes("/work/wagf")) payload = ["case_open", "wagf"];
+  else if (href.includes("/articles/")) payload = ["article_open", "articles"];
+  else if (href.startsWith("mailto:")) payload = ["contact_click", "email"];
+  else if (href.includes("linkedin.com")) payload = ["contact_click", "linkedin"];
+  else if (href.includes("github.com")) payload = ["contact_click", "github"];
+  if (payload) trackPortfolioEvent(payload[0], locale, payload[1]);
+}, { passive: true });

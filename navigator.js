@@ -126,6 +126,70 @@ export function createRequestGate() {
   };
 }
 
+export function validateNavigatorResponse(payload) {
+  if (!payload || payload.mode !== "nvidia" || typeof payload.answer !== "string" || !Array.isArray(payload.matches)) throw new Error("invalid_nvidia_response");
+  const records = new Map(NAVIGATOR_INDEX.records.map((record) => [record.id, record]));
+  const seen = new Set();
+  const matches = payload.matches.map((match) => {
+    if (!match || typeof match.id !== "string" || !records.has(match.id) || seen.has(match.id)) throw new Error("unknown_record_id");
+    seen.add(match.id);
+    return { record: records.get(match.id), reason: typeof match.reason === "string" ? match.reason.slice(0, 240) : "" };
+  });
+  if (!payload.answer.trim() || matches.length < 1 || matches.length > 3) throw new Error("invalid_nvidia_response");
+  return { answer: payload.answer.trim().slice(0, 1200), matches };
+}
+
+export async function requestNvidiaSummary({ endpoint, query, locale, turnstileToken, fetchImpl = fetch, timeoutMs = 8000 }) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetchImpl(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query, locale, turnstileToken }), signal: controller.signal });
+    if (!response.ok) throw new Error(`navigator_${response.status}`);
+    return validateNavigatorResponse(await response.json());
+  } finally { clearTimeout(timeout); }
+}
+
+let turnstileLoader;
+function loadTurnstile() {
+  if (window.turnstile) return Promise.resolve(window.turnstile);
+  if (!turnstileLoader) turnstileLoader = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    script.async = true;
+    script.defer = true;
+    script.addEventListener("load", () => resolve(window.turnstile), { once: true });
+    script.addEventListener("error", () => reject(new Error("turnstile_load_failed")), { once: true });
+    document.head.append(script);
+  });
+  return turnstileLoader;
+}
+
+async function getTurnstileToken(container, sitekey) {
+  if (!sitekey) throw new Error("turnstile_not_configured");
+  const turnstile = await loadTurnstile();
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("turnstile_timeout")), 10000);
+    if (container.dataset.widgetId) turnstile.remove(container.dataset.widgetId);
+    container.replaceChildren();
+    const widgetId = turnstile.render(container, { sitekey, action: "navigate", theme: "auto", size: "flexible", callback: (token) => { clearTimeout(timer); resolve(token); }, "error-callback": () => { clearTimeout(timer); reject(new Error("turnstile_failed")); }, "expired-callback": () => reject(new Error("turnstile_expired")) });
+    container.dataset.widgetId = String(widgetId);
+  });
+}
+
+function eventEndpoint(endpoint) {
+  if (!endpoint) return "";
+  const url = new URL(endpoint);
+  url.pathname = "/v1/events";
+  return url.toString();
+}
+
+export function trackPortfolioEvent(event, locale, target, outcome = "attempt") {
+  const endpoint = document.querySelector('meta[name="portfolio-ai-endpoint"]')?.content.trim() || "";
+  const url = eventEndpoint(endpoint);
+  if (!url) return;
+  fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event, locale, target, outcome }), keepalive: true }).catch(() => {});
+}
+
 const rankSemantically = createSemanticRanker();
 
 function isEditable(target) {
@@ -144,6 +208,10 @@ export function initPortfolioNavigator(root = document) {
   const status = shell.querySelector("[data-navigator-status]");
   const mode = shell.querySelector("[data-navigator-mode]");
   const results = shell.querySelector("[data-navigator-results]");
+  const answer = shell.querySelector("[data-navigator-answer]");
+  const turnstileContainer = shell.querySelector("[data-turnstile-container]");
+  const endpoint = document.querySelector('meta[name="portfolio-ai-endpoint"]')?.content.trim() || "";
+  const sitekey = document.querySelector('meta[name="turnstile-site-key"]')?.content.trim() || "";
   const copy = shell.dataset;
   const requestGate = createRequestGate();
 
@@ -154,7 +222,7 @@ export function initPortfolioNavigator(root = document) {
 
   const renderResults = (ranked) => {
     results.replaceChildren();
-    ranked.forEach(({ record }, index) => {
+    ranked.forEach(({ record, reason }, index) => {
       const item = document.createElement("li");
       const link = document.createElement("a");
       const number = document.createElement("span");
@@ -167,7 +235,8 @@ export function initPortfolioNavigator(root = document) {
       number.className = "navigator-result-number";
       number.textContent = String(index + 1).padStart(2, "0");
       title.textContent = record.title[locale];
-      summary.textContent = record.summary[locale];
+      summary.textContent = reason || record.summary[locale];
+      link.dataset.navigatorRecord = record.id;
       arrow.className = "navigator-result-arrow";
       arrow.setAttribute("aria-hidden", "true");
       arrow.textContent = "↗";
@@ -181,6 +250,7 @@ export function initPortfolioNavigator(root = document) {
   const openDialog = () => {
     if (!dialog.open) dialog.showModal();
     requestAnimationFrame(() => input.focus());
+    trackPortfolioEvent("navigator_open", locale, "home");
   };
 
   const runSearch = async (rawQuery) => {
@@ -190,6 +260,8 @@ export function initPortfolioNavigator(root = document) {
       return;
     }
     const currentRequest = requestGate.next();
+    answer.hidden = true;
+    answer.textContent = "";
     results.setAttribute("aria-busy", "true");
     setStatus(copy.matching, copy.local);
     const localResults = rankLocally(query, locale);
@@ -199,6 +271,23 @@ export function initPortfolioNavigator(root = document) {
     if (!navigator.onLine || navigator.connection?.saveData) {
       setStatus(copy.fallback, copy.local);
       return;
+    }
+
+    if (endpoint && sitekey) {
+      setStatus(copy.loading, copy.local);
+      try {
+        const turnstileToken = await getTurnstileToken(turnstileContainer, sitekey);
+        const nvidia = await requestNvidiaSummary({ endpoint, query, locale, turnstileToken });
+        if (!requestGate.isCurrent(currentRequest)) return;
+        answer.textContent = nvidia.answer;
+        answer.hidden = false;
+        renderResults(nvidia.matches);
+        setStatus(copy.ready, copy.nvidia);
+        trackPortfolioEvent("navigator_answer", locale, "home", "success");
+        return;
+      } catch {
+        if (!requestGate.isCurrent(currentRequest)) return;
+      }
     }
 
     setStatus(copy.loading, copy.local);

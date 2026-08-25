@@ -10,7 +10,10 @@
   "scripts": {
     "build": "node build.mjs",
     "pdf": "node cv/build-pdf.mjs",
-    "test": "node scripts/verify-site.mjs && node scripts/check-copy.mjs --strict --require-pdfs && node scripts/test-navigator.mjs",
+    "test": "node scripts/verify-site.mjs && node scripts/check-copy.mjs --strict --require-pdfs && node scripts/test-navigator.mjs && npm run test:worker",
+    "test:worker": "node --test worker/src/index.test.js",
+    "check:nvidia-model": "node worker/scripts/check-model.mjs",
+    "deploy:worker": "npm run check:nvidia-model && wrangler deploy --config worker/wrangler.jsonc",
     "qa:browser": "node scripts/browser-audit.mjs",
     "qa:lighthouse": "node scripts/lighthouse-audit.mjs",
     "qa:screenshots": "node scripts/capture-screenshots.mjs",
@@ -21,7 +24,8 @@
     "esbuild": "^0.24.0",
     "lighthouse": "^13.4.1",
     "puppeteer-core": "^25.3.0",
-    "sharp": "^0.35.3"
+    "sharp": "^0.35.3",
+    "wrangler": "^4.33.1"
   },
   "dependencies": {
     "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
