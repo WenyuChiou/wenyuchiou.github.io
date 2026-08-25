@@ -17,7 +17,7 @@ const browserCandidates = [process.env.CHROME_PATH, "C:\\Program Files\\Google\\
 const executablePath = browserCandidates.find((candidate) => fs.existsSync(candidate));
 if (!executablePath) throw new Error("Chrome not found; set CHROME_PATH");
 
-const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json", ".jpg": "image/jpeg", ".png": "image/png", ".woff2": "font/woff2" };
+const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json", ".jpg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".woff2": "font/woff2" };
 let server;
 let baseUrl = args.base ? String(args.base).replace(/\/$/, "") : "";
 if (!baseUrl) {

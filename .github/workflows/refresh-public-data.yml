@@ -45,7 +45,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
-          git add data/github.json assets/app.bundle.js index.html work research publications about zh
+          git add data/github.json assets/app.bundle.js assets/github index.html work research publications about zh
           git commit -m "chore(data): refresh public GitHub metrics"
           git push --set-upstream origin "$branch"
           gh pr create --base standalone-portfolio --head "$branch" --title "chore(data): refresh public GitHub metrics" --body "Automated daily snapshot refresh. This PR does not deploy the site; review and merge separately."

@@ -266,12 +266,40 @@ function formatCount(value, locale) {
   return `${Math.floor(value / 100) / 10}K`;
 }
 
+function RepoPreview({ previewUrl }) {
+  if (!previewUrl) return <Github className="repo-glyph" aria-hidden="true" size={20} />;
+  return (
+    <div className="repo-preview" aria-hidden="true">
+      <Github className="repo-preview-fallback" size={24} />
+      <img
+        src={previewUrl}
+        alt=""
+        width="640"
+        height="320"
+        loading="lazy"
+        decoding="async"
+        referrerPolicy="no-referrer"
+      />
+    </div>
+  );
+}
+
 function OpenSource({ content, locale }) {
   const O = content.openSource;
   return (
     <section id="open-source" className="section open-source" aria-labelledby="oss-title"><div className="wrap">
       <SectionHead eyebrow={O.eyebrow} title={O.title} intro={O.intro} id="oss-title" />
-      <div className="repo-list">{O.repos.map((repo) => { const stats = githubData.repositories[repo.key]; return <article className="repo-row" key={repo.key}><Github aria-hidden="true" size={20} /><div><h3>{repo.name}</h3><p>{repo.desc}</p></div>{stats ? <p className="repo-stats"><strong>{formatCount(stats.stars, locale)}</strong> {content.labels.stars} <span>·</span> {formatCount(stats.forks, locale)} {content.labels.forks}</p> : null}<SmartLink className="icon-link" href={repo.href} locale={locale}><ArrowUpRight aria-hidden="true" /><span className="sr-only">{repo.name}</span></SmartLink></article>; })}</div>
+      <div className="repo-list">{O.repos.map((repo) => {
+        const stats = githubData.repositories[repo.key];
+        return (
+          <article className={`repo-row${stats?.previewUrl ? " has-preview" : ""}`} key={repo.key}>
+            <RepoPreview previewUrl={stats?.previewUrl} />
+            <div className="repo-copy"><h3>{repo.name}</h3><p>{repo.desc}</p></div>
+            {stats ? <p className="repo-stats"><strong>{formatCount(stats.stars, locale)}</strong> {content.labels.stars} <span>·</span> {formatCount(stats.forks, locale)} {content.labels.forks}</p> : null}
+            <SmartLink className="icon-link" href={repo.href} locale={locale}><ArrowUpRight aria-hidden="true" /><span className="sr-only">{repo.name}</span></SmartLink>
+          </article>
+        );
+      })}</div>
       <p className="data-note">{content.labels.updated}: {githubData.checkedAt.slice(0, 10)} · {content.labels.source}: {content.labels.snapshot}</p>
     </div></section>
   );

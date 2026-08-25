@@ -1,9 +1,22 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { SEO } from "../seo.js";
 import { CONTENT, PAGE_DEFINITIONS, localizedPath } from "../content.js";
 
 const errors = [];
+const githubData = JSON.parse(readFileSync("data/github.json", "utf8"));
+const previewEntries = Object.entries(githubData.repositories).filter(([, repo]) => repo.previewUrl);
+if (!previewEntries.length) errors.push("GitHub snapshot has no custom repository social previews");
+const expectedPreviewAssets = new Set(previewEntries.map(([, repo]) => repo.previewUrl.slice(1)));
+for (const [name, repo] of previewEntries) {
+  const source = new URL(repo.previewSourceUrl);
+  if (!repo.previewUrl.startsWith("/assets/github/") || !existsSync(repo.previewUrl.slice(1))) errors.push(`${name}: missing local repository preview asset`);
+  if (source.protocol !== "https:" || source.hostname !== "repository-images.githubusercontent.com") errors.push(`${name}: invalid custom repository preview source URL`);
+}
+for (const entry of existsSync("assets/github") ? readdirSync("assets/github", { withFileTypes: true }) : []) {
+  const assetPath = `assets/github/${entry.name}`;
+  if (entry.isFile() && entry.name.endsWith(".webp") && !expectedPreviewAssets.has(assetPath)) errors.push(`${assetPath}: orphaned repository preview asset`);
+}
 const routes = Object.values(SEO.routes);
 if (routes.length !== PAGE_DEFINITIONS.length * 2) errors.push(`expected ${PAGE_DEFINITIONS.length * 2} routes, found ${routes.length}`);
 
