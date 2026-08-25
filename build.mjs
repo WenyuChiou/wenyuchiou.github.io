@@ -3,7 +3,24 @@ import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
+import sharp from "sharp";
 import { SEO, LEGACY_REDIRECTS } from "./seo.js";
+import { FEATURE_CONTENT } from "./feature-content.js";
+
+const escapeSvg = (value) => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const titleLines = {
+  "evaluating-llm-agents-against-measured-human-behavior": ["Evaluating LLM Agents", "Against Measured", "Human Behavior"],
+  "why-governed-agents-need-validators-before-state-changes": ["Why Governed Agents", "Need Validators Before", "State Changes"],
+  "from-individual-decisions-to-system-consequences": ["From Individual Decisions", "to System Consequences"],
+};
+
+mkdirSync("assets/og", { recursive: true });
+for (const article of FEATURE_CONTENT.en.articlesPage.articles) {
+  const lines = titleLines[article.slug];
+  const title = lines.map((line, index) => `<text x="92" y="${250 + index * 92}" class="title">${escapeSvg(line)}</text>`).join("");
+  const graphic = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="630" fill="#10201b"/><path d="M92 104H1108" stroke="#5ea99f" stroke-width="3"/><text x="92" y="162" class="meta">WENYU CHIOU · ARTICLES</text>${title}<circle cx="988" cy="426" r="78" fill="none" stroke="#5ea99f" stroke-width="3"/><path d="M862 426H1114M988 300V552" stroke="#d8ece7" stroke-width="2"/><text x="92" y="570" class="foot">LLM evaluation · agent governance · behavioral simulation</text><style>.meta,.foot{font-family:Arial,sans-serif;fill:#9fd5cd;font-size:24px;font-weight:700}.title{font-family:Georgia,serif;fill:#f3f8f5;font-size:68px;font-weight:600}.foot{font-size:21px;font-weight:400;fill:#c6d5d0}</style></svg>`;
+  await sharp(Buffer.from(graphic)).png({ compressionLevel: 9 }).toFile(`assets/og/${article.slug}.png`);
+}
 
 const VENDOR_ASSETS = {
   "assets/vendor/transformers-4.2.0.mjs": "034dbecc87ac928f6f9eeb254ffe44f49757c1e5bfda1736fdaff6950e602db4",

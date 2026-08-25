@@ -9,12 +9,12 @@ Status: candidate implementation and local verification complete. Production has
 | Identity | Global Research/Industry switch | One professional identity; document-specific resumes |
 | Locales | English only | English plus route-parity Traditional Chinese |
 | Hero | Technical category first | Capability-led LLM behavior evaluation, over a real AGU image |
-| Main interaction | Four-stage mode-dependent map | Six-stage chapter-based evidence chain with mutually exclusive switching, active-state focus, and static fallback |
+| Main interaction | Four-stage mode-dependent map | Five-stage Decision Provenance Explorer plus a two-track human–environment SVG and static fallback |
 | Work hierarchy | Six similarly weighted project pages | Unframed editorial rows for three flagship systems, led by role and problem |
 | Facts | Stale date/count/title conflicts | Owner-approved ledger and automated checks |
 | Updates | Static project copy | Curated LinkedIn updates plus build-time GitHub API snapshot |
 | Documents | Two English PDFs | Industry/academic × English/Traditional Chinese |
-| SEO | English canonical and basic OG | 16 canonicals, reciprocal hreflang, Twitter cards, lastmod, expanded JSON-LD |
+| SEO | English canonical and basic OG | 24 canonicals, reciprocal hreflang, article social previews, lastmod, and TechArticle JSON-LD |
 | Automation | Local build only | Non-deploying CI and reviewed public-data refresh PRs |
 
 ## Reproducible Commands
@@ -25,6 +25,7 @@ npm run refresh:github
 npm run build
 npm run pdf
 npm test
+npm run test:worker
 npm run qa:browser
 npm run qa:lighthouse
 npm run qa:screenshots
@@ -42,27 +43,28 @@ npm run qa:screenshots
 - Added a dated GitHub snapshot and curated public-update source.
 - Added four CV outputs and legacy PDF aliases.
 - Added route/copy validators, metadata parity, redirects, CI, and non-deploying refresh automation.
+- Added three bilingual methods articles and three accessible HTML/CSS technical diagrams.
+- Added Decision Provenance lenses, case Evidence Slices, and a two-track human–environment feedback SVG.
+- Added an optional Cloudflare Worker boundary for grounded NVIDIA NIM summaries, Turnstile, rate limiting, and aggregate events; local search remains the fallback.
 
 ## Owner Decisions Still Required
 
-1. Confirm the prepared LinkedIn About update immediately before the public save action; the headline remains unchanged by design.
-2. Approve or request changes to the final browser/PDF screenshots and pull requests.
+1. Authenticate Wrangler and enter Cloudflare/NVIDIA/Turnstile secrets without placing them in Git or chat.
+2. Review the 48 candidate screenshots and the website pull request.
 3. Approve merge into `standalone-portfolio` and the separate GitHub Pages deployment step.
 
-## Prepared Pull Requests
+## Release Boundaries
 
-- Website redesign: `WenyuChiou/wenyuchiou.github.io#1`, targeting `standalone-portfolio`.
-- Daily reviewed data-refresh workflow: `WenyuChiou/wenyuchiou.github.io#2`, targeting `main`.
-- GitHub profile alignment: `WenyuChiou/WenyuChiou#21` (not touched in this revision).
-
-None of these pull requests has been merged. The LinkedIn About section was updated and verified; the existing headline was preserved, the portfolio URL remains listed, and the Lehigh education end date remains December 2027.
+- This revision targets `standalone-portfolio` through a new website pull request.
+- LinkedIn, GitHub Profile, and all four CV sources remain outside this revision.
+- The Worker must be deployed and its exact HTTPS endpoint supplied to the site build before NVIDIA mode is enabled. Until then, the production Navigator continues to use lexical and MiniLM search.
 
 ## Agent and Review Record
 
 - Codex: architecture, UI implementation, bilingual integration, browser inspection, QA, and release preparation.
-- Independent code reviewer: staged-diff review; identified tablet first-fold coverage, fragment-link validation, and response-body handling gaps, all corrected before the final targeted recheck.
-- A bounded Gemini copy-review attempt failed closed because the installed wrapper used an obsolete CLI flag. No delegate output was applied; both locales were completed and verified locally.
+- Luna: read-only visual and bilingual-copy review; identified the mobile Navigator position, FLOODABM status ambiguity, and one literal Chinese label, all corrected before final review.
+- Independent code reviewer: final staged-diff security, quality, and maintainability gate before commit.
 
 ## Review vs Deploy
 
-Review the PR branch and local preview first. Merge/deploy is a separate owner-approved action; CI and data-refresh workflows do not deploy the site. The daily refresh workflow opens a reviewed pull request and never pushes public data directly to the production branch. See `10-test-report.md` for the 2.9 s zh-TW mobile lab LCP, manual screen-reader release check, and LinkedIn feed limitation.
+Review the PR branch and local preview first. Merge/deploy is a separate owner-approved action; CI and data-refresh workflows do not deploy the site. See `10-test-report.md` for the 2.0 s zh-TW mobile lab LCP, Worker deployment blocker, and remaining manual screen-reader check.

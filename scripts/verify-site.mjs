@@ -42,6 +42,19 @@ const enKeys = Object.keys(CONTENT.en.caseStudies).sort().join(",");
 const zhKeys = Object.keys(CONTENT["zh-TW"].caseStudies).sort().join(",");
 if (enKeys !== zhKeys) errors.push(`case-study locale mismatch: en=${enKeys}; zh=${zhKeys}`);
 if (CONTENT.en.observatory.stages.length !== 6 || CONTENT["zh-TW"].observatory.stages.length !== 6) errors.push("both locales must have six evidence stages");
+if (CONTENT.en.articlesPage.articles.length !== 3 || CONTENT["zh-TW"].articlesPage.articles.length !== 3) errors.push("both locales must have three articles");
+if (CONTENT.en.articlesPage.articles.map(({ slug }) => slug).join(",") !== CONTENT["zh-TW"].articlesPage.articles.map(({ slug }) => slug).join(",")) errors.push("article locale routes are not mirrored");
+for (const file of ["index.html", "zh/index.html"]) {
+  const html = readFileSync(file, "utf8");
+  if (["937", "52,141", "50 runs"].some((value) => html.includes(value))) errors.push(`${file}: research scale leaked onto homepage`);
+  for (const selectorCopy of ["selected-work", "decision-provenance", "open-source", "articles-preview-title", "contact"]) if (!html.includes(selectorCopy)) errors.push(`${file}: missing homepage section ${selectorCopy}`);
+}
+for (const route of routes.filter(({ page }) => page.startsWith("article:"))) {
+  const file = `${route.path.slice(1)}index.html`;
+  const html = readFileSync(file, "utf8");
+  if (!html.includes('"@type":"TechArticle"')) errors.push(`${file}: missing TechArticle JSON-LD`);
+  if (!existsSync(route.ogImage.slice(1))) errors.push(`${file}: missing article social preview ${route.ogImage}`);
+}
 
 const sitemap = existsSync("sitemap.xml") ? readFileSync("sitemap.xml", "utf8") : "";
 for (const route of routes) {

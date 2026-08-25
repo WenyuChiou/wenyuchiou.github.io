@@ -122,7 +122,7 @@ function SiteHeader({ content, locale, page, basePath }) {
         <nav id="primary-navigation" className={open ? "primary-nav is-open" : "primary-nav"} aria-label="Primary">
           <ul>
             {content.nav.map((item) => {
-              const isCurrent = page === item.id || (page.startsWith("case:") && item.id === "work");
+              const isCurrent = page === item.id || (page.startsWith("case:") && item.id === "work") || (page.startsWith("article:") && item.id === "articles");
               if (item.id !== "work") return <li key={item.id}><a href={localizedPath(item.href, locale)} aria-current={isCurrent ? "page" : undefined}>{item.label}</a></li>;
               return (
                 <li className="work-dropdown-item" key={item.id}>
@@ -158,6 +158,7 @@ function SiteHeader({ content, locale, page, basePath }) {
 }
 
 function Hero({ content, locale }) {
+  const resume = content.documents.items[0];
   return (
     <section className="hero" aria-labelledby="hero-name">
       <div className="hero-content wrap">
@@ -166,9 +167,10 @@ function Hero({ content, locale }) {
           <h1 id="hero-name">{content.hero.title}</h1>
           <p className="hero-headline">{content.hero.headline}</p>
           <p className="hero-intro">{content.hero.intro}</p>
+          <ul className="hero-capabilities" aria-label={content.expertise.eyebrow}>{content.heroCapabilities.map((item) => <li key={item}>{item}</li>)}</ul>
           <div className="hero-actions">
-            <a className="button button-light" href={content.hero.primary.href}>{content.hero.primary.label}<ArrowDown aria-hidden="true" size={17} /></a>
-            <a className="button button-ghost" href={content.hero.secondary.href}>{content.hero.secondary.label}<ArrowDown aria-hidden="true" size={17} /></a>
+            <a className="button button-light" href="#selected-work">{locale === "zh-TW" ? "探索精選工作" : "Explore selected work"}<ArrowDown aria-hidden="true" size={17} /></a>
+            <a className="button button-ghost" href={resume.href} download>{resume.label}<Download aria-hidden="true" size={17} /></a>
           </div>
           <div className="hero-meta">
             <HeroSocialLinks content={content} locale={locale} />
@@ -284,12 +286,14 @@ function RepoPreview({ previewUrl }) {
   );
 }
 
-function OpenSource({ content, locale }) {
+function OpenSource({ content, locale, compact = false }) {
   const O = content.openSource;
+  const featured = new Set(["awesome-agentic-ai-zh", "ai-research-skills", "agent-collab-skills"]);
+  const repositories = compact ? O.repos.filter((repo) => featured.has(repo.key)) : O.repos;
   return (
     <section id="open-source" className="section open-source" aria-labelledby="oss-title"><div className="wrap">
       <SectionHead eyebrow={O.eyebrow} title={O.title} intro={O.intro} id="oss-title" />
-      <div className="repo-list">{O.repos.map((repo) => {
+      <div className="repo-list">{repositories.map((repo) => {
         const stats = githubData.repositories[repo.key];
         return (
           <article className={`repo-row${stats?.previewUrl ? " has-preview" : ""}`} key={repo.key}>
@@ -303,6 +307,85 @@ function OpenSource({ content, locale }) {
       <p className="data-note">{content.labels.updated}: {githubData.checkedAt.slice(0, 10)} · {content.labels.source}: {content.labels.snapshot}</p>
     </div></section>
   );
+}
+
+function CoupledFlowDiagram({ flow, activeStage = 0, full = false }) {
+  const points = [190, 500, 810];
+  return (
+    <div className={`coupled-flow${full ? " is-full" : ""}`}>
+      <svg viewBox="0 0 1000 430" role="img" aria-labelledby="coupled-flow-title coupled-flow-desc">
+        <title id="coupled-flow-title">{flow.title}</title>
+        <desc id="coupled-flow-desc">{flow.description}</desc>
+        <defs>
+          <marker id="flow-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" /></marker>
+        </defs>
+        <text className="flow-lane-label" x="24" y="106">{flow.humanLabel}</text>
+        <text className="flow-lane-label" x="24" y="318">{flow.environmentLabel}</text>
+        <path className={`flow-path ${activeStage <= 2 ? "is-active" : ""}`} d="M190 104H810" markerEnd="url(#flow-arrow)" />
+        <path className={`flow-path ${activeStage >= 2 ? "is-active" : ""}`} d="M190 316H810" markerEnd="url(#flow-arrow)" />
+        <path className={`flow-feedback ${activeStage >= 3 ? "is-active" : ""}`} d="M810 132C915 168 915 252 810 288" markerEnd="url(#flow-arrow)" />
+        <path className={`flow-feedback ${activeStage === 4 ? "is-active" : ""}`} d="M190 288C85 252 85 168 190 132" markerEnd="url(#flow-arrow)" />
+        {flow.human.map((label, index) => <g className={`flow-node ${activeStage === index ? "is-active" : ""}`} key={label} transform={`translate(${points[index]} 104)`}><circle r="42" /><text y="70" textAnchor="middle">{label}</text></g>)}
+        {flow.environment.map((label, index) => <g className={`flow-node ${activeStage === index + 2 ? "is-active" : ""}`} key={label} transform={`translate(${points[index]} 316)`}><circle r="42" /><text y="70" textAnchor="middle">{label}</text></g>)}
+      </svg>
+      <p className="flow-feedback-copy">{flow.feedback}</p>
+    </div>
+  );
+}
+
+function DecisionProvenanceExplorer({ content, full = false }) {
+  const P = content.provenance;
+  const lensIds = ["evaluation", "governance", "simulation"];
+  const [lens, setLens] = useState(full ? "simulation" : "evaluation");
+  const [stage, setStage] = useState(0);
+  const active = P.lenses[lens];
+  const selectLens = (next) => { setLens(next); setStage(0); };
+  return (
+    <section id="decision-provenance" className={`section provenance${full ? " provenance-full" : ""}`} aria-labelledby="provenance-title">
+      <div className="wrap">
+        <SectionHead eyebrow={P.eyebrow} title={P.title} intro={P.intro} id="provenance-title" />
+        <div className="segmented-control provenance-lenses" role="group" aria-label={P.controlLabel}>{lensIds.map((id) => <button key={id} type="button" aria-pressed={lens === id} onClick={() => selectLens(id)}>{P.lenses[id].label}</button>)}</div>
+        <p className="provenance-summary" aria-live="polite">{active.summary}</p>
+        <div className="provenance-layout">
+          <ol className="provenance-stages" aria-label={P.stageLabel}>{active.stages.map(([status, text], index) => <li className={stage === index ? "is-active" : ""} key={`${lens}-${P.stageNames[index]}`}><button type="button" onClick={() => setStage(index)} aria-current={stage === index ? "step" : undefined}><span className="provenance-index">0{index + 1}</span><span><strong>{P.stageNames[index]}</strong><small>{P.statuses[status]}</small></span></button><p>{text}</p></li>)}</ol>
+          <CoupledFlowDiagram flow={P.flow} activeStage={stage} full={full} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function EvidenceSlice({ content, locale, slug }) {
+  const E = content.evidenceSlices[slug];
+  const L = content.evidenceLabels;
+  const fields = [[L.problem, E.problem], [L.role, E.role], [L.input, E.input], [L.decision, E.decision], [L.validation, E.validation], [L.consequence, E.consequence]];
+  return <section className="section evidence-slice" aria-labelledby="evidence-slice-title"><div className="wrap"><SectionHead eyebrow={L.eyebrow} title={L.title} id="evidence-slice-title" /><p className="evidence-status"><strong>{L.publicStatus}</strong>{E.status}</p><dl>{fields.map(([label, value], index) => <div key={label}><dt><span>0{index + 1}</span>{label}</dt><dd>{value}</dd></div>)}</dl><p className="evidence-sources"><strong>{L.sources}</strong>{E.sources.map((source) => <SmartLink href={source.href} locale={locale} className="text-link" key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></div></section>;
+}
+
+function ArticleDiagram({ type, content }) {
+  const isZh = content.locale === "zh-TW";
+  const diagrams = {
+    evaluation: isZh ? ["實測行為", "受控人物設定", "重複決策", "結構與穩定性"] : ["Measured behavior", "Controlled persona", "Repeated decisions", "Structure + stability"],
+    governance: isZh ? ["結構化提案", "確定性驗證", "針對性修正", "允許狀態更新"] : ["Structured proposal", "Deterministic checks", "Targeted repair", "Authorized update"],
+    feedback: isZh ? ["理解風險", "受限決策", "危害與損失", "更新後的情境"] : ["Interpret risk", "Constrained choice", "Hazard + loss", "Updated context"],
+  };
+  return <figure className={`article-diagram diagram-${type}`}><ol>{diagrams[type].map((label, index) => <li key={label}><span>0{index + 1}</span><strong>{label}</strong>{index < 3 ? <ArrowRight aria-hidden="true" size={18} /> : <RotateCcw aria-hidden="true" size={18} />}</li>)}</ol><figcaption>{content.articlesPage.diagram}</figcaption></figure>;
+}
+
+function ArticlesPreview({ content, locale }) {
+  const A = content.articlesPage;
+  return <section className="section articles-preview" aria-labelledby="articles-preview-title"><div className="wrap"><SectionHead eyebrow={A.eyebrow} title={A.title} intro={A.intro} action={{ href: "/articles/", label: A.eyebrow }} locale={locale} id="articles-preview-title" /><div className="article-preview-list">{A.articles.map((article, index) => <article key={article.slug}><span>0{index + 1}</span><div><p className="article-meta"><time dateTime={article.date}>{article.date}</time> · {article.readingTime}</p><h3>{article.title}</h3><p>{article.dek}</p></div><SmartLink className="icon-link" href={`/articles/${article.slug}/`} locale={locale}><ArrowUpRight aria-hidden="true" /><span className="sr-only">{A.read}: {article.title}</span></SmartLink></article>)}</div></div></section>;
+}
+
+function ArticlesPage({ content, locale }) {
+  const A = content.articlesPage;
+  return <><PageHero eyebrow={A.eyebrow} title={A.title} intro={A.intro} /><section className="section articles-index"><div className="wrap">{A.articles.map((article, index) => <article className="article-index-item" key={article.slug}><span>0{index + 1}</span><div><p className="article-meta"><time dateTime={article.date}>{article.date}</time> · {article.readingTime}</p><h2>{article.title}</h2><p>{article.dek}</p><SmartLink className="text-link" href={`/articles/${article.slug}/`} locale={locale}>{A.read}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div><ArticleDiagram type={article.diagramType} content={content} /></article>)}</div></section><Contact content={content} /></>;
+}
+
+function ArticlePage({ content, locale, slug }) {
+  const A = content.articlesPage;
+  const article = A.articles.find((item) => item.slug === slug) || A.articles[0];
+  return <article className="tech-article"><header className="article-hero wrap"><p className="eyebrow">{A.eyebrow}</p><p className="article-meta"><time dateTime={article.date}>{article.date}</time> · {article.readingTime}</p><h1>{article.title}</h1><p>{article.dek}</p></header><section className="section article-body"><div className="wrap article-layout"><aside><p className="eyebrow">{A.thesis}</p><p>{article.thesis}</p><ArticleDiagram type={article.diagramType} content={content} /></aside><div className="article-prose">{article.sections.map((section) => <section key={section.title}><h2>{section.title}</h2>{section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</section>)}<footer className="article-sources"><h2>{A.sources}</h2>{article.sources.map((source) => <SmartLink className="text-link" href={source.href} locale={locale} key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={15} /></SmartLink>)}<SmartLink className="text-link" href={article.relatedCase} locale={locale}>{A.related}<ArrowUpRight aria-hidden="true" size={15} /></SmartLink></footer></div></div></section><Contact content={content} /></article>;
 }
 
 function PublicationsPreview({ content, locale }) {
@@ -326,7 +409,7 @@ function Contact({ content }) {
 }
 
 function Home({ content, locale }) {
-  return <><Hero content={content} locale={locale} /><Expertise content={content} /><FlagshipCards content={content} locale={locale} /><Observatory content={content} locale={locale} /><OpenSource content={content} locale={locale} /><PublicationsPreview content={content} locale={locale} /><RecentUpdates content={content} /><Documents content={content} /><Contact content={content} /></>;
+  return <><Hero content={content} locale={locale} /><FlagshipCards content={content} locale={locale} /><DecisionProvenanceExplorer content={content} /><OpenSource content={content} locale={locale} compact /><ArticlesPreview content={content} locale={locale} /><Contact content={content} /></>;
 }
 
 function PageHero({ eyebrow, title, intro }) {
@@ -363,7 +446,7 @@ function PathwayExplorer({ content }) {
 function FloodTimeline({ content }) {
   const [tenure, setTenure] = useState("owner");
   const labels = content.interactions.timeline;
-  return <div className="interactive-artifact timeline-artifact"><div className="segmented-control" role="group" aria-label={labels.controlLabel}>{[["owner", labels.owner], ["renter", labels.renter]].map(([id, label]) => <button key={id} type="button" aria-pressed={tenure === id} onClick={() => setTenure(id)}>{label}</button>)}</div><p className="artifact-note">{labels.note}</p><ol className={`feedback-timeline is-${tenure}`}>{[labels.start, labels.choice, labels.hazard, labels.finance, labels.repeat].map((label, index) => <li key={label}><span>0{index + 1}</span><strong>{label}</strong>{index === 4 ? <RotateCcw aria-hidden="true" size={18} /> : <ChevronRight aria-hidden="true" size={18} />}</li>)}</ol><p className="artifact-result" aria-live="polite"><strong>{labels.lensLabel}</strong>{labels.views[tenure]}</p></div>;
+  return <div className="interactive-artifact timeline-artifact"><div className="segmented-control" role="group" aria-label={labels.controlLabel}>{[["owner", labels.owner], ["renter", labels.renter]].map(([id, label]) => <button key={id} type="button" aria-pressed={tenure === id} onClick={() => setTenure(id)}>{label}</button>)}</div><p className="artifact-note">{labels.note}</p><CoupledFlowDiagram flow={content.provenance.flow} activeStage={tenure === "owner" ? 3 : 1} full /><ol className={`feedback-timeline is-${tenure}`}>{[labels.start, labels.choice, labels.hazard, labels.finance, labels.repeat].map((label, index) => <li key={label}><span>0{index + 1}</span><strong>{label}</strong>{index === 4 ? <RotateCcw aria-hidden="true" size={18} /> : <ChevronRight aria-hidden="true" size={18} />}</li>)}</ol><p className="artifact-result" aria-live="polite"><strong>{labels.lensLabel}</strong>{labels.views[tenure]}</p></div>;
 }
 
 function GovernanceTrace({ content }) {
@@ -382,7 +465,7 @@ function CaseInteraction({ type, content }) {
 function CaseStudyPage({ content, locale, slug }) {
   const C = content.caseStudies[slug];
   const labels = content.caseLabels;
-  return <article className="case-study"><header className="case-hero wrap"><p className="eyebrow">{C.eyebrow}</p><p className="case-status">{C.status}</p><h1>{C.title}</h1><p className="case-lede">{C.lede}</p><ul>{C.scale.map((item) => <li key={item}>{item}</li>)}</ul></header><section className="section case-overview"><div className="wrap two-column"><div><p className="eyebrow">{labels.problem}</p><h2>{labels.why}</h2><p>{C.problem}</p></div><aside><p className="eyebrow">{labels.aiTeams}</p><p>{C.relevance}</p></aside></div></section><section className="section"><div className="wrap"><SectionHead eyebrow={labels.artifact} title={labels.inspect} intro={C.artifact} id="artifact-title" /><CaseInteraction type={C.interaction} content={content} /></div></section><section className="section case-method"><div className="wrap two-column"><div><p className="eyebrow">{labels.roleMethod}</p><h2>{labels.built}</h2><p>{C.role}</p><ol>{C.method.map((item) => <li key={item}>{item}</li>)}</ol></div><div className="limits-panel"><AlertTriangle aria-hidden="true" /><h2>{labels.validation}</h2><h3>{labels.validationShort}</h3><ul>{C.validation.map((item) => <li key={item}>{item}</li>)}</ul><h3>{labels.limitations}</h3><ul>{C.limitations.map((item) => <li key={item}>{item}</li>)}</ul></div></div></section><section className="section case-learned"><div className="wrap"><p className="eyebrow">{labels.changed}</p><blockquote>{C.learned}</blockquote><p className="record-links">{C.links.map((link) => <SmartLink key={link.href} className="button button-outline" href={link.href} locale={locale}>{link.label}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>)}</p></div></section><Contact content={content} /></article>;
+  return <article className="case-study"><header className="case-hero wrap"><p className="eyebrow">{C.eyebrow}</p><p className="case-status">{C.status}</p><h1>{C.title}</h1><p className="case-lede">{C.lede}</p><ul>{C.scale.map((item) => <li key={item}>{item}</li>)}</ul></header><section className="section case-overview"><div className="wrap two-column"><div><p className="eyebrow">{labels.problem}</p><h2>{labels.why}</h2><p>{C.problem}</p></div><aside><p className="eyebrow">{labels.aiTeams}</p><p>{C.relevance}</p></aside></div></section><EvidenceSlice content={content} locale={locale} slug={slug} /><section className="section"><div className="wrap"><SectionHead eyebrow={labels.artifact} title={labels.inspect} intro={C.artifact} id="artifact-title" /><CaseInteraction type={C.interaction} content={content} /></div></section><section className="section case-method"><div className="wrap two-column"><div><p className="eyebrow">{labels.roleMethod}</p><h2>{labels.built}</h2><p>{C.role}</p><ol>{C.method.map((item) => <li key={item}>{item}</li>)}</ol></div><div className="limits-panel"><AlertTriangle aria-hidden="true" /><h2>{labels.validation}</h2><h3>{labels.validationShort}</h3><ul>{C.validation.map((item) => <li key={item}>{item}</li>)}</ul><h3>{labels.limitations}</h3><ul>{C.limitations.map((item) => <li key={item}>{item}</li>)}</ul></div></div></section><section className="section case-learned"><div className="wrap"><p className="eyebrow">{labels.changed}</p><blockquote>{C.learned}</blockquote><p className="record-links">{C.links.map((link) => <SmartLink key={link.href} className="button button-outline" href={link.href} locale={locale}>{link.label}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>)}</p></div></section><Contact content={content} /></article>;
 }
 
 function SiteFooter({ content }) {
@@ -391,6 +474,11 @@ function SiteFooter({ content }) {
 
 function PortfolioNavigator({ content, locale }) {
   const N = content.navigator;
+  const ai = locale === "zh-TW" ? {
+    nvidia: "NVIDIA 引用摘要", disclosure: "啟用 AI 時，問題會送至 NVIDIA；若服務不可用，仍保留本機搜尋結果。",
+  } : {
+    nvidia: "NVIDIA cited summary", disclosure: "When AI is enabled, your question is sent to NVIDIA. Local results remain available if the service fails.",
+  };
   return (
     <div
       className="portfolio-navigator"
@@ -403,8 +491,9 @@ function PortfolioNavigator({ content, locale }) {
       data-fallback={N.fallback}
       data-ready={N.ready}
       data-result-label={N.resultLabel}
+      data-nvidia={ai.nvidia}
     >
-      <button className="navigator-launch" type="button" data-navigator-launch aria-haspopup="dialog" aria-controls="portfolio-navigator-dialog">
+      <button className="navigator-launch" type="button" data-navigator-launch aria-haspopup="dialog" aria-controls="portfolio-navigator-dialog" aria-label={N.launch} title={N.launch}>
         <Search aria-hidden="true" size={18} />
         <span>{N.launch}</span>
       </button>
@@ -434,8 +523,10 @@ function PortfolioNavigator({ content, locale }) {
             <span data-navigator-status>{N.ready}</span>
             <span data-navigator-mode />
           </div>
+          <div className="navigator-answer" data-navigator-answer hidden />
           <ol className="navigator-results" data-navigator-results />
-          <p className="navigator-privacy">{N.privacy}</p>
+          <div className="navigator-turnstile" data-turnstile-container />
+          <p className="navigator-privacy">{ai.disclosure}</p>
         </div>
       </dialog>
     </div>
@@ -449,6 +540,8 @@ export function App({ page = "home", locale = "en", basePath = "/" }) {
   else if (page === "work") body = <WorkPage content={content} locale={locale} />;
   else if (page === "research") body = <ResearchPage content={content} locale={locale} />;
   else if (page === "publications") body = <PublicationsPage content={content} locale={locale} />;
+  else if (page === "articles") body = <ArticlesPage content={content} locale={locale} />;
+  else if (page.startsWith("article:")) body = <ArticlePage content={content} locale={locale} slug={page.slice(8)} />;
   else if (page === "about") body = <AboutPage content={content} />;
   else if (page.startsWith("case:")) body = <CaseStudyPage content={content} locale={locale} slug={page.slice(5)} />;
   else body = <Home content={content} locale={locale} />;

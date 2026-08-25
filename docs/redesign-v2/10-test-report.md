@@ -1,38 +1,37 @@
 # Test Report
 
-Status: capability-led revision verified on 2026-08-23. Production has not been merged or deployed.
-
-## Baseline
-
-- `npm ci`: passed; 35 packages; one moderate audit advisory recorded without force-upgrading.
-- `npm run build`: passed; 10 old routes prerendered; 212.1 KB bundle; copy linter clean.
-- `npm run pdf`: passed; old English academic CV 3 pages and industry resume 1 page.
-- Lab mobile: FCP 1.2 s, LCP 1.856 s, CLS 0.0276, 151 ms long task, load 2.006 s.
-- Axe: homepage 6 serious contrast nodes plus 1 minor ARIA issue; each other old route had a serious footer contrast issue; 22 mobile targets below 44 px.
+Status: evidence-led and AI-Navigator candidate verified on 2026-08-25. Production has not been merged or deployed.
 
 ## Final Gates
 
-- `npm run build`: passed; 16 localized routes, 7 legacy redirects, reciprocal hreflang, 16-URL sitemap, one h1 per canonical route, and a 233.5 KB uncompressed production bundle.
-- `npm test`: passed; route parity, metadata, canonical links, copy lint, fact checks, and four required PDFs.
-- `npm run qa:browser`: passed on all 16 routes. The audit covers axe in light and dark themes, console errors, horizontal overflow, h1 structure, key target sizes, language counterparts, internal fragments, external-link safety, PDF signatures, theme persistence, static and React mobile menus, keyboard activation, all three case interactions, reduced motion, and no-JavaScript fallback on every route. First-fold assertions cover widths 360, 390, 620, 621, 768, 980, 981, 1100, and 1440 px.
-- `npm run qa:lighthouse`: passed four isolated runs using gzip delivery. Mobile EN scored 99/100/100/100 and mobile zh-TW scored 94/100/100/100; both desktop locales scored 100/100/100/100 for Performance/Accessibility/Best Practices/SEO. LCP was 2.3 s EN mobile, 2.9 s zh-TW mobile, and 0.7 s on both desktop runs; TBT was 0 ms throughout.
-- `npm run qa:screenshots -- --routes=/,/zh/`: produced 16 full-page homepage images covering 360, 390, 768, and 1440 px in both locales and both themes. Visual review found no overlap, clipping, broken glyphs, or horizontal overflow.
+- `npm run build`: passed; 24 localized routes, 7 legacy redirects, reciprocal hreflang, 24-URL sitemap, one H1 per route, TechArticle JSON-LD, and three raster article social previews.
+- JavaScript: 298.7 KiB raw and 90.4 KiB gzip, below the 250 KiB transferred target.
+- `npm test`: passed route parity, metadata, canonical links, copy lint, seven bilingual Navigator queries, semantic retry/race checks, and ten Worker tests.
+- Worker tests cover exact CORS, Turnstile action/hostname binding, navigation and event rate limits, timeout, provider failure, malicious prompt handling, malformed/scalar JSON, unknown record IDs, deterministic evidence text, and allowlisted anonymous events.
+- `npx wrangler deploy --dry-run --config worker/wrangler.jsonc`: passed; upload 19.73 KiB raw and 6.46 KiB gzip with Analytics Engine, 5-request/60-second Navigator limiting, and 30-request/60-second event limiting.
+- `npm run qa:browser`: passed all 24 routes. Coverage includes axe in light/dark themes, 360/390/620/621/768/980/981/1100/1440 px, overflow, 44 px targets, keyboard controls, Decision Provenance lenses, three case interactions, locale switching, links, PDFs, reduced motion, and no-JavaScript fallback.
+- `npm run qa:lighthouse`: passed four gzip-served runs. EN mobile scored 98/100/100/100; zh-TW mobile 97/100/100/100; EN desktop 100/100/100/100; zh-TW desktop 96/100/100/100 for Performance/Accessibility/Best Practices/SEO. LCP was 2.5 s, 2.0 s, 0.8 s, and 1.3 s respectively; CLS was 0 in all runs.
+- Screenshot capture produced 48 full-page images for the English and Traditional Chinese home, FLOODABM case, and governance article across 360/390/768/1440 px and both themes. Visual review found no clipping, horizontal overflow, broken glyphs, or illegible SVG state.
 - `npx --yes impeccable --json app.jsx`: returned `[]`.
-- The four industry/academic, English/Traditional Chinese PDFs were not regenerated or edited in this revision; `npm test -- --require-pdfs` confirmed that all four required files remain present and pass copy checks.
+- `npm run pdf`: passed four-document source scanning and generated the expected 3/1/3/1 page counts. Generated binary changes were restored because CV content is outside this revision; no PDF diff remains.
+
+## Independent Review
+
+Luna's read-only candidate review found two P2 issues: a mobile floating Navigator overlapping old screenshots and ambiguous FLOODABM publication wording. The mobile control now sits in the header as a 46 px icon, and the Evidence Slice distinguishes the public WRR article, AGU poster, and repository from the case-study manuscript still in revision. It also suggested replacing the literal Traditional Chinese phrase `相連能力`; this is now `延伸能力`.
+
+## Deployment Blocker
+
+Worker code is deployable but was not published from this environment. Wrangler is not authenticated, and `NVIDIA_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, and `TURNSTILE_SITE_KEY` are absent. Secrets must be entered by the owner through Cloudflare; they must not be committed or sent through the site build.
 
 ## Residual Risks
 
-- The zh-TW mobile lab LCP is 2.9 s, above the 2.5 s aspirational target but within the configured Lighthouse gate. No field Core Web Vitals data exists for this unmerged candidate.
-- Automated axe, keyboard, focus, reduced-motion, and static-fallback checks passed, but a manual pass with a real screen reader remains an owner-side release check.
-- LinkedIn does not provide a reliable public member-post feed for this use case. Posts remain curated data; only GitHub metrics use the reviewed refresh workflow.
+- No field Core Web Vitals data exists for the unmerged candidate.
+- Automated accessibility checks pass, but a manual pass with the owner's preferred real screen reader remains a release check.
+- NVIDIA Developer API availability and quota can change. Lexical and MiniLM results remain the functional fallback.
 
 ## Evidence Paths
 
-- Capability-led homepage screenshots: `screenshots/{light,dark}/{narrow-mobile,mobile,tablet,desktop}/`
-- Deployed baseline screenshots: `outputs/redesign-visuals/baseline/`
-- Final first-fold screenshots: `outputs/functional-visual-audit-20260823/final-folds/`
+- Candidate screenshots: `C:/Users/wenyu/.codex/visualizations/2026/06/08/019ea839-5d03-7512-8ae3-bb46ac6c5a26/portfolio-evidence-ai/`
 - Lighthouse JSON and summary: `lighthouse-results/`
-- Case and dark-theme states: `outputs/functional-visual-audit-20260823/interactions/` and `outputs/functional-visual-audit-20260823/dark-theme/`
-- PDF page renders: `outputs/pdf-review/`
 
-The evidence directories are intentionally untracked so QA artifacts do not increase the GitHub Pages payload.
+Screenshot and Lighthouse output directories remain untracked so QA artifacts do not increase the GitHub Pages payload.
