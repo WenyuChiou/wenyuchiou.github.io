@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   AlertTriangle,
   ArrowDown,
+  ArrowRight,
   ArrowUpRight,
   Check,
   ChevronDown,
@@ -14,6 +15,7 @@ import {
   Menu,
   Moon,
   RotateCcw,
+  Search,
   ShieldCheck,
   Sun,
   X,
@@ -333,6 +335,59 @@ function SiteFooter({ content }) {
   return <footer className="site-footer"><div className="wrap"><div><strong>{content.name}</strong><p>{content.footer.line}</p></div><p>{content.footer.note}<br />© 2026 Wenyu Chiou</p></div></footer>;
 }
 
+function PortfolioNavigator({ content, locale }) {
+  const N = content.navigator;
+  return (
+    <div
+      className="portfolio-navigator"
+      data-portfolio-navigator
+      data-locale={locale}
+      data-loading={N.loading}
+      data-matching={N.matching}
+      data-local={N.local}
+      data-semantic={N.semantic}
+      data-fallback={N.fallback}
+      data-ready={N.ready}
+      data-result-label={N.resultLabel}
+    >
+      <button className="navigator-launch" type="button" data-navigator-launch aria-haspopup="dialog" aria-controls="portfolio-navigator-dialog">
+        <Search aria-hidden="true" size={18} />
+        <span>{N.launch}</span>
+      </button>
+      <dialog className="navigator-dialog" id="portfolio-navigator-dialog" aria-labelledby="navigator-title">
+        <div className="navigator-frame">
+          <header className="navigator-header">
+            <p className="eyebrow">{N.eyebrow}</p>
+            <button className="icon-button navigator-close" type="button" data-navigator-close aria-label={N.close} title={N.close}>
+              <X aria-hidden="true" size={18} />
+            </button>
+          </header>
+          <div className="navigator-intro">
+            <h2 id="navigator-title">{N.title}</h2>
+            <p>{N.intro}</p>
+          </div>
+          <div className="navigator-suggestions" aria-label={N.label}>
+            {N.suggestions.map((suggestion) => <button type="button" data-navigator-query={suggestion} key={suggestion}><span>{suggestion}</span><span aria-hidden="true">→</span></button>)}
+          </div>
+          <form className="navigator-form" role="search">
+            <label className="sr-only" htmlFor="navigator-query">{N.label}</label>
+            <input id="navigator-query" name="query" type="search" placeholder={N.placeholder} maxLength="180" autoComplete="off" />
+            <button className="navigator-submit" type="submit" aria-label={N.submit} title={N.submit}>
+              <ArrowRight aria-hidden="true" size={18} />
+            </button>
+          </form>
+          <div className="navigator-feedback" aria-live="polite">
+            <span data-navigator-status>{N.ready}</span>
+            <span data-navigator-mode />
+          </div>
+          <ol className="navigator-results" data-navigator-results />
+          <p className="navigator-privacy">{N.privacy}</p>
+        </div>
+      </dialog>
+    </div>
+  );
+}
+
 export function App({ page = "home", locale = "en", basePath = "/" }) {
   const content = CONTENT[locale] || CONTENT.en;
   let body;
@@ -343,5 +398,5 @@ export function App({ page = "home", locale = "en", basePath = "/" }) {
   else if (page === "about") body = <AboutPage content={content} />;
   else if (page.startsWith("case:")) body = <CaseStudyPage content={content} locale={locale} slug={page.slice(5)} />;
   else body = <Home content={content} locale={locale} />;
-  return <><SiteHeader content={content} locale={locale} page={page} basePath={basePath} /><main id="main">{body}</main><SiteFooter content={content} /></>;
+  return <><SiteHeader content={content} locale={locale} page={page} basePath={basePath} /><main id="main">{body}</main><PortfolioNavigator content={content} locale={locale} /><SiteFooter content={content} /></>;
 }

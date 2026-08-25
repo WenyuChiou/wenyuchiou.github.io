@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="{{CSP}}">
   <meta name="theme-color" content="#101815">
   <title>{{TITLE}}</title>
   <meta name="description" content="{{DESCRIPTION}}">
@@ -24,7 +25,7 @@
   <meta name="twitter:image" content="{{OG_IMAGE}}">
 {{HEAD_EXTRA}}
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-  <script>try{document.documentElement.dataset.theme=localStorage.getItem("wy-theme")||"light"}catch(e){}</script>
+  <script>{{THEME_SCRIPT}}</script>
   <link rel="stylesheet" href="/styles.css">
   <script defer src="/assets/app.bundle.js"></script>
 </head>

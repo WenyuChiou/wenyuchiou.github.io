@@ -56,12 +56,15 @@ async function launchChrome(runPort, name) {
   return chrome;
 }
 
-const runs = [
+const configuredRuns = [
   { name: "en-mobile", route: "/" },
   { name: "zh-mobile", route: "/zh/" },
   { name: "en-desktop", route: "/", config: desktopConfig },
   { name: "zh-desktop", route: "/zh/", config: desktopConfig },
 ];
+const requestedRuns = args.runs ? new Set(String(args.runs).split(",")) : null;
+const runs = requestedRuns ? configuredRuns.filter((run) => requestedRuns.has(run.name)) : configuredRuns;
+if (!runs.length) throw new Error(`No Lighthouse runs matched --runs=${args.runs}`);
 const summary = [];
 try {
   for (const [index, run] of runs.entries()) {

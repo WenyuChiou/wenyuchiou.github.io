@@ -11,7 +11,7 @@ const browserCandidates = [process.env.CHROME_PATH, "C:\\Program Files\\Google\\
 const executablePath = browserCandidates.find((candidate) => fs.existsSync(candidate));
 if (!executablePath) throw new Error("browser-audit: Chrome/Edge not found; set CHROME_PATH");
 
-const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".pdf": "application/pdf", ".woff2": "font/woff2" };
+const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8", ".wasm": "application/wasm", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".pdf": "application/pdf", ".woff2": "font/woff2" };
 const server = http.createServer((request, response) => {
   const url = new URL(request.url, "http://127.0.0.1");
   let relative = decodeURIComponent(url.pathname).replace(/^\/+/, "");
@@ -62,6 +62,7 @@ const auditCaseControl = async (route, selector, expectedClass, resultSelector) 
   const page = await browser.newPage();
   await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
   await page.evaluateOnNewDocument(() => localStorage.setItem("wy-theme", "dark"));
+  await page.setBypassCSP(true);
   const response = await page.goto(`${origin}${route}`, { waitUntil: "networkidle0" });
   if (!response || response.status() !== 200) failures.push(`${route}: HTTP ${response?.status()}`);
   const activeTheme = await page.evaluate(() => document.documentElement.dataset.theme);
@@ -195,10 +196,99 @@ const auditSelectedWork = async (route) => {
   await page.close();
 };
 
+const auditPortfolioNavigator = async (route, query, expectedPath) => {
+  const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
+  const launchVisible = await page.$eval(".navigator-launch", (button) => {
+    const rect = button.getBoundingClientRect();
+    return getComputedStyle(button).display !== "none" && rect.width >= 44 && rect.height >= 44;
+  });
+  if (!launchVisible) failures.push(`${route}: portfolio navigator launch is not visible or touch-sized`);
+  await page.click(".navigator-launch");
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  const opened = await page.$eval(".navigator-dialog", (dialog) => {
+    const rect = dialog.getBoundingClientRect();
+    return { open: dialog.open, focused: document.activeElement === dialog.querySelector("input"), left: rect.left, right: rect.right, bottom: rect.bottom };
+  });
+  if (!opened.open || !opened.focused || opened.left < -1 || opened.right > 391 || opened.bottom > 845) failures.push(`${route}: portfolio navigator did not open and fit the mobile viewport`);
+  await page.setOfflineMode(true);
+  await page.type("#navigator-query", query);
+  await page.click(".navigator-submit");
+  await page.waitForSelector(".navigator-results li");
+  const result = await page.evaluate(() => ({
+    count: document.querySelectorAll(".navigator-results li").length,
+    firstPath: new URL(document.querySelector(".navigator-results a").href).pathname,
+    mode: document.querySelector("[data-navigator-mode]").textContent.trim(),
+  }));
+  if (result.count !== 3 || result.firstPath !== expectedPath || !result.mode) failures.push(`${route}: local navigator routing returned ${result.count} result(s), first ${result.firstPath}, mode ${result.mode || "unset"}`);
+  await page.keyboard.press("Escape");
+  const closed = await page.evaluate(() => ({ open: document.querySelector(".navigator-dialog").open, focused: document.activeElement === document.querySelector(".navigator-launch") }));
+  if (closed.open || !closed.focused) failures.push(`${route}: Escape did not close the navigator and restore focus`);
+  await page.keyboard.press("/");
+  if (!(await page.$eval(".navigator-dialog", (dialog) => dialog.open))) failures.push(`${route}: slash shortcut did not open the navigator`);
+  await page.keyboard.press("Escape");
+  await page.setOfflineMode(false);
+  await page.close();
+};
+
+const auditSemanticNavigator = async () => {
+  const route = "/";
+  const query = "Which work demonstrates governed LLM agents? private-query-marker";
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
+  const requests = [];
+  const failedResponses = [];
+  const consoleErrors = [];
+  page.on("request", (request) => requests.push({ url: request.url(), type: request.resourceType() }));
+  page.on("response", (response) => { if (response.status() >= 400) failedResponses.push(`${response.status()} ${response.url()}`); });
+  page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
+  page.on("pageerror", (error) => consoleErrors.push(error.message));
+  const response = await page.goto(`${origin}${route}`, { waitUntil: "networkidle0" });
+  if (!response || response.status() !== 200) failures.push(`${route}: semantic navigator HTTP ${response?.status()}`);
+  const csp = await page.$eval('meta[http-equiv="Content-Security-Policy"]', (meta) => meta.content);
+  const scriptPolicy = csp.split(";").find((directive) => directive.trim().startsWith("script-src")) || "";
+  if (!scriptPolicy.includes("'self'") || /https?:/.test(scriptPolicy)) failures.push(`${route}: CSP script-src does not restrict executable code to this site`);
+  await page.click(".navigator-launch");
+  await page.type("#navigator-query", query);
+  await page.click(".navigator-submit");
+  try {
+    await page.waitForFunction(() => {
+      const shell = document.querySelector("[data-portfolio-navigator]");
+      return document.querySelector("[data-navigator-mode]")?.textContent.trim() === shell?.dataset.semantic;
+    }, { timeout: 120000 });
+  } catch {
+    const state = await page.$eval(".navigator-feedback", (row) => row.textContent.trim());
+    failures.push(`${route}: semantic navigator did not reach on-device semantic mode (${state}; failed resources: ${failedResponses.join(", ") || "none"})`);
+  }
+  const firstPath = await page.$eval(".navigator-results a", (link) => new URL(link.href).pathname);
+  if (firstPath !== "/work/wagf/") failures.push(`${route}: semantic navigator ranked ${firstPath} instead of /work/wagf/`);
+  const remoteScripts = requests.filter(({ url, type }) => type === "script" && !url.startsWith(origin));
+  if (remoteScripts.length) failures.push(`${route}: semantic navigator loaded remote executable code: ${remoteScripts.map(({ url }) => url).join(", ")}`);
+  const leakedQuery = requests.some(({ url }) => decodeURIComponent(url).toLocaleLowerCase().includes("private-query-marker"));
+  if (leakedQuery) failures.push(`${route}: semantic navigator included visitor query text in a network request`);
+  if (consoleErrors.length) failures.push(`${route}: semantic navigator console errors: ${consoleErrors.join(" | ")}`);
+  await page.close();
+};
+
+if (process.argv.includes("--semantic-only")) {
+  try {
+    await auditSemanticNavigator();
+  } finally {
+    await browser.close();
+    server.close();
+  }
+  if (failures.length) {
+    failures.forEach((failure) => console.error(`- ${failure}`));
+    process.exit(1);
+  }
+  console.log("browser-audit: semantic navigator passed CSP, local-runtime, privacy, and routing checks");
+  process.exit(0);
+}
+
 try {
   for (const route of Object.keys(SEO.routes)) {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+    await page.setBypassCSP(true);
     const consoleErrors = [];
     page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
     page.on("pageerror", (error) => consoleErrors.push(error.message));
@@ -258,6 +348,9 @@ try {
     await auditSelectedWork(route);
     await auditEvidenceStage(route);
   }
+  await auditPortfolioNavigator("/", "agent governance constraints", "/work/wagf/");
+  await auditPortfolioNavigator("/zh/", "找洪水模型", "/zh/work/floodabm/");
+  await auditSemanticNavigator();
   await auditWorkDropdown("/work/wagf/");
 
   const heroPage = await openPage("/", { width: 1440, height: 1000, deviceScaleFactor: 1 });
@@ -274,6 +367,15 @@ try {
   const zhArticleLabels = await zhArticlePage.$$eval(".update-item .status-label", (labels) => labels.map((label) => label.textContent.trim()));
   if (!zhArticleLabels.includes("期刊論文")) failures.push(`/zh/: Recent Updates is missing the 期刊論文 classification`);
   await zhArticlePage.close();
+
+  const publicationCopyPage = await openPage("/publications/");
+  const publicationCopy = await publicationCopyPage.$eval("main", (main) => main.textContent);
+  if (!publicationCopy.includes("Journal articles") || /peer-reviewed|following peer review/i.test(publicationCopy)) failures.push(`/publications/: publication types still overstate peer-review status`);
+  await publicationCopyPage.close();
+  const zhPublicationCopyPage = await openPage("/zh/publications/");
+  const zhPublicationCopy = await zhPublicationCopyPage.$eval("main", (main) => main.textContent);
+  if (!zhPublicationCopy.includes("期刊文章") || zhPublicationCopy.includes("同儕審查")) failures.push(`/zh/publications/: publication types still overstate peer-review status`);
+  await zhPublicationCopyPage.close();
 
   for (const prefix of ["", "/zh"]) {
     await auditCaseControl(`${prefix}/work/human-grounded-llm-evaluation/`, ".segmented-control button:nth-child(3)", ".pathway-diagram.lens-renters", ".artifact-result");
@@ -319,9 +421,9 @@ try {
     await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
     await page.setJavaScriptEnabled(false);
     const response = await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: "load" });
-    const staticState = await page.evaluate(() => ({ h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length }));
+    const staticState = await page.evaluate(() => ({ h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length, navigatorVisible: getComputedStyle(document.querySelector(".portfolio-navigator")).display !== "none" }));
     const pageType = SEO.routes[route].page;
-    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || (pageType === "home" && staticState.stages !== 6) || (pageType.startsWith("case:") && staticState.artifacts !== 1)) failures.push(`${route}: no-JavaScript fallback incomplete`);
+    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || staticState.navigatorVisible || (pageType === "home" && staticState.stages !== 6) || (pageType.startsWith("case:") && staticState.artifacts !== 1)) failures.push(`${route}: no-JavaScript fallback incomplete`);
     await page.click(".work-dropdown > summary");
     if (!(await page.$eval(".work-dropdown", (details) => details.open))) failures.push(`${route}: no-JavaScript Work disclosure did not open natively`);
     if (pageType === "home") {
