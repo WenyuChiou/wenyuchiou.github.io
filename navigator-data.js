@@ -1,0 +1,178 @@
+export const NAVIGATOR_INDEX = {
+  model: {
+    moduleUrl: "/assets/vendor/transformers-4.2.0.mjs",
+    wasmPath: "/assets/vendor/onnxruntime/",
+    id: "Xenova/all-MiniLM-L6-v2",
+    revision: "751bff37182d3f1213fa05d7196b954e230abad9",
+  },
+  aliases: {
+    "人工智慧": "artificial intelligence AI",
+    "大型語言模型": "large language model LLM",
+    "語言模型": "language model LLM",
+    "行為評估": "behavior evaluation human grounded evaluation",
+    "人類": "human survey evidence measured behavior",
+    "人類與 LLM": "compare LLM generated decisions with measured human pathways",
+    "決策差異": "compare generated decisions subgroup differences",
+    "人類行為": "human behavior human grounded",
+    "社會群體": "social groups subgroup comparison",
+    "次群體": "subgroup comparison",
+    "代理治理": "agent governance validators constraints audit repair",
+    "代理系統": "agent systems governance",
+    "行為模擬": "behavioral simulation agent based modeling",
+    "洪水": "flood risk adaptation catastrophe",
+    "災害": "disaster risk catastrophe",
+    "研究軟體": "research software reproducible workflows",
+    "開源": "open source GitHub repositories",
+    "程式庫": "GitHub repositories software",
+    "論文": "journal articles manuscripts publications",
+    "期刊": "journal articles publications",
+    "演講": "conference presentations talks",
+    "簡報": "conference presentations talks",
+    "履歷": "resume curriculum vitae CV documents",
+    "學術": "academic research publications CV",
+    "實習": "internship availability contact",
+    "聯絡": "contact email LinkedIn",
+  },
+  records: [
+    {
+      id: "expertise",
+      href: "/#expertise-title",
+      title: { en: "Core expertise", "zh-TW": "核心專長" },
+      summary: {
+        en: "Human-grounded LLM evaluation, governed agents, behavioral simulation, and reproducible research systems.",
+        "zh-TW": "以人類行為為基礎的 LLM 評估、代理治理、行為模擬與可重現研究系統。",
+      },
+      semantic: "Wenyu's core capabilities: human-grounded LLM behavior evaluation, governed agent systems, behavioral and coupled simulation, computational social science, AI for science, and reproducible Python research software.",
+      keywords: {
+        en: ["expertise", "skills", "capabilities", "LLM evaluation", "AI for science", "computational social science"],
+        "zh-TW": ["專長", "能力", "技能", "LLM 評估", "AI for Science", "計算社會科學"],
+      },
+    },
+    {
+      id: "human-grounded-llm-evaluation",
+      href: "/work/human-grounded-llm-evaluation/",
+      title: { en: "Human-Grounded LLM Evaluation", "zh-TW": "以人類行為為基礎的 LLM 評估" },
+      summary: {
+        en: "Compare generated decisions with measured human pathways, subgroup differences, and repeated-run stability.",
+        "zh-TW": "比較生成決策與實測人類路徑、次群體差異及重複執行穩定性。",
+      },
+      semantic: "Evaluation design for comparing LLM-generated decisions with human survey evidence across social groups using psychometrics, confirmatory factor analysis, structural equation modeling, and repeated-run stability checks.",
+      keywords: {
+        en: ["LLM behavior", "human grounded", "evaluation", "survey", "psychometrics", "SEM", "subgroups", "stability"],
+        "zh-TW": ["LLM 行為", "人類行為", "評估", "問卷", "心理計量", "結構方程式", "次群體", "穩定性"],
+      },
+    },
+    {
+      id: "wagf",
+      href: "/work/wagf/",
+      title: { en: "WAGF · Governed Agent System", "zh-TW": "WAGF · 受治理代理系統" },
+      summary: {
+        en: "Parse, validate, repair, and audit agent decisions before they can update simulation state.",
+        "zh-TW": "在代理決策更新模擬狀態前進行解析、驗證、修正與稽核。",
+      },
+      semantic: "Agent governance system with structured outputs, physical financial and behavioral constraints, targeted repair, audit traces, and state update gates for LLM agents.",
+      keywords: {
+        en: ["agent governance", "validators", "constraints", "audit", "repair", "structured outputs", "safety"],
+        "zh-TW": ["代理治理", "驗證器", "限制", "稽核", "修正", "結構化輸出", "安全"],
+      },
+    },
+    {
+      id: "floodabm",
+      href: "/work/floodabm/",
+      title: { en: "FLOODABM", "zh-TW": "FLOODABM 洪災代理模型" },
+      summary: {
+        en: "Connect household adaptation decisions with flood damage, insurance, and financial exposure over time.",
+        "zh-TW": "串連家戶調適決策、洪災損失、保險與長期財務暴露。",
+      },
+      semantic: "Coupled agent-based and catastrophe flood simulation of household adaptation, risk perception, insurance, damage, homeowners and renters, and long-term financial outcomes.",
+      keywords: {
+        en: ["flood", "ABM", "agent based model", "catastrophe", "adaptation", "insurance", "households", "risk"],
+        "zh-TW": ["洪水", "洪災", "代理人基模型", "巨災", "調適", "保險", "家戶", "風險"],
+      },
+    },
+    {
+      id: "research",
+      href: "/research/",
+      title: { en: "Research program", "zh-TW": "研究計畫" },
+      summary: {
+        en: "Research questions, methods, systems, and explicit validity boundaries across evaluation and simulation.",
+        "zh-TW": "評估與模擬研究的問題、方法、系統及明確效度邊界。",
+      },
+      semantic: "Research program spanning measurement, behavioral correspondence, subgroup-aware LLM evaluation, governance, coupled simulation, validity boundaries, survey design, psychometrics, and Python workflows.",
+      keywords: {
+        en: ["research", "methods", "validity", "measurement", "methodology", "research questions"],
+        "zh-TW": ["研究", "方法", "效度", "測量", "研究問題"],
+      },
+    },
+    {
+      id: "publications",
+      href: "/publications/",
+      title: { en: "Journal articles and presentations", "zh-TW": "期刊文章與會議發表" },
+      summary: {
+        en: "Published journal articles, manuscripts in progress, conference papers, posters, and official records.",
+        "zh-TW": "已發表期刊文章、進行中的手稿、會議論文、海報與官方紀錄。",
+      },
+      semantic: "Publication record including a Water Resources Research journal article, manuscripts, ISDSA presentation, AGU poster, sociohydrology talk, DOI, and Google Scholar links.",
+      keywords: {
+        en: ["journal article", "publications", "paper", "manuscript", "conference", "poster", "talk", "DOI", "Scholar"],
+        "zh-TW": ["期刊文章", "著作", "論文", "手稿", "會議", "海報", "演講", "學術"],
+      },
+    },
+    {
+      id: "open-source",
+      href: "/#open-source",
+      title: { en: "Open-source systems", "zh-TW": "開源研究系統" },
+      summary: {
+        en: "Research operations, multi-agent collaboration, and cross-platform delegation repositories.",
+        "zh-TW": "研究作業、多代理協作與跨平台委派的開源程式庫。",
+      },
+      semantic: "GitHub open-source repositories for research operations, Zotero and Obsidian workflows, multi-agent collaboration skills, task splitting, acceptance gates, and cross-platform Codex delegation.",
+      keywords: {
+        en: ["GitHub", "open source", "repositories", "research software", "multi agent", "automation", "Python"],
+        "zh-TW": ["GitHub", "開源", "程式庫", "研究軟體", "多代理", "自動化", "Python"],
+      },
+    },
+    {
+      id: "documents",
+      href: "/#documents-title",
+      title: { en: "Resume and academic CV", "zh-TW": "業界履歷與學術 CV" },
+      summary: {
+        en: "Download the industry resume or academic CV in English or Traditional Chinese.",
+        "zh-TW": "下載英文或繁中的業界履歷與學術 CV。",
+      },
+      semantic: "Download documents: English and Traditional Chinese industry resume for AI roles and academic curriculum vitae with research publications and presentations.",
+      keywords: {
+        en: ["resume", "CV", "curriculum vitae", "download", "industry", "academic", "PDF"],
+        "zh-TW": ["履歷", "CV", "下載", "業界", "學術", "文件", "PDF"],
+      },
+    },
+    {
+      id: "about",
+      href: "/about/",
+      title: { en: "About Wenyu", "zh-TW": "關於文昱" },
+      summary: {
+        en: "Background, current Ph.D. work, collaboration style, and professional direction.",
+        "zh-TW": "背景、目前博士研究、協作方式與職涯方向。",
+      },
+      semantic: "About Wenyu Chiou, a Lehigh University PhD candidate combining civil and environmental engineering, computational social science, LLM evaluation, agent systems, and reproducible research engineering.",
+      keywords: {
+        en: ["about", "background", "biography", "education", "PhD", "Lehigh", "experience"],
+        "zh-TW": ["關於", "背景", "自我介紹", "教育", "博士", "理海", "經歷"],
+      },
+    },
+    {
+      id: "contact",
+      href: "/#contact",
+      title: { en: "Internship and contact", "zh-TW": "實習與聯絡方式" },
+      summary: {
+        en: "Summer 2027 internship availability, email, LinkedIn, GitHub, Scholar, and ORCID.",
+        "zh-TW": "2027 年暑期實習時間、電子郵件、LinkedIn、GitHub、Scholar 與 ORCID。",
+      },
+      semantic: "Contact Wenyu for a Summer 2027 internship in LLM evaluation, agent systems, behavioral simulation, or AI for science. Email, LinkedIn, GitHub, Google Scholar, ORCID, F-1 CPT eligible.",
+      keywords: {
+        en: ["contact", "email", "internship", "Summer 2027", "CPT", "LinkedIn", "availability"],
+        "zh-TW": ["聯絡", "電子郵件", "實習", "2027 暑期", "CPT", "LinkedIn", "時間"],
+      },
+    },
+  ],
+};

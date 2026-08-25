@@ -5,6 +5,16 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { SEO, LEGACY_REDIRECTS } from "./seo.js";
 
+const VENDOR_ASSETS = {
+  "assets/vendor/transformers-4.2.0.mjs": "034dbecc87ac928f6f9eeb254ffe44f49757c1e5bfda1736fdaff6950e602db4",
+  "assets/vendor/onnxruntime/ort-wasm-simd-threaded.asyncify.mjs": "5959c6733039619c9af710d8e1bae8d6e84402787990637be987c2b1bd6c5fa9",
+  "assets/vendor/onnxruntime/ort-wasm-simd-threaded.asyncify.wasm": "e0c0c6d3e73d43b8a249972f8358f845b08cc16fec3c80efafdf8bed40366786",
+};
+for (const [file, expected] of Object.entries(VENDOR_ASSETS)) {
+  const actual = createHash("sha256").update(readFileSync(file)).digest("hex");
+  if (actual !== expected) throw new Error(`Vendor integrity check failed for ${file}`);
+}
+
 await esbuild.build({
   entryPoints: ["entry.jsx"],
   bundle: true,

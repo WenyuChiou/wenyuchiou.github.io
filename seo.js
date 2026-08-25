@@ -30,7 +30,7 @@ const EN_META = {
   },
   publications: {
     title: "Publications & Talks — Wenyu Chiou",
-    description: "Peer-reviewed publications, manuscripts, and presentations including Water Resources Research 2026, ISDSA 2026, AGU25, and ISHC 2025.",
+    description: "Journal articles, manuscripts, and presentations including Water Resources Research 2026, ISDSA 2026, AGU25, and ISHC 2025.",
   },
   about: {
     title: "About — Wenyu Chiou",
@@ -45,7 +45,7 @@ const ZH_META = {
   "case:floodabm": { title: "FLOODABM｜邱文昱", description: "涵蓋 52,141 個家戶、27 個人口普查區、2011 至 2023 年，且每個情境執行 50 次的耦合代理與巨災模型。" },
   "case:wagf": { title: "WAGF 受治理代理系統｜邱文昱", description: "在代理決策更新耦合模擬狀態前，進行解析、限制檢查、針對性修正與稽核的開發中框架。" },
   research: { title: "研究計畫｜邱文昱", description: "串連心理計量、群體感知 LLM 評估、代理模擬、治理與人類—環境回饋的研究計畫。" },
-  publications: { title: "出版與演講｜邱文昱", description: "同儕審查出版、論文與公開發表，包括 2026 Water Resources Research、ISDSA 2026、AGU25 與 ISHC 2025。" },
+  publications: { title: "出版與演講｜邱文昱", description: "期刊文章、論文手稿與公開發表，包括 2026 Water Resources Research、ISDSA 2026、AGU25 與 ISHC 2025。" },
   about: { title: "關於邱文昱", description: "理海大學土木與環境工程博士候選人，研究人類決策證據、LLM 評估、受治理代理與耦合模擬。" },
 };
 

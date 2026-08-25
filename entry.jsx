@@ -1,7 +1,9 @@
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { App } from "./app.jsx";
+import { initPortfolioNavigator } from "./navigator.js";
 
+document.documentElement.classList.add("js");
 const root = document.getElementById("root");
 
 function initDisclosureGroup(selector) {
@@ -71,7 +73,8 @@ function initProgressiveEnhancement() {
     dropdown.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => { dropdown.open = false; }));
   });
 
-  const revealTargets = [...document.querySelectorAll(".section-head, .flagship-entry, .update-item")];
+  const revealTargets = [...document.querySelectorAll(".section-head, .flagship-entry, .update-item")]
+    .filter((target) => !target.closest(".expertise"));
   if (!revealTargets.length || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   revealTargets.forEach((target, index) => {
     target.classList.add("scroll-reveal");
@@ -139,4 +142,5 @@ if (root) {
     });
   }
   initProgressiveEnhancement();
+  initPortfolioNavigator(root);
 }
