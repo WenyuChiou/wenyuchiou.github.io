@@ -1,0 +1,126 @@
+name: Refresh website GitHub stats
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 9 * * *"
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: refresh-website-github-stats
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out the website branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: standalone-portfolio
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22.19.0
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check whether the public snapshot changed
+        id: freshness
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: npm run refresh:github -- --check
+
+      - name: Refresh GitHub data and preview images
+        if: steps.freshness.outcome == 'failure'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: npm run refresh:github
+
+      - name: Rebuild the static site
+        if: steps.freshness.outcome == 'failure'
+        run: npm run build
+
+      - name: Verify generated content
+        if: steps.freshness.outcome == 'failure'
+        run: npm test
+
+      - name: Run browser audit
+        if: steps.freshness.outcome == 'failure'
+        run: npm run qa:browser
+
+      - name: Stage the controlled data update
+        if: steps.freshness.outcome == 'failure'
+        id: staged
+        shell: bash
+        run: |
+          git add -- \
+            data/github.json \
+            assets/app.bundle.js \
+            assets/github \
+            index.html \
+            about \
+            articles \
+            engineering \
+            hire \
+            projects \
+            publications \
+            research \
+            work \
+            zh \
+            robots.txt \
+            sitemap.xml
+
+          if ! git diff --quiet; then
+            echo "Unexpected unstaged tracked files after the controlled build:" >&2
+            git diff --name-only >&2
+            exit 1
+          fi
+
+          if test -n "$(git ls-files --others --exclude-standard)"; then
+            echo "Unexpected untracked files after the controlled build:" >&2
+            git ls-files --others --exclude-standard >&2
+            exit 1
+          fi
+
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and deploy the refreshed snapshot
+        if: steps.staged.outputs.changed == 'true'
+        env:
+          GH_PUSH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(data): refresh public GitHub metrics"
+
+          git fetch origin standalone-portfolio
+          if ! git merge-base --is-ancestor origin/standalone-portfolio HEAD; then
+            echo "standalone-portfolio advanced during the refresh; refusing a non-fast-forward update" >&2
+            exit 1
+          fi
+
+          git push \
+            "https://x-access-token:${GH_PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            HEAD:standalone-portfolio
+
+      - name: Request a GitHub Pages rebuild
+        if: steps.staged.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/${GITHUB_REPOSITORY}/pages/builds"
