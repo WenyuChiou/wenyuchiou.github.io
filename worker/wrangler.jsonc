@@ -8,7 +8,7 @@
   "vars": {
     "ALLOWED_ORIGIN": "https://wenyuchiou.github.io",
     "ALLOWED_HOSTNAME": "wenyuchiou.github.io",
-    "NVIDIA_MODEL": "deepseek-ai/deepseek-v4-flash-0731"
+    "NVIDIA_MODEL": "stepfun-ai/step-3.7-flash"
   },
   "ratelimits": [{
     "name": "RATE_LIMITER",
