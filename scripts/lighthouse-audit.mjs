@@ -61,6 +61,8 @@ const configuredRuns = [
   { name: "zh-mobile", route: "/zh/" },
   { name: "en-desktop", route: "/", config: desktopConfig },
   { name: "zh-desktop", route: "/zh/", config: desktopConfig },
+  { name: "en-hire-mobile", route: "/hire/" },
+  { name: "zh-hire-mobile", route: "/zh/hire/" },
 ];
 const requestedRuns = args.runs ? new Set(String(args.runs).split(",")) : null;
 const runs = requestedRuns ? configuredRuns.filter((run) => requestedRuns.has(run.name)) : configuredRuns;

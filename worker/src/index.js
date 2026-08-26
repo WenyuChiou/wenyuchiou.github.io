@@ -1,8 +1,8 @@
 import { NAVIGATOR_INDEX } from "../../navigator-data.js";
 
 const NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-const EVENT_ALLOWLIST = new Set(["hero_work_click", "industry_resume_download", "academic_cv_download", "case_open", "article_open", "navigator_open", "navigator_answer", "contact_click"]);
-const TARGET_ALLOWLIST = new Set(["home", "human-grounded-llm-evaluation", "floodabm", "wagf", "articles", "resume-en", "resume-zh", "email", "linkedin", "github"]);
+const EVENT_ALLOWLIST = new Set(["hero_work_click", "industry_resume_download", "academic_cv_download", "case_open", "article_open", "navigator_open", "navigator_answer", "contact_click", "recruiter_brief_open", "recruiter_resume_download", "recruiter_contact_click", "recruiter_navigator_use"]);
+const TARGET_ALLOWLIST = new Set(["home", "hire", "human-grounded-llm-evaluation", "floodabm", "wagf", "articles", "resume-en", "resume-zh", "email", "linkedin", "github"]);
 const RECORDS = new Map(NAVIGATOR_INDEX.records.map((record) => [record.id, record]));
 
 function corsHeaders(origin, env) {

@@ -97,7 +97,7 @@ function initProgressiveEnhancement() {
 
 if (root) {
   const page = root.dataset.page || "home";
-  if (page === "home" || page.startsWith("case:")) {
+  if (page === "home" || page === "hire" || page.startsWith("case:")) {
     hydrateRoot(root, <App page={page} locale={root.dataset.locale || "en"} basePath={root.dataset.basePath || "/"} />);
   } else {
     const menu = root.querySelector(".menu-button");
@@ -143,6 +143,7 @@ if (root) {
   }
   initProgressiveEnhancement();
   initPortfolioNavigator(root);
+  if (page === "hire") trackPortfolioEvent("recruiter_brief_open", root.dataset.locale === "zh-TW" ? "zh-TW" : "en", "hire", "success");
 }
 
 document.addEventListener("click", (event) => {
@@ -151,7 +152,11 @@ document.addEventListener("click", (event) => {
   const href = link.getAttribute("href") || "";
   const locale = root?.dataset.locale === "zh-TW" ? "zh-TW" : "en";
   let payload;
-  if (link.closest(".hero-actions") && href === "#selected-work") payload = ["hero_work_click", "home"];
+  if (link.closest(".hero-actions") && href.includes("/hire/")) payload = ["recruiter_brief_open", "hire"];
+  else if (link.closest(".hero-work-link") && href === "#selected-work") payload = ["hero_work_click", "home"];
+  else if (link.closest(".hire-contact") && href.includes("Industry_Resume_EN")) payload = ["recruiter_resume_download", "resume-en"];
+  else if (link.closest(".hire-contact") && href.startsWith("mailto:")) payload = ["recruiter_contact_click", "email"];
+  else if (link.closest(".hire-contact") && href.includes("linkedin.com")) payload = ["recruiter_contact_click", "linkedin"];
   else if (href.includes("Industry_Resume_EN")) payload = ["industry_resume_download", "resume-en"];
   else if (href.includes("Industry_Resume_zh-TW")) payload = ["industry_resume_download", "resume-zh"];
   else if (href.includes("Academic_CV_EN")) payload = ["academic_cv_download", "resume-en"];

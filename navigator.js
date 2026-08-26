@@ -184,6 +184,7 @@ function eventEndpoint(endpoint) {
 }
 
 export function trackPortfolioEvent(event, locale, target, outcome = "attempt") {
+  if (window.location.origin !== "https://wenyuchiou.github.io") return;
   const endpoint = document.querySelector('meta[name="portfolio-ai-endpoint"]')?.content.trim() || "";
   const url = eventEndpoint(endpoint);
   if (!url) return;
@@ -213,6 +214,8 @@ export function initPortfolioNavigator(root = document) {
   const endpoint = document.querySelector('meta[name="portfolio-ai-endpoint"]')?.content.trim() || "";
   const sitekey = document.querySelector('meta[name="turnstile-site-key"]')?.content.trim() || "";
   const copy = shell.dataset;
+  const inline = shell.dataset.inline === "true";
+  const eventTarget = inline ? "hire" : "home";
   const requestGate = createRequestGate();
 
   const setStatus = (message, activeMode = "") => {
@@ -248,9 +251,10 @@ export function initPortfolioNavigator(root = document) {
   };
 
   const openDialog = () => {
+    if (!dialog) return;
     if (!dialog.open) dialog.showModal();
     requestAnimationFrame(() => input.focus());
-    trackPortfolioEvent("navigator_open", locale, "home");
+    trackPortfolioEvent("navigator_open", locale, eventTarget);
   };
 
   const runSearch = async (rawQuery) => {
@@ -259,6 +263,7 @@ export function initPortfolioNavigator(root = document) {
       input.focus();
       return;
     }
+    if (inline) trackPortfolioEvent("recruiter_navigator_use", locale, "hire");
     const currentRequest = requestGate.next();
     answer.hidden = true;
     answer.textContent = "";
@@ -283,7 +288,7 @@ export function initPortfolioNavigator(root = document) {
         answer.hidden = false;
         renderResults(nvidia.matches);
         setStatus(copy.ready, copy.nvidia);
-        trackPortfolioEvent("navigator_answer", locale, "home", "success");
+        trackPortfolioEvent(inline ? "recruiter_navigator_use" : "navigator_answer", locale, eventTarget, "success");
         return;
       } catch {
         if (!requestGate.isCurrent(currentRequest)) return;
@@ -304,23 +309,24 @@ export function initPortfolioNavigator(root = document) {
     }
   };
 
-  launch.addEventListener("click", openDialog);
-  close.addEventListener("click", () => dialog.close());
-  dialog.addEventListener("close", () => launch.focus());
-  dialog.addEventListener("click", (event) => {
+  launch?.addEventListener("click", openDialog);
+  close?.addEventListener("click", () => dialog?.close());
+  dialog?.addEventListener("close", () => launch?.focus());
+  dialog?.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
   });
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     runSearch(input.value);
   });
-  shell.querySelectorAll("[data-navigator-query]").forEach((button) => {
-    button.addEventListener("click", () => {
-      input.value = button.dataset.navigatorQuery;
+  shell.querySelectorAll("[data-navigator-query]").forEach((control) => {
+    control.addEventListener("click", (event) => {
+      event.preventDefault();
+      input.value = control.dataset.navigatorQuery;
       runSearch(input.value);
     });
   });
-  document.addEventListener("keydown", (event) => {
+  if (!inline) document.addEventListener("keydown", (event) => {
     if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey || isEditable(event.target)) return;
     event.preventDefault();
     openDialog();
