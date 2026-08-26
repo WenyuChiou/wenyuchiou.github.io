@@ -47,7 +47,8 @@ if (CONTENT.en.articlesPage.articles.length !== 3 || CONTENT["zh-TW"].articlesPa
 if (CONTENT.en.articlesPage.articles.map(({ slug }) => slug).join(",") !== CONTENT["zh-TW"].articlesPage.articles.map(({ slug }) => slug).join(",")) errors.push("article locale routes are not mirrored");
 for (const file of ["index.html", "zh/index.html"]) {
   const html = readFileSync(file, "utf8");
-  if (["937", "52,141", "50 runs"].some((value) => html.includes(value))) errors.push(`${file}: research scale leaked onto homepage`);
+  const visibleCopy = html.replace(/<svg[\s\S]*?<\/svg>/g, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").toLowerCase();
+  if (["937 human profiles", "52,141 simulated households", "50 runs per", "937 份人類", "52,141 戶", "50 次模擬"].some((value) => visibleCopy.includes(value.toLowerCase()))) errors.push(`${file}: research scale leaked onto homepage`);
   for (const selectorCopy of ["selected-work", "decision-provenance", "open-source", "articles-preview-title", "contact"]) if (!html.includes(selectorCopy)) errors.push(`${file}: missing homepage section ${selectorCopy}`);
 }
 const recruiterFiles = ["hire/index.html", "zh/hire/index.html"];

@@ -64,7 +64,7 @@ const homepageScalePatterns = [
   { name: "50 次模擬", pattern: /(?:每(?:個)?情境\s*)?50\s*次(?:隨機)?(?:模擬|實現)/gu },
 ];
 for (const file of ["index.html", "zh/index.html"]) {
-  const text = readFileSync(file, "utf8");
+  const text = readFileSync(file, "utf8").replace(/<svg[\s\S]*?<\/svg>/g, " ").replace(/<[^>]+>/g, " ");
   for (const rule of homepageScalePatterns) {
     rule.pattern.lastIndex = 0;
     if (rule.pattern.test(text)) failures.push(`${file}: homepage contains research-scale metric: ${rule.name}`);

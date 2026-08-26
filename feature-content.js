@@ -16,9 +16,15 @@ export const FEATURE_CONTENT = {
       stageLabel: "Inspect stage",
       statuses: { published: "Published evidence", public: "Public artifact", illustrative: "Illustrative example" },
       stageNames: ["Human evidence", "Persona / context", "LLM decision", "Validation / repair", "System consequence"],
+      detailLabels: { status: "Evidence status", focus: "What this stage tests", output: "Trace output", caseLink: "Inspect the complete case" },
+      visual: { evaluationLabel: "Measured human behavior compared with generated model behavior", governanceLabel: "A proposal must pass validation before a state update", measured: "Measured human structure", generated: "Generated model behavior", compare: "Compare direction, subgroup pattern, and stability", proposal: "Structured proposal", validator: "Deterministic gate", stateUpdate: "Authorized state update" },
       lenses: {
         evaluation: {
           label: "Evaluation",
+          caseTitle: "Human-Grounded LLM Evaluation",
+          caseSlug: "human-grounded-llm-evaluation",
+          caseHref: "/work/human-grounded-llm-evaluation/",
+          colorRole: "evaluation",
           summary: "Compare generated choices with decision structures measured from people, then state where the comparison stops being valid.",
           stages: [
             ["published", "Measured constructs and reported choices establish the empirical reference."],
@@ -27,9 +33,15 @@ export const FEATURE_CONTENT = {
             ["public", "Checks compare direction, subgroup behavior, and run-to-run stability without exposing respondent records."],
             ["illustrative", "The result becomes an evaluation finding, not a claim that the model represents a person."],
           ],
+          focus: ["Ground the reference in measured constructs and reported choices.", "Control which approved attributes reach the model.", "Capture repeated decisions in a comparable structure.", "Test direction, subgroup behavior, and run stability.", "State the validity boundary of the comparison."],
+          outcomes: ["An empirical behavioral reference.", "A controlled, label-blind synthetic context.", "A repeated set of structured model choices.", "A documented correspondence and stability assessment.", "A bounded evaluation finding with explicit limits."],
         },
         governance: {
           label: "Governance",
+          caseTitle: "WAGF",
+          caseSlug: "wagf",
+          caseHref: "/work/wagf/",
+          colorRole: "governance",
           summary: "Keep a proposed action separate from system state until deterministic validators accept it.",
           stages: [
             ["published", "Behavioral and physical constraints define what a plausible action must respect."],
@@ -38,9 +50,15 @@ export const FEATURE_CONTENT = {
             ["public", "Validators reject invalid fields, request targeted repair, and retain an audit trace."],
             ["illustrative", "Only an accepted proposal updates the coupled model state."],
           ],
+          focus: ["Declare behavioral and physical constraints before generation.", "Limit the proposal to actions allowed by current state.", "Keep model output separate from executable state changes.", "Block invalid fields and repair only the failed part.", "Authorize an update only after every validator passes."],
+          outcomes: ["A declared constraint boundary.", "A state-aware synthetic agent context.", "A typed proposal with no direct write access.", "A validation result, targeted repair, and audit trace.", "An authorized and attributable state transition."],
         },
         simulation: {
           label: "Simulation",
+          caseTitle: "FLOODABM",
+          caseSlug: "floodabm",
+          caseHref: "/work/floodabm/",
+          colorRole: "simulation",
           summary: "Trace how household decisions and environmental conditions change one another over time.",
           stages: [
             ["published", "Survey evidence and public flood-risk sources ground household behavior."],
@@ -49,6 +67,8 @@ export const FEATURE_CONTENT = {
             ["public", "Model checks keep behavioral, financial, and physical state transitions consistent."],
             ["published", "Flood losses and adaptation alter the household and environmental state for the next cycle."],
           ],
+          focus: ["Ground household behavior in survey and public risk evidence.", "Represent tenure, resources, perception, and exposure.", "Make adaptation choices under behavioral and financial constraints.", "Preserve consistent human, financial, and physical state transitions.", "Return losses and adaptation effects to the next decision cycle."],
+          outcomes: ["A human-grounded behavioral reference.", "A household and hazard decision context.", "A constrained adaptation or insurance choice.", "A validated coupled-model transition.", "An updated human-environment system state."],
         },
       },
       flow: {
@@ -161,10 +181,12 @@ export const FEATURE_CONTENT = {
       controlLabel: "選擇決策視角", stageLabel: "檢視階段",
       statuses: { published: "已出版證據", public: "公開成果", illustrative: "示意範例" },
       stageNames: ["人類證據", "角色／情境", "LLM 決策", "驗證／修正", "系統後果"],
+      detailLabels: { status: "證據狀態", focus: "此階段檢查什麼", output: "軌跡產出", caseLink: "查看完整案例" },
+      visual: { evaluationLabel: "比較人類實測行為與模型生成行為", governanceLabel: "提案必須先通過驗證才能更新狀態", measured: "人類實測結構", generated: "模型生成行為", compare: "比較方向、群體模式與穩定性", proposal: "結構化提案", validator: "確定性驗證閘門", stateUpdate: "獲准的狀態更新" },
       lenses: {
-        evaluation: { label: "評估", summary: "比較模型生成的選擇與人類實測的決策結構，並清楚界定比較何時不再有效。", stages: [["published", "以實測構念與自陳選擇建立經驗基準。"], ["illustrative", "無標籤的合成人物設定只帶入核准的屬性。"], ["illustrative", "重複執行模型，取得可比較的選擇與簡短理由。"], ["public", "比較方向、群體差異與執行穩定性，不公開個別受訪者資料。"], ["illustrative", "產出是有邊界的評估結果，不是模型足以代表真人的宣稱。"]] },
-        governance: { label: "治理", summary: "在確定性驗證器接受提案以前，讓代理輸出與系統狀態保持分離。", stages: [["published", "行為與物理限制界定合理行動必須遵守的條件。"], ["illustrative", "合成代理狀態限制模型可提出的行動範圍。"], ["illustrative", "LLM 只回傳結構化提案，不能直接修改模擬狀態。"], ["public", "驗證器拒絕無效欄位、要求針對性修正，並保留稽核軌跡。"], ["illustrative", "只有通過驗證的提案才能更新耦合模型。"]] },
-        simulation: { label: "模擬", summary: "追蹤家戶決策與環境條件如何隨時間互相改變。", stages: [["published", "調查證據與公開洪災資料共同建立行為基礎。"], ["published", "居住權屬、風險知覺、資源與暴露形成決策情境。"], ["public", "代理在限制下選擇調適、保險或不採取行動。"], ["public", "模型檢查行為、財務與物理狀態轉移是否一致。"], ["published", "洪災損失與調適會改變下一輪的家戶與環境狀態。"]] },
+        evaluation: { label: "評估", caseTitle: "以人類行為為基礎的 LLM 評估", caseSlug: "human-grounded-llm-evaluation", caseHref: "/work/human-grounded-llm-evaluation/", colorRole: "evaluation", summary: "比較模型生成的選擇與人類實測的決策結構，並清楚界定比較何時不再有效。", stages: [["published", "以實測構念與自陳選擇建立經驗基準。"], ["illustrative", "無標籤的合成人物設定只帶入核准的屬性。"], ["illustrative", "重複執行模型，取得可比較的選擇與簡短理由。"], ["public", "比較方向、群體差異與執行穩定性，不公開個別受訪者資料。"], ["illustrative", "產出是有邊界的評估結果，不是模型足以代表真人的宣稱。"]], focus: ["以實測構念與選擇建立行為基準。", "控制哪些核准屬性可以進入模型。", "以可比較的結構記錄重複決策。", "檢查方向、群體模式與執行穩定性。", "清楚說明這項比較的效度邊界。"], outcomes: ["一個以經驗資料為基礎的行為參照。", "受控制且不暴露標籤的合成情境。", "一組重複執行的結構化模型選擇。", "可查驗的一致性與穩定性評估。", "附帶明確限制的評估結果。"] },
+        governance: { label: "治理", caseTitle: "WAGF", caseSlug: "wagf", caseHref: "/work/wagf/", colorRole: "governance", summary: "在確定性驗證器接受提案以前，讓代理輸出與系統狀態保持分離。", stages: [["published", "行為與物理限制界定合理行動必須遵守的條件。"], ["illustrative", "合成代理狀態限制模型可提出的行動範圍。"], ["illustrative", "LLM 只回傳結構化提案，不能直接修改模擬狀態。"], ["public", "驗證器拒絕無效欄位、要求針對性修正，並保留稽核軌跡。"], ["illustrative", "只有通過驗證的提案才能更新耦合模型。"]], focus: ["在生成之前宣告行為與物理限制。", "依目前狀態限制可提出的行動。", "讓模型輸出與可執行的狀態更新分離。", "阻擋無效欄位，且只修正失敗部分。", "所有驗證通過後才允許更新。"], outcomes: ["一組明確宣告的限制邊界。", "了解目前狀態的合成代理情境。", "沒有直接寫入權限的型別化提案。", "驗證結果、針對性修正與稽核軌跡。", "獲得授權且可追溯的狀態轉移。"] },
+        simulation: { label: "模擬", caseTitle: "FLOODABM", caseSlug: "floodabm", caseHref: "/work/floodabm/", colorRole: "simulation", summary: "追蹤家戶決策與環境條件如何隨時間互相改變。", stages: [["published", "調查證據與公開洪災資料共同建立行為基礎。"], ["published", "居住權屬、風險知覺、資源與暴露形成決策情境。"], ["public", "代理在限制下選擇調適、保險或不採取行動。"], ["public", "模型檢查行為、財務與物理狀態轉移是否一致。"], ["published", "洪災損失與調適會改變下一輪的家戶與環境狀態。"]], focus: ["以調查與公開風險證據建立家戶行為基礎。", "表達居住權屬、資源、風險知覺與暴露。", "在行為與財務限制下做出調適決策。", "維持人類、財務與物理狀態轉移的一致性。", "把損失與調適影響帶回下一輪決策。"], outcomes: ["以人類證據為基礎的行為參照。", "家戶與洪災共同形成的決策情境。", "受限制的調適或保險選擇。", "通過檢查的耦合模型狀態轉移。", "更新後的人類—環境系統狀態。"] },
       },
       flow: { title: "人類與環境的耦合回饋", description: "上軌呈現人類理解與調適，下軌呈現危害、損害與環境狀態更新，兩者彼此回饋。", humanLabel: "人類軌", environmentLabel: "環境軌", human: ["理解風險", "決策與調適", "更新資源"], environment: ["危害狀態", "損害與損失", "下一期環境"], feedback: "結果會回到下一期的風險認知、行動能力與暴露。" },
     },

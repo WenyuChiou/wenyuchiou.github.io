@@ -6,10 +6,14 @@ import {
   ArrowRight,
   ArrowUpRight,
   Check,
+  CircleCheckBig,
+  CircleX,
   ChevronDown,
   ChevronRight,
   Download,
+  Droplets,
   FileText,
+  GitCompareArrows,
   Github,
   GraduationCap,
   Linkedin,
@@ -19,7 +23,10 @@ import {
   RotateCcw,
   Search,
   ShieldCheck,
+  Sparkles,
   Sun,
+  Users,
+  Waves,
   X,
 } from "lucide-react";
 import { CONTENT, counterpartPath, localizedPath } from "./content.js";
@@ -28,6 +35,11 @@ import updatesData from "./data/updates.json";
 
 const isExternal = (href) => /^(https?:)?\/\//.test(href);
 const lp = (href, locale) => (href.startsWith("/assets/") ? href : href.startsWith("/") ? localizedPath(href, locale) : href);
+const CASE_ROLES = {
+  "human-grounded-llm-evaluation": { role: "evaluation", Icon: GitCompareArrows },
+  wagf: { role: "governance", Icon: ShieldCheck },
+  floodabm: { role: "simulation", Icon: Waves },
+};
 
 function SmartLink({ href, locale, children, className, download = false, title }) {
   const resolved = lp(href, locale);
@@ -99,6 +111,7 @@ function SiteHeader({ content, locale, page, basePath }) {
     const closeOnEscape = (event) => {
       if (event.key !== "Escape") return;
       if (document.querySelector(".work-dropdown[open]")) return;
+      if (document.querySelector(".navigator-dialog[open]")) return;
       setOpen(false);
       menuRef.current?.focus();
     };
@@ -152,6 +165,7 @@ function SiteHeader({ content, locale, page, basePath }) {
             <a className="button button-small" href="#contact"><Mail aria-hidden="true" size={16} />{content.labels.contact}</a>
           </div>
         </nav>
+        {page !== "hire" ? <PortfolioNavigator content={content} locale={locale} header /> : null}
       </div>
     </header>
   );
@@ -222,7 +236,7 @@ function Observatory({ content, locale }) {
         <p className="interaction-hint">{O.hint}</p>
         <div className="stage-chain">
           {O.stages.map((stage, index) => (
-            <details className="stage" name="observatory-stages" key={stage.id} open={index === 0}>
+            <details className="stage" id={`observatory-stage-${stage.id}`} name="observatory-stages" key={stage.id} open={index === 0}>
               <summary><span className="stage-number">{stage.number}</span><span className="stage-title">{stage.title}</span><ChevronRight className="stage-chevron" aria-hidden="true" size={18} /></summary>
               <div className="stage-body">
                 <p className="stage-question">{stage.question}</p>
@@ -245,12 +259,15 @@ function FlagshipCards({ content, locale, full = false }) {
   return (
     <section id="selected-work" className="section flagship" aria-labelledby="flagship-title"><div className="wrap">
       <SectionHead eyebrow={F.eyebrow} title={F.title} intro={F.intro} id="flagship-title" />
-      <div className="flagship-list">{F.items.map((item, index) => (
-        <details className="flagship-entry" name="selected-work-projects" key={item.slug} open={index === 0}>
+      <div className="flagship-list">{F.items.map((item, index) => {
+        const { role, Icon } = CASE_ROLES[item.slug];
+        return (
+        <details className={`flagship-entry case-${role}`} name="selected-work-projects" key={item.slug} open={index === 0}>
           <summary className="flagship-trigger">
             <span className="flagship-meta"><span>{item.index}</span><span>{item.status}</span></span>
             <span className="flagship-summary"><h3>{item.title}</h3><span>{item.line}</span></span>
-            <span className="flagship-capability-preview" aria-hidden="true">{item.practice.join(" · ")}</span>
+            <span className="flagship-signal" aria-hidden="true"><Icon size={20} /><span>{role}</span></span>
+            <span className="flagship-capability-preview">{item.practice.join(" · ")}</span>
             <ChevronDown className="flagship-chevron" aria-hidden="true" size={20} />
           </summary>
           <div className="flagship-panel">
@@ -258,7 +275,7 @@ function FlagshipCards({ content, locale, full = false }) {
             <SmartLink className="text-link flagship-case-link" href={item.href} locale={locale}>{content.labels.details}<ArrowUpRight aria-hidden="true" size={16} /><span className="sr-only">: {item.title}</span></SmartLink>
           </div>
         </details>
-      ))}</div>
+      );})}</div>
       {full ? null : <div className="section-tail"><SmartLink className="text-link" href="/work/" locale={locale}>{content.workPage.title}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>}
     </div></section>
   );
@@ -310,27 +327,61 @@ function OpenSource({ content, locale, compact = false }) {
   );
 }
 
-function CoupledFlowDiagram({ flow, activeStage = 0, full = false }) {
-  const points = [190, 500, 810];
+const TRACE_STAGE_IDS = ["evidence", "context", "decision", "validation", "consequence"];
+const TRACE_STAGE_ROLES = ["human", "context", "model", "validation", "system"];
+
+function SystemConsequenceMap({ flow, activeStage = 0, compact = false }) {
+  const humanActive = Math.min(activeStage, 2);
+  const environmentActive = activeStage < 2 ? -1 : Math.min(activeStage - 2, 2);
   return (
-    <div className={`coupled-flow${full ? " is-full" : ""}`}>
-      <svg viewBox="0 0 1000 430" role="img" aria-labelledby="coupled-flow-title coupled-flow-desc">
-        <title id="coupled-flow-title">{flow.title}</title>
-        <desc id="coupled-flow-desc">{flow.description}</desc>
-        <defs>
-          <marker id="flow-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" /></marker>
-        </defs>
-        <text className="flow-lane-label" x="24" y="106">{flow.humanLabel}</text>
-        <text className="flow-lane-label" x="24" y="318">{flow.environmentLabel}</text>
-        <path className={`flow-path ${activeStage <= 2 ? "is-active" : ""}`} d="M190 104H810" markerEnd="url(#flow-arrow)" />
-        <path className={`flow-path ${activeStage >= 2 ? "is-active" : ""}`} d="M190 316H810" markerEnd="url(#flow-arrow)" />
-        <path className={`flow-feedback ${activeStage >= 3 ? "is-active" : ""}`} d="M810 132C915 168 915 252 810 288" markerEnd="url(#flow-arrow)" />
-        <path className={`flow-feedback ${activeStage === 4 ? "is-active" : ""}`} d="M190 288C85 252 85 168 190 132" markerEnd="url(#flow-arrow)" />
-        {flow.human.map((label, index) => <g className={`flow-node ${activeStage === index ? "is-active" : ""}`} key={label} transform={`translate(${points[index]} 104)`}><circle r="42" /><text y="70" textAnchor="middle">{label}</text></g>)}
-        {flow.environment.map((label, index) => <g className={`flow-node ${activeStage === index + 2 ? "is-active" : ""}`} key={label} transform={`translate(${points[index]} 316)`}><circle r="42" /><text y="70" textAnchor="middle">{label}</text></g>)}
-      </svg>
-      <p className="flow-feedback-copy">{flow.feedback}</p>
-    </div>
+    <figure className={`system-map${compact ? " is-compact" : ""}`} aria-labelledby="system-map-title system-map-desc">
+      <figcaption>
+        <strong id="system-map-title">{flow.title}</strong>
+        <span id="system-map-desc">{flow.description}</span>
+      </figcaption>
+      <div className="system-map-canvas">
+        <svg viewBox="0 0 1000 360" preserveAspectRatio="none" aria-hidden="true">
+          <defs><marker id="system-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" /></marker></defs>
+          <path className={`system-path is-human${activeStage <= 2 ? " is-active" : ""}`} d="M180 82H820" markerEnd="url(#system-arrow)" />
+          <path className={`system-path is-environment${activeStage >= 2 ? " is-active" : ""}`} d="M180 278H820" markerEnd="url(#system-arrow)" />
+          <path className={`system-path is-impact${activeStage >= 3 ? " is-active" : ""}`} d="M820 105C930 145 930 215 820 255" markerEnd="url(#system-arrow)" />
+          <path className={`system-path is-feedback${activeStage === 4 ? " is-active" : ""}`} d="M180 255C70 215 70 145 180 105" markerEnd="url(#system-arrow)" />
+        </svg>
+        <div className="system-lane system-lane-human">
+          <p><Users aria-hidden="true" size={18} />{flow.humanLabel}</p>
+          <ol>{flow.human.map((label, index) => <React.Fragment key={label}><li className={humanActive === index ? "is-active" : ""}><span>0{index + 1}</span><strong>{label}</strong></li>{index < flow.human.length - 1 ? <ArrowRight className="system-node-arrow" aria-hidden="true" size={18} /> : null}</React.Fragment>)}</ol>
+        </div>
+        <div className="system-lane system-lane-environment">
+          <p><Droplets aria-hidden="true" size={18} />{flow.environmentLabel}</p>
+          <ol>{flow.environment.map((label, index) => <React.Fragment key={label}><li className={environmentActive === index ? "is-active" : ""}><span>0{index + 1}</span><strong>{label}</strong></li>{index < flow.environment.length - 1 ? <ArrowRight className="system-node-arrow" aria-hidden="true" size={18} /> : null}</React.Fragment>)}</ol>
+        </div>
+      </div>
+      <p className="system-feedback"><RotateCcw aria-hidden="true" size={17} />{flow.feedback}</p>
+    </figure>
+  );
+}
+
+function TraceIllustration({ lens, stage, content }) {
+  const P = content.provenance;
+  if (lens === "simulation") return <SystemConsequenceMap flow={P.flow} activeStage={stage} compact />;
+  if (lens === "governance") {
+    const accepted = stage >= 3;
+    return (
+      <figure className={`trace-illustration governance-signal${accepted ? " is-accepted" : ""}`} aria-label={P.visual.governanceLabel}>
+        <ol>
+          <li className={stage >= 2 ? "is-active" : ""}><Sparkles aria-hidden="true" /><span>{P.visual.proposal}</span></li>
+          <li className={stage >= 3 ? "is-active" : ""}>{accepted ? <CircleCheckBig aria-hidden="true" /> : <CircleX aria-hidden="true" />}<span>{P.visual.validator}</span></li>
+          <li className={stage === 4 ? "is-active" : ""}><ShieldCheck aria-hidden="true" /><span>{P.visual.stateUpdate}</span></li>
+        </ol>
+      </figure>
+    );
+  }
+  return (
+    <figure className="trace-illustration comparison-signal" aria-label={P.visual.evaluationLabel}>
+      <div><span><Users aria-hidden="true" size={18} />{P.visual.measured}</span><i className="comparison-bar is-human" /></div>
+      <div><span><Sparkles aria-hidden="true" size={18} />{P.visual.generated}</span><i className={`comparison-bar is-model stage-${stage}`} /></div>
+      <figcaption><GitCompareArrows aria-hidden="true" size={17} />{P.visual.compare}</figcaption>
+    </figure>
   );
 }
 
@@ -340,16 +391,74 @@ function DecisionProvenanceExplorer({ content, full = false }) {
   const [lens, setLens] = useState(full ? "simulation" : "evaluation");
   const [stage, setStage] = useState(0);
   const active = P.lenses[lens];
-  const selectLens = (next) => { setLens(next); setStage(0); };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const hashLens = params.get("trace");
+    const hashStage = TRACE_STAGE_IDS.indexOf(params.get("stage"));
+    if (lensIds.includes(hashLens)) setLens(hashLens);
+    if (hashStage >= 0) setStage(hashStage);
+  }, []);
+
+  const writeHash = (nextLens, nextStage) => {
+    const hash = `trace=${nextLens}&stage=${TRACE_STAGE_IDS[nextStage]}`;
+    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#${hash}`);
+  };
+  const selectLens = (next) => { setLens(next); setStage(0); writeHash(next, 0); };
+  const selectStage = (next) => { setStage(next); writeHash(lens, next); };
+  const handleStageKey = (event, index) => {
+    const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+    let next = keys[event.key] == null ? index : Math.max(0, Math.min(4, index + keys[event.key]));
+    if (event.key === "Home") next = 0;
+    if (event.key === "End") next = 4;
+    if (![...Object.keys(keys), "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    selectStage(next);
+    event.currentTarget.closest("ol")?.querySelectorAll("button")[next]?.focus();
+  };
+  const handleLensKey = (event, index) => {
+    const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+    let next = keys[event.key] == null ? index : (index + keys[event.key] + lensIds.length) % lensIds.length;
+    if (event.key === "Home") next = 0;
+    if (event.key === "End") next = lensIds.length - 1;
+    if (![...Object.keys(keys), "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    selectLens(lensIds[next]);
+    event.currentTarget.closest('[role="tablist"]')?.querySelectorAll('[role="tab"]')[next]?.focus();
+  };
+
   return (
-    <section id="decision-provenance" className={`section provenance${full ? " provenance-full" : ""}`} aria-labelledby="provenance-title">
+    <section id="decision-provenance" className={`section provenance decision-trace${full ? " provenance-full" : ""}`} data-trace-role={active.colorRole} aria-labelledby="provenance-title">
       <div className="wrap">
         <SectionHead eyebrow={P.eyebrow} title={P.title} intro={P.intro} id="provenance-title" />
-        <div className="segmented-control provenance-lenses" role="group" aria-label={P.controlLabel}>{lensIds.map((id) => <button key={id} type="button" aria-pressed={lens === id} onClick={() => selectLens(id)}>{P.lenses[id].label}</button>)}</div>
-        <p className="provenance-summary" aria-live="polite">{active.summary}</p>
-        <div className="provenance-layout">
-          <ol className="provenance-stages" aria-label={P.stageLabel}>{active.stages.map(([status, text], index) => <li className={stage === index ? "is-active" : ""} key={`${lens}-${P.stageNames[index]}`}><button type="button" onClick={() => setStage(index)} aria-current={stage === index ? "step" : undefined}><span className="provenance-index">0{index + 1}</span><span><strong>{P.stageNames[index]}</strong><small>{P.statuses[status]}</small></span></button><p>{text}</p></li>)}</ol>
-          <CoupledFlowDiagram flow={P.flow} activeStage={stage} full={full} />
+        <div className="trace-case-selector" role="tablist" aria-label={P.controlLabel}>{lensIds.map((id) => {
+          const TraceIcon = CASE_ROLES[P.lenses[id].caseSlug]?.Icon || Sparkles;
+          const index = lensIds.indexOf(id);
+          return <button id={`trace-tab-${id}`} key={id} type="button" role="tab" tabIndex={lens === id ? 0 : -1} data-color-role={P.lenses[id].colorRole} aria-selected={lens === id} aria-controls="trace-workbench" onClick={() => selectLens(id)} onKeyDown={(event) => handleLensKey(event, index)}><TraceIcon aria-hidden="true" size={20} /><span><strong>{P.lenses[id].caseTitle}</strong><small>{P.lenses[id].label}</small></span></button>;
+        })}</div>
+        <div id="trace-workbench" className="trace-workbench" role="tabpanel" aria-labelledby={`trace-tab-${lens}`}>
+          <p className="provenance-summary" aria-live="polite">{active.summary}</p>
+          <div className="trace-stage-map">
+            <svg viewBox="0 0 1000 16" preserveAspectRatio="none" aria-hidden="true">{[0, 1, 2, 3].map((index) => <line key={index} className={stage > index ? "is-active" : ""} x1={100 + index * 200} y1="8" x2={300 + index * 200} y2="8" />)}</svg>
+            <ol aria-label={P.stageLabel}>{active.stages.map(([status, text], index) => (
+              <li data-color-role={TRACE_STAGE_ROLES[index]} className={stage === index ? "is-active" : ""} key={`${lens}-${P.stageNames[index]}`}>
+                <button type="button" onClick={() => selectStage(index)} onKeyDown={(event) => handleStageKey(event, index)} aria-current={stage === index ? "step" : undefined}>
+                  <span className="trace-stage-index">0{index + 1}</span><strong>{P.stageNames[index]}</strong><small>{P.statuses[status]}</small>
+                </button>
+                <p>{text}</p>
+              </li>
+            ))}</ol>
+          </div>
+          <div className="trace-inspector" data-color-role={TRACE_STAGE_ROLES[stage]}>
+            <div className="trace-detail">
+              <p className="trace-status"><span>{P.detailLabels.status}</span>{P.statuses[active.stages[stage][0]]}</p>
+              <h3>{P.stageNames[stage]}</h3>
+              <p>{active.stages[stage][1]}</p>
+              <dl><div><dt>{P.detailLabels.focus}</dt><dd>{active.focus[stage]}</dd></div><div><dt>{P.detailLabels.output}</dt><dd>{active.outcomes[stage]}</dd></div></dl>
+              <SmartLink className="text-link" href={active.caseHref} locale={content.locale}>{P.detailLabels.caseLink}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>
+            </div>
+            <TraceIllustration lens={lens} stage={stage} content={content} />
+          </div>
         </div>
       </div>
     </section>
@@ -370,7 +479,8 @@ function ArticleDiagram({ type, content }) {
     governance: isZh ? ["結構化提案", "確定性驗證", "針對性修正", "允許狀態更新"] : ["Structured proposal", "Deterministic checks", "Targeted repair", "Authorized update"],
     feedback: isZh ? ["理解風險", "受限決策", "危害與損失", "更新後的情境"] : ["Interpret risk", "Constrained choice", "Hazard + loss", "Updated context"],
   };
-  return <figure className={`article-diagram diagram-${type}`}><ol>{diagrams[type].map((label, index) => <li key={label}><span>0{index + 1}</span><strong>{label}</strong>{index < 3 ? <ArrowRight aria-hidden="true" size={18} /> : <RotateCcw aria-hidden="true" size={18} />}</li>)}</ol><figcaption>{content.articlesPage.diagram}</figcaption></figure>;
+  const roles = type === "evaluation" ? ["human", "context", "model", "validation"] : type === "governance" ? ["model", "validation", "repair", "system"] : ["human", "context", "environment", "system"];
+  return <figure className={`article-diagram diagram-${type}`}><ol>{diagrams[type].map((label, index) => <li data-color-role={roles[index]} key={label}><span>0{index + 1}</span><strong>{label}</strong>{index < 3 ? <ArrowRight aria-hidden="true" size={18} /> : <RotateCcw aria-hidden="true" size={18} />}</li>)}</ol><figcaption>{content.articlesPage.diagram}</figcaption></figure>;
 }
 
 function ArticlesPreview({ content, locale }) {
@@ -439,7 +549,10 @@ function WorkPage({ content, locale }) {
 
 function ResearchPage({ content, locale }) {
   const R = content.researchPage;
-  return <><PageHero eyebrow={R.eyebrow} title={R.title} intro={R.intro} /><section className="section"><div className="wrap question-grid">{R.questions.map((item, index) => <article key={item.title}><span>0{index + 1}</span><h2>{item.title}</h2><p>{item.text}</p></article>)}</div></section><section className="section research-methods"><div className="wrap two-column"><div><p className="eyebrow">{R.toolkitLabel}</p><h2>{R.methodsTitle}</h2><ol>{R.methods.map((item) => <li key={item}>{item}</li>)}</ol></div><div className="limits-panel"><AlertTriangle aria-hidden="true" /><h2>{R.limitsTitle}</h2><ul>{R.limits.map((item) => <li key={item}>{item}</li>)}</ul></div></div></section><Observatory content={content} locale={locale} /><Contact content={content} /></>;
+  const targets = ["human-evidence", "llm-evaluation", "governance-repair", "external-feedback"];
+  const roles = ["human", "model", "validation", "environment"];
+  const icons = [Users, GitCompareArrows, ShieldCheck, Waves];
+  return <><PageHero eyebrow={R.eyebrow} title={R.title} intro={R.intro} /><section className="section research-program" aria-label={R.eyebrow}><div className="wrap research-map"><svg viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M90 60H910" /></svg><ol>{R.questions.map((item, index) => { const Icon = icons[index]; return <li data-color-role={roles[index]} key={item.title}><a href={`#observatory-stage-${targets[index]}`}><span>0{index + 1}</span><Icon aria-hidden="true" size={22} /><h2>{item.title}</h2><p>{item.text}</p><ArrowDown aria-hidden="true" size={18} /></a></li>; })}</ol></div></section><section className="section research-methods"><div className="wrap two-column"><div><p className="eyebrow">{R.toolkitLabel}</p><h2>{R.methodsTitle}</h2><ol>{R.methods.map((item) => <li key={item}>{item}</li>)}</ol></div><div className="limits-panel"><AlertTriangle aria-hidden="true" /><h2>{R.limitsTitle}</h2><ul>{R.limits.map((item) => <li key={item}>{item}</li>)}</ul></div></div></section><Observatory content={content} locale={locale} /><Contact content={content} /></>;
 }
 
 function PublicationsPage({ content, locale }) {
@@ -455,7 +568,15 @@ function AboutPage({ content, locale }) {
 function HirePage({ content, locale }) {
   const H = content.hire;
   const resume = content.documents.items[0];
-  return <div className="hire-page"><header className="hire-hero wrap"><div><p className="eyebrow">{H.eyebrow}</p><h1>{H.title}</h1><p>{H.intro}</p></div><figure><img src="/assets/agu2025-photo-mobile.webp" width="360" height="480" alt={content.hero.imageAlt} /><figcaption>{content.hero.imageCaption}</figcaption></figure></header><section className="section hire-role" aria-labelledby="hire-role-title"><div className="wrap hire-split"><div><p className="hire-number">01</p><h2 id="hire-role-title">{H.roleFitTitle}</h2></div><p>{H.roleFitText}</p></div></section><section className="section hire-own" aria-labelledby="hire-own-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">02</p><h2 id="hire-own-title">{H.ownTitle}</h2></div><ol className="hire-ownership">{H.own.map((item, index) => <li key={item.title}><span>0{index + 1}</span><div><h3>{item.title}</h3><p>{item.text}</p></div></li>)}</ol></div></section><section className="section hire-evidence" aria-labelledby="hire-evidence-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">03</p><h2 id="hire-evidence-title">{H.evidenceTitle}</h2><p>{H.evidenceIntro}</p></div><div className="hire-evidence-list">{content.flagship.items.map((project) => { const slice = content.evidenceSlices[project.slug]; return <article key={project.slug}><header><span>{project.index}</span><div><p>{project.status}</p><h3>{project.title}</h3></div></header><dl><div><dt>{H.evidenceLabels.problem}</dt><dd>{project.line}</dd></div><div><dt>{H.evidenceLabels.role}</dt><dd>{project.role}</dd></div><div><dt>{H.evidenceLabels.capabilities}</dt><dd>{project.practice.join(" · ")}</dd></div><div><dt>{H.evidenceLabels.status}</dt><dd>{slice.status}</dd></div></dl><p className="hire-evidence-links"><SmartLink className="text-link" href={project.href} locale={locale}>{H.evidenceLabels.source}<ArrowRight aria-hidden="true" size={15} /></SmartLink>{slice.sources.slice(0, 1).map((source) => <SmartLink className="text-link" href={source.href} locale={locale} key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></article>; })}</div></div></section><section className="section hire-fit" aria-labelledby="hire-fit-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">04</p><h2 id="hire-fit-title">{H.fitTitle}</h2><p>{H.fitIntro}</p></div><dl className="hire-skills">{H.skillGroups.map((group) => <div key={group.label}><dt>{group.label}</dt><dd>{group.items.join(" · ")}</dd></div>)}</dl></div></section><section className="section hire-availability" aria-labelledby="hire-availability-title"><div className="wrap hire-split"><div><p className="hire-number">05</p><h2 id="hire-availability-title">{H.availabilityTitle}</h2></div><ul>{H.availability.map((item) => <li key={item}><Check aria-hidden="true" size={18} />{item}</li>)}</ul></div></section><section className="section hire-ask" aria-labelledby="hire-ask-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">06</p><h2 id="hire-ask-title">{H.askTitle}</h2><p>{H.askIntro}</p></div><PortfolioNavigator content={content} locale={locale} inline /></div></section><section id="contact" className="section hire-contact" aria-labelledby="hire-contact-title"><div className="wrap hire-split"><div><p className="hire-number">07</p><h2 id="hire-contact-title">{H.contactTitle}</h2><p>{H.contactText}</p></div><div className="hire-contact-actions"><a className="button button-dark" href={resume.href} download><Download aria-hidden="true" size={17} />{H.resumeLabel}</a><a className="button button-outline" href={`mailto:${content.contact.email}`}><Mail aria-hidden="true" size={17} />{H.emailLabel}</a><SmartLink className="button button-outline" href="https://www.linkedin.com/in/wenyu-chiou" locale={locale}><Linkedin aria-hidden="true" size={17} />{H.linkedinLabel}</SmartLink></div></div></section></div>;
+  const skillRoles = ["engineering", "model", "context", "environment"];
+  return <div className="hire-page">
+    <header className="hire-hero wrap"><div><p className="eyebrow">{H.eyebrow}</p><h1>{H.title}</h1><p>{H.intro}</p></div><figure><img src="/assets/agu2025-photo-mobile.webp" width="360" height="480" alt={content.hero.imageAlt} /><figcaption>{content.hero.imageCaption}</figcaption></figure></header>
+    <section className="section hire-profile" aria-labelledby="hire-role-title"><div className="wrap"><div className="hire-split hire-role"><div><p className="hire-number">01</p><h2 id="hire-role-title">{H.roleFitTitle}</h2></div><p>{H.roleFitText}</p></div><div className="hire-section-title hire-own-title"><p className="hire-number">02</p><h2 id="hire-own-title">{H.ownTitle}</h2></div><ol className="hire-ownership">{H.own.map((item, index) => <li data-color-role={["human", "validation", "system"][index]} key={item.title}><span>0{index + 1}</span><div><h3>{item.title}</h3><p>{item.text}</p></div></li>)}</ol></div></section>
+    <section className="section hire-evidence" aria-labelledby="hire-evidence-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">03</p><h2 id="hire-evidence-title">{H.evidenceTitle}</h2><p>{H.evidenceIntro}</p></div><div className="hire-evidence-list">{content.flagship.items.map((project) => { const slice = content.evidenceSlices[project.slug]; const role = CASE_ROLES[project.slug].role; return <article className={`case-${role}`} key={project.slug}><header><span>{project.index}</span><div><p>{project.status}</p><h3>{project.title}</h3></div></header><dl><div><dt>{H.evidenceLabels.problem}</dt><dd>{project.line}</dd></div><div><dt>{H.evidenceLabels.role}</dt><dd>{project.role}</dd></div><div><dt>{H.evidenceLabels.capabilities}</dt><dd>{project.practice.join(" · ")}</dd></div><div><dt>{H.evidenceLabels.status}</dt><dd>{slice.status}</dd></div></dl><p className="hire-evidence-links"><SmartLink className="text-link" href={project.href} locale={locale}>{H.evidenceLabels.source}<ArrowRight aria-hidden="true" size={15} /></SmartLink>{slice.sources.slice(0, 1).map((source) => <SmartLink className="text-link" href={source.href} locale={locale} key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></article>; })}</div></div></section>
+    <section className="section hire-fit" aria-labelledby="hire-fit-title"><div className="wrap hire-fit-grid"><div><div className="hire-section-title"><p className="hire-number">04</p><h2 id="hire-fit-title">{H.fitTitle}</h2><p>{H.fitIntro}</p></div><dl className="hire-skills">{H.skillGroups.map((group, index) => <div data-color-role={skillRoles[index]} key={group.label}><dt>{group.label}</dt><dd>{group.items.join(" · ")}</dd></div>)}</dl></div><aside className="hire-availability" aria-labelledby="hire-availability-title"><p className="hire-number">05</p><h2 id="hire-availability-title">{H.availabilityTitle}</h2><ul>{H.availability.map((item) => <li key={item}><Check aria-hidden="true" size={18} />{item}</li>)}</ul></aside></div></section>
+    <section className="section hire-ask" aria-labelledby="hire-ask-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">06</p><h2 id="hire-ask-title">{H.askTitle}</h2><p>{H.askIntro}</p></div><PortfolioNavigator content={content} locale={locale} inline /></div></section>
+    <section id="contact" className="section hire-contact" aria-labelledby="hire-contact-title"><div className="wrap hire-split"><div><p className="hire-number">07</p><h2 id="hire-contact-title">{H.contactTitle}</h2><p>{H.contactText}</p></div><div className="hire-contact-actions"><a className="button button-dark" href={resume.href} download><Download aria-hidden="true" size={17} />{H.resumeLabel}</a><a className="button button-outline" href={`mailto:${content.contact.email}`}><Mail aria-hidden="true" size={17} />{H.emailLabel}</a><SmartLink className="button button-outline" href="https://www.linkedin.com/in/wenyu-chiou" locale={locale}><Linkedin aria-hidden="true" size={17} />{H.linkedinLabel}</SmartLink></div></div></section>
+  </div>;
 }
 
 function PathwayExplorer({ content }) {
@@ -468,7 +589,7 @@ function PathwayExplorer({ content }) {
 function FloodTimeline({ content }) {
   const [tenure, setTenure] = useState("owner");
   const labels = content.interactions.timeline;
-  return <div className="interactive-artifact timeline-artifact"><div className="segmented-control" role="group" aria-label={labels.controlLabel}>{[["owner", labels.owner], ["renter", labels.renter]].map(([id, label]) => <button key={id} type="button" aria-pressed={tenure === id} onClick={() => setTenure(id)}>{label}</button>)}</div><p className="artifact-note">{labels.note}</p><CoupledFlowDiagram flow={content.provenance.flow} activeStage={tenure === "owner" ? 3 : 1} full /><ol className={`feedback-timeline is-${tenure}`}>{[labels.start, labels.choice, labels.hazard, labels.finance, labels.repeat].map((label, index) => <li key={label}><span>0{index + 1}</span><strong>{label}</strong>{index === 4 ? <RotateCcw aria-hidden="true" size={18} /> : <ChevronRight aria-hidden="true" size={18} />}</li>)}</ol><p className="artifact-result" aria-live="polite"><strong>{labels.lensLabel}</strong>{labels.views[tenure]}</p></div>;
+  return <div className="interactive-artifact timeline-artifact"><div className="segmented-control" role="group" aria-label={labels.controlLabel}>{[["owner", labels.owner], ["renter", labels.renter]].map(([id, label]) => <button key={id} type="button" aria-pressed={tenure === id} onClick={() => setTenure(id)}>{label}</button>)}</div><p className="artifact-note">{labels.note}</p><SystemConsequenceMap flow={content.provenance.flow} activeStage={tenure === "owner" ? 4 : 3} /><ol className={`feedback-timeline is-${tenure}`}>{[labels.start, labels.choice, labels.hazard, labels.finance, labels.repeat].map((label, index) => <li data-color-role={["context", "human", "environment", "validation", "system"][index]} key={label}><span>0{index + 1}</span><strong>{label}</strong>{index === 4 ? <RotateCcw aria-hidden="true" size={18} /> : <ChevronRight aria-hidden="true" size={18} />}</li>)}</ol><p className="artifact-result" aria-live="polite"><strong>{labels.lensLabel}</strong>{labels.views[tenure]}</p></div>;
 }
 
 function GovernanceTrace({ content }) {
@@ -494,7 +615,7 @@ function SiteFooter({ content, locale }) {
   return <footer className="site-footer"><div className="wrap"><div><strong>{content.name}</strong><p>{content.footer.line}</p><SmartLink href="/hire/" locale={locale}>{content.hire.footerLabel}<ArrowRight aria-hidden="true" size={14} /></SmartLink></div><p>{content.footer.note}<br />© 2026 Wenyu Chiou</p></div></footer>;
 }
 
-function PortfolioNavigator({ content, locale, inline = false }) {
+function PortfolioNavigator({ content, locale, inline = false, header = false }) {
   const N = content.navigator;
   const suggestions = inline ? content.hire.suggestions : N.suggestions;
   const suggestionFallbacks = inline ? ["/work/human-grounded-llm-evaluation/", "/work/wagf/", "/work/"] : [];
@@ -532,7 +653,7 @@ function PortfolioNavigator({ content, locale, inline = false }) {
   </div>;
   return (
     <div
-      className={inline ? "recruiter-navigator" : "portfolio-navigator"}
+      className={inline ? "recruiter-navigator" : header ? "portfolio-navigator navigator-header-entry" : "portfolio-navigator"}
       data-portfolio-navigator
       data-locale={locale}
       data-inline={inline ? "true" : "false"}
@@ -546,7 +667,7 @@ function PortfolioNavigator({ content, locale, inline = false }) {
       data-nvidia={ai.nvidia}
     >
       {!inline ? <button className="navigator-launch" type="button" data-navigator-launch aria-haspopup="dialog" aria-controls="portfolio-navigator-dialog" aria-label={N.launch} title={N.launch}>
-        <Search aria-hidden="true" size={18} />
+        {header ? <Sparkles aria-hidden="true" size={18} /> : <Search aria-hidden="true" size={18} />}
         <span>{N.launch}</span>
       </button> : null}
       {inline ? <div className="navigator-inline-panel" aria-labelledby={titleId}>{frame}</div> : <dialog className="navigator-dialog" id="portfolio-navigator-dialog" aria-labelledby={titleId}>{frame}</dialog>}
@@ -567,5 +688,5 @@ export function App({ page = "home", locale = "en", basePath = "/" }) {
   else if (page === "about") body = <AboutPage content={content} locale={locale} />;
   else if (page.startsWith("case:")) body = <CaseStudyPage content={content} locale={locale} slug={page.slice(5)} />;
   else body = <Home content={content} locale={locale} />;
-  return <><SiteHeader content={content} locale={locale} page={page} basePath={basePath} /><main id="main"><Breadcrumbs content={content} locale={locale} page={page} />{body}</main>{page !== "hire" ? <PortfolioNavigator content={content} locale={locale} /> : null}<SiteFooter content={content} locale={locale} /></>;
+  return <><SiteHeader content={content} locale={locale} page={page} basePath={basePath} /><main id="main"><Breadcrumbs content={content} locale={locale} page={page} />{body}</main><SiteFooter content={content} locale={locale} /></>;
 }
