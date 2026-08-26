@@ -164,14 +164,14 @@ function loadTurnstile() {
   return turnstileLoader;
 }
 
-async function getTurnstileToken(container, sitekey) {
+export async function getTurnstileToken(container, sitekey, action = "navigate") {
   if (!sitekey) throw new Error("turnstile_not_configured");
   const turnstile = await loadTurnstile();
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error("turnstile_timeout")), 10000);
     if (container.dataset.widgetId) turnstile.remove(container.dataset.widgetId);
     container.replaceChildren();
-    const widgetId = turnstile.render(container, { sitekey, action: "navigate", theme: "auto", size: "flexible", callback: (token) => { clearTimeout(timer); resolve(token); }, "error-callback": () => { clearTimeout(timer); reject(new Error("turnstile_failed")); }, "expired-callback": () => reject(new Error("turnstile_expired")) });
+    const widgetId = turnstile.render(container, { sitekey, action, theme: "auto", size: "flexible", callback: (token) => { clearTimeout(timer); resolve(token); }, "error-callback": () => { clearTimeout(timer); reject(new Error("turnstile_failed")); }, "expired-callback": () => { clearTimeout(timer); reject(new Error("turnstile_expired")); } });
     container.dataset.widgetId = String(widgetId);
   });
 }
@@ -183,15 +183,19 @@ function eventEndpoint(endpoint) {
   return url.toString();
 }
 
-export function trackPortfolioEvent(event, locale, target, outcome = "attempt") {
+export function trackPortfolioEvent(event, locale, target, outcome = "attempt", metadata = {}) {
   if (window.location.origin !== "https://wenyuchiou.github.io") return;
   const endpoint = document.querySelector('meta[name="portfolio-ai-endpoint"]')?.content.trim() || "";
   const url = eventEndpoint(endpoint);
   if (!url) return;
-  fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event, locale, target, outcome }), keepalive: true }).catch(() => {});
+  const bounded = {
+    ...(metadata.mode === "nvidia" || metadata.mode === "local" ? { mode: metadata.mode } : {}),
+    ...Object.fromEntries(["strongCount", "adjacentCount", "gapCount"].map((key) => [key, Number.isInteger(metadata[key]) ? Math.max(0, Math.min(metadata[key], 6)) : 0])),
+  };
+  fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event, locale, target, outcome, ...bounded }), keepalive: true }).catch(() => {});
 }
 
-const rankSemantically = createSemanticRanker();
+export const rankSemantically = createSemanticRanker();
 
 function isEditable(target) {
   return target instanceof HTMLElement && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));

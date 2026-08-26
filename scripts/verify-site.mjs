@@ -54,10 +54,10 @@ for (const file of ["index.html", "zh/index.html"]) {
 const recruiterFiles = ["hire/index.html", "zh/hire/index.html"];
 for (const file of recruiterFiles) {
   const html = readFileSync(file, "utf8");
-  for (const marker of ["hire-role-title", "hire-own-title", "hire-evidence-title", "hire-fit-title", "hire-availability-title", "hire-ask-title", "hire-contact-title"]) if (!html.includes(marker)) errors.push(`${file}: missing recruiter section ${marker}`);
+  for (const marker of ["hire-role-title", "hire-own-title", "hire-evidence-title", "hire-fit-title", "hire-availability-title", "fit-explorer-title", "hire-contact-title"]) if (!html.includes(marker)) errors.push(`${file}: missing recruiter section ${marker}`);
   if (!html.includes('"@type":"WebPage"') || !html.includes('"@id":"https://wenyuchiou.github.io/#wenyu-chiou"')) errors.push(`${file}: recruiter identity JSON-LD is incomplete`);
   if (!html.includes('/assets/og/recruiter-brief.png')) errors.push(`${file}: missing recruiter social preview`);
-  if (!html.includes("data-inline=\"true\"")) errors.push(`${file}: missing inline recruiter navigator`);
+  if (!html.includes("data-recruiter-fit-explorer=\"true\"") || !html.includes("data-fit-jd=\"true\"") || !html.includes("data-fit-role=\"true\"")) errors.push(`${file}: missing AI Recruiter Fit Explorer controls`);
 }
 for (const marker of ["LangChain", "Model Context Protocol (MCP)", "Retrieval-Augmented Generation (RAG)", "Agent Skills", "OpenAI Codex", "Claude Code", "MATLAB", "Structural Equation Modeling (SEM)", "Agent-Based Modeling (ABM)", "Hydrological Modeling"]) if (!readFileSync("hire/index.html", "utf8").includes(marker)) errors.push(`hire/index.html: missing verified technical term ${marker}`);
 for (const marker of ["LangChain", "Model Context Protocol, MCP", "Retrieval-Augmented Generation, RAG", "Agent Skills", "OpenAI Codex", "Claude Code", "MATLAB", "Structural Equation Modeling, SEM", "Agent-Based Modeling, ABM", "Hydrological Modeling"]) if (!readFileSync("zh/hire/index.html", "utf8").includes(marker)) errors.push(`zh/hire/index.html: missing verified technical term ${marker}`);

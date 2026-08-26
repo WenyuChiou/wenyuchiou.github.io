@@ -32,6 +32,7 @@ import {
 import { CONTENT, counterpartPath, localizedPath } from "./content.js";
 import githubData from "./data/github.json";
 import updatesData from "./data/updates.json";
+import { FIT_ROLE_PRESETS } from "./fit-data.js";
 
 const isExternal = (href) => /^(https?:)?\/\//.test(href);
 const lp = (href, locale) => (href.startsWith("/assets/") ? href : href.startsWith("/") ? localizedPath(href, locale) : href);
@@ -202,6 +203,11 @@ function Hero({ content, locale }) {
       </div>
     </section>
   );
+}
+
+function RecruiterFitTeaser({ content, locale }) {
+  const F = content.hire.fitExplorer;
+  return <section className="fit-teaser" aria-labelledby="fit-teaser-title"><div className="wrap fit-teaser-layout"><div><p className="eyebrow"><Sparkles aria-hidden="true" size={16} />{F.homeEyebrow}</p><h2 id="fit-teaser-title">{F.homeTitle}</h2><p>{F.homeIntro}</p></div><nav aria-label={F.roleLabel}>{Object.entries(FIT_ROLE_PRESETS).map(([id, preset]) => <SmartLink href={`/hire/?role=${id}#fit-explorer`} locale={locale} key={id}><span>{preset.shortTitle[locale]}</span><ArrowRight aria-hidden="true" size={16} /></SmartLink>)}</nav></div></section>;
 }
 
 function Expertise({ content }) {
@@ -520,7 +526,7 @@ function Contact({ content }) {
 }
 
 function Home({ content, locale }) {
-  return <><Hero content={content} locale={locale} /><FlagshipCards content={content} locale={locale} /><DecisionProvenanceExplorer content={content} /><OpenSource content={content} locale={locale} compact /><ArticlesPreview content={content} locale={locale} /><Contact content={content} /></>;
+  return <><Hero content={content} locale={locale} /><RecruiterFitTeaser content={content} locale={locale} /><FlagshipCards content={content} locale={locale} /><DecisionProvenanceExplorer content={content} /><OpenSource content={content} locale={locale} compact /><ArticlesPreview content={content} locale={locale} /><Contact content={content} /></>;
 }
 
 function PageHero({ eyebrow, title, intro }) {
@@ -565,6 +571,11 @@ function AboutPage({ content, locale }) {
   return <><PageHero eyebrow={A.eyebrow} title={A.title} intro={A.bio[0]} /><section className="section about-body"><div className="wrap about-layout"><figure><img src="/assets/portrait.jpg" width="768" height="1024" alt={content.hero.imageAlt} loading="eager" /><figcaption>{content.hero.eyebrow}</figcaption></figure><div className="prose">{A.bio.slice(1).map((text) => <p key={text}>{text}</p>)}<SmartLink className="button button-outline about-brief-link" href="/hire/" locale={locale}>{content.hire.primaryLabel}<ArrowRight aria-hidden="true" size={16} /></SmartLink></div></div></section><section className="section"><div className="wrap two-column"><div><p className="eyebrow"><GraduationCap aria-hidden="true" size={16} />{A.educationTitle}</p><h2>{A.educationTitle}</h2><ol className="education-list">{A.education.map((item) => <li key={item.degree}><h3>{item.degree}</h3><p>{item.school}</p><span>{item.date}</span></li>)}</ol></div><div><p className="eyebrow">{A.timelineLabel}</p><h2>{A.trajectoryTitle}</h2><ol className="trajectory-list">{A.trajectory.map((item) => <li key={item.year}><span>{item.year}</span><p>{item.text}</p></li>)}</ol></div></div></section><Documents content={content} /><Contact content={content} /></>;
 }
 
+function RecruiterFitExplorer({ content, locale, resume }) {
+  const F = content.hire.fitExplorer;
+  return <section id="fit-explorer" className="section recruiter-fit" aria-labelledby="fit-explorer-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">06</p><h2 id="fit-explorer-title">{F.title}</h2><p>{F.intro}</p></div><div className="fit-explorer-shell" data-recruiter-fit-explorer data-locale={locale} data-resume-href={resume.href} data-email-href={`mailto:${content.contact.email}`} data-linkedin-href="https://www.linkedin.com/in/wenyu-chiou"><form data-fit-form><fieldset><legend>{F.roleLabel}</legend><div className="fit-role-options">{Object.entries(FIT_ROLE_PRESETS).map(([id, preset], index) => <label data-color-role={["model", "validation", "environment"][index]} key={id}><input type="radio" name="rolePreset" value={id} data-fit-role defaultChecked={index === 0} /><span>{preset.title[locale]}</span></label>)}</div></fieldset><label className="fit-jd-label" htmlFor="fit-job-description"><span>{F.jdLabel}</span><span><span data-fit-count>0</span> / 8,000</span></label><textarea id="fit-job-description" data-fit-jd rows="8" maxLength="8000" placeholder={F.jdPlaceholder} autoComplete="off" /><div className="fit-submit-row"><button className="button button-dark" type="submit" data-fit-submit><Sparkles aria-hidden="true" size={17} />{F.submit}</button><p><ShieldCheck aria-hidden="true" size={17} />{F.privacy}</p></div><div className="fit-turnstile" data-fit-turnstile /></form><div className="fit-analysis-status" role="status" aria-live="polite"><span className="fit-status-pulse" aria-hidden="true" /><span data-fit-status>{F.ready}</span></div><div className="fit-report" data-fit-result hidden /><noscript><p className="fit-noscript">{F.noScript}</p></noscript></div></div></section>;
+}
+
 function HirePage({ content, locale }) {
   const H = content.hire;
   const resume = content.documents.items[0];
@@ -574,7 +585,7 @@ function HirePage({ content, locale }) {
     <section className="section hire-profile" aria-labelledby="hire-role-title"><div className="wrap"><div className="hire-split hire-role"><div><p className="hire-number">01</p><h2 id="hire-role-title">{H.roleFitTitle}</h2></div><p>{H.roleFitText}</p></div><div className="hire-section-title hire-own-title"><p className="hire-number">02</p><h2 id="hire-own-title">{H.ownTitle}</h2></div><ol className="hire-ownership">{H.own.map((item, index) => <li data-color-role={["human", "validation", "system"][index]} key={item.title}><span>0{index + 1}</span><div><h3>{item.title}</h3><p>{item.text}</p></div></li>)}</ol></div></section>
     <section className="section hire-evidence" aria-labelledby="hire-evidence-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">03</p><h2 id="hire-evidence-title">{H.evidenceTitle}</h2><p>{H.evidenceIntro}</p></div><div className="hire-evidence-list">{content.flagship.items.map((project) => { const slice = content.evidenceSlices[project.slug]; const role = CASE_ROLES[project.slug].role; return <article className={`case-${role}`} key={project.slug}><header><span>{project.index}</span><div><p>{project.status}</p><h3>{project.title}</h3></div></header><dl><div><dt>{H.evidenceLabels.problem}</dt><dd>{project.line}</dd></div><div><dt>{H.evidenceLabels.role}</dt><dd>{project.role}</dd></div><div><dt>{H.evidenceLabels.capabilities}</dt><dd>{project.practice.join(" · ")}</dd></div><div><dt>{H.evidenceLabels.status}</dt><dd>{slice.status}</dd></div></dl><p className="hire-evidence-links"><SmartLink className="text-link" href={project.href} locale={locale}>{H.evidenceLabels.source}<ArrowRight aria-hidden="true" size={15} /></SmartLink>{slice.sources.slice(0, 1).map((source) => <SmartLink className="text-link" href={source.href} locale={locale} key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></article>; })}</div></div></section>
     <section className="section hire-fit" aria-labelledby="hire-fit-title"><div className="wrap hire-fit-grid"><div><div className="hire-section-title"><p className="hire-number">04</p><h2 id="hire-fit-title">{H.fitTitle}</h2><p>{H.fitIntro}</p></div><dl className="hire-skills">{H.skillGroups.map((group, index) => <div data-color-role={skillRoles[index]} key={group.label}><dt>{group.label}</dt><dd>{group.items.join(" · ")}</dd></div>)}</dl></div><aside className="hire-availability" aria-labelledby="hire-availability-title"><p className="hire-number">05</p><h2 id="hire-availability-title">{H.availabilityTitle}</h2><ul>{H.availability.map((item) => <li key={item}><Check aria-hidden="true" size={18} />{item}</li>)}</ul></aside></div></section>
-    <section className="section hire-ask" aria-labelledby="hire-ask-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">06</p><h2 id="hire-ask-title">{H.askTitle}</h2><p>{H.askIntro}</p></div><PortfolioNavigator content={content} locale={locale} inline /></div></section>
+    <RecruiterFitExplorer content={content} locale={locale} resume={resume} />
     <section id="contact" className="section hire-contact" aria-labelledby="hire-contact-title"><div className="wrap hire-split"><div><p className="hire-number">07</p><h2 id="hire-contact-title">{H.contactTitle}</h2><p>{H.contactText}</p></div><div className="hire-contact-actions"><a className="button button-dark" href={resume.href} download><Download aria-hidden="true" size={17} />{H.resumeLabel}</a><a className="button button-outline" href={`mailto:${content.contact.email}`}><Mail aria-hidden="true" size={17} />{H.emailLabel}</a><SmartLink className="button button-outline" href="https://www.linkedin.com/in/wenyu-chiou" locale={locale}><Linkedin aria-hidden="true" size={17} />{H.linkedinLabel}</SmartLink></div></div></section>
   </div>;
 }
