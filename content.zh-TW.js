@@ -11,7 +11,7 @@ export const ZH_TW = {
     { id: "work", label: "專案作品", href: "/work/" },
     { id: "research", label: "研究計畫", href: "/research/" },
     { id: "publications", label: "著作與演講", href: "/publications/" },
-    { id: "hire", label: "招聘摘要", href: "/hire/" },
+    { id: "hire", label: "招募摘要", href: "/hire/" },
     { id: "about", label: "關於我", href: "/about/" },
   ],
   labels: {
@@ -56,8 +56,8 @@ export const ZH_TW = {
     imageCaption: "於紐奧良舉行的 AGU 2025 發表人類—洪災耦合模型研究。",
   },
   hire: {
-    navLabel: "招聘摘要",
-    eyebrow: "Recruiter brief／招聘摘要",
+    navLabel: "招募摘要",
+    eyebrow: "Recruiter brief／招募摘要",
     title: "邱文昱：LLM 評估與 AI 研究職位摘要",
     intro: "用 60 秒掌握我能負責的研究工程工作、相關證據，以及可任職時間。",
     roleFitTitle: "60 秒職位匹配摘要",
@@ -66,7 +66,7 @@ export const ZH_TW = {
     own: [
       { title: "以人類行為為基礎的 LLM 評估", text: "設計能檢視次群體差異與重複執行穩定性的評估，將生成決策與實測行為證據比較，並清楚說明效度邊界。" },
       { title: "受治理的代理工作流", text: "定義結構化輸出、確定性驗證器、針對性修正與稽核軌跡，避免模型提案在通過檢查前改變系統狀態。" },
-      { title: "行為模擬與 AI for Science", text: "把個別決策連結到代理人基與耦合模擬，檢驗環境、財務與制度層面的後續影響。" },
+      { title: "行為模擬與 AI for Science", text: "把個別決策連結到代理人基礎模型與耦合模擬，檢驗環境、財務與制度層面的後續影響。" },
     ],
     evidenceTitle: "實作證據",
     evidenceIntro: "三個專案分別呈現評估、治理與模擬能力，並直接標示公開狀態。",
@@ -82,7 +82,7 @@ export const ZH_TW = {
     availabilityTitle: "可任職時間與工作授權",
     availability: ["開放申請 2027 年暑期實習", "預計 2027 年 12 月取得博士學位", "F-1 學生身分；實習可使用 CPT", "畢業後可洽談全職機會"],
     askTitle: "詢問作品集",
-    askIntro: "可直接從招聘問題開始；網站會先顯示本機證據，並可能透過 NVIDIA 導向具引用依據的頁面。",
+    askIntro: "可直接從招募相關問題開始；網站會先顯示本機證據，並可能透過 NVIDIA 導向具引用依據的頁面。",
     suggestions: ["哪些證據支持文昱的 LLM 評估經驗？", "哪項工作呈現受治理的代理系統？", "文昱能為 AI 研究團隊帶來什麼貢獻？"],
     contactTitle: "履歷與聯絡方式",
     contactText: "若職缺涉及 LLM 評估、AI 研究、代理系統或 AI for Science，請使用 Email 或 LinkedIn 聯絡。英文業界履歷是最精簡的完整紀錄。",
@@ -90,8 +90,8 @@ export const ZH_TW = {
     emailLabel: "Email 聯絡文昱",
     linkedinLabel: "查看 LinkedIn",
     selectedWorkLabel: "探索精選工作",
-    primaryLabel: "查看招聘摘要",
-    footerLabel: "招聘摘要",
+    primaryLabel: "查看招募摘要",
+    footerLabel: "招募摘要",
   },
   expertise: {
     eyebrow: "專業領域",
@@ -441,7 +441,7 @@ export const ZH_TW = {
     text: "我正在尋求 2027 年夏季（約 5 月下旬至 8 月中旬）的全職實習機會。我對 LLM 評估、代理系統、行為模擬以及 AI for Science 特別感興趣。",
     email: "wec324@lehigh.edu",
     workAuth: "F-1 學生身分 · 具備 CPT 資格",
-    recruiterLink: "查看招聘摘要",
+    recruiterLink: "查看招募摘要",
     links: [
       { label: "GitHub", href: "https://github.com/WenyuChiou" },
       { label: "LinkedIn", href: "https://www.linkedin.com/in/wenyu-chiou" },

@@ -39,7 +39,7 @@ const firstFoldSelectors = {
   "article:evaluating-llm-agents-against-measured-human-behavior": ".article-body",
   "article:why-governed-agents-need-validators-before-state-changes": ".article-body",
   "article:from-individual-decisions-to-system-consequences": ".article-body",
-  hire: ".hire-role",
+  hire: ".hire-profile",
   about: ".about-body img",
   "case:human-grounded-llm-evaluation": ".case-overview",
   "case:floodabm": ".case-overview",
@@ -207,16 +207,16 @@ const auditPortfolioNavigator = async (route, query, expectedPath) => {
   const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
   const launchVisible = await page.$eval(".navigator-launch", (button) => {
     const rect = button.getBoundingClientRect();
-    return getComputedStyle(button).display !== "none" && rect.width >= 44 && rect.height >= 44;
+    return { visible: getComputedStyle(button).display !== "none" && rect.width >= 44 && rect.height >= 44, menuClosed: document.querySelector(".menu-button")?.getAttribute("aria-expanded") === "false" };
   });
-  if (!launchVisible) failures.push(`${route}: portfolio navigator launch is not visible or touch-sized`);
+  if (!launchVisible.visible || !launchVisible.menuClosed) failures.push(`${route}: portfolio navigator launch is not independently visible from the closed mobile menu`);
   await page.click(".navigator-launch");
   await new Promise((resolve) => setTimeout(resolve, 300));
   const opened = await page.$eval(".navigator-dialog", (dialog) => {
     const rect = dialog.getBoundingClientRect();
-    return { open: dialog.open, focused: document.activeElement === dialog.querySelector("input"), left: rect.left, right: rect.right, bottom: rect.bottom };
+    return { open: dialog.open, focused: document.activeElement === dialog.querySelector("input"), width: rect.width, height: rect.height, left: rect.left, right: rect.right, bottom: rect.bottom };
   });
-  if (!opened.open || !opened.focused || opened.left < -1 || opened.right > 391 || opened.bottom > 845) failures.push(`${route}: portfolio navigator did not open and fit the mobile viewport`);
+  if (!opened.open || !opened.focused || opened.width <= 0 || opened.height <= 0 || opened.left < -1 || opened.right > 391 || opened.bottom > 845) failures.push(`${route}: portfolio navigator did not open and fit the mobile viewport`);
   await page.setOfflineMode(true);
   await page.type("#navigator-query", query);
   await page.click(".navigator-submit");
@@ -241,7 +241,7 @@ const auditRecruiterNavigator = async (route, query, expectedPath) => {
   const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
   if (await page.$(".navigator-launch")) failures.push(`${route}: recruiter brief should use the inline navigator instead of a floating launcher`);
   const sections = await page.$$eval(".hire-page .section", (items) => items.map((item) => item.querySelector("h2")?.textContent.trim()));
-  if (sections.length !== 7 || sections.some((title) => !title)) failures.push(`${route}: recruiter brief does not expose seven ordered sections`);
+  if (sections.length !== 5 || sections.some((title) => !title)) failures.push(`${route}: recruiter brief does not expose five ordered sections`);
   await page.setOfflineMode(true);
   await page.type(".recruiter-navigator input", query);
   await page.click(".recruiter-navigator .navigator-submit");
@@ -254,12 +254,36 @@ const auditRecruiterNavigator = async (route, query, expectedPath) => {
 const auditProvenance = async (route) => {
   const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
   await page.$eval(".provenance", (section) => section.scrollIntoView({ block: "start", behavior: "instant" }));
-  const initial = await page.$eval(".provenance-stages", (list) => ({ current: list.querySelector('[aria-current="step"]')?.textContent, activePaths: document.querySelectorAll(".coupled-flow .is-active").length, title: document.querySelector(".coupled-flow title")?.textContent, desc: document.querySelector(".coupled-flow desc")?.textContent }));
-  if (!initial.current || !initial.activePaths || !initial.title || !initial.desc) failures.push(`${route}: provenance SVG lacks initial state or accessible text`);
-  await page.click('.provenance-lenses button:nth-child(2)');
-  await page.click('.provenance-stages li:nth-child(4) button');
-  const changed = await page.$eval(".provenance", (section) => ({ lens: section.querySelector('.provenance-lenses button:nth-child(2)')?.getAttribute("aria-pressed"), step: section.querySelector('.provenance-stages li:nth-child(4) button')?.getAttribute("aria-current"), text: section.querySelector('.provenance-stages li:nth-child(4)>p')?.textContent.trim() }));
-  if (changed.lens !== "true" || changed.step !== "step" || !changed.text) failures.push(`${route}: provenance lens and keyboard-readable stage did not update`);
+  const initial = await page.$eval(".decision-trace", (section) => {
+    const stages = [...section.querySelectorAll(".trace-stage-map li")];
+    const stageColors = new Set(stages.map((item) => getComputedStyle(item).getPropertyValue("--signal").trim()).filter(Boolean));
+    const keyText = [section.querySelector(".provenance-summary"), ...section.querySelectorAll(".trace-stage-map strong"), section.querySelector(".trace-inspector h3")].filter(Boolean);
+    const tabs = [...section.querySelectorAll('[role="tab"]')];
+    return {
+      tabs: tabs.length,
+      tabbableTabs: tabs.filter((tab) => tab.tabIndex === 0).length,
+      stages: stages.length,
+      current: section.querySelector('[aria-current="step"]')?.textContent,
+      inspector: section.querySelector(".trace-inspector h3")?.textContent,
+      visual: Boolean(section.querySelector('.trace-illustration[aria-label], .system-map[aria-labelledby]')),
+      panelLabel: section.querySelector('[role="tabpanel"]')?.getAttribute("aria-labelledby"),
+      semanticColors: stageColors.size,
+      smallestKeyText: Math.min(...keyText.map((item) => Number.parseFloat(getComputedStyle(item).fontSize))),
+    };
+  });
+  if (initial.tabs !== 3 || initial.tabbableTabs !== 1 || initial.stages !== 5 || !initial.current || !initial.inspector || !initial.visual || initial.panelLabel !== "trace-tab-evaluation") failures.push(`${route}: Decision Trace Studio lacks its complete initial state or ARIA tab relationships`);
+  if (initial.semanticColors < 4) failures.push(`${route}: Decision Trace stages do not expose enough semantic color roles (${initial.semanticColors})`);
+  if (initial.smallestKeyText < 15) failures.push(`${route}: Decision Trace key text falls below 15px (${initial.smallestKeyText}px)`);
+  await page.focus('.trace-case-selector button:nth-child(1)');
+  await page.keyboard.press("ArrowRight");
+  const tabKeyboard = await page.$eval('.trace-case-selector button:nth-child(2)', (tab) => ({ selected: tab.getAttribute("aria-selected"), focused: document.activeElement === tab, tabIndex: tab.tabIndex }));
+  if (tabKeyboard.selected !== "true" || !tabKeyboard.focused || tabKeyboard.tabIndex !== 0) failures.push(`${route}: Decision Trace tab keyboard navigation or roving tabindex failed`);
+  await page.click('.trace-stage-map li:nth-child(4) button');
+  const changed = await page.$eval(".decision-trace", (section) => ({ lens: section.querySelector('.trace-case-selector button:nth-child(2)')?.getAttribute("aria-selected"), step: section.querySelector('.trace-stage-map li:nth-child(4) button')?.getAttribute("aria-current"), detail: section.querySelector('.trace-detail h3')?.textContent.trim(), hash: window.location.hash }));
+  if (changed.lens !== "true" || changed.step !== "step" || !changed.detail || !changed.hash.includes("trace=governance") || !changed.hash.includes("stage=validation")) failures.push(`${route}: Decision Trace lens, stage, detail, or shareable hash did not update`);
+  await page.focus('.trace-stage-map li:nth-child(4) button');
+  await page.keyboard.press("ArrowRight");
+  if (!(await page.$eval('.trace-stage-map li:nth-child(5) button', (button) => button.getAttribute("aria-current") === "step"))) failures.push(`${route}: Decision Trace keyboard navigation did not advance the stage`);
   await page.close();
 };
 
@@ -505,10 +529,10 @@ try {
     await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
     await page.setJavaScriptEnabled(false);
     const response = await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: "load" });
-    const staticState = await page.evaluate(() => { const floatingNavigator = document.querySelector(".portfolio-navigator"); const inlineNavigator = document.querySelector(".recruiter-navigator"); const inlineForm = inlineNavigator?.querySelector("form"); return { h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, provenanceStages: document.querySelectorAll(".provenance-stages>li").length, visibleProvenance: [...document.querySelectorAll(".provenance-stages>li>p")].filter((item) => getComputedStyle(item).display !== "none").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, recruiterSections: document.querySelectorAll(".hire-page .section").length, recruiterFallbackLinks: inlineNavigator?.querySelectorAll("[data-navigator-query][href]").length || 0, recruiterFormAction: inlineForm ? new URL(inlineForm.action).pathname : "", explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length, navigatorVisible: floatingNavigator ? getComputedStyle(floatingNavigator).display !== "none" : false, inlineNavigatorVisible: inlineNavigator ? getComputedStyle(inlineNavigator).display !== "none" : false }; });
+    const staticState = await page.evaluate(() => { const floatingNavigator = document.querySelector(".portfolio-navigator"); const inlineNavigator = document.querySelector(".recruiter-navigator"); const inlineForm = inlineNavigator?.querySelector("form"); return { h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, provenanceStages: document.querySelectorAll(".trace-stage-map>ol>li").length, visibleProvenance: [...document.querySelectorAll(".trace-stage-map>ol>li>p")].filter((item) => getComputedStyle(item).display !== "none").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, recruiterSections: document.querySelectorAll(".hire-page .section").length, recruiterFallbackLinks: inlineNavigator?.querySelectorAll("[data-navigator-query][href]").length || 0, recruiterFormAction: inlineForm ? new URL(inlineForm.action).pathname : "", explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length, navigatorVisible: floatingNavigator ? getComputedStyle(floatingNavigator).display !== "none" : false, inlineNavigatorVisible: inlineNavigator ? getComputedStyle(inlineNavigator).display !== "none" : false }; });
     const pageType = SEO.routes[route].page;
     const expectedWorkPath = route.startsWith("/zh/") ? "/zh/work/" : "/work/";
-    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || staticState.navigatorVisible || (pageType === "home" && (staticState.provenanceStages !== 5 || staticState.visibleProvenance !== 5)) || (pageType.startsWith("case:") && staticState.artifacts !== 1) || (pageType === "hire" && (staticState.recruiterSections !== 7 || !staticState.inlineNavigatorVisible || staticState.recruiterFallbackLinks !== 3 || staticState.recruiterFormAction !== expectedWorkPath))) failures.push(`${route}: no-JavaScript fallback incomplete`);
+    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || staticState.navigatorVisible || (pageType === "home" && (staticState.provenanceStages !== 5 || staticState.visibleProvenance !== 5)) || (pageType.startsWith("case:") && staticState.artifacts !== 1) || (pageType === "hire" && (staticState.recruiterSections !== 5 || !staticState.inlineNavigatorVisible || staticState.recruiterFallbackLinks !== 3 || staticState.recruiterFormAction !== expectedWorkPath))) failures.push(`${route}: no-JavaScript fallback incomplete`);
     await page.click(".work-dropdown > summary");
     if (!(await page.$eval(".work-dropdown", (details) => details.open))) failures.push(`${route}: no-JavaScript Work disclosure did not open natively`);
     if (pageType === "home") {
