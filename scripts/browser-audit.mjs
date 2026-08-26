@@ -31,7 +31,7 @@ const internalTargets = new Map();
 const anchorTargets = new Map();
 const origin = `http://127.0.0.1:${port}`;
 const firstFoldSelectors = {
-  home: ".flagship",
+  home: ".fit-teaser",
   work: ".flagship",
   research: "main > .section",
   publications: ".publication-groups",
@@ -237,17 +237,28 @@ const auditPortfolioNavigator = async (route, query, expectedPath) => {
   await page.close();
 };
 
-const auditRecruiterNavigator = async (route, query, expectedPath) => {
+const auditRecruiterFitExplorer = async (route, role, jobDescription, expectedPath) => {
   const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
-  if (await page.$(".navigator-launch")) failures.push(`${route}: recruiter brief should use the inline navigator instead of a floating launcher`);
+  if (await page.$(".navigator-launch")) failures.push(`${route}: recruiter brief should use the fit explorer instead of a floating navigator`);
   const sections = await page.$$eval(".hire-page .section", (items) => items.map((item) => item.querySelector("h2")?.textContent.trim()));
   if (sections.length !== 5 || sections.some((title) => !title)) failures.push(`${route}: recruiter brief does not expose five ordered sections`);
+  const controls = await page.$eval("[data-recruiter-fit-explorer]", (shell) => ({ roles: shell.querySelectorAll("[data-fit-role]").length, maxLength: shell.querySelector("[data-fit-jd]")?.maxLength, resultHidden: shell.querySelector("[data-fit-result]")?.hidden }));
+  if (controls.roles !== 3 || controls.maxLength !== 8000 || !controls.resultHidden) failures.push(`${route}: recruiter fit controls are incomplete`);
   await page.setOfflineMode(true);
-  await page.type(".recruiter-navigator input", query);
-  await page.click(".recruiter-navigator .navigator-submit");
-  await page.waitForSelector(".recruiter-navigator .navigator-results li");
-  const result = await page.$eval(".recruiter-navigator", (shell) => ({ firstPath: new URL(shell.querySelector(".navigator-results a").href).pathname, inline: shell.dataset.inline, mode: shell.querySelector("[data-navigator-mode]").textContent.trim() }));
-  if (result.firstPath !== expectedPath || result.inline !== "true" || !result.mode) failures.push(`${route}: inline recruiter navigator returned ${result.firstPath}, inline=${result.inline}, mode=${result.mode || "unset"}`);
+  await page.$eval(`[data-fit-role][value="${role}"]`, (input) => input.click());
+  await page.type("[data-fit-jd]", jobDescription);
+  await page.click("[data-fit-submit]");
+  await page.waitForSelector(".fit-report:not([hidden]) .fit-result-item");
+  const result = await page.$eval("[data-recruiter-fit-explorer]", (shell) => ({ firstPath: new URL(shell.querySelector("[data-fit-evidence]").href).pathname, groups: shell.querySelectorAll(".fit-result-group").length, status: shell.querySelector("[data-fit-status]").textContent.trim(), overflow: shell.scrollWidth > shell.clientWidth + 1 }));
+  if (result.firstPath !== expectedPath || result.groups !== 3 || !result.status || result.overflow) failures.push(`${route}: fit explorer returned ${result.firstPath}, ${result.groups} groups, status=${result.status || "unset"}, overflow=${result.overflow}`);
+  await page.click(".fit-result-toggle");
+  const disclosure = await page.$eval(".fit-result-item", (item) => {
+    const button = item.querySelector("button");
+    const details = item.querySelector(".fit-result-details");
+    return { expanded: button.getAttribute("aria-expanded"), controls: button.getAttribute("aria-controls"), detailsId: details.id, hidden: details.hidden };
+  });
+  if (disclosure.expanded !== "true" || disclosure.hidden || !disclosure.controls || disclosure.controls !== disclosure.detailsId) failures.push(`${route}: fit evidence chain did not expand accessibly`);
+  await page.setOfflineMode(false);
   await page.close();
 };
 
@@ -435,8 +446,8 @@ try {
   for (const route of ["/research/", "/zh/research/"]) await auditEvidenceStage(route);
   await auditPortfolioNavigator("/", "agent governance constraints", "/work/wagf/");
   await auditPortfolioNavigator("/zh/", "找洪水模型", "/zh/work/floodabm/");
-  await auditRecruiterNavigator("/hire/", "Which work demonstrates governed agent systems?", "/work/wagf/");
-  await auditRecruiterNavigator("/zh/hire/", "哪項工作呈現受治理的代理系統？", "/zh/work/wagf/");
+  await auditRecruiterFitExplorer("/hire/", "agent-systems", "Build validators and audit traces for agent actions. Operate a production Kubernetes platform.", "/work/wagf/");
+  await auditRecruiterFitExplorer("/zh/hire/", "ai-science", "建立水文與社會水文模型。管理正式環境 Kubernetes 平台。", "/zh/work/floodabm/");
   await auditSemanticNavigator();
   await auditWorkDropdown("/work/wagf/");
 
@@ -529,10 +540,9 @@ try {
     await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
     await page.setJavaScriptEnabled(false);
     const response = await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: "load" });
-    const staticState = await page.evaluate(() => { const floatingNavigator = document.querySelector(".portfolio-navigator"); const inlineNavigator = document.querySelector(".recruiter-navigator"); const inlineForm = inlineNavigator?.querySelector("form"); return { h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, provenanceStages: document.querySelectorAll(".trace-stage-map>ol>li").length, visibleProvenance: [...document.querySelectorAll(".trace-stage-map>ol>li>p")].filter((item) => getComputedStyle(item).display !== "none").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, recruiterSections: document.querySelectorAll(".hire-page .section").length, recruiterFallbackLinks: inlineNavigator?.querySelectorAll("[data-navigator-query][href]").length || 0, recruiterFormAction: inlineForm ? new URL(inlineForm.action).pathname : "", explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length, navigatorVisible: floatingNavigator ? getComputedStyle(floatingNavigator).display !== "none" : false, inlineNavigatorVisible: inlineNavigator ? getComputedStyle(inlineNavigator).display !== "none" : false }; });
+    const staticState = await page.evaluate(() => { const floatingNavigator = document.querySelector(".portfolio-navigator"); const fitExplorer = document.querySelector("[data-recruiter-fit-explorer]"); const fitForm = fitExplorer?.querySelector("[data-fit-form]"); const fitNoScript = fitExplorer?.querySelector(".fit-noscript"); return { h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, provenanceStages: document.querySelectorAll(".trace-stage-map>ol>li").length, visibleProvenance: [...document.querySelectorAll(".trace-stage-map>ol>li>p")].filter((item) => getComputedStyle(item).display !== "none").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, recruiterSections: document.querySelectorAll(".hire-page .section").length, fitExplorerVisible: fitExplorer ? getComputedStyle(fitExplorer).display !== "none" : false, fitFormVisible: fitForm ? getComputedStyle(fitForm).display !== "none" : false, fitNoScriptVisible: fitNoScript ? getComputedStyle(fitNoScript).display !== "none" : false, explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length, navigatorVisible: floatingNavigator ? getComputedStyle(floatingNavigator).display !== "none" : false }; });
     const pageType = SEO.routes[route].page;
-    const expectedWorkPath = route.startsWith("/zh/") ? "/zh/work/" : "/work/";
-    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || staticState.navigatorVisible || (pageType === "home" && (staticState.provenanceStages !== 5 || staticState.visibleProvenance !== 5)) || (pageType.startsWith("case:") && staticState.artifacts !== 1) || (pageType === "hire" && (staticState.recruiterSections !== 5 || !staticState.inlineNavigatorVisible || staticState.recruiterFallbackLinks !== 3 || staticState.recruiterFormAction !== expectedWorkPath))) failures.push(`${route}: no-JavaScript fallback incomplete`);
+    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || staticState.navigatorVisible || (pageType === "home" && (staticState.provenanceStages !== 5 || staticState.visibleProvenance !== 5)) || (pageType.startsWith("case:") && staticState.artifacts !== 1) || (pageType === "hire" && (staticState.recruiterSections !== 5 || !staticState.fitExplorerVisible || staticState.fitFormVisible || !staticState.fitNoScriptVisible))) failures.push(`${route}: no-JavaScript fallback incomplete`);
     await page.click(".work-dropdown > summary");
     if (!(await page.$eval(".work-dropdown", (details) => details.open))) failures.push(`${route}: no-JavaScript Work disclosure did not open natively`);
     if (pageType === "home") {

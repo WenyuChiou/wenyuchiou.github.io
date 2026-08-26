@@ -1,3 +1,5 @@
+import { FIT_EVIDENCE } from "./fit-data.js";
+
 export const NAVIGATOR_INDEX = {
   model: {
     moduleUrl: "/assets/vendor/transformers-4.2.0.mjs",
@@ -34,6 +36,8 @@ export const NAVIGATOR_INDEX = {
     "招聘": "recruiter hiring role fit resume",
     "職位": "role fit AI research engineer LLM evaluation",
     "水文建模": "hydrological modeling sociohydrological modeling flood simulation",
+    "水文模型": "hydrological modeling flood simulation",
+    "社會水文模型": "sociohydrological modeling coupled human environment systems",
     "模型上下文協定": "Model Context Protocol MCP agent systems",
     "檢索增強生成": "Retrieval-Augmented Generation RAG LLM systems",
     "代理技能": "Agent Skills plugin architectures agent systems",
@@ -49,6 +53,7 @@ export const NAVIGATOR_INDEX = {
   records: [
     {
       id: "hire",
+      fit: FIT_EVIDENCE.hire,
       href: "/hire/",
       title: { en: "Recruiter brief · LLM Evaluation & AI Research", "zh-TW": "招聘摘要 · LLM 評估與 AI 研究" },
       summary: {
@@ -63,6 +68,7 @@ export const NAVIGATOR_INDEX = {
     },
     {
       id: "expertise",
+      fit: FIT_EVIDENCE.expertise,
       href: "/#selected-work",
       title: { en: "Core expertise", "zh-TW": "核心專長" },
       summary: {
@@ -77,6 +83,7 @@ export const NAVIGATOR_INDEX = {
     },
     {
       id: "human-grounded-llm-evaluation",
+      fit: FIT_EVIDENCE["human-grounded-llm-evaluation"],
       href: "/work/human-grounded-llm-evaluation/",
       title: { en: "Human-Grounded LLM Evaluation", "zh-TW": "以人類行為為基礎的 LLM 評估" },
       summary: {
@@ -91,6 +98,7 @@ export const NAVIGATOR_INDEX = {
     },
     {
       id: "wagf",
+      fit: FIT_EVIDENCE.wagf,
       href: "/work/wagf/",
       title: { en: "WAGF · Governed Agent System", "zh-TW": "WAGF · 受治理代理系統" },
       summary: {
@@ -105,6 +113,7 @@ export const NAVIGATOR_INDEX = {
     },
     {
       id: "floodabm",
+      fit: FIT_EVIDENCE.floodabm,
       href: "/work/floodabm/",
       title: { en: "FLOODABM", "zh-TW": "FLOODABM 洪災代理模型" },
       summary: {
@@ -119,6 +128,7 @@ export const NAVIGATOR_INDEX = {
     },
     {
       id: "research",
+      fit: FIT_EVIDENCE.research,
       href: "/research/",
       title: { en: "Research program", "zh-TW": "研究計畫" },
       summary: {
@@ -133,6 +143,7 @@ export const NAVIGATOR_INDEX = {
     },
     {
       id: "publications",
+      fit: FIT_EVIDENCE.publications,
       href: "/publications/",
       title: { en: "Journal articles and presentations", "zh-TW": "期刊文章與會議發表" },
       summary: {
@@ -147,6 +158,7 @@ export const NAVIGATOR_INDEX = {
     },
     {
       id: "articles",
+      fit: FIT_EVIDENCE.articles,
       href: "/articles/",
       title: { en: "Methods articles", "zh-TW": "方法文章" },
       summary: { en: "Practical writing on LLM evaluation, agent validators, and coupled decision consequences.", "zh-TW": "LLM 評估、代理驗證與耦合決策後果的實務文章。" },
@@ -155,6 +167,7 @@ export const NAVIGATOR_INDEX = {
     },
     {
       id: "open-source",
+      fit: FIT_EVIDENCE["open-source"],
       href: "/#open-source",
       title: { en: "Open-source systems", "zh-TW": "開源研究系統" },
       summary: {
@@ -169,6 +182,7 @@ export const NAVIGATOR_INDEX = {
     },
     {
       id: "documents",
+      fit: FIT_EVIDENCE.documents,
       href: "/about/#documents-title",
       title: { en: "Resume and academic CV", "zh-TW": "業界履歷與學術 CV" },
       summary: {
@@ -183,6 +197,7 @@ export const NAVIGATOR_INDEX = {
     },
     {
       id: "about",
+      fit: FIT_EVIDENCE.about,
       href: "/about/",
       title: { en: "About Wenyu", "zh-TW": "關於文昱" },
       summary: {
@@ -197,6 +212,7 @@ export const NAVIGATOR_INDEX = {
     },
     {
       id: "contact",
+      fit: FIT_EVIDENCE.contact,
       href: "/#contact",
       title: { en: "Internship and contact", "zh-TW": "實習與聯絡方式" },
       summary: {
