@@ -29,7 +29,6 @@ async function parseBody(request, maxBytes = 4096) {
 }
 
 async function verifyTurnstile(token, remoteip, env, fetchImpl) {
-  if (env.TURNSTILE_BYPASS === "true") return true;
   if (!token || !env.TURNSTILE_SECRET) return false;
   const body = new FormData();
   body.set("secret", env.TURNSTILE_SECRET);
