@@ -12,11 +12,18 @@ const cases = [
   ["我想了解你的實習時間", "zh-TW", "contact"],
   ["驗證器與失敗模式文章", "zh-TW", "articles"],
   ["AI research engineer role fit", "en", "hire"],
+  ["LangChain MATLAB Claude Code skills", "en", "hire"],
+  ["模型上下文協定", "zh-TW", "hire"],
+  ["檢索增強生成", "zh-TW", "hire"],
+  ["結構方程模型", "zh-TW", "hire"],
+  ["貝葉斯校準", "zh-TW", "hire"],
+  ["代理人基礎模型", "zh-TW", "floodabm"],
 ];
 
 for (const [query, locale, expected] of cases) {
   const [first] = rankLocally(query, locale);
   assert.equal(first?.record.id, expected, `${locale} query did not rank ${expected} first: ${query}`);
+  assert.ok(first?.score > 0, `${locale} query ranked by record order instead of a positive lexical score: ${query}`);
 }
 
 const expanded = toSemanticQuery("找論文與代理治理");

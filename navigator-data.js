@@ -33,6 +33,17 @@ export const NAVIGATOR_INDEX = {
     "實習": "internship availability contact",
     "招聘": "recruiter hiring role fit resume",
     "職位": "role fit AI research engineer LLM evaluation",
+    "水文建模": "hydrological modeling sociohydrological modeling flood simulation",
+    "模型上下文協定": "Model Context Protocol MCP agent systems",
+    "檢索增強生成": "Retrieval-Augmented Generation RAG LLM systems",
+    "代理技能": "Agent Skills plugin architectures agent systems",
+    "外掛": "plugin architectures agent systems",
+    "程式語言": "programming Python R MATLAB",
+    "結構方程模型": "Structural Equation Modeling SEM inference",
+    "貝葉斯校準": "Bayesian calibration inference",
+    "代理人基礎模型": "Agent-Based Modeling ABM behavioral simulation",
+    "代理人基模型": "Agent-Based Modeling ABM behavioral simulation",
+    "社會水文建模": "Sociohydrological Modeling human environment systems",
     "聯絡": "contact email LinkedIn",
   },
   records: [
@@ -44,10 +55,10 @@ export const NAVIGATOR_INDEX = {
         en: "Role fit, verified capabilities, project evidence, Summer 2027 availability, work authorization, resume, and contact.",
         "zh-TW": "職位匹配、可驗證能力、專案證據、2027 年暑期可任職時間、工作授權、履歷與聯絡方式。",
       },
-      semantic: "Recruiter hiring profile for Wenyu Chiou as an LLM Evaluation and AI Research Engineer. Human grounded subgroup aware stability aware evaluation, governed agent systems, behavioral simulation, AI for science, Summer 2027 internship, December 2027 graduation, F-1 CPT, resume and contact.",
+      semantic: "Recruiter hiring profile for Wenyu Chiou as an LLM Evaluation and AI Research Engineer. Human grounded subgroup aware stability aware evaluation, governed agent systems, LangChain, Model Context Protocol, Retrieval-Augmented Generation, Agent Skills, plugin architectures, Codex, Claude Code, Python, R, MATLAB, structural equation modeling, Bayesian calibration, agent-based modeling, hydrological modeling, sociohydrological modeling, AI for science, Summer 2027 internship, December 2027 graduation, F-1 CPT, resume and contact.",
       keywords: {
-        en: ["recruiter", "hire", "role fit", "AI Research Engineer", "LLM Evaluation Engineer", "internship", "resume", "CPT", "availability"],
-        "zh-TW": ["招聘", "職位匹配", "AI Research Engineer", "LLM Evaluation", "實習", "履歷", "CPT", "可任職時間"],
+        en: ["recruiter", "hire", "role fit", "AI Research Engineer", "LLM Evaluation Engineer", "LangChain", "MCP", "RAG", "Agent Skills", "plugins", "Codex", "Claude Code", "MATLAB", "hydrological modeling", "internship", "resume", "CPT", "availability"],
+        "zh-TW": ["招聘", "職位匹配", "AI Research Engineer", "LLM Evaluation", "LangChain", "模型上下文協定", "檢索增強生成", "代理技能", "外掛", "Codex", "Claude Code", "MATLAB", "結構方程模型", "貝葉斯校準", "代理人基礎模型", "水文建模", "社會水文建模", "實習", "履歷", "CPT", "可任職時間"],
       },
     },
     {
@@ -103,7 +114,7 @@ export const NAVIGATOR_INDEX = {
       semantic: "Coupled agent-based and catastrophe flood simulation of household adaptation, risk perception, insurance, damage, homeowners and renters, and long-term financial outcomes.",
       keywords: {
         en: ["flood", "ABM", "agent based model", "catastrophe", "adaptation", "insurance", "households", "risk"],
-        "zh-TW": ["洪水", "洪災", "代理人基模型", "巨災", "調適", "保險", "家戶", "風險"],
+        "zh-TW": ["洪水", "洪災", "代理人基礎模型", "巨災", "調適", "保險", "家戶", "風險"],
       },
     },
     {

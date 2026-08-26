@@ -103,7 +103,7 @@ const person = {
   affiliation: { "@type": "CollegeOrUniversity", "@id": "https://www.lehigh.edu/#organization", name: "Lehigh University", url: "https://www.lehigh.edu/" },
   email: "mailto:wec324@lehigh.edu",
   url: siteUrl,
-  knowsAbout: ["LLM evaluation", "Human-grounded AI evaluation", "Agent systems", "AI agent governance", "Behavioral simulation", "Agent-based modeling", "Computational social science", "AI for science", "Research software engineering"],
+  knowsAbout: ["LLM evaluation", "Human-grounded AI evaluation", "LangChain", "Model Context Protocol", "Retrieval-Augmented Generation", "Agent Skills", "AI agent governance", "Multi-agent systems", "Behavioral simulation", "Agent-based modeling", "Hydrological modeling", "Sociohydrological modeling", "Computational social science", "AI for science", "MATLAB", "Research software engineering"],
   sameAs: [
     "https://github.com/WenyuChiou",
     "https://www.linkedin.com/in/wenyu-chiou",

@@ -58,6 +58,8 @@ for (const file of recruiterFiles) {
   if (!html.includes('/assets/og/recruiter-brief.png')) errors.push(`${file}: missing recruiter social preview`);
   if (!html.includes("data-inline=\"true\"")) errors.push(`${file}: missing inline recruiter navigator`);
 }
+for (const marker of ["LangChain", "Model Context Protocol (MCP)", "Retrieval-Augmented Generation (RAG)", "Agent Skills", "OpenAI Codex", "Claude Code", "MATLAB", "Structural Equation Modeling (SEM)", "Agent-Based Modeling (ABM)", "Hydrological Modeling"]) if (!readFileSync("hire/index.html", "utf8").includes(marker)) errors.push(`hire/index.html: missing verified technical term ${marker}`);
+for (const marker of ["LangChain", "Model Context Protocol, MCP", "Retrieval-Augmented Generation, RAG", "Agent Skills", "OpenAI Codex", "Claude Code", "MATLAB", "Structural Equation Modeling, SEM", "Agent-Based Modeling, ABM", "Hydrological Modeling"]) if (!readFileSync("zh/hire/index.html", "utf8").includes(marker)) errors.push(`zh/hire/index.html: missing verified technical term ${marker}`);
 if (!existsSync("assets/og/recruiter-brief.png")) errors.push("missing recruiter social preview asset");
 for (const file of ["about/index.html", "zh/about/index.html"]) {
   const html = readFileSync(file, "utf8");
