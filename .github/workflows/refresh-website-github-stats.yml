@@ -59,6 +59,11 @@ jobs:
         if: steps.freshness.outcome == 'failure'
         run: npm run qa:browser
 
+      - name: Restore platform-dependent static previews
+        if: steps.freshness.outcome == 'failure'
+        # Sharp rasterization varies by OS; these previews do not contain GitHub metrics.
+        run: git restore --source=HEAD --worktree -- assets/og
+
       - name: Stage the controlled data update
         if: steps.freshness.outcome == 'failure'
         id: staged
