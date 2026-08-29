@@ -209,6 +209,41 @@ test("analytics accepts recruiter funnel events without retaining query text", a
   assert.equal(JSON.stringify(writes).includes("private recruiting question"), false);
 });
 
+test("analytics stores a privacy-preserving navigator funnel", async () => {
+  const writes = [];
+  const env = baseEnv({ ANALYTICS: { writeDataPoint: (value) => writes.push(value) } });
+  const events = [
+    { event: "navigator_impression", target: "home" },
+    { event: "navigator_open", target: "home" },
+    { event: "navigator_query_submit", target: "home" },
+    { event: "navigator_result_mode", target: "home", mode: "semantic", outcome: "success" },
+    { event: "navigator_evidence_open", target: "wagf", outcome: "success" },
+  ];
+  for (const event of events) {
+    const response = await handleRequest(request("/v1/events", { ...event, locale: "en", query: "private portfolio question", referrer: "private source" }), env);
+    assert.equal(response.status, 204);
+  }
+  assert.deepEqual(writes.map((point) => point.blobs), [
+    ["navigator_impression", "en", "home", "attempt"],
+    ["navigator_open", "en", "home", "attempt"],
+    ["navigator_query_submit", "en", "home", "attempt"],
+    ["navigator_result_mode", "en", "home", "success", "semantic"],
+    ["navigator_evidence_open", "en", "wagf", "success"],
+  ]);
+  assert.equal(JSON.stringify(writes).includes("private portfolio question"), false);
+  assert.equal(JSON.stringify(writes).includes("private source"), false);
+});
+
+test("analytics rejects invalid navigator targets and result modes", async () => {
+  const env = baseEnv({ ANALYTICS: { writeDataPoint() {} } });
+  const invalidHomeTarget = await handleRequest(request("/v1/events", { event: "navigator_query_submit", locale: "en", target: "hire" }), env);
+  assert.equal(invalidHomeTarget.status, 400);
+  const invalidEvidence = await handleRequest(request("/v1/events", { event: "navigator_evidence_open", locale: "en", target: "email" }), env);
+  assert.equal(invalidEvidence.status, 400);
+  const invalidMode = await handleRequest(request("/v1/events", { event: "navigator_result_mode", locale: "en", target: "home", mode: "provider-name" }), env);
+  assert.equal(invalidMode.status, 400);
+});
+
 test("analytics stores only bounded aggregate fit dimensions", async () => {
   let point;
   const env = baseEnv({ ANALYTICS: { writeDataPoint(value) { point = value; } } });

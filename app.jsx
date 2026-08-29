@@ -677,9 +677,10 @@ function PortfolioNavigator({ content, locale, inline = false, header = false })
       data-result-label={N.resultLabel}
       data-nvidia={ai.nvidia}
     >
-      {!inline ? <button className="navigator-launch" type="button" data-navigator-launch aria-haspopup="dialog" aria-controls="portfolio-navigator-dialog" aria-label={N.launch} title={N.launch}>
+      {!inline ? <button className="navigator-launch" type="button" data-navigator-launch aria-haspopup="dialog" aria-controls="portfolio-navigator-dialog" aria-label={`${N.launchShort}: ${N.launch}. ${N.launchScope}`} title={`${N.launch}: ${N.launchScope}`}>
         {header ? <Sparkles aria-hidden="true" size={18} /> : <Search aria-hidden="true" size={18} />}
-        <span>{N.launch}</span>
+        <span className="navigator-launch-copy"><strong>{N.launch}</strong><small>{N.launchScope}</small></span>
+        <span className="navigator-launch-short" aria-hidden="true">{N.launchShort}</span>
       </button> : null}
       {inline ? <div className="navigator-inline-panel" aria-labelledby={titleId}>{frame}</div> : <dialog className="navigator-dialog" id="portfolio-navigator-dialog" aria-labelledby={titleId}>{frame}</dialog>}
     </div>

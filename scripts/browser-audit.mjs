@@ -207,9 +207,15 @@ const auditPortfolioNavigator = async (route, query, expectedPath) => {
   const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
   const launchVisible = await page.$eval(".navigator-launch", (button) => {
     const rect = button.getBoundingClientRect();
-    return { visible: getComputedStyle(button).display !== "none" && rect.width >= 44 && rect.height >= 44, menuClosed: document.querySelector(".menu-button")?.getAttribute("aria-expanded") === "false" };
+    const shortLabel = button.querySelector(".navigator-launch-short");
+    return {
+      visible: getComputedStyle(button).display !== "none" && rect.width >= 76 && rect.height >= 44,
+      menuClosed: document.querySelector(".menu-button")?.getAttribute("aria-expanded") === "false",
+      visibleLabel: shortLabel && getComputedStyle(shortLabel).display !== "none" ? shortLabel.textContent.trim() : "",
+      accessibleScope: button.getAttribute("aria-label") || "",
+    };
   });
-  if (!launchVisible.visible || !launchVisible.menuClosed) failures.push(`${route}: portfolio navigator launch is not independently visible from the closed mobile menu`);
+  if (!launchVisible.visible || !launchVisible.menuClosed || !/AI/i.test(launchVisible.visibleLabel) || !/(projects|專案)/i.test(launchVisible.accessibleScope)) failures.push(`${route}: portfolio navigator launch is not independently visible or clearly scoped from the closed mobile menu`);
   await page.click(".navigator-launch");
   await new Promise((resolve) => setTimeout(resolve, 300));
   const opened = await page.$eval(".navigator-dialog", (dialog) => {

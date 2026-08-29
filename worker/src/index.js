@@ -3,8 +3,10 @@ import { FIT_CAPABILITIES, FIT_ENUMS, FIT_OWNERSHIP, FIT_ROLE_PRESETS } from "..
 
 const NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
 const RECORDS = new Map(NAVIGATOR_INDEX.records.map((record) => [record.id, record]));
-const EVENT_ALLOWLIST = new Set(["hero_work_click", "industry_resume_download", "academic_cv_download", "case_open", "article_open", "navigator_open", "navigator_answer", "contact_click", "recruiter_brief_open", "recruiter_resume_download", "recruiter_contact_click", "recruiter_navigator_use", "fit_explorer_open", "fit_role_selected", "fit_analysis_started", "fit_result_mode", "fit_evidence_open", "fit_resume_download", "fit_contact_click"]);
+const EVENT_ALLOWLIST = new Set(["hero_work_click", "industry_resume_download", "academic_cv_download", "case_open", "article_open", "navigator_impression", "navigator_open", "navigator_query_submit", "navigator_result_mode", "navigator_evidence_open", "navigator_answer", "contact_click", "recruiter_brief_open", "recruiter_resume_download", "recruiter_contact_click", "recruiter_navigator_use", "fit_explorer_open", "fit_role_selected", "fit_analysis_started", "fit_result_mode", "fit_evidence_open", "fit_resume_download", "fit_contact_click"]);
 const TARGET_ALLOWLIST = new Set(["home", "hire", "human-grounded-llm-evaluation", "floodabm", "wagf", "articles", "resume-en", "resume-zh", "email", "linkedin", "github", ...RECORDS.keys(), ...Object.keys(FIT_ROLE_PRESETS)]);
+const NAVIGATOR_HOME_EVENTS = new Set(["navigator_impression", "navigator_open", "navigator_query_submit", "navigator_result_mode", "navigator_answer"]);
+const NAVIGATOR_RESULT_MODES = new Set(["nvidia", "semantic", "local"]);
 
 function corsHeaders(origin, env) {
   const allowed = origin === env.ALLOWED_ORIGIN ? origin : "";
@@ -228,6 +230,12 @@ async function event(request, env, origin) {
   try { limit = await env.EVENT_RATE_LIMITER.limit({ key: ip }); } catch { return json({ error: "unavailable" }, 503, origin, env); }
   if (!limit?.success) return json({ error: "rate_limited" }, 429, origin, env);
   const point = { blobs: [body.event, body.locale, body.target, body.outcome === "success" ? "success" : "attempt"], indexes: [body.event] };
+  if (NAVIGATOR_HOME_EVENTS.has(body.event) && body.target !== "home") return json({ error: "invalid_request" }, 400, origin, env);
+  if (body.event === "navigator_evidence_open" && !RECORDS.has(body.target)) return json({ error: "invalid_request" }, 400, origin, env);
+  if (body.event === "navigator_result_mode") {
+    if (!NAVIGATOR_RESULT_MODES.has(body.mode)) return json({ error: "invalid_request" }, 400, origin, env);
+    point.blobs.push(body.mode);
+  }
   if (body.event.startsWith("fit_")) {
     if (!FIT_ROLE_PRESETS[body.target]) return json({ error: "invalid_request" }, 400, origin, env);
     const counts = [body.strongCount, body.adjacentCount, body.gapCount];

@@ -189,7 +189,7 @@ export function trackPortfolioEvent(event, locale, target, outcome = "attempt", 
   const url = eventEndpoint(endpoint);
   if (!url) return;
   const bounded = {
-    ...(metadata.mode === "nvidia" || metadata.mode === "local" ? { mode: metadata.mode } : {}),
+    ...(["nvidia", "semantic", "local"].includes(metadata.mode) ? { mode: metadata.mode } : {}),
     ...Object.fromEntries(["strongCount", "adjacentCount", "gapCount"].map((key) => [key, Number.isInteger(metadata[key]) ? Math.max(0, Math.min(metadata[key], 6)) : 0])),
   };
   fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event, locale, target, outcome, ...bounded }), keepalive: true }).catch(() => {});
@@ -221,6 +221,14 @@ export function initPortfolioNavigator(root = document) {
   const inline = shell.dataset.inline === "true";
   const eventTarget = inline ? "hire" : "home";
   const requestGate = createRequestGate();
+  let impressionTracked = false;
+  let openTracked = false;
+
+  const trackImpression = () => {
+    if (impressionTracked) return;
+    impressionTracked = true;
+    trackPortfolioEvent("navigator_impression", locale, "home");
+  };
 
   const setStatus = (message, activeMode = "") => {
     status.textContent = message;
@@ -256,9 +264,20 @@ export function initPortfolioNavigator(root = document) {
 
   const openDialog = () => {
     if (!dialog) return;
-    if (!dialog.open) dialog.showModal();
+    const wasOpen = dialog.open;
+    if (!wasOpen) dialog.showModal();
     requestAnimationFrame(() => input.focus());
-    trackPortfolioEvent("navigator_open", locale, eventTarget);
+    if (!wasOpen && !inline) {
+      trackImpression();
+      if (!openTracked) {
+        openTracked = true;
+        trackPortfolioEvent("navigator_open", locale, eventTarget);
+      }
+    }
+  };
+
+  const trackResultMode = (activeMode) => {
+    if (!inline) trackPortfolioEvent("navigator_result_mode", locale, "home", "success", { mode: activeMode });
   };
 
   const runSearch = async (rawQuery) => {
@@ -268,6 +287,7 @@ export function initPortfolioNavigator(root = document) {
       return;
     }
     if (inline) trackPortfolioEvent("recruiter_navigator_use", locale, "hire");
+    else trackPortfolioEvent("navigator_query_submit", locale, "home");
     const currentRequest = requestGate.next();
     answer.hidden = true;
     answer.textContent = "";
@@ -279,6 +299,7 @@ export function initPortfolioNavigator(root = document) {
 
     if (!navigator.onLine || navigator.connection?.saveData) {
       setStatus(copy.fallback, copy.local);
+      trackResultMode("local");
       return;
     }
 
@@ -293,6 +314,7 @@ export function initPortfolioNavigator(root = document) {
         renderResults(nvidia.matches);
         setStatus(copy.ready, copy.nvidia);
         trackPortfolioEvent(inline ? "recruiter_navigator_use" : "navigator_answer", locale, eventTarget, "success");
+        trackResultMode("nvidia");
         return;
       } catch {
         if (!requestGate.isCurrent(currentRequest)) return;
@@ -307,9 +329,11 @@ export function initPortfolioNavigator(root = document) {
       if (!requestGate.isCurrent(currentRequest)) return;
       renderResults(semanticResults);
       setStatus(copy.ready, copy.semantic);
+      trackResultMode("semantic");
     } catch {
       if (!requestGate.isCurrent(currentRequest)) return;
       setStatus(copy.fallback, copy.local);
+      trackResultMode("local");
     }
   };
 
@@ -330,6 +354,20 @@ export function initPortfolioNavigator(root = document) {
       runSearch(input.value);
     });
   });
+  results.addEventListener("click", (event) => {
+    const link = event.target.closest?.("[data-navigator-record]");
+    if (!inline && link?.dataset.navigatorRecord) trackPortfolioEvent("navigator_evidence_open", locale, link.dataset.navigatorRecord, "success");
+  });
+  if (!inline && launch) {
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver((entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        trackImpression();
+        observer.disconnect();
+      }, { threshold: 0.5 });
+      observer.observe(launch);
+    } else trackImpression();
+  }
   if (!inline) document.addEventListener("keydown", (event) => {
     if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey || isEditable(event.target)) return;
     event.preventDefault();

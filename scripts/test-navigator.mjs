@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
-import { createRequestGate, createSemanticRanker, rankLocally, requestNvidiaSummary, toSemanticQuery, validateNavigatorResponse } from "../navigator.js";
+import { createRequestGate, createSemanticRanker, rankLocally, requestNvidiaSummary, toSemanticQuery, trackPortfolioEvent, validateNavigatorResponse } from "../navigator.js";
 import { NAVIGATOR_INDEX } from "../navigator-data.js";
 import { buildLocalFitReport, requestNvidiaFit, validateFitResponse } from "../fit-explorer.js";
 
@@ -175,5 +175,22 @@ const fitResult = await requestNvidiaFit({
 assert.equal(fitRequest.rolePreset, "llm-evaluation");
 assert.equal(fitRequest.turnstileToken, "fit-token");
 assert.equal(fitResult.mode, "nvidia");
+
+const originalWindow = globalThis.window;
+const originalDocument = globalThis.document;
+const originalFetch = globalThis.fetch;
+let analyticsRequest;
+globalThis.window = { location: { origin: "https://wenyuchiou.github.io" } };
+globalThis.document = { querySelector: () => ({ content: "https://worker.example/v1/navigate" }) };
+globalThis.fetch = async (url, init) => {
+  analyticsRequest = { url, init, body: JSON.parse(init.body) };
+  return new Response(null, { status: 204 });
+};
+trackPortfolioEvent("navigator_result_mode", "en", "home", "success", { mode: "semantic", query: "must not leave the page" });
+assert.equal(analyticsRequest.url, "https://worker.example/v1/events");
+assert.deepEqual(analyticsRequest.body, { event: "navigator_result_mode", locale: "en", target: "home", outcome: "success", mode: "semantic", strongCount: 0, adjacentCount: 0, gapCount: 0 });
+globalThis.window = originalWindow;
+globalThis.document = originalDocument;
+globalThis.fetch = originalFetch;
 
 console.log(`navigator-test: ${cases.length} bilingual routes plus recruiter fit local, NVIDIA, localization, retry, and grounding checks passed`);
