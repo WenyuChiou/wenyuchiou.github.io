@@ -42,11 +42,11 @@ const CASE_ROLES = {
   floodabm: { role: "simulation", Icon: Waves },
 };
 
-function SmartLink({ href, locale, children, className, download = false, title }) {
+function SmartLink({ href, locale, children, className, download = false, title, provenanceCase = false }) {
   const resolved = lp(href, locale);
   const external = isExternal(resolved);
   return (
-    <a className={className} href={resolved} download={download || undefined} target={external ? "_blank" : undefined} rel={external ? "noreferrer" : undefined} title={title}>
+    <a className={className} href={resolved} download={download || undefined} target={external ? "_blank" : undefined} rel={external ? "noreferrer" : undefined} title={title} data-provenance-case={provenanceCase || undefined}>
       {children}
     </a>
   );
@@ -434,34 +434,34 @@ function DecisionProvenanceExplorer({ content, full = false }) {
   };
 
   return (
-    <section id="decision-provenance" className={`section provenance decision-trace${full ? " provenance-full" : ""}`} data-trace-role={active.colorRole} aria-labelledby="provenance-title">
+    <section id="decision-provenance" className={`section provenance decision-trace${full ? " provenance-full" : ""}`} data-trace-role={active.colorRole} data-provenance-explorer aria-labelledby="provenance-title">
       <div className="wrap">
         <SectionHead eyebrow={P.eyebrow} title={P.title} intro={P.intro} id="provenance-title" />
         <div className="trace-case-selector" role="tablist" aria-label={P.controlLabel}>{lensIds.map((id) => {
           const TraceIcon = CASE_ROLES[P.lenses[id].caseSlug]?.Icon || Sparkles;
           const index = lensIds.indexOf(id);
-          return <button id={`trace-tab-${id}`} key={id} type="button" role="tab" tabIndex={lens === id ? 0 : -1} data-color-role={P.lenses[id].colorRole} aria-selected={lens === id} aria-controls="trace-workbench" onClick={() => selectLens(id)} onKeyDown={(event) => handleLensKey(event, index)}><TraceIcon aria-hidden="true" size={20} /><span><strong>{P.lenses[id].caseTitle}</strong><small>{P.lenses[id].label}</small></span></button>;
+          return <button id={`trace-tab-${id}`} key={id} type="button" role="tab" tabIndex={lens === id ? 0 : -1} data-color-role={P.lenses[id].colorRole} data-provenance-lens={id} aria-selected={lens === id} aria-controls="trace-workbench" onClick={() => selectLens(id)} onKeyDown={(event) => handleLensKey(event, index)}><TraceIcon aria-hidden="true" size={20} /><span><strong>{P.lenses[id].caseTitle}</strong><small>{P.lenses[id].label}</small></span></button>;
         })}</div>
         <div id="trace-workbench" className="trace-workbench" role="tabpanel" aria-labelledby={`trace-tab-${lens}`}>
-          <p className="provenance-summary" aria-live="polite">{active.summary}</p>
+          <p className="provenance-summary" data-provenance-summary aria-live="polite">{active.summary}</p>
           <div className="trace-stage-map">
             <svg viewBox="0 0 1000 16" preserveAspectRatio="none" aria-hidden="true">{[0, 1, 2, 3].map((index) => <line key={index} className={stage > index ? "is-active" : ""} x1={100 + index * 200} y1="8" x2={300 + index * 200} y2="8" />)}</svg>
             <ol aria-label={P.stageLabel}>{active.stages.map(([status, text], index) => (
               <li data-color-role={TRACE_STAGE_ROLES[index]} className={stage === index ? "is-active" : ""} key={`${lens}-${P.stageNames[index]}`}>
-                <button type="button" onClick={() => selectStage(index)} onKeyDown={(event) => handleStageKey(event, index)} aria-current={stage === index ? "step" : undefined}>
+                <button type="button" data-provenance-stage={index + 1} onClick={() => selectStage(index)} onKeyDown={(event) => handleStageKey(event, index)} aria-current={stage === index ? "step" : undefined}>
                   <span className="trace-stage-index">0{index + 1}</span><strong>{P.stageNames[index]}</strong><small>{P.statuses[status]}</small>
                 </button>
                 <p>{text}</p>
               </li>
             ))}</ol>
           </div>
-          <div className="trace-inspector" data-color-role={TRACE_STAGE_ROLES[stage]}>
+          <div className="trace-inspector" data-color-role={TRACE_STAGE_ROLES[stage]} data-provenance-inspector>
             <div className="trace-detail">
-              <p className="trace-status"><span>{P.detailLabels.status}</span>{P.statuses[active.stages[stage][0]]}</p>
-              <h3>{P.stageNames[stage]}</h3>
-              <p>{active.stages[stage][1]}</p>
-              <dl><div><dt>{P.detailLabels.focus}</dt><dd>{active.focus[stage]}</dd></div><div><dt>{P.detailLabels.output}</dt><dd>{active.outcomes[stage]}</dd></div></dl>
-              <SmartLink className="text-link" href={active.caseHref} locale={content.locale}>{P.detailLabels.caseLink}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>
+              <p className="trace-status"><span>{P.detailLabels.status}</span><span data-provenance-status>{P.statuses[active.stages[stage][0]]}</span></p>
+              <h3 data-provenance-title>{P.stageNames[stage]}</h3>
+              <p data-provenance-description>{active.stages[stage][1]}</p>
+              <dl><div><dt>{P.detailLabels.focus}</dt><dd data-provenance-focus>{active.focus[stage]}</dd></div><div><dt>{P.detailLabels.output}</dt><dd data-provenance-output>{active.outcomes[stage]}</dd></div></dl>
+              <SmartLink className="text-link" provenanceCase href={active.caseHref} locale={content.locale}>{P.detailLabels.caseLink}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>
             </div>
             <TraceIllustration lens={lens} stage={stage} content={content} />
           </div>
