@@ -3,6 +3,7 @@ import { hydrateRoot } from "react-dom/client";
 import { App } from "./app.jsx";
 import { initPortfolioNavigator, trackPortfolioEvent } from "./navigator.js";
 import { initRecruiterFitExplorer } from "./fit-explorer.js";
+import { initWebMcpSiteTools } from "./webmcp.js";
 
 document.documentElement.classList.add("js");
 const root = document.getElementById("root");
@@ -145,6 +146,7 @@ if (root) {
   initProgressiveEnhancement();
   initPortfolioNavigator(root);
   initRecruiterFitExplorer(root);
+  void initWebMcpSiteTools().catch(() => {});
   if (page === "hire") trackPortfolioEvent("recruiter_brief_open", root.dataset.locale === "zh-TW" ? "zh-TW" : "en", "hire", "success");
 }
 
