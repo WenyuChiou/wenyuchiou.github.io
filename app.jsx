@@ -57,7 +57,7 @@ function HeroSocialLinks({ content, locale }) {
     { label: content.labels.linkedin, href: "https://www.linkedin.com/in/wenyu-chiou", Icon: Linkedin },
     { label: content.labels.github, href: "https://github.com/WenyuChiou", Icon: Github },
     { label: content.labels.email, href: `mailto:${content.contact.email}`, Icon: Mail },
-    { label: content.labels.threads, href: "https://www.threads.com/@wenyuchiou", Icon: AtSign },
+    { label: content.labels.threads, href: "https://www.threads.com/@wenyu_chiou", Icon: AtSign },
   ];
   return (
     <ul className="hero-socials" aria-label={content.labels.socialLinks}>

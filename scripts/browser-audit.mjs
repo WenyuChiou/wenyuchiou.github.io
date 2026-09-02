@@ -543,7 +543,7 @@ try {
   await heroPage.waitForFunction(() => { const image = document.querySelector(".repo-preview img"); return image?.complete && image.naturalWidth === 0; }, { timeout: 5000 });
   const previewFallback = await heroPage.$eval(".repo-preview", (preview) => ({ failed: preview.querySelector("img").naturalWidth === 0, fallbackVisible: getComputedStyle(preview.querySelector("svg")).display !== "none" }));
   if (!previewFallback.failed || !previewFallback.fallbackVisible) failures.push(`/: GitHub social preview failure does not expose its fallback`);
-  const expectedSocialLinks = ["https://www.linkedin.com/in/wenyu-chiou", "https://github.com/WenyuChiou", "mailto:wec324@lehigh.edu", "https://www.threads.com/@wenyuchiou"];
+  const expectedSocialLinks = ["https://www.linkedin.com/in/wenyu-chiou", "https://github.com/WenyuChiou", "mailto:wec324@lehigh.edu", "https://www.threads.com/@wenyu_chiou"];
   const socialLinks = await heroPage.$$eval(".hero-social-link", (links) => links.map((link) => ({ href: link.getAttribute("href"), name: link.textContent.trim(), title: link.title, width: link.getBoundingClientRect().width, height: link.getBoundingClientRect().height })));
   if (socialLinks.length !== 4 || socialLinks.some((link, index) => link.href !== expectedSocialLinks[index] || !link.name || !link.title || link.width < 44 || link.height < 44)) failures.push(`/: Hero social links are incomplete, misordered, unlabeled, or undersized: ${JSON.stringify(socialLinks)}`);
   const desktopHero = await heroPage.$eval(".hero-media", (image) => ({ width: image.getBoundingClientRect().width, fit: getComputedStyle(image).objectFit }));
