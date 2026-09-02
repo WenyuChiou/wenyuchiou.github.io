@@ -107,6 +107,7 @@ const person = {
   sameAs: [
     "https://github.com/WenyuChiou",
     "https://www.linkedin.com/in/wenyu-chiou",
+    "https://www.threads.com/@wenyu_chiou",
     "https://scholar.google.com/citations?user=vSQ3zT4AAAAJ&hl=en",
     "https://orcid.org/0009-0005-8006-1288",
   ],
