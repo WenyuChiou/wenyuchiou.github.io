@@ -577,7 +577,7 @@ try {
   await zhPublicationCopyPage.close();
 
   for (const prefix of ["", "/zh"]) {
-    await auditCaseControl(`${prefix}/work/human-grounded-llm-evaluation/`, ".segmented-control button:nth-child(3)", ".pathway-diagram.lens-renters", ".artifact-result");
+    await auditCaseControl(`${prefix}/work/human-grounded-llm-evaluation/`, '[data-behavior-lens-button="repeats"]', '[data-behavior-lens="repeats"]', '[data-behavior-finding]');
     await auditCaseControl(`${prefix}/work/floodabm/`, ".segmented-control button:nth-child(2)", ".feedback-timeline.is-renter", ".artifact-result");
     await auditCaseControl(`${prefix}/work/wagf/`, ".segmented-control button:nth-child(2)", ".governance-trace.is-repaired", ".trace-result");
   }

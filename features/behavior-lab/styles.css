@@ -1,0 +1,114 @@
+.behavior-lab.interactive-artifact {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: 0;
+  min-width: 0;
+  scroll-margin-top: 100px;
+}
+.behavior-lab *, .behavior-lab *::before, .behavior-lab *::after { box-sizing: border-box; letter-spacing: 0; }
+.behavior-lab [hidden] { display: none !important; }
+.behavior-lab h2, .behavior-lab h3, .behavior-lab h4, .behavior-lab p, .behavior-lab figure, .behavior-lab dl, .behavior-lab dd { margin: 0; }
+.behavior-lab h2, .behavior-lab h3, .behavior-lab h4, .behavior-lab button, .behavior-lab summary { text-transform: none; }
+.behavior-lab h2 { font-size: 28px; line-height: 1.3; max-width: 30ch; }
+.behavior-lab h3 { font-size: 19px; line-height: 1.4; }
+.behavior-lab h4 { font-size: 16px; line-height: 1.5; }
+.behavior-lab button, .behavior-lab summary, .behavior-lab a { -webkit-tap-highlight-color: transparent; }
+.behavior-lab button { font: inherit; font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--ink); background: transparent; cursor: pointer; min-height: 44px; min-width: 44px; border-radius: 4px; white-space: normal; overflow-wrap: anywhere; }
+.behavior-lab button:focus-visible, .behavior-lab summary:focus-visible, .behavior-lab a:focus-visible { outline: 3px solid var(--model); outline-offset: 4px; }
+.behavior-lab .behavior-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 12px 28px; }
+.behavior-lab .behavior-synthetic { color: var(--muted); font-size: 16px; margin-bottom: 8px; }
+.behavior-lab .behavior-heading-icon { width: 40px; height: 40px; color: var(--model); flex-shrink: 0; }
+.behavior-lab .behavior-controls { border-block: 1px solid var(--line); padding-block: 20px; display: grid; gap: 20px; }
+.behavior-lab .behavior-control-group { display: grid; gap: 8px; }
+.behavior-lab .behavior-control-label { font-size: 15px; font-weight: 600; color: var(--muted); }
+.behavior-lab .behavior-scenario-options, .behavior-lab .behavior-lens-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.behavior-lab .behavior-scenario-options button, .behavior-lab .behavior-lens-options button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--line); transition: background-color 180ms, border-color 180ms; }
+.behavior-lab .behavior-scenario-options button { flex: 1 1 180px; }
+.behavior-lab .behavior-scenario-options button > span { color: var(--muted); font-variant-numeric: tabular-nums; }
+.behavior-lab .behavior-scenario-options button[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: var(--surface); }
+.behavior-lab .behavior-scenario-options button[aria-pressed="true"] > span { color: inherit; }
+.behavior-lab .behavior-lens-options button { border-color: transparent; }
+.behavior-lab .behavior-lens-options button[aria-pressed="true"] { border-color: var(--model); color: var(--model); background: var(--surface); }
+.behavior-lab .behavior-lens-options svg { flex-shrink: 0; }
+.behavior-lab .behavior-finding { margin-block: 24px; padding-left: 16px; border-left: 3px solid var(--failure); min-height: 100px; }
+.behavior-lab .behavior-finding > strong { font-size: 15px; color: var(--failure); }
+.behavior-lab .behavior-finding p { margin-top: 6px; max-width: 74ch; }
+.behavior-lab .behavior-chart figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 24px; font-size: 16px; padding-bottom: 18px; }
+.behavior-lab .behavior-chart figcaption > span { color: var(--muted); font-size: 15px; }
+.behavior-lab .behavior-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.behavior-lab .behavior-series { min-width: 0; }
+.behavior-lab .behavior-series h3 { display: flex; align-items: center; gap: 10px; padding-bottom: 16px; border-bottom: 2px solid var(--human); }
+.behavior-lab .behavior-model h3 { border-color: var(--model); }
+.behavior-lab .behavior-series h3 > span { width: 12px; height: 12px; background: var(--human); border-radius: 50%; flex-shrink: 0; }
+.behavior-lab .behavior-model h3 > span { background: var(--model); border-radius: 0; }
+.behavior-lab .behavior-chart-row { min-height: 156px; padding-block: 16px; border-bottom: 1px solid var(--line); }
+.behavior-lab .behavior-chart-row h4 { margin-bottom: 10px; }
+.behavior-lab .behavior-count { display: grid; grid-template-columns: minmax(62px, .65fr) minmax(0, 1.7fr) auto; gap: 10px; align-items: center; min-height: 28px; font-size: 15px; }
+.behavior-lab .behavior-count > strong { font-size: 16px; font-variant-numeric: tabular-nums; min-width: 3ch; text-align: end; }
+.behavior-lab .behavior-count-label { overflow-wrap: anywhere; }
+.behavior-lab .behavior-track { display: block; height: 10px; border-radius: 0; background: var(--line); overflow: hidden; }
+.behavior-lab .behavior-track { width: 100%; }
+.behavior-lab .behavior-track rect { fill: var(--human); }
+.behavior-lab .behavior-count-model .behavior-track rect { fill: var(--model); }
+.behavior-lab .behavior-row-note { margin-top: 8px; color: var(--muted); font-size: 15px; }
+.behavior-lab .behavior-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; padding-block: 22px; border-bottom: 1px solid var(--line); }
+.behavior-lab .behavior-metrics dt { font-size: 15px; color: var(--muted); }
+.behavior-lab .behavior-metrics dd { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.behavior-lab .behavior-metrics dd > span { display: block; font-size: 15px; font-weight: 400; color: var(--muted); }
+.behavior-lab .behavior-record-section { padding-block: 24px; }
+.behavior-lab .behavior-record-section > h3 { margin-bottom: 14px; }
+.behavior-lab .behavior-records { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px 16px; }
+.behavior-lab .behavior-record { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; border: 0; border-bottom: 2px solid var(--line); border-radius: 0; padding: 10px 4px; text-align: start; }
+.behavior-lab .behavior-record[aria-pressed="true"] { border-bottom-color: var(--model); background: var(--surface); }
+.behavior-lab .behavior-record-choices { display: inline-flex; gap: 5px; align-items: center; font-variant-numeric: tabular-nums; }
+.behavior-lab .behavior-reference-choice { color: var(--human); }
+.behavior-lab .behavior-record-divider { color: var(--muted); }
+.behavior-lab .behavior-match { color: var(--model); }
+.behavior-lab .behavior-mismatch { color: var(--failure); text-decoration: underline; text-underline-offset: 3px; }
+.behavior-lab .behavior-record-detail { padding-block: 20px 0; }
+.behavior-lab .behavior-record-detail h4 { margin-bottom: 12px; }
+.behavior-lab .behavior-record-detail h4 > strong { color: var(--model); margin-left: 6px; }
+.behavior-lab .behavior-record-detail dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 24px; }
+.behavior-lab .behavior-record-detail dt { font-size: 15px; color: var(--muted); margin-bottom: 4px; }
+.behavior-lab .behavior-record-detail dd > span { display: block; }
+.behavior-lab details { border: 0; border-block-start: 1px solid var(--line); border-radius: 0; padding: 0; background: none; }
+.behavior-lab summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 52px; padding-block: 12px; font-size: 16px; font-weight: 600; cursor: pointer; list-style: none; }
+.behavior-lab summary::-webkit-details-marker { display: none; }
+.behavior-lab summary svg { flex-shrink: 0; transition: transform 180ms; }
+.behavior-lab details[open] > summary svg { transform: rotate(180deg); }
+.behavior-lab details > p { margin-bottom: 16px; max-width: 78ch; }
+.behavior-lab .behavior-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 16px; margin-bottom: 20px; }
+.behavior-lab .behavior-table caption { text-align: start; color: var(--muted); font-size: 15px; padding-block: 8px 12px; }
+.behavior-lab .behavior-table th, .behavior-lab .behavior-table td { padding: 10px 8px; text-align: start; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; vertical-align: top; }
+.behavior-lab .behavior-table thead th { font-size: 15px; }
+.behavior-lab .behavior-table-group { display: block; font-size: 15px; font-weight: 400; color: var(--muted); }
+.behavior-lab .behavior-sources { border-top: 1px solid var(--line); padding-top: 16px; }
+.behavior-lab .behavior-sources nav { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.behavior-lab .behavior-sources a { display: inline-flex; align-items: center; min-height: 44px; color: var(--model); text-underline-offset: 4px; }
+.behavior-lab .behavior-sources p { color: var(--muted); font-size: 16px; margin-top: 4px; }
+@media (hover: hover) {
+  .behavior-lab button:hover { border-color: var(--model); }
+  .behavior-lab .behavior-record:hover { background: var(--surface); }
+}
+@media (max-width: 640px) {
+  .behavior-lab h2 { font-size: 24px; }
+  .behavior-lab .behavior-heading { gap: 14px; }
+  .behavior-lab .behavior-heading-icon { width: 28px; height: 28px; }
+  .behavior-lab .behavior-scenario-options { flex-direction: column; }
+  .behavior-lab .behavior-scenario-options button { flex: none; justify-content: flex-start; }
+  .behavior-lab .behavior-lens-options { gap: 4px; }
+  .behavior-lab .behavior-lens-options button { flex: 1 1 80px; padding-inline: 8px; }
+  .behavior-lab .behavior-pair { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .behavior-lab .behavior-chart-row { min-height: 140px; }
+  .behavior-lab .behavior-metrics, .behavior-lab .behavior-record-detail dl { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .behavior-lab .behavior-records { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .behavior-lab .behavior-table th, .behavior-lab .behavior-table td { padding-inline: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .behavior-lab *, .behavior-lab *::before, .behavior-lab *::after { transition: none !important; }
+}
