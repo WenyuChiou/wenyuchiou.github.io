@@ -9,7 +9,7 @@ export const FEATURE_CONTENT = {
     articlesNav: { id: "articles", label: "Articles", href: "/articles/" },
     heroCapabilities: ["LLM behavior evaluation", "Agent governance", "Behavioral simulation", "Reproducible research systems"],
     provenance: {
-      illustration: { alt: "Wenyu Chiou: human evidence and context inform an LLM proposal, validation and repair, and human-environment feedback.", replay: "Replay research workflow" },
+      illustration: { alt: "Wenyu Chiou: human evidence and context inform an LLM proposal, validation and repair, and human-environment feedback.", pause: "Pause research animation", play: "Play research animation" },
       eyebrow: "Decision Provenance Explorer",
       title: "Inspect what supports a decision before trusting its consequence.",
       intro: "Switch lenses to follow evidence, context, an LLM decision, its validation, and the state change that follows.",
@@ -176,7 +176,7 @@ export const FEATURE_CONTENT = {
     articlesNav: { id: "articles", label: "文章", href: "/articles/" },
     heroCapabilities: ["LLM 行為評估", "代理治理", "行為模擬", "可重現研究系統"],
     provenance: {
-      illustration: { alt: "邱文昱 Wenyu Chiou：人類證據與情境，串起 LLM 提案、驗證修復與人類—環境回饋。", replay: "重播研究流程" },
+      illustration: { alt: "邱文昱 Wenyu Chiou：人類證據與情境，串起 LLM 提案、驗證修復與人類—環境回饋。", pause: "暫停研究動畫", play: "播放研究動畫" },
       eyebrow: "Decision Provenance Explorer",
       title: "在相信決策後果之前，先看清楚它的依據。",
       intro: "切換三種視角，追蹤人類證據、情境、LLM 決策、驗證，以及最後產生的狀態變化。",

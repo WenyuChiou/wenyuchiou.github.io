@@ -20,6 +20,8 @@ import {
   Mail,
   Menu,
   Moon,
+  Pause,
+  Play,
   RotateCcw,
   Search,
   ShieldCheck,
@@ -394,23 +396,22 @@ function TraceIllustration({ lens, stage, content }) {
 function ResearchIllustration({ content }) {
   const figure = useRef(null);
   const [run, setRun] = useState(0);
+  const [paused, setPaused] = useState(false);
   const copy = content.provenance.illustration;
   const localeSuffix = content.locale === "zh-TW" ? "-zh-TW" : "";
 
   useEffect(() => {
     if (!figure.current || !window.IntersectionObserver) return;
     const observer = new IntersectionObserver((entries) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
-      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) setRun((value) => value || 1);
-      observer.disconnect();
+      setRun(entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.15) ? 1 : 0);
     }, { threshold: 0.15 });
     observer.observe(figure.current);
     return () => observer.disconnect();
   }, []);
 
   const asset = (dark, mobile, staticOnly = false) => {
-    const still = staticOnly || run === 0;
-    return `/assets/research/research-loop${localeSuffix}${mobile ? "-mobile" : ""}${dark ? "-dark" : ""}${still ? "-static" : ""}.svg${still ? "" : `?play=${run}`}`;
+    const still = staticOnly || run === 0 || paused;
+    return `/assets/research/research-loop${localeSuffix}${mobile ? "-mobile" : ""}${dark ? "-dark" : ""}${still ? "-static" : ""}.svg?v=loop-1${still ? "" : `&play=${run}`}`;
   };
   return <figure ref={figure} className="research-illustration" data-research-illustration>
     {[false, true].map((dark) => <picture key={String(dark)} className={`research-art-${dark ? "dark" : "light"}`}>
@@ -419,7 +420,7 @@ function ResearchIllustration({ content }) {
       <source media="(max-width: 620px)" srcSet={asset(dark, true)} />
       <img src={asset(dark, false)} width="1200" height="750" alt={copy.alt} loading="lazy" decoding="async" />
     </picture>)}
-    <button className="icon-button research-illustration-replay" type="button" title={copy.replay} aria-label={copy.replay} onClick={() => setRun((value) => value + 1)}><RotateCcw size={20} aria-hidden="true" /></button>
+    <button className="icon-button research-illustration-toggle" type="button" title={paused ? copy.play : copy.pause} aria-label={paused ? copy.play : copy.pause} data-paused={paused} onClick={() => setPaused((value) => !value)}>{paused ? <Play size={20} aria-hidden="true" /> : <Pause size={20} aria-hidden="true" />}</button>
   </figure>;
 }
 
