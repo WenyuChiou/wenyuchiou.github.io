@@ -391,6 +391,38 @@ function TraceIllustration({ lens, stage, content }) {
   );
 }
 
+function ResearchIllustration({ content }) {
+  const figure = useRef(null);
+  const [run, setRun] = useState(0);
+  const copy = content.provenance.illustration;
+  const localeSuffix = content.locale === "zh-TW" ? "-zh-TW" : "";
+
+  useEffect(() => {
+    if (!figure.current || !window.IntersectionObserver) return;
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) setRun((value) => value || 1);
+      observer.disconnect();
+    }, { threshold: 0.15 });
+    observer.observe(figure.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const asset = (dark, mobile, staticOnly = false) => {
+    const still = staticOnly || run === 0;
+    return `/assets/research/research-loop${localeSuffix}${mobile ? "-mobile" : ""}${dark ? "-dark" : ""}${still ? "-static" : ""}.svg${still ? "" : `?play=${run}`}`;
+  };
+  return <figure ref={figure} className="research-illustration" data-research-illustration>
+    {[false, true].map((dark) => <picture key={String(dark)} className={`research-art-${dark ? "dark" : "light"}`}>
+      <source media="(max-width: 620px) and (prefers-reduced-motion: reduce)" srcSet={asset(dark, true, true)} />
+      <source media="(prefers-reduced-motion: reduce)" srcSet={asset(dark, false, true)} />
+      <source media="(max-width: 620px)" srcSet={asset(dark, true)} />
+      <img src={asset(dark, false)} width="1200" height="750" alt={copy.alt} loading="lazy" decoding="async" />
+    </picture>)}
+    <button className="icon-button research-illustration-replay" type="button" title={copy.replay} aria-label={copy.replay} onClick={() => setRun((value) => value + 1)}><RotateCcw size={20} aria-hidden="true" /></button>
+  </figure>;
+}
+
 function DecisionProvenanceExplorer({ content, full = false }) {
   const P = content.provenance;
   const lensIds = ["evaluation", "governance", "simulation"];
@@ -437,6 +469,7 @@ function DecisionProvenanceExplorer({ content, full = false }) {
     <section id="decision-provenance" className={`section provenance decision-trace${full ? " provenance-full" : ""}`} data-trace-role={active.colorRole} data-provenance-explorer aria-labelledby="provenance-title">
       <div className="wrap">
         <SectionHead eyebrow={P.eyebrow} title={P.title} intro={P.intro} id="provenance-title" />
+        {!full ? <ResearchIllustration content={content} /> : null}
         <div className="trace-case-selector" role="tablist" aria-label={P.controlLabel}>{lensIds.map((id) => {
           const TraceIcon = CASE_ROLES[P.lenses[id].caseSlug]?.Icon || Sparkles;
           const index = lensIds.indexOf(id);
