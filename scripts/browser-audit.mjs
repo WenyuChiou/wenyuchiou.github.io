@@ -578,7 +578,7 @@ try {
 
   for (const prefix of ["", "/zh"]) {
     await auditCaseControl(`${prefix}/work/human-grounded-llm-evaluation/`, ".segmented-control button:nth-child(3)", ".pathway-diagram.lens-renters", ".artifact-result");
-    await auditCaseControl(`${prefix}/work/floodabm/`, ".segmented-control button:nth-child(2)", ".feedback-timeline.is-renter", ".artifact-result");
+    await auditCaseControl(`${prefix}/work/floodabm/`, '[data-flood-tenure="renter"]', '.flood-constraint', '.flood-inspection dl');
     await auditCaseControl(`${prefix}/work/wagf/`, ".segmented-control button:nth-child(2)", ".governance-trace.is-repaired", ".trace-result");
   }
 

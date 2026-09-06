@@ -35,6 +35,16 @@ for (const [file, expected] of Object.entries(VENDOR_ASSETS)) {
   if (actual !== expected) throw new Error(`Vendor integrity check failed for ${file}`);
 }
 
+const floodBuild = await esbuild.build({
+  entryPoints: ["features/flood-lab/scene.js"], bundle: true, format: "esm",
+  outdir: "assets/flood", entryNames: "scene-[hash]", minify: true,
+  target: "es2020", legalComments: "none", metafile: true,
+});
+const floodSceneUrl = "/" + Object.keys(floodBuild.metafile.outputs).find((file) => file.endsWith(".js")).replaceAll("\\", "/");
+writeFileSync("assets/flood/THREE-LICENSE.txt", readFileSync("node_modules/three/LICENSE"));
+await esbuild.build({ entryPoints: ["features/flood-lab/styles.css"], bundle: true, minify: true, outfile: "assets/flood-lab.css" });
+const floodCssHash = createHash("sha256").update(readFileSync("assets/flood-lab.css")).digest("hex").slice(0, 8);
+
 await esbuild.build({
   entryPoints: ["entry.jsx"],
   bundle: true,
@@ -42,7 +52,7 @@ await esbuild.build({
   outfile: "assets/app.bundle.js",
   minify: true,
   jsx: "automatic",
-  define: { "process.env.NODE_ENV": '"production"' },
+  define: { "process.env.NODE_ENV": '"production"', __FLOOD_SCENE_URL__: JSON.stringify(floodSceneUrl) },
   target: "es2020",
   legalComments: "none",
 });
@@ -85,7 +95,7 @@ for (const page of generatedPages) {
   const html = readFileSync(page, "utf8")
     .replace(/(href=")\/styles\.css(?:\?v=[a-f0-9]+)?(")/g, `$1/styles.css?v=${cssHash}$2`)
     .replace(/(src=")\/assets\/app\.bundle\.js(?:\?v=[a-f0-9]+)?(")/g, `$1/assets/app.bundle.js?v=${bundleHash}$2`);
-  writeFileSync(page, html);
+  writeFileSync(page, html.includes('id="human-environment-lab"') ? html.replace("</head>", `<link rel="stylesheet" href="/assets/flood-lab.css?v=${floodCssHash}"></head>`) : html);
 }
 console.log(`Stamped ${generatedPages.length} pages; wrote sitemap.xml (${routeValues.length} URLs) and redirects (${Object.keys(LEGACY_REDIRECTS).length})`);
 

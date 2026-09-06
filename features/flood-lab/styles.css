@@ -1,0 +1,56 @@
+.flood-lab.interactive-artifact{border:0;border-radius:0;padding:0;background:transparent;scroll-margin-top:100px}
+.flood-lab{--flood-house:var(--human);--flood-water:var(--environment);font-size:1rem}
+.flood-lab-heading{max-width:72ch;margin-bottom:28px}
+.flood-lab-heading h3{font-size:2rem;line-height:1.25;margin:8px 0 16px}
+.flood-synthetic{color:var(--human);font-weight:700;font-size:.9375rem}
+.flood-lab [data-flood-controls]{display:none}
+.flood-lab[data-enhanced="true"] .flood-controls{display:flex}
+.flood-lab[data-enhanced="true"] .flood-comparison,.flood-lab[data-enhanced="true"] .flood-view-controls,.flood-lab[data-enhanced="true"] .flood-object-controls{display:flex}
+.flood-controls{flex-wrap:wrap;gap:16px;align-items:end;padding:24px 0;border-block:1px solid var(--line)}
+.flood-controls label{display:grid;gap:8px;flex:1 1 160px;font-weight:650}
+.flood-controls fieldset{margin:0;padding:0;border:0;flex:1 1 200px;min-width:0}
+.flood-controls legend{margin-bottom:8px;font-weight:650}
+.flood-lab select{min-height:44px;max-width:100%;width:100%;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);padding:8px 12px;font:inherit}
+.flood-segments,.flood-comparison,.flood-object-controls{display:flex;flex-wrap:wrap;gap:8px}
+.flood-lab button{min-height:44px;font:inherit;font-size:.9375rem;cursor:pointer;transition:background-color 160ms,color 160ms}
+.flood-segments button,.flood-comparison button,.flood-object-controls button{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:9px 14px;background:var(--surface);border:1px solid var(--line-strong);color:var(--ink)}
+.flood-lab button[aria-pressed="true"]{background:var(--human-soft);border-color:var(--human);color:var(--ink);font-weight:700}
+.flood-lab button:focus-visible,.flood-lab select:focus-visible,.flood-lab summary:focus-visible{outline:2px solid var(--model);outline-offset:4px}
+.flood-lab button:disabled{cursor:wait}
+.flood-icon-button{display:inline-flex;align-items:center;justify-content:center;width:44px;min-width:44px;padding:0;background:transparent;border:1px solid var(--line-strong);color:var(--ink)}
+.flood-status{min-height:3em;font-size:.9375rem;margin:12px 0}
+.flood-constraint{color:var(--ink);font-size:.9375rem;margin:16px 0 0}
+.flood-comparison{margin:12px 0 20px}
+.flood-stage{position:relative;min-height:300px;aspect-ratio:2/1;max-height:560px;isolation:isolate}
+.flood-canvas{position:absolute;inset:0;visibility:hidden;touch-action:pan-y}
+.flood-canvas canvas{display:block;width:100%;height:100%;touch-action:pan-y}
+.flood-stage[data-scene-ready="true"] .flood-canvas{visibility:visible}
+.flood-stage[data-scene-ready="true"] .flood-diagram{visibility:hidden}
+.flood-diagram{margin:0;height:100%;display:flex;flex-direction:column;justify-content:center}
+.flood-diagram svg{display:block;width:100%;min-height:0;flex:1}
+.flood-diagram figcaption{font-size:.9375rem;line-height:1.5;max-width:75ch;color:var(--muted);margin:12px 0}
+.flood-diagram path{stroke:var(--line-strong);stroke-width:1.5;stroke-linejoin:round}
+.flood-ground{fill:var(--surface-2)}
+.flood-river-bank{fill:var(--human-soft)}
+.flood-diagram .flood-water{fill:var(--environment-soft);stroke:var(--environment)}
+.flood-current path{stroke:var(--environment);stroke-width:3;fill:none}
+.flood-neighbor path{fill:var(--surface)}
+.flood-focus-house path{fill:var(--human-soft);stroke:var(--human)}
+.flood-focus-house .flood-roof{fill:var(--human);stroke:var(--ink)}
+.flood-focus-house .flood-door,.flood-focus-house .flood-window{fill:var(--surface)}
+.flood-neighbor .flood-roof{fill:var(--line-strong)}
+.flood-stilts path{stroke:var(--human);stroke-width:8;fill:none}
+.flood-diagram .flood-preparation{stroke:var(--validation);stroke-width:8;fill:none}
+.flood-contour{fill:none}
+.flood-view-controls{flex-wrap:wrap;gap:16px;align-items:center;margin:24px 0}
+.flood-inspection{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;padding:24px 0;border-block:1px solid var(--line)}
+.flood-inspection p{max-width:65ch;line-height:1.65}
+.flood-inspection dl{margin:0}
+.flood-inspection dl>div{display:flex;justify-content:space-between;gap:24px;padding:10px 0;border-bottom:1px solid var(--line)}
+.flood-inspection dt{display:flex;gap:6px;align-items:center;font-size:.9375rem;color:var(--muted)}
+.flood-inspection dd{margin:0;text-align:right;font-weight:650}
+.flood-assumptions{padding:22px 0;font-size:1rem}
+.flood-assumptions summary{cursor:pointer;min-height:44px;display:list-item;line-height:1.6}
+.flood-assumptions p{max-width:72ch}
+@media(max-width:700px){.flood-lab-heading h3{font-size:1.5rem}.flood-stage{aspect-ratio:1/1;min-height:300px}.flood-inspection{grid-template-columns:1fr;gap:16px}.flood-controls label,.flood-controls fieldset{flex-basis:100%}.flood-controls>.button{flex:1}.flood-view-controls .flood-segments{gap:6px}.flood-view-controls .flood-segments button{padding-inline:10px}.flood-diagram figcaption{margin-bottom:0}}
+@media(prefers-reduced-motion:reduce){.flood-lab *{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
