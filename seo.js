@@ -86,7 +86,7 @@ for (const locale of ["en", "zh-TW"]) {
       ogType: page.id.startsWith("case:") || page.id.startsWith("article:") ? "article" : "website",
       ogImage: page.id === "hire" ? "/assets/og/recruiter-brief.png" : page.id.startsWith("article:") ? `/assets/og/${page.id.slice(8)}.png` : "/assets/og-card.png",
       ogImageAlt: page.id === "hire" ? (locale === "en" ? "Wenyu Chiou — LLM Evaluation and AI Research Engineer recruiter profile" : "邱文昱 — LLM 評估與 AI 研究職位摘要") : meta.title,
-      lastModified: checkedAt,
+      lastModified: ["work"].includes(page.id) ? "2026-09-06" : checkedAt,
     };
   }
 }

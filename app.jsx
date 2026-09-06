@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { OpenSourceWorkbench } from "./features/open-source-workbench/component.jsx";
 import {
   AlertTriangle,
   AtSign,
@@ -319,10 +320,11 @@ function OpenSource({ content, locale, compact = false }) {
   return (
     <section id="open-source" className="section open-source" aria-labelledby="oss-title"><div className="wrap">
       <SectionHead eyebrow={O.eyebrow} title={O.title} intro={O.intro} id="oss-title" />
+      {!compact && <OpenSourceWorkbench locale={locale} />}
       <div className="repo-list">{repositories.map((repo) => {
         const stats = githubData.repositories[repo.key];
         return (
-          <article className={`repo-row${stats?.previewUrl ? " has-preview" : ""}`} key={repo.key}>
+          <article className={`repo-row${stats?.previewUrl ? " has-preview" : ""}`} key={repo.key} data-repo-key={compact ? undefined : repo.key}>
             <RepoPreview previewUrl={stats?.previewUrl} />
             <div className="repo-copy"><h3>{repo.name}</h3><p>{repo.desc}</p></div>
             {stats ? <p className="repo-stats"><strong>{formatCount(stats.stars, locale)}</strong> {content.labels.stars} <span>·</span> {formatCount(stats.forks, locale)} {content.labels.forks}</p> : null}

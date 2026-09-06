@@ -4,6 +4,7 @@ import { App } from "./app.jsx";
 import { initPortfolioNavigator, trackPortfolioEvent } from "./navigator.js";
 import { initRecruiterFitExplorer } from "./fit-explorer.js";
 import { initWebMcpSiteTools } from "./webmcp.js";
+import { initOpenSourceWorkbench } from "./features/open-source-workbench/enhance.js";
 
 document.documentElement.classList.add("js");
 const root = document.getElementById("root");
@@ -102,6 +103,7 @@ if (root) {
   if (page === "home" || page === "hire" || page.startsWith("case:")) {
     hydrateRoot(root, <App page={page} locale={root.dataset.locale || "en"} basePath={root.dataset.basePath || "/"} />);
   } else {
+    initOpenSourceWorkbench(root);
     const menu = root.querySelector(".menu-button");
     const navigation = root.querySelector("#primary-navigation");
     menu?.addEventListener("click", () => {

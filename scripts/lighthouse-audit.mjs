@@ -57,6 +57,8 @@ async function launchChrome(runPort, name) {
 }
 
 const configuredRuns = [
+  { name: "en-feature-mobile", route: "/work/" },
+  { name: "zh-feature-mobile", route: "/zh/work/" },
   { name: "en-mobile", route: "/" },
   { name: "zh-mobile", route: "/zh/" },
   { name: "en-desktop", route: "/", config: desktopConfig },
@@ -65,7 +67,10 @@ const configuredRuns = [
   { name: "zh-hire-mobile", route: "/zh/hire/" },
 ];
 const requestedRuns = args.runs ? new Set(String(args.runs).split(",")) : null;
-const runs = requestedRuns ? configuredRuns.filter((run) => requestedRuns.has(run.name)) : configuredRuns;
+const selectedRuns = requestedRuns ? configuredRuns.filter((run) => requestedRuns.has(run.name)) : configuredRuns;
+const repeat = Number(args.repeat || 1);
+if (!Number.isInteger(repeat) || repeat < 1 || repeat > 3) throw new Error("--repeat must be 1, 2 or 3");
+const runs = selectedRuns.flatMap((run) => Array.from({ length: repeat }, (_, index) => ({ ...run, name: repeat > 1 ? `${run.name}-${index + 1}` : run.name })));
 if (!runs.length) throw new Error(`No Lighthouse runs matched --runs=${args.runs}`);
 const summary = [];
 try {

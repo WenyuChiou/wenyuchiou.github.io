@@ -35,6 +35,9 @@ for (const [file, expected] of Object.entries(VENDOR_ASSETS)) {
   if (actual !== expected) throw new Error(`Vendor integrity check failed for ${file}`);
 }
 
+await esbuild.build({ entryPoints: ["features/open-source-workbench/styles.css"], bundle: true, minify: true, outfile: "assets/open-source-workbench.css" });
+const workbenchCssHash = createHash("sha256").update(readFileSync("assets/open-source-workbench.css")).digest("hex").slice(0, 8);
+
 await esbuild.build({
   entryPoints: ["entry.jsx"],
   bundle: true,
@@ -85,7 +88,7 @@ for (const page of generatedPages) {
   const html = readFileSync(page, "utf8")
     .replace(/(href=")\/styles\.css(?:\?v=[a-f0-9]+)?(")/g, `$1/styles.css?v=${cssHash}$2`)
     .replace(/(src=")\/assets\/app\.bundle\.js(?:\?v=[a-f0-9]+)?(")/g, `$1/assets/app.bundle.js?v=${bundleHash}$2`);
-  writeFileSync(page, html);
+  writeFileSync(page, html.includes('id="workbench-title"') ? html.replace("</head>", `<link rel="stylesheet" href="/assets/open-source-workbench.css?v=${workbenchCssHash}"></head>`) : html);
 }
 console.log(`Stamped ${generatedPages.length} pages; wrote sitemap.xml (${routeValues.length} URLs) and redirects (${Object.keys(LEGACY_REDIRECTS).length})`);
 
