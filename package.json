@@ -10,7 +10,7 @@
   "scripts": {
     "build": "node build.mjs",
     "pdf": "node cv/build-pdf.mjs",
-    "test": "node scripts/verify-site.mjs && node scripts/check-copy.mjs --strict --require-pdfs && node scripts/test-navigator.mjs && npm run test:webmcp && npm run test:worker",
+    "test": "node scripts/test-research-header.mjs assets/research && node scripts/verify-site.mjs && node scripts/check-copy.mjs --strict --require-pdfs && node scripts/test-navigator.mjs && npm run test:webmcp && npm run test:worker",
     "test:webmcp": "node scripts/test-webmcp.mjs",
     "test:worker": "node --test worker/src/index.test.js",
     "check:nvidia-model": "node worker/scripts/check-model.mjs",

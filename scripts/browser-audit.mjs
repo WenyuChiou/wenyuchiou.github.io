@@ -7,6 +7,7 @@ import axe from "axe-core";
 import { DEPLOYMENT_CONFIG } from "../deployment-config.mjs";
 import { SEO } from "../seo.js";
 import githubData from "../data/github.json" with { type: "json" };
+import { auditResearchIllustration } from "./audit-research-illustration.mjs";
 
 const root = process.cwd();
 const browserCandidates = [process.env.CHROME_PATH, "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, "Google", "Chrome", "Application", "chrome.exe") : null, "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe", "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe", "/usr/bin/google-chrome", "/usr/bin/google-chrome-stable", "/usr/bin/chromium"].filter(Boolean);
@@ -455,6 +456,7 @@ if (process.argv.includes("--semantic-only")) {
 }
 
 try {
+  await auditResearchIllustration(browser, origin);
   for (const route of Object.keys(SEO.routes)) {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
