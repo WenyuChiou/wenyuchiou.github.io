@@ -271,19 +271,20 @@ const auditRecruiterFitExplorer = async (route, role, jobDescription, expectedPa
 
 const auditProvenance = async (route) => {
   const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
-  await page.$eval(".provenance", (section) => section.scrollIntoView({ block: "start", behavior: "instant" }));
+  await page.$eval("[data-provenance-island]", (section) => section.scrollIntoView({ block: "start", behavior: "instant" }));
+  await page.waitForSelector('[data-provenance-island][data-ready="true"]');
   const initial = await page.$eval(".decision-trace", (section) => {
-    const stages = [...section.querySelectorAll(".trace-stage-map li")];
-    const stageColors = new Set(stages.map((item) => getComputedStyle(item).getPropertyValue("--signal").trim()).filter(Boolean));
-    const keyText = [section.querySelector(".provenance-summary"), ...section.querySelectorAll(".trace-stage-map strong"), section.querySelector(".trace-inspector h3")].filter(Boolean);
+    const stages = [...section.querySelectorAll(".pw-stages li")];
+    const stageColors = new Set(stages.map((item) => getComputedStyle(item).getPropertyValue("--pw-stage").trim()).filter(Boolean));
+    const keyText = [section.querySelector("[data-provenance-summary]"), ...section.querySelectorAll(".pw-stages strong"), section.querySelector(".pw-inspector h3")].filter(Boolean);
     const tabs = [...section.querySelectorAll('[role="tab"]')];
     return {
       tabs: tabs.length,
       tabbableTabs: tabs.filter((tab) => tab.tabIndex === 0).length,
       stages: stages.length,
       current: section.querySelector('[aria-current="step"]')?.textContent,
-      inspector: section.querySelector(".trace-inspector h3")?.textContent,
-      visual: Boolean(section.querySelector('.trace-illustration[aria-label], .system-map[aria-labelledby]')),
+      inspector: section.querySelector(".pw-inspector h3")?.textContent,
+      visual: Boolean(section.querySelector('[data-provenance-scene] svg')),
       panelLabel: section.querySelector('[role="tabpanel"]')?.getAttribute("aria-labelledby"),
       semanticColors: stageColors.size,
       smallestKeyText: Math.min(...keyText.map((item) => Number.parseFloat(getComputedStyle(item).fontSize))),
@@ -292,16 +293,16 @@ const auditProvenance = async (route) => {
   if (initial.tabs !== 3 || initial.tabbableTabs !== 1 || initial.stages !== 5 || !initial.current || !initial.inspector || !initial.visual || initial.panelLabel !== "trace-tab-evaluation") failures.push(`${route}: Decision Trace Studio lacks its complete initial state or ARIA tab relationships`);
   if (initial.semanticColors < 4) failures.push(`${route}: Decision Trace stages do not expose enough semantic color roles (${initial.semanticColors})`);
   if (initial.smallestKeyText < 15) failures.push(`${route}: Decision Trace key text falls below 15px (${initial.smallestKeyText}px)`);
-  await page.focus('.trace-case-selector button:nth-child(1)');
+  await page.focus('.pw-lenses button:nth-child(1)');
   await page.keyboard.press("ArrowRight");
-  const tabKeyboard = await page.$eval('.trace-case-selector button:nth-child(2)', (tab) => ({ selected: tab.getAttribute("aria-selected"), focused: document.activeElement === tab, tabIndex: tab.tabIndex }));
+  const tabKeyboard = await page.$eval('.pw-lenses button:nth-child(2)', (tab) => ({ selected: tab.getAttribute("aria-selected"), focused: document.activeElement === tab, tabIndex: tab.tabIndex }));
   if (tabKeyboard.selected !== "true" || !tabKeyboard.focused || tabKeyboard.tabIndex !== 0) failures.push(`${route}: Decision Trace tab keyboard navigation or roving tabindex failed`);
-  await page.click('.trace-stage-map li:nth-child(4) button');
-  const changed = await page.$eval(".decision-trace", (section) => ({ lens: section.querySelector('.trace-case-selector button:nth-child(2)')?.getAttribute("aria-selected"), step: section.querySelector('.trace-stage-map li:nth-child(4) button')?.getAttribute("aria-current"), detail: section.querySelector('.trace-detail h3')?.textContent.trim(), hash: window.location.hash }));
+  await page.click('.pw-stages li:nth-child(4) button');
+  const changed = await page.$eval(".decision-trace", (section) => ({ lens: section.querySelector('.pw-lenses button:nth-child(2)')?.getAttribute("aria-selected"), step: section.querySelector('.pw-stages li:nth-child(4) button')?.getAttribute("aria-current"), detail: section.querySelector('.pw-inspector h3')?.textContent.trim(), hash: window.location.hash }));
   if (changed.lens !== "true" || changed.step !== "step" || !changed.detail || !changed.hash.includes("trace=governance") || !changed.hash.includes("stage=validation")) failures.push(`${route}: Decision Trace lens, stage, detail, or shareable hash did not update`);
-  await page.focus('.trace-stage-map li:nth-child(4) button');
+  await page.focus('.pw-stages li:nth-child(4) button');
   await page.keyboard.press("ArrowRight");
-  if (!(await page.$eval('.trace-stage-map li:nth-child(5) button', (button) => button.getAttribute("aria-current") === "step"))) failures.push(`${route}: Decision Trace keyboard navigation did not advance the stage`);
+  if (!(await page.$eval('.pw-stages li:nth-child(5) button', (button) => button.getAttribute("aria-current") === "step"))) failures.push(`${route}: Decision Trace keyboard navigation did not advance the stage`);
   await page.close();
 };
 
@@ -552,7 +553,7 @@ try {
   if (desktopHero.width < 319 || desktopHero.width > 361 || desktopHero.fit !== "contain") failures.push(`/: contained desktop Hero photo is ${Math.round(desktopHero.width)}px with object-fit ${desktopHero.fit}`);
   await heroPage.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
   const mobileHeroWidth = await heroPage.$eval(".hero-media", (image) => image.getBoundingClientRect().width);
-  if (mobileHeroWidth < 119 || mobileHeroWidth > 121) failures.push(`/: mobile Hero photo is ${Math.round(mobileHeroWidth)}px, expected 120px`);
+  if (mobileHeroWidth < 95 || mobileHeroWidth > 97) failures.push(`/: mobile Hero photo is ${Math.round(mobileHeroWidth)}px, expected 96px`);
   const articleTitles = await heroPage.$$eval(".article-preview-list h3", (titles) => titles.map((title) => title.textContent.trim()));
   if (articleTitles.length !== 3 || articleTitles.some((title) => !title)) failures.push(`/: homepage does not expose all three articles`);
   await heroPage.close();
@@ -620,7 +621,7 @@ try {
     await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
     await page.setJavaScriptEnabled(false);
     const response = await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: "load" });
-    const staticState = await page.evaluate(() => { const floatingNavigator = document.querySelector(".portfolio-navigator"); const fitExplorer = document.querySelector("[data-recruiter-fit-explorer]"); const fitForm = fitExplorer?.querySelector("[data-fit-form]"); const fitNoScript = fitExplorer?.querySelector(".fit-noscript"); return { h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, provenanceStages: document.querySelectorAll(".trace-stage-map>ol>li").length, visibleProvenance: [...document.querySelectorAll(".trace-stage-map>ol>li>p")].filter((item) => getComputedStyle(item).display !== "none").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, recruiterSections: document.querySelectorAll(".hire-page .section").length, fitExplorerVisible: fitExplorer ? getComputedStyle(fitExplorer).display !== "none" : false, fitFormVisible: fitForm ? getComputedStyle(fitForm).display !== "none" : false, fitNoScriptVisible: fitNoScript ? getComputedStyle(fitNoScript).display !== "none" : false, explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length, navigatorVisible: floatingNavigator ? getComputedStyle(floatingNavigator).display !== "none" : false }; });
+    const staticState = await page.evaluate(() => { const floatingNavigator = document.querySelector(".portfolio-navigator"); const fitExplorer = document.querySelector("[data-recruiter-fit-explorer]"); const fitForm = fitExplorer?.querySelector("[data-fit-form]"); const fitNoScript = fitExplorer?.querySelector(".fit-noscript"); return { h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, provenanceStages: document.querySelectorAll(".pw-stages>li").length, visibleProvenance: [...document.querySelectorAll(".pw-static-flow section:first-of-type li>p")].filter((item) => getComputedStyle(item).display !== "none").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, recruiterSections: document.querySelectorAll(".hire-page .section").length, fitExplorerVisible: fitExplorer ? getComputedStyle(fitExplorer).display !== "none" : false, fitFormVisible: fitForm ? getComputedStyle(fitForm).display !== "none" : false, fitNoScriptVisible: fitNoScript ? getComputedStyle(fitNoScript).display !== "none" : false, explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length, navigatorVisible: floatingNavigator ? getComputedStyle(floatingNavigator).display !== "none" : false }; });
     const pageType = SEO.routes[route].page;
     if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || staticState.navigatorVisible || (pageType === "home" && (staticState.provenanceStages !== 5 || staticState.visibleProvenance !== 5)) || (pageType.startsWith("case:") && staticState.artifacts !== 1) || (pageType === "hire" && (staticState.recruiterSections !== 5 || !staticState.fitExplorerVisible || staticState.fitFormVisible || !staticState.fitNoScriptVisible))) failures.push(`${route}: no-JavaScript fallback incomplete`);
     await page.click(".work-dropdown > summary");

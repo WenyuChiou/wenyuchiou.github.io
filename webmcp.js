@@ -2,6 +2,7 @@ import { FIT_ROLE_PRESETS } from "./fit-data.js";
 import { buildLocalFitReport } from "./fit-explorer.js";
 import { NAVIGATOR_INDEX } from "./navigator-data.js";
 import { rankLocally } from "./navigator.js";
+import { activateProvenance } from "./features/provenance/loader.js";
 
 const RECORDS = new Map(NAVIGATOR_INDEX.records.map((record) => [record.id, record]));
 const RECORD_IDS = [...RECORDS.keys()];
@@ -248,6 +249,8 @@ export function createPortfolioWebMcpTools({ documentRef = globalThis.document, 
         if (!Number.isInteger(input.stage) || input.stage < 1 || input.stage > 5) throw new TypeError("invalid_stage");
         options.signal?.throwIfAborted?.();
         const explorer = documentRef.querySelector("[data-provenance-explorer]");
+        if (explorer?.querySelector("[data-provenance-island]")) await activateProvenance();
+        options.signal?.throwIfAborted?.();
         const lensButton = explorer?.querySelector(`[data-provenance-lens="${input.lens}"]`);
         if (!explorer || !lensButton) throw new Error("provenance_unavailable");
         lensButton.click();

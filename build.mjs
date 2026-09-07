@@ -35,6 +35,19 @@ for (const [file, expected] of Object.entries(VENDOR_ASSETS)) {
   if (actual !== expected) throw new Error(`Vendor integrity check failed for ${file}`);
 }
 
+const provenanceBuild = await esbuild.build({
+  entryPoints: ["features/provenance/entry.jsx"],
+  bundle: true, format: "esm", outdir: "assets/provenance",
+  entryNames: "workbench-[hash]", minify: true, jsx: "automatic",
+  define: { "process.env.NODE_ENV": '"production"' }, target: "es2020",
+  legalComments: "none", metafile: true,
+});
+const provenanceFiles = Object.keys(provenanceBuild.metafile.outputs);
+const provenanceModule = "/" + provenanceFiles.find(file => file.endsWith(".js"));
+writeFileSync("assets/provenance/manifest.json", JSON.stringify({
+  js: provenanceModule, css: "/" + provenanceFiles.find(file => file.endsWith(".css")),
+}) + "\n");
+
 await esbuild.build({
   entryPoints: ["entry.jsx"],
   bundle: true,
@@ -42,7 +55,11 @@ await esbuild.build({
   outfile: "assets/app.bundle.js",
   minify: true,
   jsx: "automatic",
-  define: { "process.env.NODE_ENV": '"production"' },
+  define: { "process.env.NODE_ENV": '"production"', __PROVENANCE_MODULE__: JSON.stringify(provenanceModule) },
+  external: ["/assets/provenance/*"],
+  plugins: [{ name: "deferred-provenance", setup(build) {
+    build.onResolve({ filter: /features\/provenance\/island\.jsx$/ }, () => ({ path: path.resolve("features/provenance/client-island.jsx") }));
+  } }],
   target: "es2020",
   legalComments: "none",
 });

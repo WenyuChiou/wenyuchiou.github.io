@@ -35,6 +35,7 @@ import { CONTENT, counterpartPath, localizedPath } from "./content.js";
 import githubData from "./data/github.json";
 import updatesData from "./data/updates.json";
 import { FIT_ROLE_PRESETS } from "./fit-data.js";
+import { ProvenanceIsland } from "./features/provenance/island.jsx";
 
 const isExternal = (href) => /^(https?:)?\/\//.test(href);
 const lp = (href, locale) => (href.startsWith("/assets/") ? href : href.startsWith("/") ? localizedPath(href, locale) : href);
@@ -335,8 +336,6 @@ function OpenSource({ content, locale, compact = false }) {
   );
 }
 
-const TRACE_STAGE_IDS = ["evidence", "context", "decision", "validation", "consequence"];
-const TRACE_STAGE_ROLES = ["human", "context", "model", "validation", "system"];
 
 function SystemConsequenceMap({ flow, activeStage = 0, compact = false }) {
   const humanActive = Math.min(activeStage, 2);
@@ -369,29 +368,6 @@ function SystemConsequenceMap({ flow, activeStage = 0, compact = false }) {
   );
 }
 
-function TraceIllustration({ lens, stage, content }) {
-  const P = content.provenance;
-  if (lens === "simulation") return <SystemConsequenceMap flow={P.flow} activeStage={stage} compact />;
-  if (lens === "governance") {
-    const accepted = stage >= 3;
-    return (
-      <figure className={`trace-illustration governance-signal${accepted ? " is-accepted" : ""}`} aria-label={P.visual.governanceLabel}>
-        <ol>
-          <li className={stage >= 2 ? "is-active" : ""}><Sparkles aria-hidden="true" /><span>{P.visual.proposal}</span></li>
-          <li className={stage >= 3 ? "is-active" : ""}>{accepted ? <CircleCheckBig aria-hidden="true" /> : <CircleX aria-hidden="true" />}<span>{P.visual.validator}</span></li>
-          <li className={stage === 4 ? "is-active" : ""}><ShieldCheck aria-hidden="true" /><span>{P.visual.stateUpdate}</span></li>
-        </ol>
-      </figure>
-    );
-  }
-  return (
-    <figure className="trace-illustration comparison-signal" aria-label={P.visual.evaluationLabel}>
-      <div><span><Users aria-hidden="true" size={18} />{P.visual.measured}</span><i className="comparison-bar is-human" /></div>
-      <div><span><Sparkles aria-hidden="true" size={18} />{P.visual.generated}</span><i className={`comparison-bar is-model stage-${stage}`} /></div>
-      <figcaption><GitCompareArrows aria-hidden="true" size={17} />{P.visual.compare}</figcaption>
-    </figure>
-  );
-}
 
 function ResearchIllustration({ content }) {
   const figure = useRef(null);
@@ -424,85 +400,9 @@ function ResearchIllustration({ content }) {
   </figure>;
 }
 
-function DecisionProvenanceExplorer({ content, full = false }) {
+function DecisionProvenanceExplorer({ content }) {
   const P = content.provenance;
-  const lensIds = ["evaluation", "governance", "simulation"];
-  const [lens, setLens] = useState(full ? "simulation" : "evaluation");
-  const [stage, setStage] = useState(0);
-  const active = P.lenses[lens];
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-    const hashLens = params.get("trace");
-    const hashStage = TRACE_STAGE_IDS.indexOf(params.get("stage"));
-    if (lensIds.includes(hashLens)) setLens(hashLens);
-    if (hashStage >= 0) setStage(hashStage);
-  }, []);
-
-  const writeHash = (nextLens, nextStage) => {
-    const hash = `trace=${nextLens}&stage=${TRACE_STAGE_IDS[nextStage]}`;
-    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#${hash}`);
-  };
-  const selectLens = (next) => { setLens(next); setStage(0); writeHash(next, 0); };
-  const selectStage = (next) => { setStage(next); writeHash(lens, next); };
-  const handleStageKey = (event, index) => {
-    const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
-    let next = keys[event.key] == null ? index : Math.max(0, Math.min(4, index + keys[event.key]));
-    if (event.key === "Home") next = 0;
-    if (event.key === "End") next = 4;
-    if (![...Object.keys(keys), "Home", "End"].includes(event.key)) return;
-    event.preventDefault();
-    selectStage(next);
-    event.currentTarget.closest("ol")?.querySelectorAll("button")[next]?.focus();
-  };
-  const handleLensKey = (event, index) => {
-    const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
-    let next = keys[event.key] == null ? index : (index + keys[event.key] + lensIds.length) % lensIds.length;
-    if (event.key === "Home") next = 0;
-    if (event.key === "End") next = lensIds.length - 1;
-    if (![...Object.keys(keys), "Home", "End"].includes(event.key)) return;
-    event.preventDefault();
-    selectLens(lensIds[next]);
-    event.currentTarget.closest('[role="tablist"]')?.querySelectorAll('[role="tab"]')[next]?.focus();
-  };
-
-  return (
-    <section id="decision-provenance" className={`section provenance decision-trace${full ? " provenance-full" : ""}`} data-trace-role={active.colorRole} data-provenance-explorer aria-labelledby="provenance-title">
-      <div className="wrap">
-        <SectionHead eyebrow={P.eyebrow} title={P.title} intro={P.intro} id="provenance-title" />
-        {!full ? <ResearchIllustration content={content} /> : null}
-        <div className="trace-case-selector" role="tablist" aria-label={P.controlLabel}>{lensIds.map((id) => {
-          const TraceIcon = CASE_ROLES[P.lenses[id].caseSlug]?.Icon || Sparkles;
-          const index = lensIds.indexOf(id);
-          return <button id={`trace-tab-${id}`} key={id} type="button" role="tab" tabIndex={lens === id ? 0 : -1} data-color-role={P.lenses[id].colorRole} data-provenance-lens={id} aria-selected={lens === id} aria-controls="trace-workbench" onClick={() => selectLens(id)} onKeyDown={(event) => handleLensKey(event, index)}><TraceIcon aria-hidden="true" size={20} /><span><strong>{P.lenses[id].caseTitle}</strong><small>{P.lenses[id].label}</small></span></button>;
-        })}</div>
-        <div id="trace-workbench" className="trace-workbench" role="tabpanel" aria-labelledby={`trace-tab-${lens}`}>
-          <p className="provenance-summary" data-provenance-summary aria-live="polite">{active.summary}</p>
-          <div className="trace-stage-map">
-            <svg viewBox="0 0 1000 16" preserveAspectRatio="none" aria-hidden="true">{[0, 1, 2, 3].map((index) => <line key={index} className={stage > index ? "is-active" : ""} x1={100 + index * 200} y1="8" x2={300 + index * 200} y2="8" />)}</svg>
-            <ol aria-label={P.stageLabel}>{active.stages.map(([status, text], index) => (
-              <li data-color-role={TRACE_STAGE_ROLES[index]} className={stage === index ? "is-active" : ""} key={`${lens}-${P.stageNames[index]}`}>
-                <button type="button" data-provenance-stage={index + 1} onClick={() => selectStage(index)} onKeyDown={(event) => handleStageKey(event, index)} aria-current={stage === index ? "step" : undefined}>
-                  <span className="trace-stage-index">0{index + 1}</span><strong>{P.stageNames[index]}</strong><small>{P.statuses[status]}</small>
-                </button>
-                <p>{text}</p>
-              </li>
-            ))}</ol>
-          </div>
-          <div className="trace-inspector" data-color-role={TRACE_STAGE_ROLES[stage]} data-provenance-inspector>
-            <div className="trace-detail">
-              <p className="trace-status"><span>{P.detailLabels.status}</span><span data-provenance-status>{P.statuses[active.stages[stage][0]]}</span></p>
-              <h3 data-provenance-title>{P.stageNames[stage]}</h3>
-              <p data-provenance-description>{active.stages[stage][1]}</p>
-              <dl><div><dt>{P.detailLabels.focus}</dt><dd data-provenance-focus>{active.focus[stage]}</dd></div><div><dt>{P.detailLabels.output}</dt><dd data-provenance-output>{active.outcomes[stage]}</dd></div></dl>
-              <SmartLink className="text-link" provenanceCase href={active.caseHref} locale={content.locale}>{P.detailLabels.caseLink}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>
-            </div>
-            <TraceIllustration lens={lens} stage={stage} content={content} />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  return <section id="decision-provenance" className="section provenance decision-trace" data-provenance-explorer aria-labelledby="provenance-title"><div className="wrap"><SectionHead eyebrow={P.eyebrow} title={P.title} intro={P.intro} id="provenance-title" /><ResearchIllustration content={content} /><ProvenanceIsland content={content} /></div></section>;
 }
 
 function EvidenceSlice({ content, locale, slug }) {
@@ -556,7 +456,7 @@ function Documents({ content }) {
 
 function Contact({ content }) {
   const C = content.contact;
-  return <section id="contact" className="contact-band" aria-labelledby="contact-title"><div className="wrap contact-layout"><div><p className="eyebrow">{C.eyebrow}</p><h2 id="contact-title">{C.title}</h2><p>{C.text}</p><SmartLink className="contact-brief-link" href="/hire/" locale={content.locale}>{C.recruiterLink}<ArrowRight aria-hidden="true" size={15} /></SmartLink></div><div className="contact-actions"><a className="button button-light" href={`mailto:${C.email}`}><Mail aria-hidden="true" size={18} />{C.email}</a><p>{C.workAuth}</p><ul>{C.links.map((link) => <li key={link.href}><SmartLink href={link.href} locale={content.locale}>{link.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink></li>)}</ul></div></div></section>;
+  return <section id="contact" className="contact-band" aria-labelledby="contact-title"><div className="wrap contact-layout"><div><p className="eyebrow">{C.eyebrow}</p><h2 id="contact-title">{C.title}</h2><p>{C.text}</p><SmartLink className="contact-brief-link" href="/hire/" locale={content.locale}>{C.recruiterLink}<ArrowRight aria-hidden="true" size={15} /></SmartLink></div><div className="contact-actions"><a className="button button-light" href={`mailto:${C.email}`}><Mail aria-hidden="true" size={18} />{C.email}</a>{C.workAuth && <p>{C.workAuth}</p>}<ul>{C.links.map((link) => <li key={link.href}><SmartLink href={link.href} locale={content.locale}>{link.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink></li>)}</ul></div></div></section>;
 }
 
 function Home({ content, locale }) {
