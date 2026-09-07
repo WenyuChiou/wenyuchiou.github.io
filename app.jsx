@@ -402,7 +402,7 @@ function ResearchIllustration({ content }) {
 
 function DecisionProvenanceExplorer({ content }) {
   const P = content.provenance;
-  return <section id="decision-provenance" className="section provenance decision-trace" data-provenance-explorer aria-labelledby="provenance-title"><div className="wrap"><SectionHead eyebrow={P.eyebrow} title={P.title} intro={P.intro} id="provenance-title" /><ResearchIllustration content={content} /><ProvenanceIsland content={content} /></div></section>;
+  return <section id="decision-provenance" className="section provenance decision-trace" data-provenance-explorer aria-labelledby="provenance-title"><div className="wrap"><SectionHead eyebrow={P.eyebrow} title={P.title} intro={P.intro} id="provenance-title" /><ResearchIllustration content={content} /><ProvenanceIsland content={content} compact /></div></section>;
 }
 
 function EvidenceSlice({ content, locale, slug }) {
@@ -545,9 +545,9 @@ function GovernanceTrace({ content }) {
 }
 
 function CaseInteraction({ type, content }) {
-  if (type === "pathways") return <PathwayExplorer content={content} />;
-  if (type === "timeline") return <FloodTimeline content={content} />;
-  return <GovernanceTrace content={content} />;
+  const lens = type === "pathways" ? "evaluation" : type === "timeline" ? "simulation" : "governance";
+  const context = type === "pathways" ? <PathwayExplorer content={content} /> : type === "timeline" ? <FloodTimeline content={content} /> : <GovernanceTrace content={content} />;
+  return <><div id="decision-provenance" data-provenance-explorer><ProvenanceIsland content={content} initialLens={lens} /></div><details className="case-research-context"><summary>{content.locale === "zh-TW" ? "研究脈絡與方法" : "Research context and method"}</summary>{context}</details></>;
 }
 
 function CaseStudyPage({ content, locale, slug }) {

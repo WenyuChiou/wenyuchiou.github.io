@@ -75,6 +75,7 @@ const auditCaseControl = async (route, selector, expectedClass, resultSelector) 
   if (!response || response.status() !== 200) failures.push(`${route}: HTTP ${response?.status()}`);
   const activeTheme = await page.evaluate(() => document.documentElement.dataset.theme);
   if (activeTheme !== "dark") failures.push(`${route}: expected dark theme before axe, found ${activeTheme || "unset"}`);
+  await page.click('.case-research-context > summary');
   await page.addScriptTag({ content: axe.source });
   const axeResult = await page.evaluate(async () => window.axe.run(document, { resultTypes: ["violations"] }));
   for (const violation of axeResult.violations) failures.push(`${route}: dark-theme axe ${violation.id} (${violation.impact}) on ${violation.nodes.length} node(s)`);
@@ -284,7 +285,7 @@ const auditProvenance = async (route) => {
       stages: stages.length,
       current: section.querySelector('[aria-current="step"]')?.textContent,
       inspector: section.querySelector(".pw-inspector h3")?.textContent,
-      visual: Boolean(section.querySelector('[data-provenance-scene] svg')),
+      visual: Boolean(section.querySelector('.research-illustration')) && !section.querySelector('[data-provenance-scene]'),
       panelLabel: section.querySelector('[role="tabpanel"]')?.getAttribute("aria-labelledby"),
       semanticColors: stageColors.size,
       smallestKeyText: Math.min(...keyText.map((item) => Number.parseFloat(getComputedStyle(item).fontSize))),
@@ -371,7 +372,7 @@ const auditWebMcp = async (route, expectedToolCount) => {
   const fitDefinition = state.definitions.find(({ name }) => name === "analyze_recruiter_fit");
   if (!searchDefinition?.readOnly || searchDefinition.untrusted || !fitDefinition?.readOnly || !fitDefinition.untrusted) failures.push(`${route}: WebMCP annotations do not reflect read-only and untrusted-output boundaries`);
   const expectedCaseUrl = route.startsWith("/zh/") ? "/zh/work/wagf/" : "/work/wagf/";
-  if (expectedToolCount === 4 && (state.provenance?.lens !== "governance" || state.provenance?.stage !== 4 || !state.provenance?.title || !state.provenance?.caseUrl?.endsWith(expectedCaseUrl) || state.selectedLens !== "true" || state.selectedStage !== "step" || !state.hash.includes("trace=governance") || !state.hash.includes("stage=validation"))) failures.push(`${route}: WebMCP provenance tool did not synchronize the visible lens, stage, hash, case URL, and structured result`);
+  if (expectedToolCount === 4 && (state.provenance?.lens !== "governance" || state.provenance?.stage !== 4 || !state.provenance?.title || new URL(state.provenance.caseUrl).pathname !== expectedCaseUrl || state.selectedLens !== "true" || state.selectedStage !== "step" || !state.hash.includes("trace=governance") || !state.hash.includes("stage=validation"))) failures.push(`${route}: WebMCP provenance tool did not synchronize the visible lens, stage, hash, case URL, and structured result`);
   await page.close();
 };
 
@@ -524,6 +525,9 @@ try {
   }
   await auditWebMcp("/articles/", 3);
   await auditWebMcp("/zh/articles/", 3);
+  for (const prefix of ["", "/zh"]) for (const slug of ["human-grounded-llm-evaluation", "wagf", "floodabm"]) {
+    await auditWebMcp(`${prefix}/work/${slug}/`, 4);
+  }
   for (const route of ["/research/", "/zh/research/"]) await auditEvidenceStage(route);
   await auditPortfolioNavigator("/", "agent governance constraints", "/work/wagf/");
   await auditPortfolioNavigator("/zh/", "找洪水模型", "/zh/work/floodabm/");
@@ -610,8 +614,14 @@ try {
 
   for (const [target, source] of anchorTargets) {
     const url = new URL(target, origin);
-    const page = await openPage(url.pathname);
-    const exists = await page.evaluate((hash) => Boolean(document.getElementById(decodeURIComponent(hash.slice(1)))), url.hash);
+    const trace = new URLSearchParams(url.hash.slice(1));
+    const stage = ['evidence', 'context', 'decision', 'validation', 'consequence'].indexOf(trace.get('stage')) + 1;
+    const isTrace = ['evaluation', 'governance', 'simulation'].includes(trace.get('trace')) && stage > 0;
+    const page = await openPage(isTrace ? target : url.pathname);
+    if (isTrace) await page.waitForSelector('[data-provenance-island][data-ready="true"]');
+    const exists = await page.evaluate(({hash,isTrace,lens,stage}) => isTrace
+      ? document.querySelector(`[data-provenance-lens="${lens}"]`)?.getAttribute('aria-selected') === 'true' && document.querySelector(`[data-provenance-stage="${stage}"]`)?.getAttribute('aria-current') === 'step'
+      : Boolean(document.getElementById(decodeURIComponent(hash.slice(1)))), { hash:url.hash, isTrace, lens:trace.get('trace'), stage });
     if (!exists) failures.push(`${source}: anchor target ${target} does not exist`);
     await page.close();
   }

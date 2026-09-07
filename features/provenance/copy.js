@@ -1,5 +1,6 @@
 export const COPY = {
   en: {
+    explore: 'Explore this case',
     stages: ['Human evidence', 'Context', 'LLM proposal', 'Validation / repair', 'Consequence'], agent: 'Agent decision',
     synthetic: 'Synthetic example', pause: 'Pause scene animation', play: 'Play scene animation', reset: 'Reset scene',
     modes: { direction: 'Direction', groups: 'Subgroups', repeats: 'Stability' }, mode: 'Comparison mode',
@@ -24,6 +25,7 @@ export const COPY = {
     staticTitle: 'Decision flow and sources', publicSource: 'Research evidence', staticNotice: 'Interactive controls require JavaScript. The complete flow and sources remain below.',
   },
   'zh-TW': {
+    explore: '深入查看案例',
     stages: ['人類證據', '決策情境', 'LLM 提案', '驗證／修正', '系統後果'], agent: '代理決策',
     synthetic: '合成示例', pause: '暫停場景動畫', play: '播放場景動畫', reset: '重設場景',
     modes: { direction: '方向', groups: '群體', repeats: '穩定性' }, mode: '比較方式',

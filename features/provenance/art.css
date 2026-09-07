@@ -56,21 +56,21 @@
 .provenance-workbench .pv-blink {
   transform-box: fill-box;
   transform-origin: center;
-  animation: pv-art-blink 4.8s linear infinite;
+  animation: pv-art-blink 9.6s linear infinite;
 }
 
 .provenance-workbench .pv-scan {
-  animation: pv-art-scan 3.2s cubic-bezier(.25, 1, .5, 1) infinite;
+  animation: pv-art-scan 9.6s cubic-bezier(.25, 1, .5, 1) infinite;
 }
 
 .provenance-workbench .pv-rain {
-  animation: pv-art-rain 1.6s linear infinite;
+  animation: pv-art-rain 3.2s linear infinite;
 }
 
-.provenance-workbench .pv-rain-back { animation-delay: -.8s; }
+.provenance-workbench .pv-rain-back { animation-delay: -1.6s; }
 
 .provenance-workbench .pv-water {
-  animation: pv-art-water 2.4s linear infinite;
+  animation: pv-art-water 4.8s linear infinite;
 }
 
 .provenance-workbench .pv-validation-check,
@@ -100,10 +100,10 @@
 }
 
 @keyframes pv-art-scan {
-  0%, 100% { transform: translateY(0); opacity: 0; }
-  12% { opacity: .55; }
-  75% { transform: translateY(54px); opacity: .55; }
-  90% { transform: translateY(54px); opacity: 0; }
+  0%, 64%, 100% { transform: translateY(0); opacity: 0; }
+  68% { opacity: .4; }
+  88% { transform: translateY(54px); opacity: .4; }
+  94% { transform: translateY(54px); opacity: 0; }
 }
 
 @keyframes pv-art-rain {

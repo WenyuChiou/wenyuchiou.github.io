@@ -37,6 +37,9 @@ test('tenure constraints and fixed river hazard hold through all five stages', (
 test('hash parsing supports exact existing stages and rejects unknown values', () => {
   assert.deepEqual(readTrace('#trace=simulation&stage=decision'),{lens:'simulation',stage:2});
   assert.deepEqual(readTrace('#trace=evil&stage=bad'),{lens:'evaluation',stage:0});
+  assert.deepEqual(readTrace('', 'simulation'),{lens:'simulation',stage:0});
+  assert.deepEqual(readTrace('#trace=governance&stage=validation', 'simulation'),{lens:'governance',stage:3});
+  assert.deepEqual(readTrace('', 'bad'),{lens:'evaluation',stage:0});
 });
 test('localized workbench copy has identical keys and synthetic boundaries', () => {
   assert.deepEqual(Object.keys(COPY.en),Object.keys(COPY['zh-TW']));
@@ -57,4 +60,19 @@ test('main bundle defers workbench code and static markup remains available', ()
   assert.ok(html.includes('data-provenance-island'));
   assert.ok(html.includes('pw-static-flow'));
   assert.ok(html.includes(manifest.css));
+});
+
+test('home is compact while all bilingual cases retain full scenes and research context', () => {
+  for(const prefix of ['', 'zh/']) {
+    const home=readFileSync(`${prefix}index.html`,'utf8');
+    assert.ok(home.includes('data-compact="true"'));
+    assert.ok(!home.includes('data-provenance-scene'));
+    for(const [slug,lens] of [['human-grounded-llm-evaluation','evaluation'],['wagf','governance'],['floodabm','simulation']]) {
+      const html=readFileSync(`${prefix}work/${slug}/index.html`,'utf8');
+      assert.ok(html.includes('data-provenance-scene'));
+      assert.ok(html.includes(`data-initial-lens="${lens}"`));
+      assert.ok(html.includes('<details class="case-research-context">'));
+      assert.ok(html.includes('pw-static-flow'));
+    }
+  }
 });

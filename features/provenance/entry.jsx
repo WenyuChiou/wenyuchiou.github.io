@@ -7,5 +7,5 @@ import './art.css';
 
 export function mount(element) {
   const locale = element.dataset.locale === 'zh-TW' ? 'zh-TW' : 'en';
-  return hydrateRoot(element, <Workbench provenance={FEATURE_CONTENT[locale].provenance} locale={locale} />);
+  return hydrateRoot(element, <Workbench provenance={FEATURE_CONTENT[locale].provenance} locale={locale} compact={element.dataset.compact === 'true'} initialLens={element.dataset.initialLens} />);
 }

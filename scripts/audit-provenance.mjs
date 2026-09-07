@@ -43,6 +43,30 @@ try {
       await pause(1300);
       assert.ok(!requests.some(url=>/assets\/provenance\/.*\.js/.test(url)),'Workbench JS must not load at top of home');
       await activate(page);
+      assert.equal(await page.$('[data-provenance-scene]'),null,'Home has no second animated scene');
+      for(const lens of ['evaluation','governance','simulation']) {
+        await click(page,`[data-provenance-lens="${lens}"]`);
+        await click(page,'[data-provenance-stage="4"]');
+        const destination=await page.$eval('[data-provenance-case]',node=>node.href);
+        assert.ok(destination.endsWith(`#trace=${lens}&stage=validation`));
+        const textOverflow=await page.$eval('.provenance-workbench',root=>[...root.querySelectorAll('p,dd,strong')].filter(node=>node.clientWidth>0&&!node.closest('.sr-only,.pw-static-flow')).some(node=>node.scrollWidth>node.clientWidth+1));
+        assert.equal(textOverflow,false,`${name}: compact text overflow`);
+      }
+      await (await page.$('.provenance-workbench')).screenshot({path:path.join(out,`${name}-home.png`)});
+      await click(page,'[data-provenance-case]');
+      await page.waitForSelector('[data-provenance-island][data-ready="true"]');
+      await pause(150);
+      assert.equal(await page.$eval('.provenance-workbench',node=>node.dataset.lens),'simulation');
+      assert.equal(await page.$eval('[data-provenance-stage="4"]',node=>node.getAttribute('aria-current')),'step');
+      const destinationTop=await page.$eval('[data-provenance-island]',node=>node.getBoundingClientRect().top);
+      assert.ok(destinationTop>=0 && destinationTop<200,'Deep link scrolls to the case interaction');
+      const prefix=locale==='en'?'':'/zh';
+      for(const [slug,lens] of [['human-grounded-llm-evaluation','evaluation'],['wagf','governance'],['floodabm','simulation']]) {
+        await page.goto(`${base}${prefix}/work/${slug}/`,{waitUntil:'networkidle0'});
+        await activate(page);
+        assert.equal(await page.$eval('.provenance-workbench',node=>node.dataset.lens),lens,'Case defaults to its own lens');
+        assert.equal(await page.$eval('.case-research-context',node=>node.open),false);
+      }
       for(const lens of ['evaluation','governance','simulation']) {
         await click(page,`[data-provenance-lens="${lens}"]`);
         await click(page,'[data-scene-play]');
@@ -95,14 +119,14 @@ try {
       const accessibility=await page.evaluate(()=>axe.run(document.querySelector('.provenance-workbench'),{resultTypes:['violations']}));
       assert.deepEqual(accessibility.violations.map(v=>v.id),[],`${name}: axe`);
       assert.deepEqual(runtimeErrors,[],`${name}: runtime errors`);
-      results.push({name,views:3,layout:'pass',interactions:'pass',axe:'pass'});
+      results.push({name,views:4,layout:'pass',interactions:'pass',axe:'pass'});
       console.log(`${name}: PASS`);
     } catch(error) { errors.push(`${name}: ${error.message}`); console.error(errors.at(-1)); }
     finally { await page.close(); }
   }
 
   const page=await browser.newPage(); await page.setViewport({width:1440,height:1000});
-  await page.goto(base+'/#trace=simulation&stage=consequence',{waitUntil:'networkidle0'}); await activate(page);
+  await page.goto(base+'/work/floodabm/#trace=simulation&stage=consequence',{waitUntil:'networkidle0'}); await activate(page);
   assert.equal(await page.$eval('[data-provenance-lens="simulation"]',node=>node.getAttribute('aria-selected')),'true');
   assert.equal(await page.$eval('[data-provenance-stage="5"]',node=>node.getAttribute('aria-current')),'step');
   await page.$eval('.pw-scene',node=>node.scrollIntoView({block:'center',behavior:'instant'})); await pause(200);

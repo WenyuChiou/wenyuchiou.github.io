@@ -21,6 +21,10 @@ export function initProvenance() {
   const element = document.querySelector('[data-provenance-island]');
   if (!element) return;
   const load = () => { void activateProvenance().catch(() => {}); };
+  const trace = new URLSearchParams(window.location.hash.slice(1)).get('trace');
+  if (['evaluation', 'governance', 'simulation'].includes(trace)) {
+    void activateProvenance().then(() => element.scrollIntoView({ block: 'start', behavior: 'instant' })).catch(() => {});
+  }
   element.addEventListener('focusin', load, { once: true });
   element.addEventListener('pointerenter', load, { once: true });
   element.addEventListener('click', async event => {

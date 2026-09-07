@@ -1,11 +1,13 @@
 # Decision Provenance Workbench
 
-The lower homepage explorer uses a deferred React island. The existing robot
-cover and case-page interactions remain separate and unchanged.
+The homepage uses a compact evidence-only island below the unchanged robot
+cover. Full SVG scenes live in the existing case artifact sections, defaulting
+to their relevant lens. Original case interactions remain available under the
+native Research context and method disclosure. No second scene renders at home.
 
 ## Rendering
 
-- Server rendering uses `island.jsx` and produces the complete default scene,
+- Server rendering uses `island.jsx` and produces the appropriate preview or scene,
   five stages, evidence inspector, and all three static text flows.
 - The main build resolves that component to `client-island.jsx`, a stable
   container preserving the server HTML. It never imports workbench code.
@@ -38,6 +40,8 @@ the relevant case. No coefficients or unpublished findings are introduced.
 Local CSS loops animate only visual signals. IntersectionObserver and document
 visibility stop offscreen/background animation. Manual pause remains paused
 after re-entry and reset. Reduced motion disables all motion but not controls.
+Home has no lower-island animation. Case water/rain move more slowly; blinking
+and scanning use a 9.6-second cycle with a quiet interval between scans.
 The art derives from the existing research-header generator without modifying
 that generator or its assets. HTML carries labels; SVG remains decorative.
 

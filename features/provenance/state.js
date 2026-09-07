@@ -26,7 +26,7 @@ export function simulationState(tenure, stage) {
   return { version: 'provenance-synthetic-v1', action, hazard: 3, resources: stage === 4 ? 6 - cost : 6, applied: stage === 4, canElevate: false };
 }
 
-export function readTrace(hash) {
+export function readTrace(hash, fallbackLens = 'evaluation') {
   const params = new URLSearchParams(hash.replace(/^#/, ''));
-  return { lens: LENSES.includes(params.get('trace')) ? params.get('trace') : 'evaluation', stage: Math.max(0, STAGES.indexOf(params.get('stage'))) };
+  return { lens: LENSES.includes(params.get('trace')) ? params.get('trace') : LENSES.includes(fallbackLens) ? fallbackLens : 'evaluation', stage: Math.max(0, STAGES.indexOf(params.get('stage'))) };
 }

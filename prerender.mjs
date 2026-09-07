@@ -77,7 +77,7 @@ function contentSecurityPolicy(headExtra) {
 
 function extraHead(meta) {
   const parts = [];
-  if (meta.page === "home") {
+  if (meta.page === "home" || meta.page.startsWith("case:")) {
     const assets = JSON.parse(readFileSync(path.join(ROOT, "assets/provenance/manifest.json"), "utf8"));
     parts.push(`<link rel="stylesheet" href="${assets.css}">`);
   }
