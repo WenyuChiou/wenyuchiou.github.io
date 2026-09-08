@@ -7,7 +7,7 @@ Checked: 2026-08-23. Owner-approved facts override older public profiles.
 | Wenyu Chiou / 邱文昱 | Verified and public | NCU Institutional Repository thesis record | High; Chinese characters verified against institutional record |
 | Ph.D. candidate, Civil & Environmental Engineering, Lehigh University | Verified and public | Lehigh CMR profile; owner CV | High |
 | Expected graduation: December 2027 | Verified but owner-supplied | Owner decision, 2026-08-23 | High; replaces public 2028 references |
-| F-1 student; CPT eligible | Verified but private/owner-supplied | Owner CV | High; publish on career surfaces |
+| CPT eligibility claim | Withdrawn from website copy and AI evidence | Owner instruction, 2026-09-07 | Do not publish or infer eligibility; existing PDF content is outside this correction |
 | Primary email: wec324@lehigh.edu | Verified and public | Current site, CV, owner decision | High; other emails excluded from career surfaces |
 | Human evidence: 937 household profiles/responses | Verified and owner-approved | Owner decision; survey/CV records | High; use 937 consistently |
 | LLM repeated-run design: 10 runs | Verified but publication-limited | Master prompt | Do not publish until manuscript/CV approval explicitly covers it |

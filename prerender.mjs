@@ -77,6 +77,10 @@ function contentSecurityPolicy(headExtra) {
 
 function extraHead(meta) {
   const parts = [];
+  if (meta.page === "home" || meta.page.startsWith("case:")) {
+    const assets = JSON.parse(readFileSync(path.join(ROOT, "assets/provenance/manifest.json"), "utf8"));
+    parts.push(`<link rel="stylesheet" href="${assets.css}">`);
+  }
   if (meta.page === "home") {
     parts.push('<link rel="preload" href="/assets/agu2025-photo-mobile.webp" as="image" type="image/webp" media="(max-width:620px)" fetchpriority="high">');
     parts.push('<link rel="preload" href="/assets/agu2025-photo.webp" as="image" type="image/webp" media="(min-width:621px)" imagesrcset="/assets/agu2025-photo-tablet.webp 828w, /assets/agu2025-photo.webp 1108w" imagesizes="100vw" fetchpriority="high">');

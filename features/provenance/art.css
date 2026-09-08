@@ -1,0 +1,127 @@
+.provenance-workbench .pv-art {
+  --pa-bg: var(--art-bg, #f6f8f7);
+  --pa-muted: var(--art-muted, #536467);
+  --pa-paper: var(--art-paper, #fbfcfa);
+  --pa-shade: var(--art-shade, #d8e1de);
+  --pa-metal: var(--art-metal, #bac8c7);
+  --pa-edge: var(--art-edge, #52686b);
+  --pa-screen: var(--art-screen, #243537);
+  --pa-eyes: var(--art-eyes, #95dbca);
+  --pa-human: var(--art-human, #176e67);
+  --pa-human-soft: var(--art-human-soft, #cee6df);
+  --pa-proposal: var(--art-proposal, #70496d);
+  --pa-proposal-soft: var(--art-proposal-soft, #e6dce8);
+  --pa-check: var(--art-check, #826019);
+  --pa-check-soft: var(--art-check-soft, #efe5c6);
+  --pa-coral: var(--art-coral, #ae483e);
+  --pa-coral-soft: var(--art-coral-soft, #f6dfd8);
+  --pa-water: var(--art-water, #286f99);
+  --pa-water-soft: var(--art-water-soft, #a3ccde);
+  --pa-land: var(--art-land, #dbe5cf);
+  --pa-hill: var(--art-hill, #bdcdae);
+  --pa-green: var(--art-green, #466d51);
+  fill: none;
+  stroke: var(--pa-edge);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+:root[data-theme='dark'] .provenance-workbench .pv-art,
+.provenance-workbench[data-theme='dark'] .pv-art {
+  --pa-bg: var(--art-bg, #171e20);
+  --pa-muted: var(--art-muted, #b8c8c5);
+  --pa-paper: var(--art-paper, #d7dfdc);
+  --pa-shade: var(--art-shade, #889e9c);
+  --pa-metal: var(--art-metal, #728988);
+  --pa-edge: var(--art-edge, #acc0bc);
+  --pa-screen: var(--art-screen, #233435);
+  --pa-eyes: var(--art-eyes, #a7e0cb);
+  --pa-human: var(--art-human, #83cbbb);
+  --pa-human-soft: var(--art-human-soft, #264d47);
+  --pa-proposal: var(--art-proposal, #d3b2d2);
+  --pa-proposal-soft: var(--art-proposal-soft, #493b4d);
+  --pa-check: var(--art-check, #dfc173);
+  --pa-check-soft: var(--art-check-soft, #544d35);
+  --pa-coral: var(--art-coral, #f0a496);
+  --pa-coral-soft: var(--art-coral-soft, #623f39);
+  --pa-water: var(--art-water, #95c7e1);
+  --pa-water-soft: var(--art-water-soft, #397999);
+  --pa-land: var(--art-land, #58735a);
+  --pa-hill: var(--art-hill, #75936c);
+  --pa-green: var(--art-green, #c0d4a9);
+}
+
+.provenance-workbench .pv-blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pv-art-blink 9.6s linear infinite;
+}
+
+.provenance-workbench .pv-scan {
+  animation: pv-art-scan 9.6s cubic-bezier(.25, 1, .5, 1) infinite;
+}
+
+.provenance-workbench .pv-rain {
+  animation: pv-art-rain 3.2s linear infinite;
+}
+
+.provenance-workbench .pv-rain-back { animation-delay: -1.6s; }
+
+.provenance-workbench .pv-water {
+  animation: pv-art-water 4.8s linear infinite;
+}
+
+.provenance-workbench .pv-validation-check,
+.provenance-workbench .pv-validation-cross,
+.provenance-workbench .pv-status-light {
+  transition: opacity 240ms cubic-bezier(.25, 1, .5, 1), fill 240ms cubic-bezier(.25, 1, .5, 1);
+}
+
+.provenance-workbench .pv-validation-check { opacity: 0; }
+.provenance-workbench .pv-validation-cross { opacity: 1; }
+.provenance-workbench .pv-status-light { fill: var(--pa-coral); }
+.provenance-workbench .pv-validator[data-accepted='true'] .pv-validation-check { opacity: 1; }
+.provenance-workbench .pv-validator[data-accepted='true'] .pv-validation-cross { opacity: 0; }
+.provenance-workbench .pv-validator[data-accepted='true'] .pv-status-light { fill: var(--pa-human); }
+.provenance-workbench .pv-validator [data-check='true'] .pv-validation-check { opacity:1; }
+.provenance-workbench .pv-validator [data-check='true'] .pv-validation-cross { opacity:0; }
+.provenance-workbench .pv-validator [data-check='false'] .pv-validation-check { opacity:0; }
+.provenance-workbench .pv-validator [data-check='false'] .pv-validation-cross { opacity:1; }
+
+.provenance-workbench[data-running='false'] .pv-art .pv-motion {
+  animation-play-state: paused;
+}
+
+@keyframes pv-art-blink {
+  0%, 42%, 46%, 100% { transform: scaleY(1); }
+  44% { transform: scaleY(.12); }
+}
+
+@keyframes pv-art-scan {
+  0%, 64%, 100% { transform: translateY(0); opacity: 0; }
+  68% { opacity: .4; }
+  88% { transform: translateY(54px); opacity: .4; }
+  94% { transform: translateY(54px); opacity: 0; }
+}
+
+@keyframes pv-art-rain {
+  0%, 100% { transform: translate(0, 0); opacity: 0; }
+  15% { opacity: .85; }
+  80% { transform: translate(-9px, 23px); opacity: .85; }
+  99% { transform: translate(-12px, 30px); opacity: 0; }
+}
+
+/* One complete dash period makes the water loop visually seamless. */
+@keyframes pv-art-water {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -20; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .provenance-workbench .pv-art .pv-motion { animation: none; }
+  .provenance-workbench .pv-art .pv-validation-check,
+  .provenance-workbench .pv-art .pv-validation-cross,
+  .provenance-workbench .pv-art .pv-status-light { transition: none; }
+}

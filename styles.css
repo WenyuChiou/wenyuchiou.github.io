@@ -173,7 +173,7 @@ ul,ol{margin:0;padding:0}
 .hero-work-link{min-height:44px;display:inline-flex;align-items:center;gap:7px;margin-top:7px;color:#cfe3dd;font-size:13px;font-weight:700;text-decoration:none;transition:color .15s var(--ease-out-quint),transform .15s var(--ease-out-quint)}
 .hero-work-link:hover,.hero-work-link:focus-visible{color:#fff;transform:translateX(3px)}
 .hero-meta{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:22px}
-.hero-capabilities{display:flex;flex-wrap:wrap;gap:8px 18px;list-style:none;margin-top:22px;padding-top:17px;border-top:1px solid rgba(255,255,255,.24);color:#cbd8d3;font-size:12px}
+.hero-capabilities{display:flex;flex-wrap:wrap;gap:8px 18px;list-style:none;margin-top:22px;padding-top:17px;border-top:1px solid rgba(255,255,255,.24);color:#cbd8d3;font-size:14px}
 .hero-capabilities li{position:relative;padding-left:13px}
 .hero-capabilities li:before{position:absolute;left:0;top:.65em;width:4px;height:4px;border-radius:50%;background:#83d3cb;content:""}
 .hero-socials{display:flex;flex:0 0 auto;gap:7px;list-style:none}
@@ -183,7 +183,7 @@ ul,ol{margin:0;padding:0}
 .hero-availability{max-width:620px;color:#f3f7f5;font-size:14px}
 .hero-figure{width:100%;margin:0;justify-self:end}
 .hero-media{width:100%;height:auto;aspect-ratio:1108/1477;display:block;object-fit:contain;border:1px solid rgba(255,255,255,.2)}
-.hero-caption{margin-top:10px;color:#b8c9c3;font-size:11px;line-height:1.45}
+.hero-caption{margin-top:10px;color:#b8c9c3;font-size:14px;line-height:1.5}
 
 .expertise{background:var(--paper)}
 .expertise-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:76px;border-top:1px solid var(--line-strong)}
@@ -642,26 +642,33 @@ ul,ol{margin:0;padding:0}
   .hire-evidence-list dl{gap:20px 28px}
 }
 
+@media (max-width:380px){
+  .header-inner .brand-mark{display:none}
+}
+
 @media (min-width:621px) and (max-width:768px){
   .hero-content{grid-template-columns:minmax(0,1fr) 150px;align-items:start;gap:12px 28px;padding-top:18px;padding-bottom:10px}
   .hero-copy{display:contents}
   .hero-eyebrow{grid-column:1;grid-row:1;align-self:end;margin-bottom:8px}
   .hero h1{grid-column:1;grid-row:2;align-self:start;font-size:46px}
   .hero-figure{grid-column:2;grid-row:1/3;width:150px}
+  .hero-media{width:120px;margin-inline:auto}
   .hero-headline{grid-column:1/-1;grid-row:3;margin-top:7px;font-size:25px}
   .hero-intro{grid-column:1/-1;grid-row:4;margin-top:12px;font-size:16px}
   .hero-actions{grid-column:1/-1;grid-row:5;margin-top:12px}
   .hero-work-link{grid-column:1/-1;grid-row:6}
   .hero-meta{grid-column:1/-1;grid-row:7;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:14px;margin-top:8px}
-  .hero-availability{font-size:12px}
-  .hero-caption{font-size:9px}
+  .hero-availability{font-size:14px;line-height:1.55}
+  .hero-caption{font-size:14px}
 }
 
 @media (max-width:620px){
   :root:lang(zh-Hant-TW) #root[data-page]{--display:"Songti TC","PMingLiU",serif;--body:"PingFang TC","Microsoft JhengHei",sans-serif;font-family:var(--body)}
   body{font-size:16px}
   .wrap{width:calc(100% - 28px)}
-  .header-inner{width:calc(100% - 22px);height:62px}
+  .header-inner{width:calc(100% - 22px);height:62px;gap:8px}
+  .header-inner .brand{min-width:0;min-height:44px;gap:8px;white-space:normal;line-height:1.25}
+  .header-inner .brand-mark,.header-inner .menu-button{flex:0 0 auto}
   .primary-nav{top:62px}
   .brand{font-size:14px}
   .brand-mark{width:32px;height:32px}
@@ -672,26 +679,26 @@ ul,ol{margin:0;padding:0}
   .section-head h2,.documents h2,.contact-layout h2,.two-column h2{font-size:36px}
   .section-intro{font-size:17px}
   .hero{min-height:0;background:#10201b}
-  .hero-content{grid-template-columns:minmax(0,1fr) 120px;align-items:start;gap:10px 18px;padding-top:18px;padding-bottom:10px}
+  .hero-content{grid-template-columns:minmax(0,1fr) 96px;align-items:start;gap:16px;padding-top:20px;padding-bottom:24px}
   .hero-copy{display:contents}
-  .hero-figure{grid-column:2;grid-row:1/3;width:120px}
-  .hero-media{width:120px;height:auto;object-fit:contain}
-  .hero-eyebrow{margin-bottom:10px;font-size:12px}
+  .hero-figure{grid-column:2;grid-row:1/3;width:96px;align-self:center}
+  .hero-media{width:96px;height:auto;object-fit:contain}
+  .hero-eyebrow{margin-bottom:0;font-size:14px;line-height:1.5}
   .hero-eyebrow{grid-column:1;grid-row:1;align-self:end}
-  .hero h1{font-size:38px}
+  .hero h1{font-size:30px;line-height:1.2;text-wrap:balance}
   .hero h1{grid-column:1;grid-row:2;align-self:start}
-  .hero-headline{margin-top:5px;font-size:21px;line-height:1.14}
+  .hero-headline{margin-top:4px;font-size:22px;line-height:1.35}
   .hero-headline{grid-column:1/-1;grid-row:3}
-  .hero-intro{margin-top:9px;font-size:14px;line-height:1.4}
+  .hero-intro{margin-top:0;font-size:16px;line-height:1.6}
   .hero-intro{grid-column:1/-1;grid-row:4}
   .hero-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
   .hero-actions{grid-column:1/-1;grid-row:5}
   .hero-actions .button{width:100%;height:100%;white-space:normal;text-align:center;line-height:1.25}
   .hero-actions{gap:8px;margin-top:10px}
-  .hero-actions .button{min-height:44px;padding:8px 12px;font-size:13px}
+  .hero-actions .button{min-height:48px;padding:10px 12px;font-size:14px}
   .hero-work-link{grid-column:1/-1;grid-row:6;margin-top:0}
-  .hero-meta{grid-column:1/-1;grid-row:7;display:grid;grid-template-columns:1fr;gap:4px;margin-top:3px}
-  .hero-availability{font-size:11px;line-height:1.4}
+  .hero-meta{grid-column:1/-1;grid-row:7;display:grid;grid-template-columns:1fr;gap:12px;margin-top:0}
+  .hero-availability{font-size:14px;line-height:1.55}
   .hero-caption{display:none}
   .expertise-primary h3{font-size:31px}
   .expertise-primary>p:last-child{font-size:17px}
@@ -850,6 +857,7 @@ ul,ol{margin:0;padding:0}
 .eyebrow,.section-label,.status-label,.record-year,.hire-number{font-size:.8125rem}
 .hero-capabilities,.flagship-meta,.stage-number,.stage-evidence dt,.stage-relevance span,.hire-evidence-list header p,.hire-evidence-list dt,.hire-skills dt,.case-status,.breadcrumbs ol{font-size:.8125rem}
 .hero-caption,.hire-hero figcaption,.about-layout figcaption,.article-diagram figcaption,.data-note,.site-footer p{font-size:.75rem}
+.hero-caption,.hero-capabilities{font-size:.875rem}
 .work-dropdown-project small,.flagship-capability-preview,.flagship-contribution ul,.artifact-note,.navigator-feedback,.navigator-privacy{font-size:.8125rem}
 .primary-nav>ul>li>a,.work-dropdown>summary,.button,.text-link,.card-link{font-size:.9375rem}
 
@@ -1148,6 +1156,12 @@ html:not(.js) [data-fit-form],html:not(.js) .fit-analysis-status{display:none}
   .hero-headline{margin-top:12px}
   .hero-intro,.hero-capabilities{margin-top:14px}
   .hero-actions{margin-top:18px}
+}
+
+@media (max-width:768px){
+  .hero-content{row-gap:8px;padding-top:16px;padding-bottom:16px}
+  .hero-headline,.hero-intro,.hero-actions{margin-top:0}
+  .hero-actions .button{gap:6px;padding:8px}
 }
 
 @media (max-width:760px){

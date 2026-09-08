@@ -57,13 +57,13 @@ export const NAVIGATOR_INDEX = {
       href: "/hire/",
       title: { en: "Recruiter brief · LLM Evaluation & AI Research", "zh-TW": "招聘摘要 · LLM 評估與 AI 研究" },
       summary: {
-        en: "Role fit, verified capabilities, project evidence, Summer 2027 availability, work authorization, resume, and contact.",
-        "zh-TW": "職位匹配、可驗證能力、專案證據、2027 年暑期可任職時間、工作授權、履歷與聯絡方式。",
+        en: "Role fit, verified capabilities, project evidence, Summer 2027 availability, resume, and contact.",
+        "zh-TW": "職位匹配、可驗證能力、專案證據、2027 年暑期可任職時間、履歷與聯絡方式。",
       },
-      semantic: "Recruiter hiring profile for Wenyu Chiou as an LLM Evaluation and AI Research Engineer. Human grounded subgroup aware stability aware evaluation, governed agent systems, LangChain, Model Context Protocol, Retrieval-Augmented Generation, Agent Skills, plugin architectures, Codex, Claude Code, Python, R, MATLAB, structural equation modeling, Bayesian calibration, agent-based modeling, hydrological modeling, sociohydrological modeling, AI for science, Summer 2027 internship, December 2027 graduation, F-1 CPT, resume and contact.",
+      semantic: "Recruiter hiring profile for Wenyu Chiou as an LLM Evaluation and AI Research Engineer. Human grounded subgroup aware stability aware evaluation, governed agent systems, LangChain, Model Context Protocol, Retrieval-Augmented Generation, Agent Skills, plugin architectures, Codex, Claude Code, Python, R, MATLAB, structural equation modeling, Bayesian calibration, agent-based modeling, hydrological modeling, sociohydrological modeling, AI for science, Summer 2027 internship, December 2027 graduation, resume and contact.",
       keywords: {
-        en: ["recruiter", "hire", "role fit", "AI Research Engineer", "LLM Evaluation Engineer", "LangChain", "MCP", "RAG", "Agent Skills", "plugins", "Codex", "Claude Code", "MATLAB", "hydrological modeling", "internship", "resume", "CPT", "availability"],
-        "zh-TW": ["招聘", "職位匹配", "AI Research Engineer", "LLM Evaluation", "LangChain", "模型上下文協定", "檢索增強生成", "代理技能", "外掛", "Codex", "Claude Code", "MATLAB", "結構方程模型", "貝葉斯校準", "代理人基礎模型", "水文建模", "社會水文建模", "實習", "履歷", "CPT", "可任職時間"],
+        en: ["recruiter", "hire", "role fit", "AI Research Engineer", "LLM Evaluation Engineer", "LangChain", "MCP", "RAG", "Agent Skills", "plugins", "Codex", "Claude Code", "MATLAB", "hydrological modeling", "internship", "resume", "availability"],
+        "zh-TW": ["招聘", "職位匹配", "AI Research Engineer", "LLM Evaluation", "LangChain", "模型上下文協定", "檢索增強生成", "代理技能", "外掛", "Codex", "Claude Code", "MATLAB", "結構方程模型", "貝葉斯校準", "代理人基礎模型", "水文建模", "社會水文建模", "實習", "履歷", "可任職時間"],
       },
     },
     {
@@ -219,10 +219,10 @@ export const NAVIGATOR_INDEX = {
         en: "Summer 2027 internship availability, email, LinkedIn, GitHub, Scholar, and ORCID.",
         "zh-TW": "2027 年暑期實習時間、電子郵件、LinkedIn、GitHub、Scholar 與 ORCID。",
       },
-      semantic: "Contact Wenyu for a Summer 2027 internship in LLM evaluation, agent systems, behavioral simulation, or AI for science. Email, LinkedIn, GitHub, Google Scholar, ORCID, F-1 CPT eligible.",
+      semantic: "Contact Wenyu for a Summer 2027 internship in LLM evaluation, agent systems, behavioral simulation, or AI for science. Email, LinkedIn, GitHub, Google Scholar, ORCID.",
       keywords: {
-        en: ["contact", "email", "internship", "Summer 2027", "CPT", "LinkedIn", "availability"],
-        "zh-TW": ["聯絡", "電子郵件", "實習", "2027 暑期", "CPT", "LinkedIn", "時間"],
+        en: ["contact", "email", "internship", "Summer 2027", "LinkedIn", "availability"],
+        "zh-TW": ["聯絡", "電子郵件", "實習", "2027 暑期", "LinkedIn", "時間"],
       },
     },
   ],
