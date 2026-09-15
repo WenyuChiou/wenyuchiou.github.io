@@ -33,6 +33,7 @@ const banned = [
   /\breproduc(?:e|es|ed|ing|tion)\b/giu,
   /stand in for real people|human[- ]equivalent|validated human substitute/giu,
   /expected 2028|May 2027|\b5K\+|700\+ forks/giu,
+  /\bCPT\b|Curricular Practical Training/giu,
   /\b(?:redefining|revolutionizing|at the forefront|unlocking|cutting-edge)\b/giu,
   /wenyuchiou12/giu,
 ];
