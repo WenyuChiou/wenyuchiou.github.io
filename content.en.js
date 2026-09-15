@@ -469,9 +469,9 @@ export const EN = {
     title: "Documents",
     intro: "Choose the document for the context. The website keeps one identity; the PDFs change emphasis for the reader.",
     items: [
-      { label: "Industry resume · English", href: "/assets/Wenyu_Chiou_Industry_Resume_EN.pdf", type: "PDF" },
+      { label: "AI research resume · English", href: "/assets/Wenyu_Chiou_AI_Research_Resume.pdf", type: "PDF" },
       { label: "Industry resume · 繁中", href: "/assets/Wenyu_Chiou_Industry_Resume_zh-TW.pdf", type: "PDF" },
-      { label: "Academic CV · English", href: "/assets/Wenyu_Chiou_Academic_CV_EN.pdf", type: "PDF" },
+      { label: "Academic CV · English", href: "/assets/Wenyu_Chiou_Academic_CV.pdf", type: "PDF" },
       { label: "Academic CV · 繁中", href: "/assets/Wenyu_Chiou_Academic_CV_zh-TW.pdf", type: "PDF" },
     ],
   },

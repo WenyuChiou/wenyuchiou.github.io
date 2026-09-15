@@ -469,9 +469,9 @@ export const ZH_TW = {
     title: "文件",
     intro: "請依據您的情境選擇文件。網站保持統一的定位；而 PDF 則針對不同讀者調整重點。",
     items: [
-      { label: "業界履歷 · 英文", href: "/assets/Wenyu_Chiou_Industry_Resume_EN.pdf", type: "PDF" },
+      { label: "AI 研究履歷 · 英文", href: "/assets/Wenyu_Chiou_AI_Research_Resume.pdf", type: "PDF" },
       { label: "業界履歷 · 繁中", href: "/assets/Wenyu_Chiou_Industry_Resume_zh-TW.pdf", type: "PDF" },
-      { label: "學術 CV · 英文", href: "/assets/Wenyu_Chiou_Academic_CV_EN.pdf", type: "PDF" },
+      { label: "學術 CV · 英文", href: "/assets/Wenyu_Chiou_Academic_CV.pdf", type: "PDF" },
       { label: "學術 CV · 繁中", href: "/assets/Wenyu_Chiou_Academic_CV_zh-TW.pdf", type: "PDF" },
     ],
   },

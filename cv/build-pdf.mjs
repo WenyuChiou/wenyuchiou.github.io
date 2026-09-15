@@ -74,6 +74,4 @@ try {
   await browser.close();
 }
 
-fs.copyFileSync(path.join(outDir, "Wenyu_Chiou_Academic_CV_EN.pdf"), path.join(outDir, "Wenyu_Chiou_Academic_CV.pdf"));
-fs.copyFileSync(path.join(outDir, "Wenyu_Chiou_Industry_Resume_EN.pdf"), path.join(outDir, "Wenyu_Chiou_AI_Research_Resume.pdf"));
-console.log("Legacy PDF aliases updated.");
+console.log("Generated bilingual CV set; curated English PDFs remain unchanged.");
