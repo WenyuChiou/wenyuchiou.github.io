@@ -79,21 +79,38 @@ const pdfFiles = [
   "assets/Wenyu_Chiou_Industry_Resume_zh-TW.pdf",
   "assets/Wenyu_Chiou_Academic_CV_EN.pdf",
   "assets/Wenyu_Chiou_Academic_CV_zh-TW.pdf",
+  "assets/Wenyu_Chiou_Academic_CV.pdf",
+  "assets/Wenyu_Chiou_AI_Research_Resume.pdf",
 ];
+// Remove only the approved research-question wording before applying the
+// affirmative reproduction-claim rule to the rest of each document.
+const pdfAllowedQuestions = new Map([
+  ["assets/Wenyu_Chiou_Academic_CV.pdf", [
+    /evaluate\s+whether\s+large\s+language\s+models\s+\(LLMs\)\s+reproduce\s+empirically\s+observed\s+response\s+distributions\s+and\s+decision-making\s+relationships/giu,
+  ]],
+  ["assets/Wenyu_Chiou_AI_Research_Resume.pdf", [
+    /testing\s+whether\s+large\s+language\s+models\s+\(LLMs\)\s+reproduce\s+real\s+people's\s+response\s+patterns\s+and\s+decision-making\s+relationships/giu,
+  ]],
+]);
+for (const file of pdfFiles) {
+  if (!existsSync(file) && requirePdfs) failures.push(`${file}: missing`);
+}
 const pdfTool = spawnSync("pdftotext", ["-v"], { encoding: "utf8" });
 if (!pdfTool.error) {
   for (const file of pdfFiles) {
     if (!existsSync(file)) {
-      if (requirePdfs) failures.push(`${file}: missing`);
-      else console.warn(`check-copy: ${file} not generated yet; PDF scan deferred`);
+      if (!requirePdfs) console.warn(`check-copy: ${file} not generated yet; PDF scan deferred`);
       continue;
     }
     const result = spawnSync("pdftotext", [file, "-"], { encoding: "utf8" });
     if (result.status !== 0) failures.push(`${file}: pdftotext failed`);
     else {
       for (const rule of banned.slice(0, 7)) {
+        const checkedText = rule.name === "human-comparison-reproduce"
+          ? (pdfAllowedQuestions.get(file) || []).reduce((text, pattern) => text.replace(pattern, ""), result.stdout)
+          : result.stdout;
         rule.pattern.lastIndex = 0;
-        const match = rule.pattern.exec(result.stdout);
+        const match = rule.pattern.exec(checkedText);
         if (match) failures.push(`${file}: ${rule.name}: ${match[0]}`);
       }
     }
