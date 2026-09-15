@@ -17,6 +17,7 @@ const banned = [
   { name: "inflated-ai-copy", pattern: /\b(?:redefining|revolutionizing|at the forefront|unlocking|cutting-edge)\b/giu },
   { name: "stale-year", pattern: /expected 2028|expected 2027(?![^\n]{0,20}December)|May 2027/giu },
   { name: "stale-scale", pattern: /\b5K\+|700\+ forks|6\.1K\+/giu },
+  { name: "withdrawn-cpt", pattern: /\bCPT\b|Curricular Practical Training/giu },
   { name: "private-email", pattern: /wenyuchiou12/giu },
   { name: "placeholder", pattern: /\[CONFIRM|\{\{[A-Z_]+\}\}/gu },
 ];
@@ -105,7 +106,7 @@ if (!pdfTool.error) {
     const result = spawnSync("pdftotext", [file, "-"], { encoding: "utf8" });
     if (result.status !== 0) failures.push(`${file}: pdftotext failed`);
     else {
-      for (const rule of banned.slice(0, 7)) {
+      for (const rule of banned.slice(0, 8)) {
         const checkedText = rule.name === "human-comparison-reproduce"
           ? (pdfAllowedQuestions.get(file) || []).reduce((text, pattern) => text.replace(pattern, ""), result.stdout)
           : result.stdout;
