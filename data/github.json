@@ -1,30 +1,30 @@
 {
-  "checkedAt": "2026-09-20T13:35:46.101Z",
+  "checkedAt": "2026-09-21T15:54:45.873Z",
   "owner": "WenyuChiou",
   "repositories": {
     "awesome-agentic-ai-zh": {
-      "stars": 7107,
-      "forks": 964,
+      "stars": 7126,
+      "forks": 968,
       "url": "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
       "previewUrl": "/assets/github/awesome-agentic-ai-zh.webp",
       "previewSourceUrl": "https://repository-images.githubusercontent.com/1229284184/6b2714ee-67ae-493d-a8ab-581370d76fd8"
     },
     "ai-research-skills": {
-      "stars": 272,
-      "forks": 17,
+      "stars": 283,
+      "forks": 19,
       "url": "https://github.com/WenyuChiou/ai-research-skills",
       "previewUrl": "/assets/github/ai-research-skills.webp",
       "previewSourceUrl": "https://repository-images.githubusercontent.com/1221061473/058c3873-5b00-409c-a859-f84f2f786a6c"
     },
     "research-hub": {
       "stars": 55,
-      "forks": 9,
+      "forks": 10,
       "url": "https://github.com/WenyuChiou/research-hub",
       "previewUrl": null,
       "previewSourceUrl": null
     },
     "agent-collab-skills": {
-      "stars": 28,
+      "stars": 29,
       "forks": 6,
       "url": "https://github.com/WenyuChiou/agent-collab-skills",
       "previewUrl": "/assets/github/agent-collab-skills.webp",
