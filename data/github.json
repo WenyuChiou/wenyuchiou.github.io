@@ -1,10 +1,10 @@
 {
-  "checkedAt": "2026-09-29T15:53:32.128Z",
+  "checkedAt": "2026-09-30T15:56:10.577Z",
   "owner": "WenyuChiou",
   "repositories": {
     "awesome-agentic-ai-zh": {
-      "stars": 7218,
-      "forks": 977,
+      "stars": 7232,
+      "forks": 978,
       "url": "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
       "previewUrl": "/assets/github/awesome-agentic-ai-zh.webp",
       "previewSourceUrl": "https://repository-images.githubusercontent.com/1229284184/6b2714ee-67ae-493d-a8ab-581370d76fd8"
@@ -17,14 +17,14 @@
       "previewSourceUrl": "https://repository-images.githubusercontent.com/1221061473/058c3873-5b00-409c-a859-f84f2f786a6c"
     },
     "research-hub": {
-      "stars": 58,
+      "stars": 59,
       "forks": 10,
       "url": "https://github.com/WenyuChiou/research-hub",
       "previewUrl": null,
       "previewSourceUrl": null
     },
     "agent-collab-skills": {
-      "stars": 29,
+      "stars": 28,
       "forks": 6,
       "url": "https://github.com/WenyuChiou/agent-collab-skills",
       "previewUrl": "/assets/github/agent-collab-skills.webp",
