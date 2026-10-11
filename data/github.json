@@ -1,16 +1,16 @@
 {
-  "checkedAt": "2026-10-10T15:23:43.967Z",
+  "checkedAt": "2026-10-11T15:42:38.011Z",
   "owner": "WenyuChiou",
   "repositories": {
     "awesome-agentic-ai-zh": {
-      "stars": 7450,
-      "forks": 992,
+      "stars": 7498,
+      "forks": 996,
       "url": "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
       "previewUrl": "/assets/github/awesome-agentic-ai-zh.webp",
       "previewSourceUrl": "https://repository-images.githubusercontent.com/1229284184/6b2714ee-67ae-493d-a8ab-581370d76fd8"
     },
     "ai-research-skills": {
-      "stars": 311,
+      "stars": 312,
       "forks": 21,
       "url": "https://github.com/WenyuChiou/ai-research-skills",
       "previewUrl": "/assets/github/ai-research-skills.webp",
@@ -31,7 +31,7 @@
       "previewSourceUrl": "https://repository-images.githubusercontent.com/1223161782/c6660473-67cb-4271-89b7-80c1db702131"
     },
     "codex-delegate": {
-      "stars": 62,
+      "stars": 61,
       "forks": 6,
       "url": "https://github.com/WenyuChiou/codex-delegate",
       "previewUrl": null,
