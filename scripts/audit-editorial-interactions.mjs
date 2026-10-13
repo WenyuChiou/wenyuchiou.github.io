@@ -10,7 +10,7 @@ export async function auditEditorialInteractions(browser, origin) {
     for (const width of [360, 390, 768, 1440]) for (const theme of ["light", "dark"]) for (const reduced of [false, true]) {
       const page = await context.newPage();
       try {
-        await page.setViewport({ width, height: 900 });
+        await page.setViewport({ width, height: 900, deviceScaleFactor: 1 });
         await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: reduced ? "reduce" : "no-preference" }]);
         await page.evaluateOnNewDocument(value => localStorage.setItem("wy-theme", value), theme);
         await page.goto(origin + locale + "/", { waitUntil: "load" });
@@ -40,20 +40,31 @@ export async function auditEditorialInteractions(browser, origin) {
           await new Promise(resolve => setTimeout(resolve, 320));
           const artworks = await page.$$("[data-provenance-signature] svg");
           assert.equal(artworks.length, 3, 'all three animated artifacts are covered');
-          const offset = await page.evaluate(() => ({ x: scrollX, y: scrollY }));
+          const animationTimes = () => page.$eval('[data-provenance-signature]', node => node.getAnimations({ subtree: true }).map(animation => {
+            const style = getComputedStyle(animation.effect.target);
+            return { name: animation.animationName, state: animation.playState, time: animation.currentTime, transform: style.transform, opacity: style.opacity, dashOffset: style.strokeDashoffset };
+          }));
+          const pausedTimes = await animationTimes();
+          // Crop actors from one viewport frame instead of separate CDP clip captures.
+          const pausedViewport = await page.screenshot({ captureBeyondViewport: false });
+          const size = await sharp(pausedViewport).metadata();
+          assert.deepEqual([size.width, size.height], [width, 900], 'capture uses fixed device-pixel dimensions');
           const frames = [];
           for (const artwork of artworks) {
             const box = await artwork.boundingBox();
-            const x = Math.floor(box.x + offset.x), y = Math.floor(box.y + offset.y);
-            const clip = { x, y, width: Math.ceil(box.x + offset.x + box.width) - x, height: Math.ceil(box.y + offset.y + box.height) - y };
-            const image = await page.screenshot({ clip });
+            const left = Math.floor(box.x), top = Math.floor(box.y);
+            const clip = { left, top, width: Math.ceil(box.x + box.width) - left, height: Math.ceil(box.y + box.height) - top };
+            assert(left >= 0 && top >= 0 && left + clip.width <= width && top + clip.height <= 900, 'the complete actor is visible');
+            const image = await sharp(pausedViewport).extract(clip).png().toBuffer();
             frames.push({ clip, image, pixels: await sharp(image).raw().toBuffer() });
           }
-          const animationTimes = () => page.$eval('[data-provenance-signature]', node => node.getAnimations({ subtree: true }).map(animation => ({ name: animation.animationName, state: animation.playState, time: animation.currentTime })));
-          const pausedTimes = await animationTimes();
           await new Promise(resolve => setTimeout(resolve, 450));
+          const laterViewport = await page.screenshot({ captureBeyondViewport: false });
+          assert.equal(await page.$eval('[data-provenance-signature]', node => node.dataset.motion), 'paused');
+          assert(await page.$eval('[data-provenance-signature]', node => node.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused')));
+          assert.deepEqual(await animationTimes(), pausedTimes, `${locale || 'en'}: paused animation timelines and drawing styles stay fixed`);
           for (const [index, frame] of frames.entries()) {
-            const laterImage = await page.screenshot({ clip: frame.clip });
+            const laterImage = await sharp(laterViewport).extract(frame.clip).png().toBuffer();
             const later = await sharp(laterImage).raw().toBuffer();
             // Compare artwork, not font rasterization or fractional selected borders.
             const frozen = frame.pixels.length === later.length && frame.pixels.every((value, pixel) => Math.abs(value - later[pixel]) <= 1);
@@ -68,9 +79,6 @@ export async function auditEditorialInteractions(browser, origin) {
             }
             assert(frozen, `${locale || 'en'}: paused artwork ${index} remains unchanged`);
           }
-          assert.equal(await page.$eval('[data-provenance-signature]', node => node.dataset.motion), 'paused');
-          assert(await page.$eval('[data-provenance-signature]', node => node.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused')));
-          assert.deepEqual(await animationTimes(), pausedTimes, `${locale || 'en'}: paused animation timelines stay fixed`);
           await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
           await page.$eval("[data-provenance-signature]", node => node.scrollIntoView({ block: "center", behavior: "instant" }));
           assert.equal(await page.$eval("[data-scene-play]", node => node.getAttribute("aria-pressed")), "true", "scroll does not undo manual pause");
