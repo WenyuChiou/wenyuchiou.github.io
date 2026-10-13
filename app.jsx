@@ -602,11 +602,11 @@ function PortfolioNavigator({ content, locale, inline = false, header = false })
       <p className="navigator-privacy" id={`${queryId}-privacy`}>{N.privacy}</p>
       <button className="navigator-submit" type="submit"><Sparkles aria-hidden="true" size={18} /><span>{N.submit}</span></button>
     </form>
+    <div className="navigator-turnstile" data-turnstile-container />
     <div className="navigator-feedback" aria-live="polite"><span data-navigator-status>{N.ready}</span><span data-navigator-mode /></div>
     <div className="navigator-answer" data-navigator-answer hidden />
     {!inline && <p className="guide-reading-intro" data-guide-intro />}
     <ol className="navigator-results" data-navigator-results />
-    <div className="navigator-turnstile" data-turnstile-container />
   </div>;
   return (
     <div

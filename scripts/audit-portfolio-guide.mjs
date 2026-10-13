@@ -16,7 +16,11 @@ export async function auditPortfolioGuide(browser, origin, failures, { screensho
       await page.evaluateOnNewDocument(() => {
         window.guideTestTokens = [];
         window.turnstile = {
-          render: (_element, options) => {
+          render: (element, options) => {
+            const widget = document.createElement('div');
+            widget.style.height = '70px';
+            widget.textContent = 'Test-only verification widget';
+            element.append(widget);
             if (window.guideTestHoldToken) window.guideTestTokens.push(options.callback);
             else setTimeout(() => options.callback('test-only-token'), 5);
             return 'test-widget';
@@ -103,6 +107,9 @@ export async function auditPortfolioGuide(browser, origin, failures, { screensho
       await new Promise(resolve => setTimeout(resolve, 100));
       if (calls !== 3) failures.push(`${locale}: changing intent during token validation sent a stale query`);
       {
+        await page.evaluate(() => window.guideTestHoldToken = true);
+        await page.click('.navigator-submit');
+        await page.waitForFunction(() => window.guideTestTokens.length === 1);
         await page.addScriptTag({ content: axe.source });
         for (const theme of ['light', 'dark']) for (const width of [360, 390, 768, 1440]) {
           await page.setViewport({ width, height: width < 768 ? 844 : 1000 });
@@ -117,12 +124,16 @@ export async function auditPortfolioGuide(browser, origin, failures, { screensho
             const bounds = dialog.getBoundingClientRect();
             const privacy = dialog.querySelector('.navigator-privacy');
             const submit = dialog.querySelector('.navigator-submit');
+            const verification = dialog.querySelector('[data-turnstile-container]');
+            const results = dialog.querySelector('[data-navigator-results]');
             const audit = await window.axe.run(dialog, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } });
             return { overflow: document.documentElement.scrollWidth > innerWidth + 1 || frame.scrollWidth > frame.clientWidth + 1 || bounds.left < -1 || bounds.right > innerWidth + 1,
-              privacyFirst: Boolean(privacy.compareDocumentPosition(submit) & Node.DOCUMENT_POSITION_FOLLOWING),
+               verificationHeight: verification.getBoundingClientRect().height,
+               verificationFirst: Boolean(verification.compareDocumentPosition(results) & Node.DOCUMENT_POSITION_FOLLOWING),
+               privacyFirst: Boolean(privacy.compareDocumentPosition(submit) & Node.DOCUMENT_POSITION_FOLLOWING),
               violations: audit.violations.map(item => ({ id: item.id, nodes: item.nodes.map(node => ({ target: node.target, summary: node.failureSummary })) })) };
           });
-          if (layout.overflow || !layout.privacyFirst || layout.violations.length) failures.push(`${locale}/${theme}/${width}: Guide layout/privacy/accessibility ${JSON.stringify(layout)}`);
+          if (layout.overflow || !layout.privacyFirst || layout.verificationHeight < 70 || !layout.verificationFirst || layout.violations.length) failures.push(`${locale}/${theme}/${width}: Guide layout/privacy/verification/accessibility ${JSON.stringify(layout)}`);
           if (screenshots) await page.screenshot({ path: `${screenshots}/${locale}-${theme}-${width}.jpg`, type: 'jpeg', quality: 85 });
         }
       }

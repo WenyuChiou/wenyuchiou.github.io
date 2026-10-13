@@ -165,15 +165,50 @@ function loadTurnstile() {
   return turnstileLoader;
 }
 
-export async function getTurnstileToken(container, sitekey, action = "navigate") {
-  if (!sitekey) throw new Error("turnstile_not_configured");
-  const turnstile = await loadTurnstile();
+const turnstileRequests = new WeakMap();
+
+export function cancelTurnstile(container) {
+  turnstileRequests.get(container)?.cancel();
+}
+
+export function getTurnstileToken(container, sitekey, action = "navigate") {
+  if (!sitekey) return Promise.reject(new Error("turnstile_not_configured"));
+  cancelTurnstile(container);
   return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error("turnstile_timeout")), 10000);
-    if (container.dataset.widgetId) turnstile.remove(container.dataset.widgetId);
-    container.replaceChildren();
-    const widgetId = turnstile.render(container, { sitekey, action, theme: "auto", size: "flexible", callback: (token) => { clearTimeout(timer); resolve(token); }, "error-callback": () => { clearTimeout(timer); reject(new Error("turnstile_failed")); }, "expired-callback": () => { clearTimeout(timer); reject(new Error("turnstile_expired")); } });
-    container.dataset.widgetId = String(widgetId);
+    let settled = false;
+    let widgetId;
+    let turnstile;
+    const owner = { cancel: () => finish(new Error("turnstile_cancelled")) };
+    const finish = (error, token) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      try { if (widgetId !== undefined) turnstile?.remove(widgetId); } catch {}
+      if (turnstileRequests.get(container) === owner) {
+        turnstileRequests.delete(container);
+        delete container.dataset.widgetId;
+        container.replaceChildren();
+      }
+      if (error) reject(error);
+      else resolve(token);
+    };
+    const timer = setTimeout(() => finish(new Error("turnstile_timeout")), 45000);
+    turnstileRequests.set(container, owner);
+    loadTurnstile().then((api) => {
+      if (settled || turnstileRequests.get(container) !== owner) return;
+      turnstile = api;
+      try {
+        container.replaceChildren();
+        widgetId = turnstile.render(container, {
+          sitekey, action, theme: "auto", size: "flexible",
+          callback: (token) => finish(typeof token === "string" && token ? null : new Error("turnstile_failed"), token),
+          "error-callback": () => finish(new Error("turnstile_failed")),
+          "expired-callback": () => finish(new Error("turnstile_expired")),
+        });
+        if (!settled) container.dataset.widgetId = String(widgetId);
+        else { try { turnstile.remove(widgetId); } catch {} }
+      } catch { finish(new Error("turnstile_failed")); }
+    }, () => finish(new Error("turnstile_load_failed")));
   });
 }
 
@@ -266,6 +301,7 @@ export function initPortfolioNavigator(root = document) {
   };
 
   const invalidate = () => {
+    cancelTurnstile(turnstileContainer);
     requestGate.next();
     submit.disabled = false;
     form.removeAttribute('aria-busy');

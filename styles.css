@@ -539,7 +539,7 @@ ul,ol{margin:0;padding:0}
 .navigator-dialog{position:fixed;inset:auto 24px 24px auto;width:min(500px,calc(100% - 48px));max-width:none;max-height:min(760px,calc(100dvh - 48px));margin:0;padding:0;overflow:hidden;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface);color:var(--ink);box-shadow:0 20px 64px oklch(12% .018 158 / .28)}
 .navigator-dialog::backdrop{background:oklch(12% .018 158 / .5);animation:navigator-backdrop-in .18s var(--ease-out-quint) both}
 .navigator-dialog[open]{animation:navigator-panel-in .26s var(--ease-out-quint) both}
-.navigator-frame{max-height:inherit;display:flex;flex-direction:column;padding:28px}
+.navigator-frame{max-height:inherit;display:flex;flex-direction:column;padding:28px;overflow:auto}
 .navigator-header{display:flex;align-items:start;justify-content:space-between;gap:24px}
 .navigator-header .eyebrow{margin:6px 0 0}
 .navigator-close{flex:0 0 auto}
@@ -560,7 +560,8 @@ ul,ol{margin:0;padding:0}
 .navigator-feedback{min-height:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:9px 2px 7px;color:var(--muted);font-size:.875rem}
 .navigator-feedback [data-navigator-mode]{color:var(--teal);text-align:right}
 .navigator-answer{margin:4px 0 14px;padding:14px 15px;border:1px solid var(--rule);background:var(--teal-soft);color:var(--ink);font-size:14px;line-height:1.55}
-.navigator-turnstile{margin:10px 0 0;overflow:hidden}
+.navigator-turnstile{flex:0 0 auto;min-height:70px;margin:10px 0 0;overflow:visible}
+.navigator-turnstile:empty{display:none}
 .navigator-results{min-height:0;overflow:auto;list-style:none;border-top:1px solid var(--line-strong)}
 .navigator-results:empty{border-top:0}
 .navigator-results li{border-bottom:1px solid var(--line)}
@@ -1040,7 +1041,8 @@ ul,ol{margin:0;padding:0}
 .fit-submit-row .button:disabled{cursor:wait;opacity:.65}
 .fit-submit-row p{display:flex;align-items:flex-start;gap:9px;color:var(--muted);font-size:.875rem;line-height:1.45}
 .fit-submit-row p svg{flex:0 0 auto;margin-top:1px;color:var(--repair)}
-.fit-turnstile{overflow:hidden}
+.fit-turnstile{min-height:70px;overflow:visible}
+.fit-turnstile:empty{display:none}
 .fit-analysis-status{min-height:50px;display:flex;align-items:center;gap:11px;padding:12px 38px;border-top:1px solid var(--line);color:var(--muted);font-size:.875rem}
 .fit-status-pulse{width:8px;height:8px;border-radius:50%;background:var(--line-strong)}
 .fit-explorer-shell[data-state="analyzing"] .fit-status-pulse{background:var(--model);animation:fit-status-pulse 1s ease-in-out infinite}

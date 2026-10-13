@@ -8,7 +8,7 @@
   "vars": {
     "ALLOWED_ORIGIN": "https://wenyuchiou.github.io",
     "ALLOWED_HOSTNAME": "wenyuchiou.github.io",
-    "NVIDIA_MODEL": "stepfun-ai/step-3.7-flash"
+    "NVIDIA_MODEL": "nvidia/nemotron-3.5-lightning-30b-a3b"
   },
   "ratelimits": [{
     "name": "RATE_LIMITER",
