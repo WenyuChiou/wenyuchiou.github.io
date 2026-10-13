@@ -145,6 +145,18 @@ if (root) {
     });
   }
   initProgressiveEnhancement();
+  const timeline = root.querySelector("[data-experience-timeline]");
+  if (timeline) {
+    const loadTimeline = () => import(__TIMELINE_MODULE__).then(module => module.initExperienceTimeline(timeline)).catch(() => {});
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(entries => {
+        if (!entries.some(entry => entry.isIntersecting)) return;
+        observer.disconnect();
+        void loadTimeline();
+      }, { rootMargin: "200px" });
+      observer.observe(timeline);
+    } else void loadTimeline();
+  }
   initPortfolioNavigator(root);
   initRecruiterFitExplorer(root);
   requestAnimationFrame(() => requestAnimationFrame(initProvenance));

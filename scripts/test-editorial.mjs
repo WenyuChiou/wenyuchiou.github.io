@@ -31,6 +31,7 @@ test('prerendered first screen and visible evidence links do not depend on JavaS
 });
 
 test('recruiter and publications destinations remain in the prerendered site', () => {
+  assert.doesNotMatch(readFileSync('assets/app.bundle.js', 'utf8'), /\.\.\/features\/editorial\/Timeline\.jsx/);
   for (const prefix of ['', 'zh/']) {
     const html = readFileSync(`${prefix}about/index.html`, 'utf8');
     assert.match(html, /\/hire\//);

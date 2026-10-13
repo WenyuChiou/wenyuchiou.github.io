@@ -1,6 +1,8 @@
 export const EDITORIAL = {
   en: {
     writingLabel: "Writing",
+    observatoryLabel: "Decision Observatory", observatoryTitle: "Follow the evidence behind a decision.",
+    observatoryIntro: "Two applications, one method: compare with human evidence, check the proposal, and inspect what changes. Select an object or a step to follow its source.",
     researchLinks: [{ label: "Research directions", href: "/research/" }, { label: "Publications & talks", href: "/publications/" }],
     methodLabel: "Methods", limitsLabel: "Boundaries", contributionLabel: "My contribution",
     contexts: [
@@ -17,6 +19,8 @@ export const EDITORIAL = {
   },
   "zh-TW": {
     writingLabel: "文章",
+    observatoryLabel: "決策觀測台", observatoryTitle: "沿著證據，理解每個決策。",
+    observatoryIntro: "兩種應用共用同一方法：對照人類證據、檢查提案，再追蹤改變了什麼。選擇圖中物件或階段，即可查看其來源。",
     researchLinks: [{ label: "研究方向", href: "/research/" }, { label: "著作與演講", href: "/publications/" }],
     methodLabel: "方法", limitsLabel: "範圍與限制", contributionLabel: "我的貢獻",
     contexts: [

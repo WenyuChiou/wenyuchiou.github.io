@@ -55,9 +55,10 @@ await esbuild.build({
   outfile: "assets/app.bundle.js",
   minify: true,
   jsx: "automatic",
-  define: { "process.env.NODE_ENV": '"production"', __PROVENANCE_MODULE__: JSON.stringify(provenanceModule) },
+  define: { "process.env.NODE_ENV": '"production"', __PROVENANCE_MODULE__: JSON.stringify(provenanceModule), __TIMELINE_MODULE__: JSON.stringify("/features/editorial/timeline.js?v=" + createHash("sha256").update(readFileSync("features/editorial/timeline.js")).digest("hex").slice(0, 8)) },
   external: ["/assets/provenance/*"],
   plugins: [{ name: "deferred-provenance", setup(build) {
+    build.onResolve({ filter: /^\/features\/editorial\/timeline\.js\?v=/ }, args => ({ path: args.path, external: true }));
     build.onResolve({ filter: /features\/provenance\/island\.jsx$/ }, () => ({ path: path.resolve("features/provenance/client-island.jsx") }));
   } }],
   target: "es2020",
@@ -98,11 +99,13 @@ const hash = (value) => createHash("sha256").update(value).digest("hex").slice(0
 const bundleHash = hash(bundle);
 const cssHash = hash(readFileSync("styles.css", "utf8").replace(/\r\n/g, "\n"));
 const editorialHash = hash(readFileSync("editorial.css", "utf8").replace(/\r\n/g, "\n"));
+const interactionHash = hash(readFileSync("features/editorial/interactions.css", "utf8").replace(/\r\n/g, "\n"));
 const generatedPages = [...routeValues.map((route) => route.path === "/" ? "index.html" : `${route.path.slice(1)}index.html`), ...Object.keys(LEGACY_REDIRECTS).map((route) => `${route.slice(1)}index.html`)];
 for (const page of generatedPages) {
   const html = readFileSync(page, "utf8")
     .replace(/(href=")\/styles\.css(?:\?v=[a-f0-9]+)?(")/g, `$1/styles.css?v=${cssHash}$2`)
     .replace(/(href=")\/editorial\.css(?:\?v=[a-f0-9]+)?(")/g, `$1/editorial.css?v=${editorialHash}$2`)
+    .replace(/(href=")\/features\/editorial\/interactions\.css(?:\?v=[a-f0-9]+)?(")/g, `$1/features/editorial/interactions.css?v=${interactionHash}$2`)
     .replace(/(src=")\/assets\/app\.bundle\.js(?:\?v=[a-f0-9]+)?(")/g, `$1/assets/app.bundle.js?v=${bundleHash}$2`);
   writeFileSync(page, html);
 }

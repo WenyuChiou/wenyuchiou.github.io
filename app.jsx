@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Timeline } from "./features/editorial/Timeline.jsx";
 import {
   AlertTriangle,
   AtSign,
@@ -401,7 +402,7 @@ function ResearchIllustration({ content }) {
 
 function DecisionProvenanceExplorer({ content }) {
   const P = content.provenance;
-  return <section id="decision-provenance" className="section provenance decision-trace" data-provenance-explorer aria-labelledby="provenance-title"><div className="wrap"><SectionHead eyebrow={P.eyebrow} title={P.title} intro={P.intro} id="provenance-title" /><ResearchIllustration content={content} /><ProvenanceIsland content={content} compact /></div></section>;
+  return <section id="decision-provenance" className="section provenance decision-trace" data-provenance-explorer aria-labelledby="provenance-title"><div className="wrap"><SectionHead eyebrow={content.editorial.observatoryLabel} title={content.editorial.observatoryTitle} intro={content.editorial.observatoryIntro} id="provenance-title" /><ProvenanceIsland content={content} compact /></div></section>;
 }
 
 function EvidenceSlice({ content, locale, slug }) {
@@ -509,10 +510,10 @@ function AboutPage({ content, locale }) {
         <div className="prose">{A.bio.slice(1).map((text) => <p key={text}>{text}</p>)}<SmartLink className="button button-outline about-brief-link" href="/hire/" locale={locale}>{content.hire.primaryLabel}<ArrowRight aria-hidden="true" size={16} /></SmartLink></div>
       </div>
     </section>
-    <section className="section"><div className="wrap two-column">
+    <section className="section"><div className="wrap">
       <div><p className="eyebrow"><GraduationCap aria-hidden="true" size={16} />{A.educationTitle}</p><h2>{A.educationTitle}</h2><ol className="education-list">{A.education.map((item) => <li key={item.degree}><h3>{item.degree}</h3><p>{item.school}</p><span>{item.date}</span></li>)}</ol></div>
-      <div><p className="eyebrow">{A.timelineLabel}</p><h2>{A.trajectoryTitle}</h2><ol className="trajectory-list">{A.trajectory.map((item) => <li key={item.year}><span>{item.year}</span><p>{item.text}</p></li>)}</ol></div>
     </div></section>
+    <section className="section" id="experience"><div className="wrap"><SectionHead eyebrow={A.timelineLabel} title={A.trajectoryTitle} /><Timeline content={content} locale={locale} /></div></section>
     <Documents content={content} /><Contact content={content} />
   </>;
 }

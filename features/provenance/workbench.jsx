@@ -4,6 +4,7 @@ import { COPY } from './copy.js';
 import { FIXTURES, getComparison } from './behavior-data.js';
 import { LENSES, STAGES, INITIAL_STATE, REJECTED_PROPOSAL, REPAIRED_PROPOSAL, validateProposal, applyProposal, simulationState, readTrace } from './state.js';
 import { RobotArt, EvidenceArt, HomeArt, RiverArt, ValidatorArt, ResourceArt } from './art.jsx';
+import { DecisionObservatory } from './signature.jsx';
 
 function ObjectView({ label, children, onClick, selected, tone, detail }) {
   const body = <><svg viewBox="0 0 280 330" aria-hidden="true" focusable="false">{children}</svg><strong>{label}</strong>{detail && <span>{detail}</span>}</>;
@@ -79,7 +80,7 @@ export function Workbench({ provenance: P, locale, compact = false, initialLens 
   const [ready, setReady] = useState(false);
   const active = P.lenses[lens];
   const names = C.stages.map((name, index) => lens === 'simulation' && index === 2 ? C.agent : name);
-  const running = !compact && ready && !paused && visible && foreground && !reduced;
+  const running = ready && !paused && visible && foreground && !reduced;
 
   useEffect(() => {
     const syncHash = () => { const next = readTrace(window.location.hash, initialLens); setLens(next.lens); setStage(next.stage); };
@@ -92,8 +93,8 @@ export function Workbench({ provenance: P, locale, compact = false, initialLens 
     document.addEventListener('visibilitychange', syncVisibility);
     window.addEventListener('hashchange', syncHash);
     const observer = 'IntersectionObserver' in window ? new IntersectionObserver(entries => setVisible(entries[0].isIntersecting), { threshold: 0.05 }) : null;
-    const scene = root.current.querySelector('[data-provenance-scene]');
-    if (observer && scene) observer.observe(scene); else setVisible(!compact);
+    const scene = root.current.querySelector('[data-provenance-signature]');
+    if (observer && scene) observer.observe(scene); else setVisible(true);
     const island = root.current.closest('[data-provenance-island]');
     island.dataset.ready = 'true';
     island.dispatchEvent(new Event('provenance:ready'));
@@ -104,6 +105,7 @@ export function Workbench({ provenance: P, locale, compact = false, initialLens 
     setLens(nextLens); setStage(nextStage);
     window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#trace=${nextLens}&stage=${STAGES[nextStage]}`);
   };
+  const selectLens = (nextLens, nextStage = 0) => select(nextLens, nextStage);
   const selectStage = next => select(lens, next);
   const reset = () => { setMode('direction'); setRecordId('A1'); setTenure('owner'); setSystem(INITIAL_STATE); setRepaired(false); selectStage(0); };
   const repair = () => {
@@ -121,14 +123,15 @@ export function Workbench({ provenance: P, locale, compact = false, initialLens 
   const icons = [Users, ShieldCheck, Waves];
   const href = locale === 'zh-TW' ? `/zh${active.caseHref}` : active.caseHref;
 
-  return <div ref={root} className="provenance-workbench" data-compact={compact} data-running={running} data-ready={ready} data-lens={lens}>
+  return <div ref={root} className="provenance-workbench" data-compact={compact} data-running={running} data-motion={running ? 'running' : 'paused'} data-ready={ready} data-lens={lens}>
+    <DecisionObservatory {...{ locale, lens, stage, selectLens, selectStage }} motion={running} />
+    <div className="pw-toolbar"><span>{C.synthetic}</span><div><button type="button" data-scene-play aria-label={paused ? C.play : C.pause} title={paused ? C.play : C.pause} aria-pressed={paused} disabled={reduced} onClick={() => setPaused(value => !value)}>{paused || reduced ? <Play aria-hidden="true" size={20} /> : <Pause aria-hidden="true" size={20} />}</button><button type="button" data-scene-reset aria-label={C.reset} title={C.reset} onClick={reset}><RotateCcw aria-hidden="true" size={20} /></button></div></div>
     <div className="pw-lenses" role="tablist" aria-label={P.controlLabel}>{LENSES.map((id, index) => {
       const Icon = icons[index];
       return <button type="button" key={id} id={`trace-tab-${id}`} role="tab" aria-selected={lens === id} tabIndex={lens === id ? 0 : -1} aria-controls="trace-workbench" data-provenance-lens={id} onClick={() => select(id, 0)} onKeyDown={event => keyboard(event, index, 3, '[data-provenance-lens]', next => select(LENSES[next], 0))}><Icon aria-hidden="true" size={22} /><strong>{P.lenses[id].label}</strong></button>;
     })}</div>
     <div id="trace-workbench" role="tabpanel" aria-labelledby={`trace-tab-${lens}`}>
       <ol className="pw-stages" aria-label={P.stageLabel}>{names.map((name, index) => <li key={STAGES[index]}><button type="button" data-provenance-stage={index + 1} aria-current={stage === index ? 'step' : undefined} onClick={() => selectStage(index)} onKeyDown={event => keyboard(event, index, 5, '[data-provenance-stage]', selectStage)}><span>0{index + 1}</span><strong>{name}</strong></button></li>)}</ol>
-      {!compact && <div className="pw-toolbar"><span>{C.synthetic}</span><div><button type="button" data-scene-play aria-label={paused ? C.play : C.pause} title={paused ? C.play : C.pause} aria-pressed={paused} disabled={reduced} onClick={() => setPaused(value => !value)}>{paused || reduced ? <Play aria-hidden="true" size={20} /> : <Pause aria-hidden="true" size={20} />}</button><button type="button" data-scene-reset aria-label={C.reset} title={C.reset} onClick={reset}><RotateCcw aria-hidden="true" size={20} /></button></div></div>}
       <div className="pw-layout">
         {!compact && <div className="pw-scene" data-provenance-scene>
           {lens === 'evaluation' && <Evaluation {...{ C, mode, setMode, recordId, setRecordId, stage, selectStage }} />}

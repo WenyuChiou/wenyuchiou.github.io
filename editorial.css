@@ -1,5 +1,6 @@
 /* Color marks evidence and state; the page itself stays quiet. */
 .section{padding:72px 0}
+.provenance{background:var(--paper)}
 h1,h2,h3{line-height:1.2;overflow-wrap:break-word}
 .section-head h2,.contact-layout h2,.documents h2,.two-column h2,.hire-section-title h2{font-size:2rem}
 .section-head{margin-bottom:32px}

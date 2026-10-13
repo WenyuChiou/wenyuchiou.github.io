@@ -7,7 +7,7 @@ import axe from "axe-core";
 import { DEPLOYMENT_CONFIG } from "../deployment-config.mjs";
 import { SEO } from "../seo.js";
 import githubData from "../data/github.json" with { type: "json" };
-import { auditResearchIllustration } from "./audit-research-illustration.mjs";
+import { auditEditorialInteractions } from "./audit-editorial-interactions.mjs";
 
 const root = process.cwd();
 const browserCandidates = [process.env.CHROME_PATH, "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, "Google", "Chrome", "Application", "chrome.exe") : null, "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe", "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe", "/usr/bin/google-chrome", "/usr/bin/google-chrome-stable", "/usr/bin/chromium"].filter(Boolean);
@@ -285,7 +285,7 @@ const auditProvenance = async (route) => {
       stages: stages.length,
       current: section.querySelector('[aria-current="step"]')?.textContent,
       inspector: section.querySelector(".pw-inspector h3")?.textContent,
-      visual: Boolean(section.querySelector('.research-illustration')) && !section.querySelector('[data-provenance-scene]'),
+      visual: Boolean(section.querySelector('[data-provenance-signature]')) && !section.querySelector('[data-provenance-scene]'),
       panelLabel: section.querySelector('[role="tabpanel"]')?.getAttribute("aria-labelledby"),
       semanticColors: stageColors.size,
       smallestKeyText: Math.min(...keyText.map((item) => Number.parseFloat(getComputedStyle(item).fontSize))),
@@ -458,7 +458,7 @@ if (process.argv.includes("--semantic-only")) {
 }
 
 try {
-  await auditResearchIllustration(browser, origin);
+  await auditEditorialInteractions(browser, origin);
   for (const route of Object.keys(SEO.routes)) {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
