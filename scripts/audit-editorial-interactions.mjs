@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import sharp from "sharp";
+import fs from "node:fs";
+import path from "node:path";
 
 export async function auditEditorialInteractions(browser, origin) {
   const context = await browser.createBrowserContext();
@@ -29,10 +31,34 @@ export async function auditEditorialInteractions(browser, origin) {
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
         if (!reduced && width === 1440 && theme === "light") {
           await page.click("[data-scene-play]");
+          await page.$eval("[data-provenance-signature]", node => node.scrollIntoView({ block: "center", behavior: "instant" }));
+          await page.evaluate(() => document.fonts.ready);
+          await page.waitForFunction(() => {
+            const scene = document.querySelector('[data-provenance-signature]');
+            return scene?.dataset.motion === 'paused' && scene.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused');
+          });
           await new Promise(resolve => setTimeout(resolve, 320));
-          const paused = await sharp(await signature.screenshot()).raw().toBuffer();
+          const box = await signature.boundingBox();
+          const offset = await page.evaluate(() => ({ x: scrollX, y: scrollY }));
+          const clip = { ...box, x: box.x + offset.x, y: box.y + offset.y };
+          const pausedImage = await page.screenshot({ clip });
+          const paused = await sharp(pausedImage).raw().toBuffer();
           await new Promise(resolve => setTimeout(resolve, 450));
-          assert(paused.equals(await sharp(await signature.screenshot()).raw().toBuffer()), "manual pause freezes artwork");
+          const laterImage = await page.screenshot({ clip });
+          const later = await sharp(laterImage).raw().toBuffer();
+          // Fractional static borders can differ by one color level in Chromium.
+          const frozen = paused.length === later.length && paused.every((value, index) => Math.abs(value - later[index]) <= 1);
+          assert.equal(await page.$eval('[data-provenance-signature]', node => node.dataset.motion), 'paused');
+          assert(await page.$eval('[data-provenance-signature]', node => node.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused')));
+          if (!frozen) {
+            const directory = path.resolve('outputs', 'browser-audit', 'pause-failure');
+            fs.mkdirSync(directory, { recursive: true });
+            const name = `${locale ? 'zh' : 'en'}-${Date.now()}`;
+            fs.writeFileSync(path.join(directory, `${name}-before.png`), pausedImage);
+            fs.writeFileSync(path.join(directory, `${name}-after.png`), laterImage);
+            console.error('Pause failure images:', directory, name);
+          }
+          assert(frozen, `${locale || 'en'}: manual pause freezes artwork`);
           await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
           await page.$eval("[data-provenance-signature]", node => node.scrollIntoView({ block: "center", behavior: "instant" }));
           assert.equal(await page.$eval("[data-scene-play]", node => node.getAttribute("aria-pressed")), "true", "scroll does not undo manual pause");

@@ -16,6 +16,7 @@ dist-ssr
 
 # Browser-audit screenshots are test artifacts, not website data.
 /outputs/research-illustration/*.png
+/outputs/browser-audit/pause-failure/*.png
 
 # Editor directories and files
 .vscode/*
