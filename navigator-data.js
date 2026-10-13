@@ -1,4 +1,5 @@
 import { FIT_EVIDENCE } from "./fit-data.js";
+import { GUIDE_EVIDENCE } from "./guide-evidence.js";
 
 export const NAVIGATOR_INDEX = {
   model: {
@@ -225,5 +226,10 @@ export const NAVIGATOR_INDEX = {
         "zh-TW": ["聯絡", "電子郵件", "實習", "2027 暑期", "LinkedIn", "時間"],
       },
     },
+    ...GUIDE_EVIDENCE.filter(record => record.kind === "tool").map(record => ({
+      id: record.id, title: record.title, href: record.href, summary: record.why, keywords: record.keywords,
+      semantic: `${record.title.en} ${record.why.en} ${record.how.en} ${record.limitations.en}`,
+      fit: { capabilities: [], roleRelevance: [], evidenceStrength: "contextual", sourceType: "github-repository", verifiedTerms: [] },
+    })),
   ],
 };

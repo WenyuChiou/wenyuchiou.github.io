@@ -218,7 +218,7 @@ const auditPortfolioNavigator = async (route, query, expectedPath) => {
       accessibleScope: button.getAttribute("aria-label") || "",
     };
   });
-  if (!launchVisible.visible || !launchVisible.menuClosed || !/AI/i.test(launchVisible.visibleLabel) || !/(projects|專案)/i.test(launchVisible.accessibleScope)) failures.push(`${route}: portfolio navigator launch is not independently visible or clearly scoped from the closed mobile menu`);
+  if (!launchVisible.visible || !launchVisible.menuClosed || !/AI/i.test(launchVisible.visibleLabel) || !/(research|研究)/i.test(launchVisible.accessibleScope) || !/(tools|工具)/i.test(launchVisible.accessibleScope)) failures.push(`${route}: portfolio guide launch is not independently visible or scoped to research and tools`);
   await page.click(".navigator-launch");
   await new Promise((resolve) => setTimeout(resolve, 300));
   const opened = await page.$eval(".navigator-dialog", (dialog) => {
@@ -248,7 +248,7 @@ const auditPortfolioNavigator = async (route, query, expectedPath) => {
 
 const auditRecruiterFitExplorer = async (route, role, jobDescription, expectedPath) => {
   const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
-  if (await page.$(".navigator-launch")) failures.push(`${route}: recruiter brief should use the fit explorer instead of a floating navigator`);
+  if (await page.$$eval('[data-portfolio-navigator]', elements => elements.length) !== 1 || !await page.$('.navigator-header-entry')) failures.push(`${route}: expected one shared header Guide beside the separate fit explorer`);
   const sections = await page.$$eval(".hire-page .section", (items) => items.map((item) => item.querySelector("h2")?.textContent.trim()));
   if (sections.length !== 5 || sections.some((title) => !title)) failures.push(`${route}: recruiter brief does not expose five ordered sections`);
   const controls = await page.$eval("[data-recruiter-fit-explorer]", (shell) => ({ roles: shell.querySelectorAll("[data-fit-role]").length, maxLength: shell.querySelector("[data-fit-jd]")?.maxLength, resultHidden: shell.querySelector("[data-fit-result]")?.hidden }));

@@ -3,12 +3,23 @@ import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { GUIDE_INTENTS, GUIDE_COPY, buildReadingPath } from '../portfolio-guide-data.js';
 import { NAVIGATOR_INDEX } from '../navigator-data.js';
+import { GUIDE_EVIDENCE } from '../guide-evidence.js';
 
-test('three bilingual intents use controlled reading paths and the existing recruiter tool', () => {
-  assert.deepEqual(GUIDE_INTENTS.map(item => item.id), ['research', 'tools', 'collaboration']);
-  assert.equal(GUIDE_INTENTS[2].href, '/hire/#fit-explorer');
+test('bilingual named-tool entries retain their requested repository as the first local result', () => {
+  for (const record of GUIDE_EVIDENCE.filter(item => item.kind === 'tool')) {
+    const name = record.id.slice(5);
+    for (const locale of ['en', 'zh-TW']) {
+      const query = locale === 'en' ? `When should I use ${name}?` : `何時適合使用 ${name}？`;
+      assert.equal(buildReadingPath('tools', locale, { query }).matches[0].record.id, record.id, query);
+    }
+  }
+});
+
+test('three bilingual intents are research-centered and use controlled sources', () => {
+  assert.deepEqual(GUIDE_INTENTS.map(item => item.id), ['research', 'observatory', 'tools']);
+  assert.ok(GUIDE_INTENTS.every(item => !item.href));
   for (const locale of ['en', 'zh-TW']) {
-    for (const id of ['research', 'tools']) {
+    for (const id of ['research', 'observatory', 'tools']) {
       const path = buildReadingPath(id, locale);
       assert.equal(path.matches.length, 3);
       assert.ok(path.intro.length > 20);

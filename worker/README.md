@@ -13,7 +13,17 @@ Set secrets with `wrangler secret put --config worker/wrangler.jsonc`. The publi
 
 The model check reads the deployment configuration, verifies the live catalog, and runs the same grounded Navigator request and validator in English and Traditional Chinese. It fails if an environment model override differs from the deployment model. Never export platform secrets just to run this check; use a protected remote verification workflow when credentials only exist in encrypted Worker bindings.
 
-Turnstile verification is bound to the `navigate` or `fit` action and production hostname. `/v1/fit` accepts a role preset and an optional job description of at most 8,000 characters. NVIDIA may decompose requirements, but capability names, ownership statements, links, and evidence metadata are rebuilt from the controlled portfolio index.
+Turnstile verification is bound to the `navigate` or `fit` action and production hostname. `/v1/fit` accepts a role preset and an optional job description of at most 8,000 characters. Requirements now come from controlled presets or source clauses, not model-authored prose. Unknown or compound qualifications remain gaps unless the complete clause matches a verified capability; this conservative behavior does not mean the person lacks that skill.
+
+## Portfolio Guide
+
+`POST /v1/navigate` remains compatible with the original `query`, `locale`, and `turnstileToken` request. New clients additionally send `task` (`research`, `observatory`, or `tools`), `depth` (`beginner` or `method`), and optional controlled scene `context`. The response retains `answer`, `matches`, and `mode`, and adds three cited `sections` and an optional view-only `suggestedView`.
+
+The model generates plain-language Why/How/Contribution explanations from curated bilingual evidence. Record titles, URLs, conditions, and original-source metadata are expanded by the Worker. The observatory context distinguishes synthetic reference records, LLM proposals, and simulated household agents. A suggested view changes no state until a visitor clicks; it never repairs or applies proposals.
+
+The Worker validates the complete output and citation scope, rejects off-topic queries, and checks lexical consistency against cited material. This heuristic can reject a valid paraphrase and cannot prove semantic truth or prevent every hallucination. Bilingual factual evaluation and source disclosure remain required. Failures expose no partial generation and retain clearly labeled local evidence. Questions and scene selections are not logged, cached, or persisted.
+
+Model verification with encrypted bindings uses a private remote probe; abuse-control mocks must be disclosed. Production acceptance additionally requires a real browser token. A localhost preview does not bypass the configured production CORS or hostname-bound Turnstile policy.
 
 The frontend allows up to 45 seconds for a visitor to complete Turnstile, independently of the eight-second generation timeout. Failed or expired widgets are disposed before a new attempt. Passing a provider probe with mocked Turnstile is not a production browser acceptance pass.
 

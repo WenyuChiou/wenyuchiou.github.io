@@ -171,7 +171,7 @@ function SiteHeader({ content, locale, page, basePath }) {
             <a className="button button-small" href="#contact"><Mail aria-hidden="true" size={16} />{content.labels.contact}</a>
           </div>
         </nav>
-        {page !== "hire" ? <PortfolioNavigator content={content} locale={locale} header /> : null}
+        <PortfolioNavigator content={content} locale={locale} header />
       </div>
     </header>
   );
@@ -326,7 +326,7 @@ function OpenSource({ content, locale, compact = false }) {
         return (
           <article className={`repo-row${stats?.previewUrl ? " has-preview" : ""}`} key={repo.key}>
             <RepoPreview previewUrl={stats?.previewUrl} />
-            <div className="repo-copy"><h3>{repo.name}</h3><p>{repo.desc}</p></div>
+            <div className="repo-copy"><h3>{repo.name}</h3><p>{repo.desc}</p><button className="text-link guide-context-entry" type="button" data-guide-open="tools" data-guide-query={locale === 'zh-TW' ? `何時適合使用 ${repo.name}？` : `When should I use ${repo.name}?`}>{locale === 'zh-TW' ? '了解用途' : 'Find its use'}<ArrowRight aria-hidden="true" size={16} /></button></div>
             {stats ? <p className="repo-stats"><strong>{formatCount(stats.stars, locale)}</strong> {content.labels.stars} <span>·</span> {formatCount(stats.forks, locale)} {content.labels.forks}</p> : null}
             <SmartLink className="icon-link" href={repo.href} locale={locale}><ArrowUpRight aria-hidden="true" /><span className="sr-only">{repo.name}</span></SmartLink>
           </article>
@@ -444,7 +444,7 @@ function Documents({ content }) {
 
 function Contact({ content }) {
   const C = content.contact;
-  return <section id="contact" className="contact-band" aria-labelledby="contact-title"><div className="wrap contact-layout"><div><p className="eyebrow">{C.eyebrow}</p><h2 id="contact-title">{C.title}</h2><p>{C.text}</p><SmartLink className="contact-brief-link" href="/hire/" locale={content.locale}>{C.recruiterLink}<ArrowRight aria-hidden="true" size={15} /></SmartLink></div><div className="contact-actions"><a className="button button-light" href={`mailto:${C.email}`}><Mail aria-hidden="true" size={18} />{C.email}</a>{C.workAuth && <p>{C.workAuth}</p>}<ul>{C.links.map((link) => <li key={link.href}><SmartLink href={link.href} locale={content.locale}>{link.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink></li>)}</ul></div></div></section>;
+  return <section id="contact" className="contact-band" aria-labelledby="contact-title"><div className="wrap contact-layout"><div><p className="eyebrow">{C.eyebrow}</p><h2 id="contact-title">{C.title}</h2><p>{C.text}</p><SmartLink className="contact-brief-link" href="/about/#documents-title" locale={content.locale}>{content.editorial.aboutLink}<ArrowRight aria-hidden="true" size={15} /></SmartLink></div><div className="contact-actions"><a className="button button-light" href={`mailto:${C.email}`}><Mail aria-hidden="true" size={18} />{C.email}</a>{C.workAuth && <p>{C.workAuth}</p>}<ul>{C.links.map((link) => <li key={link.href}><SmartLink href={link.href} locale={content.locale}>{link.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink></li>)}</ul></div></div></section>;
 }
 
 function Home({ content, locale }) {
@@ -572,7 +572,7 @@ function CaseStudyPage({ content, locale, slug }) {
 }
 
 function SiteFooter({ content, locale }) {
-  return <footer className="site-footer"><div className="wrap"><div><strong>{content.name}</strong><p>{content.footer.line}</p><SmartLink href="/hire/" locale={locale}>{content.hire.footerLabel}<ArrowRight aria-hidden="true" size={14} /></SmartLink></div><p>{content.footer.note}<br />© 2026 Wenyu Chiou</p></div></footer>;
+  return <footer className="site-footer"><div className="wrap"><div><strong>{content.name}</strong><p>{content.footer.line}</p><SmartLink href="/about/" locale={locale}>{content.editorial.aboutLink}<ArrowRight aria-hidden="true" size={14} /></SmartLink></div><p>{content.footer.note}<br />© 2026 Wenyu Chiou</p></div></footer>;
 }
 
 function PortfolioNavigator({ content, locale, inline = false, header = false }) {
@@ -583,11 +583,7 @@ function PortfolioNavigator({ content, locale, inline = false, header = false })
   const queryId = inline ? "recruiter-navigator-query" : "navigator-query";
   const ai = { nvidia: locale === "zh-TW" ? "NVIDIA 引用摘要" : "NVIDIA cited summary" };
   const frame = <div className="navigator-frame">
-    {!inline ? <><header className="navigator-header">
-      <p className="eyebrow">{inline ? content.hire.askTitle : N.eyebrow}</p>
-      <button className="icon-button navigator-close" type="button" data-navigator-close aria-label={N.close} title={N.close}><X aria-hidden="true" size={18} /></button>
-    </header>
-    <div className="navigator-intro">
+    {!inline ? <><div className="navigator-intro">
       <h2 id={titleId}>{N.title}</h2>
       <p>{N.intro}</p>
     </div></> : <h3 className="sr-only" id={titleId}>{content.hire.askTitle}</h3>}
@@ -596,6 +592,8 @@ function PortfolioNavigator({ content, locale, inline = false, header = false })
         ? <a key={intent.id} href={lp(intent.href, locale)} data-guide-collaboration><span>{intent.label[locale]}</span><ArrowUpRight aria-hidden="true" size={16} /></a>
         : <button type="button" data-guide-intent={intent.id} aria-pressed="false" key={intent.id}><span>{intent.label[locale]}</span><ArrowRight aria-hidden="true" size={16} /></button>)}
     </div>
+    {!inline && <fieldset className="guide-depth"><legend>{N.depthLabel}</legend><button type="button" data-guide-depth="beginner" aria-pressed="true">{N.beginner}</button><button type="button" data-guide-depth="method" aria-pressed="false">{N.method}</button></fieldset>}
+    {!inline && <p className="guide-context" data-guide-context hidden />}
     <form className="navigator-form" role="search" action={lp("/work/", locale)} method="get">
       <label className="sr-only" htmlFor={queryId}>{N.label}</label>
       <input id={queryId} name="query" type="search" placeholder={N.placeholder} maxLength="180" autoComplete="off" aria-describedby={`${queryId}-privacy`} />
@@ -605,6 +603,7 @@ function PortfolioNavigator({ content, locale, inline = false, header = false })
     <div className="navigator-turnstile" data-turnstile-container />
     <div className="navigator-feedback" aria-live="polite"><span data-navigator-status>{N.ready}</span><span data-navigator-mode /></div>
     <div className="navigator-answer" data-navigator-answer hidden />
+    {!inline && <><div className="guide-explanation" data-guide-sections hidden /><button type="button" className="text-link guide-next-view" data-guide-view hidden>{N.viewAction}<ArrowRight aria-hidden="true" size={18} /></button><h3 className="guide-evidence-heading" data-guide-evidence-heading>{N.evidence}</h3></>}
     {!inline && <p className="guide-reading-intro" data-guide-intro />}
     <ol className="navigator-results" data-navigator-results />
   </div>;
@@ -619,17 +618,24 @@ function PortfolioNavigator({ content, locale, inline = false, header = false })
       data-local={N.local}
       data-semantic={N.semantic}
       data-fallback={N.fallback}
+      data-unsupported={N.unsupported}
       data-ready={N.ready}
       data-generated-ready={N.generatedReady}
       data-result-label={N.resultLabel}
       data-nvidia={ai.nvidia}
+      data-why={N.why}
+      data-how={N.how}
+      data-contribution={N.contribution}
+      data-context-label={N.contextLabel}
+      data-boundaries={N.boundaries}
+      data-source-label={N.source}
     >
       {!inline ? <button className="navigator-launch" type="button" data-navigator-launch aria-haspopup="dialog" aria-controls="portfolio-navigator-dialog" aria-label={`${N.launchShort}: ${N.launch}. ${N.launchScope}`} title={`${N.launch}: ${N.launchScope}`}>
         {header ? <Sparkles aria-hidden="true" size={18} /> : <Search aria-hidden="true" size={18} />}
         <span className="navigator-launch-copy"><strong>{N.launch}</strong><small>{N.launchScope}</small></span>
         <span className="navigator-launch-short" aria-hidden="true">{N.launchShort}</span>
       </button> : null}
-      {inline ? <div className="navigator-inline-panel" aria-labelledby={titleId}>{frame}</div> : <dialog className="navigator-dialog" id="portfolio-navigator-dialog" aria-labelledby={titleId}>{frame}</dialog>}
+      {inline ? <div className="navigator-inline-panel" aria-labelledby={titleId}>{frame}</div> : <dialog className="navigator-dialog" id="portfolio-navigator-dialog" aria-labelledby={titleId}><header className="navigator-header"><p className="eyebrow">{N.eyebrow}</p><button className="icon-button navigator-close" type="button" data-navigator-close aria-label={N.close} title={N.close}><X aria-hidden="true" size={18} /></button></header>{frame}</dialog>}
     </div>
   );
 }

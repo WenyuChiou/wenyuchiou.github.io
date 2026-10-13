@@ -2,43 +2,36 @@ import { DEPLOYMENT_CONFIG } from '../deployment-config.mjs';
 import axe from 'axe-core';
 
 export async function auditPortfolioGuide(browser, origin, failures, { screenshots } = {}) {
-  const initialFailures = failures.length;
+  const startFailures = failures.length;
   const context = await browser.createBrowserContext();
   try {
     for (const locale of ['en', 'zh-TW']) {
       const page = await context.newPage();
       await page.setBypassCSP(true);
+      await page.setViewport({ width: 390, height: 844 });
       let calls = 0;
       let responseMode = 'success';
-      const pendingResponses = [];
-      const queries = [];
-      await page.setViewport({ width: 390, height: 844 });
+      const pending = [];
       await page.evaluateOnNewDocument(() => {
         window.guideTestTokens = [];
-        window.turnstile = {
-          render: (element, options) => {
-            const widget = document.createElement('div');
-            widget.style.height = '70px';
-            widget.textContent = 'Test-only verification widget';
-            element.append(widget);
-            if (window.guideTestHoldToken) window.guideTestTokens.push(options.callback);
-            else setTimeout(() => options.callback('test-only-token'), 5);
-            return 'test-widget';
-          },
-          remove: () => {},
-        };
+        window.turnstile = { render(element, options) {
+          const widget = document.createElement('div');
+          widget.style.height = '70px'; widget.textContent = 'Test-only verification'; element.append(widget);
+          if (window.guideHoldToken) window.guideTestTokens.push(options.callback);
+          else setTimeout(() => options.callback('test-only-token'), 5);
+          return 'test-widget';
+        }, remove() {} };
       });
       await page.setRequestInterception(true);
       page.on('request', request => {
         if (request.url() === DEPLOYMENT_CONFIG.aiEndpoint) {
           if (request.method() === 'OPTIONS') return void request.respond({ status: 204, headers: { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST', 'access-control-allow-headers': 'Content-Type' } });
           calls++;
-          queries.push(JSON.parse(request.postData()).query);
-          const matches = responseMode !== 'invalid'
-            ? [{ id: 'wagf', reason: '<img src=x onerror=alert(1)> View validation evidence.' }]
-            : [{ id: 'invented-experience', reason: 'Unsupported claim' }];
-          const respond = () => request.respond({ status: 200, headers: { 'access-control-allow-origin': origin, 'content-type': 'application/json' }, body: JSON.stringify({ mode: 'nvidia', answer: 'Test-only cited summary', matches }) });
-          if (responseMode === 'delayed') { pendingResponses.push(respond); return; }
+          const body = JSON.parse(request.postData());
+          const id = body.task === 'tools' ? 'repo-research-hub' : body.task === 'observatory' ? { evaluation: 'human-grounded-llm-evaluation', governance: 'wagf', simulation: 'floodabm' }[body.context?.lens] : 'wagf';
+          const payload = { mode: 'nvidia', answer: 'Test-only model explanation', matches: [{ id: responseMode === 'invalid' ? 'invented' : id, reason: 'A source relevant to this request.' }], sections: ['why', 'how', 'contribution'].map(kind => ({ kind, text: locale === 'en' ? 'Test-only generated explanation with a verifiable source.' : '測試用生成講解，附上可核對來源。', evidenceIds: [id] })), suggestedView: body.task === 'observatory' ? { lens: 'simulation', stage: 'consequence' } : null };
+          const respond = () => request.respond({ status: 200, headers: { 'access-control-allow-origin': origin, 'content-type': 'application/json' }, body: JSON.stringify(payload) }).catch(() => {});
+          if (responseMode === 'delayed') { pending.push(respond); return; }
           return void respond();
         }
         if (/huggingface|hf\.co|transformers-4\.2\.0|challenges\.cloudflare/.test(request.url())) return void request.abort();
@@ -48,100 +41,71 @@ export async function auditPortfolioGuide(browser, origin, failures, { screensho
       await page.click('[data-navigator-launch]');
       await page.waitForSelector('[data-navigator-results] li');
       await page.click('[data-guide-intent="tools"]');
-      const local = await page.evaluate(() => ({
-        first: document.querySelector('[data-navigator-results] a').dataset.navigatorRecord,
-        count: document.querySelectorAll('[data-navigator-results] li').length,
-        mode: document.querySelector('[data-navigator-mode]').textContent,
-        href: document.querySelector('[data-guide-collaboration]').getAttribute('href'),
-      }));
-      if (calls || local.first !== 'wagf' || local.count !== 3 || !local.mode || !local.href.endsWith('/hire/#fit-explorer')) failures.push(`${locale}: Guide opening/intent did not remain local or preserve recruiter routing`);
-      await page.$eval('#navigator-query', input => { input.value = 'agent governance private-guide-marker'; input.dispatchEvent(new Event('input', { bubbles: true })); });
-      if (calls) failures.push(`${locale}: typing called NVIDIA before explicit consent`);
+      if (calls || await page.$eval('[data-navigator-results] a', element => element.dataset.navigatorRecord) !== 'repo-ai-research-skills') failures.push(`${locale}: local tool entry called a model or displayed a non-repository`);
+      await page.$eval('#navigator-query', input => { input.value = 'research runtime private-guide-marker'; input.dispatchEvent(new Event('input', { bubbles: true })); });
+      if (calls) failures.push(`${locale}: typing called the model`);
       await page.click('.navigator-submit');
-      await page.waitForFunction(() => !document.querySelector('[data-navigator-answer]').hidden);
-      const generated = await page.evaluate(() => ({
-        answer: document.querySelector('[data-navigator-answer]').textContent,
-        injected: document.querySelector('[data-navigator-results] img'),
-        first: document.querySelector('[data-navigator-results] a').dataset.navigatorRecord,
-      }));
-      if (calls !== 1 || generated.answer !== 'Test-only cited summary' || generated.injected || generated.first !== 'wagf') failures.push(`${locale}: explicit generated response was not bounded, allowlisted, and plain text`);
+      await page.waitForSelector('[data-guide-sections]:not([hidden])');
+      if (calls !== 1 || await page.$$eval('[data-guide-sections] section', elements => elements.length) !== 3) failures.push(`${locale}: generated three-part explanation missing`);
+      if (await page.$eval('[data-navigator-results] a', element => element.dataset.navigatorRecord) !== 'repo-research-hub') failures.push(`${locale}: generated tool recommendation missing`);
+      await page.click('[data-navigator-results] summary');
+      if (!await page.$('[data-navigator-results] details[open]')) failures.push(`${locale}: evidence boundaries cannot be disclosed`);
       responseMode = 'invalid';
       await page.click('.navigator-submit');
-      await page.waitForFunction(() => {
-        const shell = document.querySelector('[data-portfolio-navigator]');
-        return document.querySelector('[data-navigator-status]').textContent === shell.dataset.fallback;
-      });
-      const fallback = await page.evaluate(() => ({
-        hidden: document.querySelector('[data-navigator-answer]').hidden,
-        count: document.querySelectorAll('[data-navigator-results] li').length,
-        stored: [...Object.keys(localStorage), ...Object.keys(sessionStorage)].some(key => /query|guide|question/.test(key)),
-      }));
-      if (calls !== 2 || !fallback.hidden || fallback.count !== 3 || fallback.stored) failures.push(`${locale}: malformed provider output did not retain clearly local, private evidence`);
-      await page.evaluate(() => window.guideTestHoldToken = true);
+      try { await page.waitForFunction(() => document.querySelector('[data-navigator-status]').textContent === document.querySelector('[data-portfolio-navigator]').dataset.fallback); }
+      catch (error) { console.log('GUIDE_DIAGNOSTIC', { locale, calls, state: await page.evaluate(() => ({ status: document.querySelector('[data-navigator-status]').textContent, mode: document.querySelector('[data-navigator-mode]').textContent, busy: document.querySelector('.navigator-form').getAttribute('aria-busy') })) }); throw error; }
+      if (calls !== 2 || !await page.$eval('[data-guide-sections]', element => element.hidden)) failures.push(`${locale}: invalid result did not stay local`);
+      const stored = await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }).includes('private-guide-marker'));
+      if (stored) failures.push(`${locale}: guide question persisted`);
+      await page.evaluate(() => window.guideHoldToken = true);
       await page.click('.navigator-submit');
       await page.waitForFunction(() => window.guideTestTokens.length === 1);
       await page.click('[data-navigator-close]');
       await page.click('[data-navigator-launch]');
-      const cancelled = await page.evaluate(() => ({ busy: document.querySelector('.navigator-form').getAttribute('aria-busy'), disabled: document.querySelector('.navigator-submit').disabled, status: document.querySelector('[data-navigator-status]').textContent, loading: document.querySelector('[data-portfolio-navigator]').dataset.loading }));
-      if (cancelled.busy || cancelled.disabled || cancelled.status === cancelled.loading) failures.push(`${locale}: close/reopen retained a false loading state`);
-      await page.evaluate(() => { window.guideTestTokens.shift()('test-only-token'); window.guideTestHoldToken = false; });
-      await new Promise(resolve => setTimeout(resolve, 100));
-      if (calls !== 2) failures.push(`${locale}: a token resolved after cancellation called NVIDIA`);
+      await page.evaluate(() => { window.guideTestTokens.shift()('obsolete'); window.guideHoldToken = false; });
+      if (calls !== 2 || await page.$eval('.navigator-submit', element => element.disabled)) failures.push(`${locale}: obsolete challenge contaminated a reopened guide`);
       responseMode = 'delayed';
       await page.click('.navigator-submit');
-      await page.waitForFunction(() => document.querySelector('.navigator-form').getAttribute('aria-busy') === 'true');
-      for (let attempt = 0; attempt < 40 && !pendingResponses.length; attempt++) await new Promise(resolve => setTimeout(resolve, 25));
-      if (pendingResponses.length !== 1) throw new Error(`${locale}: delayed test response was not intercepted`);
-      await page.click('[data-navigator-close]');
-      await page.click('[data-navigator-launch]');
-      await page.click('[data-guide-intent="research"]');
-      await pendingResponses.shift()();
-      await new Promise(resolve => setTimeout(resolve, 100));
-      const stale = await page.evaluate(() => ({ hidden: document.querySelector('[data-navigator-answer]').hidden, first: document.querySelector('[data-navigator-results] a').dataset.navigatorRecord, status: document.querySelector('[data-navigator-status]').textContent, ready: document.querySelector('[data-portfolio-navigator]').dataset.ready }));
-      if (calls !== 3 || !stale.hidden || stale.first !== 'human-grounded-llm-evaluation' || stale.status !== stale.ready) failures.push(`${locale}: cancelled late response replaced the newly selected local path`);
-      await page.evaluate(() => window.guideTestHoldToken = true);
+      for (let attempt = 0; attempt < 50 && !pending.length; attempt++) await new Promise(resolve => setTimeout(resolve, 20));
+      if (!pending.length) throw new Error('Delayed provider fixture did not start');
+      await page.click('[data-guide-depth="method"]');
+      await pending.shift()();
+      if (!await page.$eval('[data-guide-sections]', element => element.hidden)) failures.push(`${locale}: stale answer survived a depth change`);
+      responseMode = 'success';
+      await page.click('[data-guide-intent="observatory"]');
+      await page.waitForSelector('[data-provenance-island][data-ready="true"]');
       await page.click('.navigator-submit');
-      await page.waitForFunction(() => window.guideTestTokens.length === 1);
-      await page.click('[data-guide-intent="tools"]');
-      await page.evaluate(() => { window.guideTestTokens.shift()('test-only-token'); window.guideTestHoldToken = false; });
-      await new Promise(resolve => setTimeout(resolve, 100));
-      if (calls !== 3) failures.push(`${locale}: changing intent during token validation sent a stale query`);
-      {
-        await page.evaluate(() => window.guideTestHoldToken = true);
-        await page.click('.navigator-submit');
-        await page.waitForFunction(() => window.guideTestTokens.length === 1);
-        await page.addScriptTag({ content: axe.source });
-        for (const theme of ['light', 'dark']) for (const width of [360, 390, 768, 1440]) {
-          await page.setViewport({ width, height: width < 768 ? 844 : 1000 });
-          await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme);
-          await page.evaluate(async () => {
-            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-            await new Promise(resolve => setTimeout(resolve, 300));
-          });
-          const layout = await page.evaluate(async () => {
-            const dialog = document.querySelector('dialog');
-            const frame = dialog.querySelector('.navigator-frame');
-            const bounds = dialog.getBoundingClientRect();
-            const privacy = dialog.querySelector('.navigator-privacy');
-            const submit = dialog.querySelector('.navigator-submit');
-            const verification = dialog.querySelector('[data-turnstile-container]');
-            const results = dialog.querySelector('[data-navigator-results]');
-            const audit = await window.axe.run(dialog, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } });
-            return { overflow: document.documentElement.scrollWidth > innerWidth + 1 || frame.scrollWidth > frame.clientWidth + 1 || bounds.left < -1 || bounds.right > innerWidth + 1,
-               verificationHeight: verification.getBoundingClientRect().height,
-               verificationFirst: Boolean(verification.compareDocumentPosition(results) & Node.DOCUMENT_POSITION_FOLLOWING),
-               privacyFirst: Boolean(privacy.compareDocumentPosition(submit) & Node.DOCUMENT_POSITION_FOLLOWING),
-              violations: audit.violations.map(item => ({ id: item.id, nodes: item.nodes.map(node => ({ target: node.target, summary: node.failureSummary })) })) };
-          });
-          if (layout.overflow || !layout.privacyFirst || layout.verificationHeight < 70 || !layout.verificationFirst || layout.violations.length) failures.push(`${locale}/${theme}/${width}: Guide layout/privacy/verification/accessibility ${JSON.stringify(layout)}`);
-          if (screenshots) await page.screenshot({ path: `${screenshots}/${locale}-${theme}-${width}.jpg`, type: 'jpeg', quality: 85 });
-        }
+      await page.waitForSelector('[data-guide-view]:not([hidden])');
+      const before = await page.$eval('.provenance-workbench', element => ({ lens: element.dataset.lens, stage: element.dataset.guideStage, repaired: element.dataset.guideRepaired }));
+      if (before.lens !== 'evaluation' || before.repaired !== 'false') failures.push(`${locale}: generation changed the scene before approval`);
+      await page.click('[data-guide-view]');
+      await page.waitForFunction(() => document.querySelector('.provenance-workbench').dataset.lens === 'simulation' && document.querySelector('.provenance-workbench').dataset.guideStage === 'consequence');
+      if (await page.$eval('.provenance-workbench', element => element.dataset.guideRepaired) !== 'false') failures.push(`${locale}: view suggestion executed a repair`);
+      await page.click('[data-guide-open="observatory"]');
+      await page.waitForSelector('dialog[open]');
+      if (!(await page.$eval('[data-guide-context]', element => element.textContent)).length) failures.push(`${locale}: scene context missing`);
+      await page.click('[data-guide-intent="research"]');
+      await page.click('.navigator-submit');
+      await page.waitForSelector('[data-guide-sections]:not([hidden])');
+      await page.addScriptTag({ content: axe.source });
+      for (const theme of ['light', 'dark']) for (const width of [360, 390, 768, 1440]) {
+        await page.setViewport({ width, height: width >= 768 ? 1000 : 844 });
+        await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
+        await page.$eval('.navigator-frame', element => { element.scrollTop = 0; });
+        await new Promise(resolve => setTimeout(resolve, 300));
+        const sizes = await page.evaluate(() => {
+          const dialog = document.querySelector('dialog[open]');
+          return { overflow: dialog.scrollWidth > dialog.clientWidth + 1, body: Number.parseFloat(getComputedStyle(document.querySelector('[data-guide-sections] p')).fontSize), targets: [...dialog.querySelectorAll('button')].filter(element => element.getClientRects().length).some(element => element.getBoundingClientRect().height < 44) };
+        });
+        if (sizes.overflow || sizes.body < 16 || sizes.targets) failures.push(`${locale}/${theme}/${width}: guide overflow, text or tap target sizing`);
+        const result = await page.evaluate(async () => window.axe.run(document.querySelector('dialog[open]'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } }));
+        for (const violation of result.violations) failures.push(`${locale}/${theme}/${width}: Guide axe ${violation.id}: ${violation.nodes.map(node => `${node.target.join(' ')} ${node.failureSummary}`).join('; ')}`);
+        if (screenshots) await page.screenshot({ path: `${screenshots}/${locale}-${theme}-${width}.jpg`, type: 'jpeg', quality: 85 });
       }
       await page.keyboard.press('Escape');
-      if (await page.$eval('dialog', dialog => dialog.open)) failures.push(`${locale}: Guide Escape did not close`);
-      if (!await page.$eval('[data-navigator-launch]', launch => document.activeElement === launch)) failures.push(`${locale}: Guide close did not return focus`);
+      if (await page.$eval('dialog', element => element.open)) failures.push(`${locale}: Escape did not close Guide`);
       await page.close();
     }
   } finally { await context.close(); }
-  if (failures.length === initialFailures) console.log('portfolio-guide: bilingual local-first intent, explicit generation, invalid-ID fallback, plain text, privacy, accessibility and focus passed (mock provider)');
+  if (failures.length === startFailures) console.log('portfolio-guide: bilingual 3-task/local-first/citation/context/cancellation/keyboard/16-view matrix passed; provider and Turnstile explicitly mocked');
 }

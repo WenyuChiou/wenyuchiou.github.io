@@ -154,3 +154,52 @@ h1,h2,h3{line-height:1.2;overflow-wrap:break-word}
   margin-bottom: 0.375rem;
   font-size: 1rem;
 }
+
+.navigator-dialog{inset:0 0 0 auto;width:min(560px,100%);height:100dvh;max-height:100dvh;border-width:0 0 0 1px;border-radius:8px 0 0 8px;box-shadow:-12px 0 40px rgb(0 0 0 / .12)}
+.navigator-dialog[open]{display:flex;flex-direction:column}
+.navigator-frame{height:auto;flex:1;min-height:0;max-height:none;padding:16px 28px 28px;scrollbar-gutter:stable}
+.navigator-header{position:static;flex:0 0 auto;margin:0;padding:20px 28px 12px;background:var(--surface)}
+.navigator-intro h2{font-size:1.75rem;line-height:1.25}
+.navigator-intro p,.guide-reading-intro,.navigator-privacy{font-size:1rem;line-height:1.65}
+.navigator-suggestions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;border:0}
+.navigator-suggestions button{min-height:72px;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:.875rem;line-height:1.35;align-items:center}
+.navigator-suggestions button svg{display:none}
+.navigator-suggestions button[data-guide-intent="research"]{--guide-signal:var(--teal)}
+.navigator-suggestions button[data-guide-intent="observatory"]{--guide-signal:var(--environment)}
+.navigator-suggestions button[data-guide-intent="tools"]{--guide-signal:var(--validation)}
+.navigator-suggestions button[aria-pressed="true"]{color:var(--guide-signal);border-color:var(--guide-signal);background:var(--surface-2)}
+.navigator-suggestions button:hover>span:first-child,.navigator-suggestions button:focus-visible>span:first-child{transform:none}
+.guide-depth{display:flex;flex-wrap:wrap;gap:6px;border:0;padding:0;margin:22px 0 0}
+.guide-depth legend{font-size:.875rem;margin-bottom:8px;color:var(--muted)}
+.guide-depth button{min-height:44px;padding:8px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:1rem}
+.guide-depth button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.guide-context{font-size:.875rem;line-height:1.6;margin:14px 0 0;color:var(--environment)}
+.navigator-form{grid-template-columns:1fr;margin-top:20px}
+.navigator-form input{font-size:1rem;min-height:48px;border-radius:8px}
+.navigator-form .navigator-submit{grid-column:1;width:100%;min-height:48px;height:auto;border-radius:8px;display:flex;justify-content:center;gap:10px;padding:10px;font-size:1rem}
+.navigator-submit span{display:inline}
+.navigator-feedback{font-size:.875rem;line-height:1.5;align-items:start;min-height:40px;flex-wrap:wrap;gap:4px 12px}
+.guide-explanation{display:grid;gap:20px;padding:20px 0}
+.guide-explanation[hidden],.guide-next-view[hidden],.guide-context[hidden]{display:none}
+.guide-explanation h3{font-size:1.25rem;margin:0 0 8px}
+.guide-explanation p{font-size:1.125rem;line-height:1.7}
+.guide-explanation nav{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px}
+.guide-explanation nav a{font-size:.875rem;line-height:1.5;min-height:44px;display:inline-flex;align-items:center;color:var(--teal)}
+.guide-evidence-heading{font-size:1.125rem;margin:20px 0 12px}
+.navigator-results{overflow:visible;flex-shrink:0}
+.navigator-results strong{font-size:1.125rem;line-height:1.4}
+.navigator-results small,.navigator-results details p{font-size:1rem;line-height:1.65}
+.navigator-results details{margin:0 0 14px 42px}
+.navigator-results summary{min-height:44px;display:list-item;align-content:center;font-size:.875rem;cursor:pointer}
+.navigator-results details a{display:inline-flex;min-height:44px;align-items:center;font-size:.875rem;padding:4px 0;color:var(--teal)}
+.guide-context-entry,.guide-next-view{min-height:44px;border:0;background:transparent;padding:8px 0;font-size:1rem;text-align:left;cursor:pointer}
+.guide-next-view{color:var(--environment)}
+.pw-inspector .guide-context-entry{margin-bottom:12px}
+@media(max-width:620px){
+  .navigator-dialog{inset:0;width:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0}
+  .navigator-frame{padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+  .navigator-header{margin:0;padding:16px 20px 12px}
+  .navigator-intro h2{font-size:1.5rem}
+  .guide-explanation p{font-size:1rem}
+  .navigator-suggestions button{padding:8px;min-height:78px}
+}
