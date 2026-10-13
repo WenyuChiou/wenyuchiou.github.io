@@ -38,27 +38,39 @@ export async function auditEditorialInteractions(browser, origin) {
             return scene?.dataset.motion === 'paused' && scene.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused');
           });
           await new Promise(resolve => setTimeout(resolve, 320));
-          const box = await signature.boundingBox();
+          const artworks = await page.$$("[data-provenance-signature] svg");
+          assert.equal(artworks.length, 3, 'all three animated artifacts are covered');
           const offset = await page.evaluate(() => ({ x: scrollX, y: scrollY }));
-          const clip = { ...box, x: box.x + offset.x, y: box.y + offset.y };
-          const pausedImage = await page.screenshot({ clip });
-          const paused = await sharp(pausedImage).raw().toBuffer();
+          const frames = [];
+          for (const artwork of artworks) {
+            const box = await artwork.boundingBox();
+            const x = Math.floor(box.x + offset.x), y = Math.floor(box.y + offset.y);
+            const clip = { x, y, width: Math.ceil(box.x + offset.x + box.width) - x, height: Math.ceil(box.y + offset.y + box.height) - y };
+            const image = await page.screenshot({ clip });
+            frames.push({ clip, image, pixels: await sharp(image).raw().toBuffer() });
+          }
+          const animationTimes = () => page.$eval('[data-provenance-signature]', node => node.getAnimations({ subtree: true }).map(animation => ({ name: animation.animationName, state: animation.playState, time: animation.currentTime })));
+          const pausedTimes = await animationTimes();
           await new Promise(resolve => setTimeout(resolve, 450));
-          const laterImage = await page.screenshot({ clip });
-          const later = await sharp(laterImage).raw().toBuffer();
-          // Fractional static borders can differ by one color level in Chromium.
-          const frozen = paused.length === later.length && paused.every((value, index) => Math.abs(value - later[index]) <= 1);
+          for (const [index, frame] of frames.entries()) {
+            const laterImage = await page.screenshot({ clip: frame.clip });
+            const later = await sharp(laterImage).raw().toBuffer();
+            // Compare artwork, not font rasterization or fractional selected borders.
+            const frozen = frame.pixels.length === later.length && frame.pixels.every((value, pixel) => Math.abs(value - later[pixel]) <= 1);
+            if (!frozen) {
+              const directory = path.resolve('outputs', 'browser-audit', 'pause-failure');
+              fs.mkdirSync(directory, { recursive: true });
+              const name = `${locale ? 'zh' : 'en'}-${index}-${Date.now()}`;
+              fs.writeFileSync(path.join(directory, `${name}-before.png`), frame.image);
+              fs.writeFileSync(path.join(directory, `${name}-after.png`), laterImage);
+              const maximumDelta = frame.pixels.reduce((max, value, pixel) => Math.max(max, Math.abs(value - later[pixel])), 0);
+              console.error('Pause failure:', { directory, name, maximumDelta, clip: frame.clip });
+            }
+            assert(frozen, `${locale || 'en'}: paused artwork ${index} remains unchanged`);
+          }
           assert.equal(await page.$eval('[data-provenance-signature]', node => node.dataset.motion), 'paused');
           assert(await page.$eval('[data-provenance-signature]', node => node.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused')));
-          if (!frozen) {
-            const directory = path.resolve('outputs', 'browser-audit', 'pause-failure');
-            fs.mkdirSync(directory, { recursive: true });
-            const name = `${locale ? 'zh' : 'en'}-${Date.now()}`;
-            fs.writeFileSync(path.join(directory, `${name}-before.png`), pausedImage);
-            fs.writeFileSync(path.join(directory, `${name}-after.png`), laterImage);
-            console.error('Pause failure images:', directory, name);
-          }
-          assert(frozen, `${locale || 'en'}: manual pause freezes artwork`);
+          assert.deepEqual(await animationTimes(), pausedTimes, `${locale || 'en'}: paused animation timelines stay fixed`);
           await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
           await page.$eval("[data-provenance-signature]", node => node.scrollIntoView({ block: "center", behavior: "instant" }));
           assert.equal(await page.$eval("[data-scene-play]", node => node.getAttribute("aria-pressed")), "true", "scroll does not undo manual pause");
