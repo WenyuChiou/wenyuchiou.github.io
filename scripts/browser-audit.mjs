@@ -532,8 +532,8 @@ try {
     await auditProvenance(route);
     await auditWebMcp(route, 4);
   }
-  await auditWebMcp("/articles/", 3);
-  await auditWebMcp("/zh/articles/", 3);
+  await auditWebMcp("/about/", 3);
+  await auditWebMcp("/zh/about/", 3);
   for (const prefix of ["", "/zh"]) for (const slug of ["human-grounded-llm-evaluation", "wagf", "floodabm"]) {
     await auditWebMcp(`${prefix}/work/${slug}/`, 4);
   }
@@ -567,8 +567,9 @@ try {
   await heroPage.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
   const mobileHeroWidth = await heroPage.$eval(".hero-media", (image) => image.getBoundingClientRect().width);
   if (mobileHeroWidth < 95 || mobileHeroWidth > 121) failures.push(`/: mobile Hero photo is ${Math.round(mobileHeroWidth)}px, expected 96–120px`);
-  const articleTitles = await heroPage.$$eval(".article-preview-list h3", (titles) => titles.map((title) => title.textContent.trim()));
-  if (articleTitles.length !== 3 || articleTitles.some((title) => !title)) failures.push(`/: homepage does not expose all three articles`);
+  const postTitles = await heroPage.$$eval(".curated-note h3", (titles) => titles.map((title) => title.textContent.trim()));
+  if (postTitles.length !== 3 || postTitles.some((title) => !title)) failures.push(`/: homepage does not expose all three verified public posts`);
+  if (await heroPage.$(".article-preview-list, .article-byline")) failures.push("/: withdrawn generated writing remains visible");
   await heroPage.close();
 
   const zhArticlePage = await openPage("/zh/");
@@ -577,8 +578,8 @@ try {
   const zhPreviewPaths = await zhArticlePage.$$eval(".repo-preview img", (images) => images.map((image) => new URL(image.src).pathname));
   const expectedPreviewPaths = expectedPreviews.map(([, repo]) => repo.previewUrl);
   if (zhPreviewPaths.join("|") !== expectedPreviewPaths.join("|")) failures.push(`/zh/: GitHub social previews drifted from the English home page: ${zhPreviewPaths.join("|")}`);
-  const zhArticleTitles = await zhArticlePage.$$eval(".article-preview-list h3", (titles) => titles.map((title) => title.textContent.trim()));
-  if (zhArticleTitles.length !== 3 || zhArticleTitles.some((title) => !title)) failures.push(`/zh/: homepage does not expose all three localized articles`);
+  const zhPostTitles = await zhArticlePage.$$eval(".curated-note h3", (titles) => titles.map((title) => title.textContent.trim()));
+  if (zhPostTitles.length !== 3 || zhPostTitles.some((title) => !title)) failures.push(`/zh/: homepage does not expose all three localized public posts`);
   await zhArticlePage.close();
 
   const publicationCopyPage = await openPage("/publications/");

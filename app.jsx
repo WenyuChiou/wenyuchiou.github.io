@@ -276,8 +276,8 @@ function FlagshipCards({ content, locale, full = false }) {
         return (
         <article className={`flagship-record case-${role}`} key={item.slug}><details className={`flagship-entry case-${role}`} name="selected-work-projects" open={index === 0}>
           <summary className="flagship-trigger">
-            <span className="flagship-meta"><span>{item.index}</span><span>{item.status}</span></span>
-            <span className="flagship-summary"><h3>{item.title}</h3><span>{item.line}</span><span className="flagship-role"><strong>{content.editorial.contributionLabel}</strong> {item.role}</span></span>
+            <span className="flagship-meta">{item.index}</span>
+            <span className="flagship-summary"><h3>{item.title}</h3><span>{item.line}</span><span className="flagship-role"><strong>{content.editorial.contributionLabel}</strong> {item.role}</span><span className="flagship-outcome"><strong>{content.editorial.outcomeLabel}</strong> {item.outcome}</span></span>
             <span className="flagship-signal" aria-hidden="true"><Icon size={20} /><span>{role}</span></span>
             <ChevronDown className="flagship-chevron" aria-hidden="true" size={20} />
           </summary>
@@ -410,43 +410,21 @@ function EvidenceSlice({ content, locale, slug }) {
   const E = content.evidenceSlices[slug];
   const L = content.evidenceLabels;
   const fields = [[L.problem, E.problem], [L.role, E.role], [L.input, E.input], [L.decision, E.decision], [L.validation, E.validation], [L.consequence, E.consequence]];
-  return <section className="section evidence-slice" aria-labelledby="evidence-slice-title"><div className="wrap"><SectionHead eyebrow={L.eyebrow} title={L.title} id="evidence-slice-title" /><p className="evidence-status"><strong>{L.publicStatus}</strong>{E.status}</p><dl>{fields.map(([label, value], index) => <div key={label}><dt><span>0{index + 1}</span>{label}</dt><dd>{value}</dd></div>)}</dl><p className="evidence-sources"><strong>{L.sources}</strong>{E.sources.map((source) => <SmartLink href={source.href} locale={locale} className="text-link" key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></div></section>;
+  return <section className="section evidence-slice" aria-labelledby="evidence-slice-title"><div className="wrap"><SectionHead eyebrow={L.eyebrow} title={L.title} id="evidence-slice-title" /><dl>{fields.map(([label, value], index) => <div key={label}><dt><span>0{index + 1}</span>{label}</dt><dd>{value}</dd></div>)}</dl><p className="evidence-sources"><strong>{L.sources}</strong>{E.sources.map((source) => <SmartLink href={source.href} locale={locale} className="text-link" key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></div></section>;
 }
 
-function ArticleDiagram({ type, content }) {
-  const isZh = content.locale === "zh-TW";
-  const diagrams = {
-    evaluation: isZh ? ["實測行為", "受控人物設定", "重複決策", "結構與穩定性"] : ["Measured behavior", "Controlled persona", "Repeated decisions", "Structure + stability"],
-    governance: isZh ? ["結構化提案", "確定性驗證", "針對性修正", "允許狀態更新"] : ["Structured proposal", "Deterministic checks", "Targeted repair", "Authorized update"],
-    feedback: isZh ? ["理解風險", "受限決策", "危害與損失", "更新後的情境"] : ["Interpret risk", "Constrained choice", "Hazard + loss", "Updated context"],
-  };
-  const roles = type === "evaluation" ? ["human", "context", "model", "validation"] : type === "governance" ? ["model", "validation", "repair", "system"] : ["human", "context", "environment", "system"];
-  return <figure className={`article-diagram diagram-${type}`}><ol>{diagrams[type].map((label, index) => <li data-color-role={roles[index]} key={label}><span>0{index + 1}</span><strong>{label}</strong>{index < 3 ? <ArrowRight aria-hidden="true" size={18} /> : <RotateCcw aria-hidden="true" size={18} />}</li>)}</ol><figcaption>{content.articlesPage.diagram}</figcaption></figure>;
-}
 
-function ArticlesPreview({ content, locale }) {
-  const A = content.articlesPage;
+
+function PublicUpdates({ content, locale }) {
   const E = content.editorial;
   const posts = updatesData.items.filter(item => item.type.en === "LinkedIn").slice(0, 3);
-  return <section className="section articles-preview" aria-labelledby="articles-preview-title"><div className="wrap">
-    <SectionHead eyebrow={E.writingEyebrow} title={E.writingTitle} intro={E.writingIntro} action={{ href: "/articles/", label: A.eyebrow }} locale={locale} id="articles-preview-title" />
-    <div className="article-preview-list">{A.articles.map((article, index) => <article key={article.slug}><span>0{index + 1}</span><div><p className="article-meta"><time dateTime={article.date}>{article.date}</time> · {article.readingTime}</p><h3>{article.title}</h3><p>{article.dek}</p></div><SmartLink className="icon-link" href={`/articles/${article.slug}/`} locale={locale}><ArrowUpRight aria-hidden="true" /><span className="sr-only">{A.read}: {article.title}</span></SmartLink></article>)}</div>
-    {posts.length > 0 && <div className="curated-notes" aria-labelledby="public-notes-title"><h3 id="public-notes-title">{E.publicNotes}</h3>{posts.map(post => <article className="curated-note" key={post.url}>
+  return <section id="public-updates" className="section public-updates" aria-labelledby="public-updates-title"><div className="wrap">
+    <SectionHead eyebrow={E.updatesEyebrow} title={E.updatesTitle} intro={E.updatesIntro} id="public-updates-title" />
+    <div className="curated-notes">{posts.map(post => <article className="curated-note" key={post.url}>
       <p className="section-label">LinkedIn{post.date && /^\d{4}-\d{2}-\d{2}$/.test(post.date) ? <> · <time dateTime={post.date}>{post.date}</time></> : null}</p>
-      <div><h4>{post.title[locale]}</h4><p>{post.summary[locale]}</p><SmartLink className="text-link" href={post.url} locale={locale}>{E.originalPost}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>
-    </article>)}<SmartLink className="text-link" href="https://www.linkedin.com/in/wenyu-chiou/recent-activity/all/" locale={locale}>{E.allPosts}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>}
+      <div><h3>{post.title[locale]}</h3><p>{post.summary[locale]}</p><SmartLink className="text-link" href={post.url} locale={locale}>{E.originalPost}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>
+    </article>)}<SmartLink className="text-link" href="https://www.linkedin.com/in/wenyu-chiou/recent-activity/all/" locale={locale}>{E.allPosts}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>
   </div></section>;
-}
-
-function ArticlesPage({ content, locale }) {
-  const A = content.articlesPage;
-  return <><PageHero eyebrow={A.eyebrow} title={A.title} intro={A.intro} /><section className="section articles-index"><div className="wrap">{A.articles.map((article, index) => <article className="article-index-item" key={article.slug}><span>0{index + 1}</span><div><p className="article-meta"><time dateTime={article.date}>{article.date}</time> · {article.readingTime}</p><h2>{article.title}</h2><p>{article.dek}</p><SmartLink className="text-link" href={`/articles/${article.slug}/`} locale={locale}>{A.read}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div><ArticleDiagram type={article.diagramType} content={content} /></article>)}</div></section><Contact content={content} /></>;
-}
-
-function ArticlePage({ content, locale, slug }) {
-  const A = content.articlesPage;
-  const article = A.articles.find((item) => item.slug === slug) || A.articles[0];
-  return <article className="tech-article"><header className="article-hero wrap"><p className="eyebrow">{A.eyebrow}</p><p className="article-meta"><time dateTime={article.date}>{article.date}</time> · {article.readingTime}</p><h1>{article.title}</h1><p>{article.dek}</p><p className="article-byline">{locale === "zh-TW" ? "作者" : "By"} <SmartLink href="/about/" locale={locale}>{content.name}</SmartLink></p></header><section className="section article-body"><div className="wrap article-layout"><aside><p className="eyebrow">{A.thesis}</p><p>{article.thesis}</p><ArticleDiagram type={article.diagramType} content={content} /></aside><div className="article-prose">{article.sections.map((section) => <section key={section.title}><h2>{section.title}</h2>{section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</section>)}<footer className="article-sources"><h2>{A.sources}</h2>{article.sources.map((source) => <SmartLink className="text-link" href={source.href} locale={locale} key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={15} /></SmartLink>)}<SmartLink className="text-link" href={article.relatedCase} locale={locale}>{A.related}<ArrowUpRight aria-hidden="true" size={15} /></SmartLink></footer></div></div></section><Contact content={content} /></article>;
 }
 
 function PublicationsPreview({ content, locale }) {
@@ -470,7 +448,7 @@ function Contact({ content }) {
 }
 
 function Home({ content, locale }) {
-  return <><Hero content={content} locale={locale} /><FlagshipCards content={content} locale={locale} /><DecisionProvenanceExplorer content={content} /><OpenSource content={content} locale={locale} compact /><ArticlesPreview content={content} locale={locale} /><Contact content={content} /></>;
+  return <><Hero content={content} locale={locale} /><FlagshipCards content={content} locale={locale} /><DecisionProvenanceExplorer content={content} /><OpenSource content={content} locale={locale} compact /><PublicUpdates content={content} locale={locale} /><Contact content={content} /></>;
 }
 
 function PageHero({ eyebrow, title, intro }) {
@@ -481,14 +459,10 @@ function Breadcrumbs({ content, locale, page }) {
   if (page === "home") return null;
   const parent = page.startsWith("case:")
     ? { label: content.workPage.title, href: "/work/" }
-    : page.startsWith("article:")
-      ? { label: content.articlesPage.eyebrow, href: "/articles/" }
-      : null;
+    : null;
   const current = page.startsWith("case:")
     ? content.caseStudies[page.slice(5)]?.title
-    : page.startsWith("article:")
-      ? content.articlesPage.articles.find((item) => item.slug === page.slice(8))?.title
-      : ({ work: content.workPage.title, research: content.researchPage.title, publications: content.publicationsPage.title, articles: content.articlesPage.title, hire: content.hire.navLabel, about: content.aboutPage.title })[page];
+    : ({ work: content.workPage.title, research: content.researchPage.title, publications: content.publicationsPage.title, hire: content.hire.navLabel, about: content.aboutPage.title })[page];
   return <nav className="breadcrumbs wrap" aria-label={locale === "zh-TW" ? "階層導覽" : "Breadcrumb"}><ol><li><SmartLink href="/" locale={locale}>{locale === "zh-TW" ? "首頁" : "Home"}</SmartLink></li>{parent ? <li><SmartLink href={parent.href} locale={locale}>{parent.label}</SmartLink></li> : null}<li aria-current="page">{current}</li></ol></nav>;
 }
 
@@ -540,7 +514,7 @@ function HirePage({ content, locale }) {
   return <div className="hire-page">
     <header className="hire-hero wrap"><div><p className="eyebrow">{H.eyebrow}</p><h1>{H.title}</h1><p>{H.intro}</p></div><figure><img src="/assets/agu2025-photo-mobile.webp" width="360" height="480" alt={content.hero.imageAlt} /><figcaption>{content.hero.imageCaption}</figcaption></figure></header>
     <section className="section hire-profile" aria-labelledby="hire-role-title"><div className="wrap"><div className="hire-split hire-role"><div><p className="hire-number">01</p><h2 id="hire-role-title">{H.roleFitTitle}</h2></div><p>{H.roleFitText}</p></div><div className="hire-section-title hire-own-title"><p className="hire-number">02</p><h2 id="hire-own-title">{H.ownTitle}</h2></div><ol className="hire-ownership">{H.own.map((item, index) => <li data-color-role={["human", "validation", "system"][index]} key={item.title}><span>0{index + 1}</span><div><h3>{item.title}</h3><p>{item.text}</p></div></li>)}</ol></div></section>
-    <section className="section hire-evidence" aria-labelledby="hire-evidence-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">03</p><h2 id="hire-evidence-title">{H.evidenceTitle}</h2><p>{H.evidenceIntro}</p></div><div className="hire-evidence-list">{content.flagship.items.map((project) => { const slice = content.evidenceSlices[project.slug]; const role = CASE_ROLES[project.slug].role; return <article className={`case-${role}`} key={project.slug}><header><span>{project.index}</span><div><p>{project.status}</p><h3>{project.title}</h3></div></header><dl><div><dt>{H.evidenceLabels.problem}</dt><dd>{project.line}</dd></div><div><dt>{H.evidenceLabels.role}</dt><dd>{project.role}</dd></div><div><dt>{H.evidenceLabels.capabilities}</dt><dd>{project.practice.join(" · ")}</dd></div><div><dt>{H.evidenceLabels.status}</dt><dd>{slice.status}</dd></div></dl><p className="hire-evidence-links"><SmartLink className="text-link" href={project.href} locale={locale}>{H.evidenceLabels.source}<ArrowRight aria-hidden="true" size={15} /></SmartLink>{slice.sources.slice(0, 1).map((source) => <SmartLink className="text-link" href={source.href} locale={locale} key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></article>; })}</div></div></section>
+    <section className="section hire-evidence" aria-labelledby="hire-evidence-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">03</p><h2 id="hire-evidence-title">{H.evidenceTitle}</h2><p>{H.evidenceIntro}</p></div><div className="hire-evidence-list">{content.flagship.items.map((project) => { const slice = content.evidenceSlices[project.slug]; const role = CASE_ROLES[project.slug].role; return <article className={`case-${role}`} key={project.slug}><header><span>{project.index}</span><div><h3>{project.title}</h3></div></header><dl><div><dt>{H.evidenceLabels.problem}</dt><dd>{project.line}</dd></div><div><dt>{H.evidenceLabels.role}</dt><dd>{project.role}</dd></div><div><dt>{H.evidenceLabels.capabilities}</dt><dd>{project.practice.join(" · ")}</dd></div></dl><p className="hire-evidence-links"><SmartLink className="text-link" href={project.href} locale={locale}>{H.evidenceLabels.source}<ArrowRight aria-hidden="true" size={15} /></SmartLink>{slice.sources.slice(0, 1).map((source) => <SmartLink className="text-link" href={source.href} locale={locale} key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></article>; })}</div></div></section>
     <section className="section hire-fit" aria-labelledby="hire-fit-title"><div className="wrap hire-fit-grid"><div><div className="hire-section-title"><p className="hire-number">04</p><h2 id="hire-fit-title">{H.fitTitle}</h2><p>{H.fitIntro}</p></div><dl className="hire-skills">{H.skillGroups.map((group, index) => <div data-color-role={skillRoles[index]} key={group.label}><dt>{group.label}</dt><dd>{group.items.join(" · ")}</dd></div>)}</dl></div><aside className="hire-availability" aria-labelledby="hire-availability-title"><p className="hire-number">05</p><h2 id="hire-availability-title">{H.availabilityTitle}</h2><ul>{H.availability.map((item) => <li key={item}><Check aria-hidden="true" size={18} />{item}</li>)}</ul></aside></div></section>
     <RecruiterFitExplorer content={content} locale={locale} resume={resume} />
     <section id="contact" className="section hire-contact" aria-labelledby="hire-contact-title"><div className="wrap hire-split"><div><p className="hire-number">07</p><h2 id="hire-contact-title">{H.contactTitle}</h2><p>{H.contactText}</p></div><div className="hire-contact-actions"><a className="button button-dark" href={resume.href} download><Download aria-hidden="true" size={17} />{H.resumeLabel}</a><a className="button button-outline" href={`mailto:${content.contact.email}`}><Mail aria-hidden="true" size={17} />{H.emailLabel}</a><SmartLink className="button button-outline" href="https://www.linkedin.com/in/wenyu-chiou" locale={locale}><Linkedin aria-hidden="true" size={17} />{H.linkedinLabel}</SmartLink></div></div></section>
@@ -576,7 +550,25 @@ function CaseInteraction({ type, content }) {
 function CaseStudyPage({ content, locale, slug }) {
   const C = content.caseStudies[slug];
   const labels = content.caseLabels;
-  return <article className="case-study"><header className="case-hero wrap"><p className="eyebrow">{C.eyebrow}</p><p className="case-status">{C.status}</p><h1>{C.title}</h1><p className="case-lede">{C.lede}</p><ul>{C.scale.map((item) => <li key={item}>{item}</li>)}</ul></header><section className="section case-overview"><div className="wrap two-column"><div><p className="eyebrow">{labels.problem}</p><h2>{labels.why}</h2><p>{C.problem}</p></div><aside><p className="eyebrow">{labels.aiTeams}</p><p>{C.relevance}</p></aside></div></section><EvidenceSlice content={content} locale={locale} slug={slug} /><section className="section"><div className="wrap"><SectionHead eyebrow={labels.artifact} title={labels.inspect} intro={C.artifact} id="artifact-title" /><CaseInteraction type={C.interaction} content={content} /></div></section><section className="section case-method"><div className="wrap two-column"><div><p className="eyebrow">{labels.roleMethod}</p><h2>{labels.built}</h2><p>{C.role}</p><ol>{C.method.map((item) => <li key={item}>{item}</li>)}</ol></div><div className="limits-panel"><AlertTriangle aria-hidden="true" /><h2>{labels.validation}</h2><h3>{labels.validationShort}</h3><ul>{C.validation.map((item) => <li key={item}>{item}</li>)}</ul><h3>{labels.limitations}</h3><ul>{C.limitations.map((item) => <li key={item}>{item}</li>)}</ul></div></div></section><section className="section case-learned"><div className="wrap"><p className="eyebrow">{labels.changed}</p><blockquote>{C.learned}</blockquote><p className="record-links">{C.links.map((link) => <SmartLink key={link.href} className="button button-outline" href={link.href} locale={locale}>{link.label}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>)}</p></div></section><Contact content={content} /></article>;
+  return <article className="case-study">
+    <header className="case-hero wrap"><p className="eyebrow">{C.eyebrow}</p><h1>{C.title}</h1><p className="case-lede">{C.lede}</p><ul>{C.scale.map((item) => <li key={item}>{item}</li>)}</ul></header>
+    <section className="section case-overview"><div className="wrap two-column">
+      <div data-case-why><h2>{labels.why}</h2><p>{C.problem}</p></div>
+      <div data-case-how><h2>{labels.built}</h2><p>{C.role}</p></div>
+    </div></section>
+    <section className="section case-learned"><div className="wrap" data-case-contribution>
+      <h2>{labels.changed}</h2><p>{C.learned}</p>
+      <p>{C.relevance}</p>
+      <p className="record-links">{C.links.map((link) => <SmartLink key={link.href} className="button button-outline" href={link.href} locale={locale}>{link.label}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>)}</p>
+    </div></section>
+    <section className="section"><div className="wrap"><SectionHead eyebrow={labels.artifact} title={labels.inspect} intro={C.artifact} id="artifact-title" /><CaseInteraction type={C.interaction} content={content} /></div></section>
+    <section className="section case-method"><div className="wrap two-column">
+      <div><h2>{labels.roleMethod}</h2><ol>{C.method.map((item) => <li key={item}>{item}</li>)}</ol></div>
+      <div className="limits-panel"><AlertTriangle aria-hidden="true" /><h2>{labels.validation}</h2><h3>{labels.validationShort}</h3><ul>{C.validation.map((item) => <li key={item}>{item}</li>)}</ul><h3>{labels.limitations}</h3><ul>{C.limitations.map((item) => <li key={item}>{item}</li>)}</ul></div>
+    </div></section>
+    <EvidenceSlice content={content} locale={locale} slug={slug} />
+    <Contact content={content} />
+  </article>;
 }
 
 function SiteFooter({ content, locale }) {
@@ -649,8 +641,6 @@ export function App({ page = "home", locale = "en", basePath = "/" }) {
   else if (page === "work") body = <WorkPage content={content} locale={locale} />;
   else if (page === "research") body = <ResearchPage content={content} locale={locale} />;
   else if (page === "publications") body = <PublicationsPage content={content} locale={locale} />;
-  else if (page === "articles") body = <ArticlesPage content={content} locale={locale} />;
-  else if (page.startsWith("article:")) body = <ArticlePage content={content} locale={locale} slug={page.slice(8)} />;
   else if (page === "hire") body = <HirePage content={content} locale={locale} />;
   else if (page === "about") body = <AboutPage content={content} locale={locale} />;
   else if (page.startsWith("case:")) body = <CaseStudyPage content={content} locale={locale} slug={page.slice(5)} />;

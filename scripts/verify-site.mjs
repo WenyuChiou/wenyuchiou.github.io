@@ -43,13 +43,12 @@ const enKeys = Object.keys(CONTENT.en.caseStudies).sort().join(",");
 const zhKeys = Object.keys(CONTENT["zh-TW"].caseStudies).sort().join(",");
 if (enKeys !== zhKeys) errors.push(`case-study locale mismatch: en=${enKeys}; zh=${zhKeys}`);
 if (CONTENT.en.observatory.stages.length !== 6 || CONTENT["zh-TW"].observatory.stages.length !== 6) errors.push("both locales must have six evidence stages");
-if (CONTENT.en.articlesPage.articles.length !== 3 || CONTENT["zh-TW"].articlesPage.articles.length !== 3) errors.push("both locales must have three articles");
-if (CONTENT.en.articlesPage.articles.map(({ slug }) => slug).join(",") !== CONTENT["zh-TW"].articlesPage.articles.map(({ slug }) => slug).join(",")) errors.push("article locale routes are not mirrored");
+if (routes.some(({ page }) => page === "articles" || page.startsWith("article:"))) errors.push("withdrawn generated articles must not be indexed");
 for (const file of ["index.html", "zh/index.html"]) {
   const html = readFileSync(file, "utf8");
   const visibleCopy = html.replace(/<svg[\s\S]*?<\/svg>/g, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").toLowerCase();
   if (["937 human profiles", "52,141 simulated households", "50 runs per", "937 份人類", "52,141 戶", "50 次模擬"].some((value) => visibleCopy.includes(value.toLowerCase()))) errors.push(`${file}: research scale leaked onto homepage`);
-  for (const selectorCopy of ["selected-work", "decision-provenance", "open-source", "articles-preview-title", "contact"]) if (!html.includes(selectorCopy)) errors.push(`${file}: missing homepage section ${selectorCopy}`);
+  for (const selectorCopy of ["selected-work", "decision-provenance", "open-source", "public-updates-title", "contact"]) if (!html.includes(selectorCopy)) errors.push(`${file}: missing homepage section ${selectorCopy}`);
 }
 const recruiterFiles = ["hire/index.html", "zh/hire/index.html"];
 for (const file of recruiterFiles) {

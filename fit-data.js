@@ -9,7 +9,7 @@ export const FIT_ROLE_PRESETS = {
     semanticQuery: "human-grounded LLM evaluation model behavior subgroup stability psychometrics measured evidence",
     ownershipIds: ["evaluation-design", "validity-analysis", "reproducible-research"],
     defaultRequirements: [
-      { requirement: { en: "Evaluate model decisions against measured human behavior", "zh-TW": "以實測人類行為評估模型決策" }, priority: "required", fit: "strong", capabilityId: "human-grounded-evaluation", evidenceIds: ["human-grounded-llm-evaluation", "articles"] },
+      { requirement: { en: "Evaluate model decisions against measured human behavior", "zh-TW": "以實測人類行為評估模型決策" }, priority: "required", fit: "strong", capabilityId: "human-grounded-evaluation", evidenceIds: ["human-grounded-llm-evaluation"] },
       { requirement: { en: "Examine subgroup differences and repeated-run stability", "zh-TW": "檢視次群體差異與重複執行穩定性" }, priority: "required", fit: "strong", capabilityId: "subgroup-stability", evidenceIds: ["human-grounded-llm-evaluation", "research"] },
       { requirement: { en: "Build reproducible evaluation and analysis workflows", "zh-TW": "建立可重現的評估與分析工作流" }, priority: "preferred", fit: "strong", capabilityId: "research-engineering", evidenceIds: ["open-source", "research"] },
     ],
@@ -24,7 +24,7 @@ export const FIT_ROLE_PRESETS = {
     semanticQuery: "governed agent systems structured outputs validators targeted repair audit traces MCP RAG tools",
     ownershipIds: ["governed-agents", "agent-workflows", "reproducible-research"],
     defaultRequirements: [
-      { requirement: { en: "Validate agent actions before they change system state", "zh-TW": "在代理行動改變系統狀態前完成驗證" }, priority: "required", fit: "strong", capabilityId: "agent-governance", evidenceIds: ["wagf", "articles"] },
+      { requirement: { en: "Validate agent actions before they change system state", "zh-TW": "在代理行動改變系統狀態前完成驗證" }, priority: "required", fit: "strong", capabilityId: "agent-governance", evidenceIds: ["wagf"] },
       { requirement: { en: "Implement structured outputs, targeted repair, and audit traces", "zh-TW": "實作結構化輸出、針對性修正與稽核軌跡" }, priority: "required", fit: "strong", capabilityId: "validation-repair", evidenceIds: ["wagf"] },
       { requirement: { en: "Work with agent tools, MCP, RAG, skills, and multi-agent workflows", "zh-TW": "運用代理工具、MCP、RAG、Skills 與多代理工作流" }, priority: "preferred", fit: "adjacent", capabilityId: "agent-tooling", evidenceIds: ["hire", "open-source"] },
     ],
@@ -39,7 +39,7 @@ export const FIT_ROLE_PRESETS = {
     semanticQuery: "AI for science behavioral simulation agent-based modeling hydrological sociohydrological coupled human environment",
     ownershipIds: ["behavioral-simulation", "scientific-modeling", "reproducible-research"],
     defaultRequirements: [
-      { requirement: { en: "Connect individual decisions to system-level consequences", "zh-TW": "將個別決策連結到系統層級後果" }, priority: "required", fit: "strong", capabilityId: "coupled-simulation", evidenceIds: ["floodabm", "articles"] },
+      { requirement: { en: "Connect individual decisions to system-level consequences", "zh-TW": "將個別決策連結到系統層級後果" }, priority: "required", fit: "strong", capabilityId: "coupled-simulation", evidenceIds: ["floodabm"] },
       { requirement: { en: "Build behavioral and agent-based simulations", "zh-TW": "建立行為與代理人基礎模擬" }, priority: "required", fit: "strong", capabilityId: "behavioral-simulation", evidenceIds: ["floodabm", "research"] },
       { requirement: { en: "Work across hydrological and sociohydrological modeling", "zh-TW": "執行水文與社會水文建模" }, priority: "preferred", fit: "strong", capabilityId: "scientific-modeling", evidenceIds: ["floodabm", "publications"] },
     ],
@@ -76,7 +76,7 @@ export const FIT_EVIDENCE = {
   floodabm: { capabilities: ["coupled-simulation", "behavioral-simulation", "scientific-modeling"], roleRelevance: ["ai-science", "llm-evaluation"], evidenceStrength: "direct", sourceType: "published-case", verifiedTerms: ["Agent-Based Modeling", "catastrophe modeling", "flood risk", "hydrological modeling"] },
   research: { capabilities: ["subgroup-stability", "research-engineering", "behavioral-simulation"], roleRelevance: ["llm-evaluation", "agent-systems", "ai-science"], evidenceStrength: "supporting", sourceType: "research-program", verifiedTerms: ["survey design", "psychometrics", "Python workflows"] },
   publications: { capabilities: ["human-grounded-evaluation", "scientific-modeling"], roleRelevance: ["llm-evaluation", "ai-science"], evidenceStrength: "direct", sourceType: "publication-record", verifiedTerms: ["Water Resources Research", "AGU", "ISDSA"] },
-  articles: { capabilities: ["human-grounded-evaluation", "agent-governance", "coupled-simulation"], roleRelevance: ["llm-evaluation", "agent-systems", "ai-science"], evidenceStrength: "supporting", sourceType: "methods-article", verifiedTerms: [] },
+  "public-updates": { capabilities: [], roleRelevance: ["llm-evaluation", "agent-systems", "ai-science"], evidenceStrength: "contextual", sourceType: "public-post", verifiedTerms: [] },
   "open-source": { capabilities: ["research-engineering", "agent-tooling"], roleRelevance: ["llm-evaluation", "agent-systems", "ai-science"], evidenceStrength: "direct", sourceType: "github-repository", verifiedTerms: ["Agent Skills", "plugins", "multi-agent workflows", "research software"] },
   documents: { capabilities: ["research-engineering"], roleRelevance: ["llm-evaluation", "agent-systems", "ai-science"], evidenceStrength: "supporting", sourceType: "resume-cv", verifiedTerms: [] },
   about: { capabilities: ["human-grounded-evaluation", "behavioral-simulation"], roleRelevance: ["llm-evaluation", "agent-systems", "ai-science"], evidenceStrength: "contextual", sourceType: "profile-page", verifiedTerms: [] },

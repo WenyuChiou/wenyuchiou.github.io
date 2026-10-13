@@ -6,7 +6,6 @@ const SOURCE_LINKS = {
 
 export const FEATURE_CONTENT = {
   en: {
-    articlesNav: { id: "articles", label: "Articles", href: "/articles/" },
     heroCapabilities: ["LLM behavior evaluation", "Agent governance", "Behavioral simulation", "Reproducible research systems"],
     provenance: {
       illustration: { alt: "Wenyu Chiou: human evidence and context inform an LLM proposal, validation and repair, and human-environment feedback.", pause: "Pause research animation", play: "Play research animation" },
@@ -87,14 +86,14 @@ export const FEATURE_CONTENT = {
     },
     evidenceSlices: {
       "human-grounded-llm-evaluation": {
-        status: "In preparation. Public descriptions and synthetic examples only.",
-        problem: "A plausible answer is not enough evidence that an LLM follows human decision pathways.",
-        role: "I designed the subgroup-aware evaluation, prompt controls, repeated-run checks, and reporting boundaries.",
-        input: "Measured human constructs plus label-blind synthetic personas derived from approved attributes.",
-        decision: "The model selects an adaptation action and supplies a structured rationale.",
-        validation: "Compare pathway direction, subgroup differences, and run stability; do not expose respondent-level data or unpublished coefficients.",
-        consequence: "The study identifies where generated behavior aligns, diverges, or remains too unstable to interpret.",
-        sources: [{ label: "Google Scholar record", href: SOURCE_LINKS.scholar }],
+        status: "",
+        problem: "Can generated flood-insurance survey answers preserve the household differences and decision relationships found in real human responses?",
+        role: "I compared measured household survey responses with two LLMs using matched profiles, measurement checks, decision-pathway analysis, and repeated runs.",
+        input: "Real household survey evidence and generated answers to the same questionnaire using household context.",
+        decision: "Compare willingness to buy insurance and the relationships between measured decision variables.",
+        validation: "Check measurement quality separately, compare household-constraint groups, and test repeated responses under unchanged settings.",
+        consequence: "Reveal differences in household variation and decision relationships that average answers alone can hide.",
+        sources: [{ label: "Related research profile", href: SOURCE_LINKS.scholar }],
       },
       floodabm: {
         status: "Public WRR article, AGU poster, and repository; the case-study analysis remains in revision.",
@@ -107,7 +106,7 @@ export const FEATURE_CONTENT = {
         sources: [{ label: "Water Resources Research article", href: SOURCE_LINKS.wrr }, { label: "FLOODABM repository", href: SOURCE_LINKS.floodabm }],
       },
       wagf: {
-        status: "Framework in preparation. The trace below is synthetic and illustrative.",
+        status: "",
         problem: "An unconstrained LLM proposal can create impossible financial or physical state changes.",
         role: "I designed the proposal schema, validator sequence, targeted repair path, and audit record.",
         input: "A synthetic household state, action catalog, and explicit behavioral, financial, and physical constraints.",
@@ -117,63 +116,8 @@ export const FEATURE_CONTENT = {
         sources: [{ label: "Related public FLOODABM repository", href: SOURCE_LINKS.floodabm }],
       },
     },
-    articlesPage: {
-      eyebrow: "Articles",
-      title: "Methods, failure modes, and engineering judgment",
-      intro: "Three practical notes on evaluating behavior, governing agent actions, and tracing decisions into system consequences. They explain methods without disclosing unpublished results.",
-      read: "Read article",
-      related: "Related case",
-      diagram: "Technical diagram",
-      sources: "Sources",
-      thesis: "Thesis",
-      articles: [
-        {
-          slug: "evaluating-llm-agents-against-measured-human-behavior",
-          title: "Evaluating LLM Agents Against Measured Human Behavior",
-          dek: "A behavioral evaluation should compare decision structure, subgroup patterns, and stability, not just answer similarity.",
-          thesis: "Human-grounded evaluation asks whether generated decisions preserve the relationships observed in measured behavior, while making the limits of that comparison explicit.",
-          date: "2026-08-25", readingTime: "6 min read", diagramType: "evaluation", relatedCase: "/work/human-grounded-llm-evaluation/",
-          sections: [
-            { title: "Start with a behavioral reference", paragraphs: ["An LLM can produce a fluent, plausible decision and still rely on a different structure from the people it is meant to simulate. The reference therefore cannot be a preferred answer written by the evaluator. It needs measured constructs, reported choices, and a model of how those variables relate.", "The comparison is about structure. Does risk perception move the generated decision in the expected direction? Do constraints suppress an action when they should? Are differences between social groups preserved without placing the group label in the prompt?"] },
-            { title: "Separate prompt construction from evaluation", paragraphs: ["Personas should contain only approved inputs and should be generated through a reproducible mapping. Labels that reveal the expected outcome must stay out. Repeated runs then expose whether a conclusion survives ordinary model variability.", "Evaluation can combine choice agreement, pathway direction, subgroup contrasts, and stability. No single measure proves human equivalence. Together they locate where the model is useful and where it is only persuasive."] },
-            { title: "Failure modes to report", paragraphs: ["Common failures include collapsing distinct groups into one average response, producing the correct choice for the wrong stated reason, changing behavior across runs, and overclaiming causality from an associational human model. These are findings, not nuisances to hide."] },
-            { title: "Practical implication", paragraphs: ["For simulated-user systems, the deliverable is a bounded validity statement: which behaviors, populations, and conditions were examined; what aligned; what did not; and what remains unknown. That statement is more useful than a broad claim that the agent is realistic."] },
-          ],
-          sources: [{ label: "Related research record", href: SOURCE_LINKS.scholar }],
-        },
-        {
-          slug: "why-governed-agents-need-validators-before-state-changes",
-          title: "Why Governed Agents Need Validators Before State Changes",
-          dek: "Treat an LLM output as a proposal. Deterministic checks decide whether it may alter the system.",
-          thesis: "A governed agent separates generation from execution so invalid proposals can be blocked, repaired narrowly, and audited before any state mutation.",
-          date: "2026-08-25", readingTime: "6 min read", diagramType: "governance", relatedCase: "/work/wagf/",
-          sections: [
-            { title: "Generation is not authorization", paragraphs: ["Structured output makes an LLM response easier to parse, but valid JSON is not a valid action. A proposal can still violate available funds, physical constraints, behavioral rules, or sequencing requirements.", "The execution boundary should therefore sit after validation. The model proposes. A deterministic layer parses fields, checks constraints, and either accepts the action or returns a precise failure."] },
-            { title: "Repair the failed field, not the whole decision", paragraphs: ["A full regeneration can change fields that already passed and makes the trace harder to interpret. Targeted repair sends the failed rule and the relevant field back for correction, then reruns the complete validator set.", "This approach does not guarantee correctness. It creates a reviewable chain: original proposal, failed rule, repair request, revised proposal, and final disposition."] },
-            { title: "Failure modes to design for", paragraphs: ["Validators need explicit handling for missing fields, unknown actions, unit mismatches, unaffordable costs, impossible transitions, repeated repair failure, timeout, and model unavailability. Failures should leave state unchanged."] },
-            { title: "Practical implication", paragraphs: ["The pattern applies beyond simulation. Any agent that schedules work, allocates resources, or changes records benefits from a proposal boundary and a small set of domain validators. Governance becomes observable behavior in the software, not a policy paragraph."] },
-          ],
-          sources: [{ label: "Related public simulation system", href: SOURCE_LINKS.floodabm }],
-        },
-        {
-          slug: "from-individual-decisions-to-system-consequences",
-          title: "From Individual Decisions to System Consequences",
-          dek: "A decision model becomes consequential when actions alter the environment that shapes the next decision.",
-          thesis: "Coupled simulation should preserve the feedback loop between human interpretation, constrained action, environmental damage, and the updated conditions faced later.",
-          date: "2026-08-25", readingTime: "7 min read", diagramType: "feedback", relatedCase: "/work/floodabm/",
-          sections: [
-            { title: "Model the loop, not a one-time choice", paragraphs: ["Flood adaptation is not one isolated decision. A household interprets risk, weighs protection or insurance, experiences a hazard, absorbs damage, and enters the next period with different resources and exposure.", "A coupled model represents both tracks. Human decisions alter vulnerability. Environmental events alter finances, experience, and later perception. The meaning lies in their interaction over time."] },
-            { title: "Keep state transitions inspectable", paragraphs: ["Each transition should name its inputs, decision rule, validation, and outputs. Owner and renter pathways need distinct constraints because access to structural adaptation and financial responsibility differ.", "Repeated scenarios help distinguish a persistent mechanism from one stochastic trajectory, but repetition does not remove uncertainty in calibration or assumptions."] },
-            { title: "Failure modes to report", paragraphs: ["Feedback models can double-count damage, let actions occur without resources, update variables in the wrong order, or treat uncertain behavioral parameters as fixed truth. Inconsistent time steps can create convincing but invalid dynamics."] },
-            { title: "Practical implication", paragraphs: ["The same discipline applies to multi-agent and AI-for-science systems. When generated decisions change a shared environment, evaluation must include downstream state, delayed effects, and the next decisions produced by that altered state."] },
-          ],
-          sources: [{ label: "Water Resources Research article", href: SOURCE_LINKS.wrr }, { label: "FLOODABM repository", href: SOURCE_LINKS.floodabm }],
-        },
-      ],
-    },
   },
   "zh-TW": {
-    articlesNav: { id: "articles", label: "文章", href: "/articles/" },
     heroCapabilities: ["LLM 行為評估", "代理治理", "行為模擬", "可重現研究系統"],
     provenance: {
       illustration: { alt: "邱文昱 Wenyu Chiou：人類證據與情境，串起 LLM 提案、驗證修復與人類—環境回饋。", pause: "暫停研究動畫", play: "播放研究動畫" },
@@ -194,32 +138,9 @@ export const FEATURE_CONTENT = {
     },
     evidenceLabels: { eyebrow: "證據切片", title: "從問題追到後果", problem: "問題", role: "我的角色", input: "輸入", decision: "決策", validation: "驗證", consequence: "後果", publicStatus: "公開狀態", sources: "來源" },
     evidenceSlices: {
-      "human-grounded-llm-evaluation": { status: "研究準備中；只使用公開說明與合成範例。", problem: "答案看似合理，不代表 LLM 遵循與人類相同的決策路徑。", role: "我設計群體感知評估、提示控制、重複執行檢查與報告邊界。", input: "人類實測構念，以及由核准屬性產生的無標籤合成人物設定。", decision: "模型選擇調適行動，並提供結構化理由。", validation: "比較路徑方向、群體差異與執行穩定性；不公開個別資料或未發表係數。", consequence: "辨識生成行為何處一致、偏離，或不夠穩定而不能解讀。", sources: [{ label: "Google Scholar 紀錄", href: SOURCE_LINKS.scholar }] },
+      "human-grounded-llm-evaluation": { status: "", problem: "生成的洪水保險問卷回答，能否保留真人家戶的差異與決策關係？", role: "我將實測家戶問卷與兩個 LLM 的生成回答配對，檢查量測品質、決策路徑與重複執行。", input: "真實家戶問卷，以及依家戶情境生成的同一份問卷回答。", decision: "比較投保意願及實測決策變項之間的關係。", validation: "分別檢查量測品質、比較家戶限制群體，並在設定不變下測試重複回答。", consequence: "辨識只比較平均答案時容易忽略的家戶差異與決策關係。", sources: [{ label: "相關研究個人檔案", href: SOURCE_LINKS.scholar }] },
       floodabm: { status: "WRR 文章、AGU 海報與程式庫已公開；本案例的分析手稿仍在修訂中。", problem: "個別調適選擇會改變長期洪災損失、保險與家戶能力。", role: "我開發並測試家戶決策層，並將它耦合到巨災模型的狀態轉移。", input: "調查支持的行為、家戶情境、洪災危害、損害、保險與財務狀態。", decision: "家戶依居住權屬與資源限制，評估防護、保險或不採取行動。", validation: "行為校準、狀態不變量、重複情境，以及與公開證據比較。", consequence: "每年的決策都會改變暴露、損失與下一期可用資源。", sources: [{ label: "Water Resources Research 文章", href: SOURCE_LINKS.wrr }, { label: "FLOODABM 程式庫", href: SOURCE_LINKS.floodabm }] },
-      wagf: { status: "框架準備中；以下軌跡為合成示意。", problem: "未受約束的 LLM 提案可能造成不可能的財務或物理狀態變化。", role: "我設計提案結構、驗證順序、針對性修正與稽核紀錄。", input: "合成家戶狀態、行動目錄，以及明確的行為、財務與物理限制。", decision: "模型以型別化參數提出行動，但不能寫入狀態。", validation: "負擔能力檢查失敗時阻擋更新，只修正無效欄位，再重跑全部驗證。", consequence: "通過的提案連同輸入、失敗、修正與最終更新的完整軌跡一起提交。", sources: [{ label: "相關公開 FLOODABM 程式庫", href: SOURCE_LINKS.floodabm }] },
-    },
-    articlesPage: {
-      eyebrow: "文章", title: "方法、失敗模式與工程判斷", intro: "三篇實務文章說明如何評估行為、治理代理行動，並把個別決策追蹤到系統後果；內容不揭露未發表結果。", read: "閱讀文章", related: "相關案例", diagram: "技術圖", sources: "引用來源", thesis: "核心主張",
-      articles: [
-        { slug: "evaluating-llm-agents-against-measured-human-behavior", title: "以實測人類行為評估 LLM 代理", dek: "行為評估應比較決策結構、群體差異與穩定性，而不只看答案是否相似。", thesis: "以人類行為為基礎的評估，重點是生成決策是否保留實測行為中的關係，同時明確說明這項比較的界線。", date: "2026-08-25", readingTime: "約 6 分鐘", diagramType: "evaluation", relatedCase: "/work/human-grounded-llm-evaluation/", sections: [
-          { title: "先建立行為基準", paragraphs: ["LLM 可以給出流暢而合理的選擇，卻使用與真人不同的決策結構。因此，基準不能只是研究者預先寫好的理想答案，而要來自實測構念、自陳選擇，以及這些變數之間的關係。", "評估要問的是結構：風險知覺是否朝預期方向影響選擇？限制條件是否真的壓低某項行動？不在提示中暴露群體標籤時，差異是否仍然存在？"] },
-          { title: "分開提示建構與結果評估", paragraphs: ["人物設定只能包含核准輸入，並透過可重現的映射產生。會洩漏預期答案的標籤必須排除，再以重複執行觀察結論是否承受一般模型變異。", "選擇一致度、路徑方向、群體差異與穩定性可以互相補充，但沒有任何單一指標足以證明模型等同人類。"] },
-          { title: "應該報告的失敗模式", paragraphs: ["常見問題包括把不同群體壓成平均反應、答案正確但理由結構錯誤、不同執行出現不一致，以及把關聯性的人類模型誤解為因果。這些不是要隱藏的雜訊，而是評估結果。"] },
-          { title: "實務意義", paragraphs: ["模擬使用者系統最後應交付有邊界的效度說明：檢查了哪些行為、族群與條件，哪些一致、哪些不一致，以及還不知道什麼。這比籠統宣稱代理很真實更有用。"] },
-        ], sources: [{ label: "相關研究紀錄", href: SOURCE_LINKS.scholar }] },
-        { slug: "why-governed-agents-need-validators-before-state-changes", title: "為何受治理的代理必須在狀態更新前通過驗證", dek: "把 LLM 輸出視為提案，由確定性檢查決定它能否改變系統。", thesis: "受治理的代理會分開生成與執行，讓無效提案能在任何狀態變更前被阻擋、局部修正並留下稽核紀錄。", date: "2026-08-25", readingTime: "約 6 分鐘", diagramType: "governance", relatedCase: "/work/wagf/", sections: [
-          { title: "生成不等於授權", paragraphs: ["結構化輸出只是讓 LLM 回應容易解析。即使 JSON 格式正確，提案仍可能違反資金、物理條件、行為規則或執行順序。", "真正的執行邊界應位於驗證之後：模型提出行動，確定性系統解析欄位、檢查限制，最後才接受或回傳明確失敗。"] },
-          { title: "只修正失敗欄位", paragraphs: ["整份重新生成可能改掉已通過的欄位，也讓軌跡難以解讀。針對性修正只回傳失敗規則與相關欄位，修正後再重跑完整驗證。", "這不保證提案正確，但會形成可檢視的鏈條：原提案、失敗規則、修正要求、新提案與最終處置。"] },
-          { title: "必須預先設計的失敗模式", paragraphs: ["驗證器需要處理缺欄位、未知行動、單位不一致、資金不足、不可能的狀態轉移、重複修正失敗、逾時與模型不可用。任何失敗都不應改變狀態。"] },
-          { title: "實務意義", paragraphs: ["這個模式也適用於排程、資源配置或資料更新代理。治理要成為軟體中可觀察的行為，而不只是政策文件裡的一段文字。"] },
-        ], sources: [{ label: "相關公開模擬系統", href: SOURCE_LINKS.floodabm }] },
-        { slug: "from-individual-decisions-to-system-consequences", title: "從個別決策到系統後果", dek: "當行動會改變下一次決策所面對的環境，決策模型才真正產生系統影響。", thesis: "耦合模擬必須保留人類理解、受限行動、環境損害與下一期條件之間的回饋。", date: "2026-08-25", readingTime: "約 7 分鐘", diagramType: "feedback", relatedCase: "/work/floodabm/", sections: [
-          { title: "模擬回饋，而非一次性選擇", paragraphs: ["洪災調適不是單一決策。家戶理解風險、權衡防護或保險、經歷危害、承受損失，之後帶著不同資源與暴露進入下一期。", "耦合模型同時保留兩條軌跡：人類決策改變脆弱度，環境事件則改變財務、經驗與後續認知。"] },
-          { title: "讓狀態轉移可以檢查", paragraphs: ["每個轉移都應列出輸入、決策規則、驗證與輸出。屋主與租戶要有不同限制，因為結構性調適的權限與財務責任不同。", "重複情境有助於分辨穩定機制與單一路徑，但不能消除校準與假設本身的不確定性。"] },
-          { title: "應該報告的失敗模式", paragraphs: ["回饋模型可能重複計算損害、允許沒有資源的行動、以錯誤順序更新變數，或把不確定的行為參數當成固定真相。時間尺度不一致也會產生看似合理但無效的動態。"] },
-          { title: "實務意義", paragraphs: ["同樣的原則也適用於多代理與 AI for Science 系統。生成決策一旦會改變共享環境，評估就必須納入下游狀態、延遲效應，以及改變後的狀態會產生什麼下一步決策。"] },
-        ], sources: [{ label: "Water Resources Research 文章", href: SOURCE_LINKS.wrr }, { label: "FLOODABM 程式庫", href: SOURCE_LINKS.floodabm }] },
-      ],
+      wagf: { status: "", problem: "未受約束的 LLM 提案可能造成不可能的財務或物理狀態變化。", role: "我設計提案結構、驗證順序、針對性修正與稽核紀錄。", input: "合成家戶狀態、行動目錄，以及明確的行為、財務與物理限制。", decision: "模型以型別化參數提出行動，但不能寫入狀態。", validation: "負擔能力檢查失敗時阻擋更新，只修正無效欄位，再重跑全部驗證。", consequence: "通過的提案連同輸入、失敗、修正與最終更新的完整軌跡一起提交。", sources: [{ label: "相關公開 FLOODABM 程式庫", href: SOURCE_LINKS.floodabm }] },
     },
   },
 };

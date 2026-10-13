@@ -11,8 +11,8 @@ export const GUIDE_INTENTS = [
     },
     evidence: ['human-grounded-llm-evaluation', 'floodabm', 'publications'],
     reasons: {
-      en: ['The evaluation question, my contribution, and its current research status.', 'How simulated households respond to flood risk and resource limits.', 'Public articles and presentations, separate from synthetic demonstrations.'],
-      'zh-TW': ['評估的問題、我的貢獻，以及目前研究狀態。', '模擬家戶如何面對洪災風險與資源限制。', '公開文章與發表紀錄，和合成展示分開呈現。'],
+      en: ['Why this evaluation matters, how I designed it, and what it contributes.', 'How simulated households respond to flood risk and resource limits.', 'Published research and presentations, separate from synthetic demonstrations.'],
+      'zh-TW': ['為何需要這項評估、我如何設計，以及它帶來什麼。', '模擬家戶如何面對洪災風險與資源限制。', '公開研究與發表紀錄，和合成展示分開呈現。'],
     },
   },
   {
@@ -23,10 +23,10 @@ export const GUIDE_INTENTS = [
       en: 'Follow a proposal through validation, then explore the tools for evidence-linked research. An AI research agent is software, not a human respondent.',
       'zh-TW': '先追蹤提案如何經過驗證，再探索有證據鏈的科研工具。科研 AI 代理是軟體，不是真實受訪者。',
     },
-    evidence: ['wagf', 'open-source', 'articles'],
+    evidence: ['wagf', 'open-source', 'public-updates'],
     reasons: {
-      en: ['Inspect checks, rejected actions, and targeted repair before a state change.', 'Find the public research skills, workflow tools, and their GitHub sources.', 'Read the reasoning behind evaluation, validators, and system consequences.'],
-      'zh-TW': ['查看狀態改變前的檢查、被拒絕行動與針對性修復。', '找到公開的研究技能、工作流工具及 GitHub 原始碼。', '閱讀評估、驗證器與系統後果背後的方法判斷。'],
+      en: ['Inspect checks, rejected actions, and targeted repair before a state change.', 'Find the public research skills, workflow tools, and their GitHub sources.', 'Read my public LinkedIn posts in their original context.'],
+      'zh-TW': ['查看狀態改變前的檢查、被拒絕行動與針對性修復。', '找到公開的研究技能、工作流工具及 GitHub 原始碼。', '閱讀我的 LinkedIn 貼文及其原始脈絡。'],
     },
   },
   {
@@ -52,7 +52,7 @@ export function buildReadingPath(intentId, locale = 'en') {
 
 export const GUIDE_COPY = {
   en: {
-    launch: 'Portfolio Guide', launchShort: 'AI guide', launchScope: 'Projects · research · articles',
+    launch: 'Portfolio Guide', launchShort: 'AI guide', launchScope: 'Projects · research · public updates',
     eyebrow: 'Portfolio Guide', title: 'Where would you like to start?',
     intro: 'Choose a reading path or ask a question. Evidence is available before you request an AI summary.',
     placeholder: 'Ask about a research question or capability', submit: 'Generate a guide',
@@ -63,7 +63,7 @@ export const GUIDE_COPY = {
     privacy: 'Only Generate a guide sends your question to NVIDIA. Questions are not saved. Local evidence remains available if AI fails.',
   },
   'zh-TW': {
-    launch: '作品導覽', launchShort: 'AI 導覽', launchScope: '專案 · 研究 · 文章',
+    launch: '作品導覽', launchShort: 'AI 導覽', launchScope: '專案 · 研究 · 公開近況',
     eyebrow: 'Portfolio Guide', title: '想從哪裡開始了解？',
     intro: '選擇閱讀路徑或提出問題；不必使用 AI，也能先查看證據。',
     placeholder: '詢問研究問題或專長', submit: '生成導覽',
