@@ -1,6 +1,9 @@
 export const EDITORIAL = {
   en: {
     writingLabel: "Writing",
+    writingEyebrow: "Writing & updates", writingTitle: "Methods and public notes",
+    writingIntro: "How I evaluate decisions, build research tools, and share the work.",
+    publicNotes: "Selected public notes", originalPost: "Read on LinkedIn", allPosts: "More on LinkedIn",
     observatoryLabel: "Decision Observatory", observatoryTitle: "Follow the evidence behind a decision.",
     observatoryIntro: "Two applications, one method: compare with human evidence, check the proposal, and inspect what changes. Select an object or a step to follow its source.",
     researchLinks: [{ label: "Research directions", href: "/research/" }, { label: "Publications & talks", href: "/publications/" }],
@@ -19,6 +22,9 @@ export const EDITORIAL = {
   },
   "zh-TW": {
     writingLabel: "文章",
+    writingEyebrow: "文章與近況", writingTitle: "方法文章與公開筆記",
+    writingIntro: "分享我如何評估決策、建立科研工具，以及推進這些工作。",
+    publicNotes: "精選公開貼文", originalPost: "閱讀 LinkedIn 原文", allPosts: "更多 LinkedIn 貼文",
     observatoryLabel: "決策觀測台", observatoryTitle: "沿著證據，理解每個決策。",
     observatoryIntro: "兩種應用共用同一方法：對照人類證據、檢查提案，再追蹤改變了什麼。選擇圖中物件或階段，即可查看其來源。",
     researchLinks: [{ label: "研究方向", href: "/research/" }, { label: "著作與演講", href: "/publications/" }],

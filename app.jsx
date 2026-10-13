@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Timeline } from "./features/editorial/Timeline.jsx";
+import { GUIDE_INTENTS } from "./portfolio-guide-data.js";
 import {
   AlertTriangle,
   AtSign,
@@ -425,7 +426,16 @@ function ArticleDiagram({ type, content }) {
 
 function ArticlesPreview({ content, locale }) {
   const A = content.articlesPage;
-  return <section className="section articles-preview" aria-labelledby="articles-preview-title"><div className="wrap"><SectionHead eyebrow={A.eyebrow} title={A.title} intro={A.intro} action={{ href: "/articles/", label: A.eyebrow }} locale={locale} id="articles-preview-title" /><div className="article-preview-list">{A.articles.map((article, index) => <article key={article.slug}><span>0{index + 1}</span><div><p className="article-meta"><time dateTime={article.date}>{article.date}</time> · {article.readingTime}</p><h3>{article.title}</h3><p>{article.dek}</p></div><SmartLink className="icon-link" href={`/articles/${article.slug}/`} locale={locale}><ArrowUpRight aria-hidden="true" /><span className="sr-only">{A.read}: {article.title}</span></SmartLink></article>)}</div></div></section>;
+  const E = content.editorial;
+  const posts = updatesData.items.filter(item => item.type.en === "LinkedIn").slice(0, 3);
+  return <section className="section articles-preview" aria-labelledby="articles-preview-title"><div className="wrap">
+    <SectionHead eyebrow={E.writingEyebrow} title={E.writingTitle} intro={E.writingIntro} action={{ href: "/articles/", label: A.eyebrow }} locale={locale} id="articles-preview-title" />
+    <div className="article-preview-list">{A.articles.map((article, index) => <article key={article.slug}><span>0{index + 1}</span><div><p className="article-meta"><time dateTime={article.date}>{article.date}</time> · {article.readingTime}</p><h3>{article.title}</h3><p>{article.dek}</p></div><SmartLink className="icon-link" href={`/articles/${article.slug}/`} locale={locale}><ArrowUpRight aria-hidden="true" /><span className="sr-only">{A.read}: {article.title}</span></SmartLink></article>)}</div>
+    {posts.length > 0 && <div className="curated-notes" aria-labelledby="public-notes-title"><h3 id="public-notes-title">{E.publicNotes}</h3>{posts.map(post => <article className="curated-note" key={post.url}>
+      <p className="section-label">LinkedIn{post.date && /^\d{4}-\d{2}-\d{2}$/.test(post.date) ? <> · <time dateTime={post.date}>{post.date}</time></> : null}</p>
+      <div><h4>{post.title[locale]}</h4><p>{post.summary[locale]}</p><SmartLink className="text-link" href={post.url} locale={locale}>{E.originalPost}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>
+    </article>)}<SmartLink className="text-link" href="https://www.linkedin.com/in/wenyu-chiou/recent-activity/all/" locale={locale}>{E.allPosts}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>}
+  </div></section>;
 }
 
 function ArticlesPage({ content, locale }) {
@@ -579,11 +589,7 @@ function PortfolioNavigator({ content, locale, inline = false, header = false })
   const suggestionFallbacks = inline ? ["/work/human-grounded-llm-evaluation/", "/work/wagf/", "/work/"] : [];
   const titleId = inline ? "recruiter-navigator-title" : "navigator-title";
   const queryId = inline ? "recruiter-navigator-query" : "navigator-query";
-  const ai = locale === "zh-TW" ? {
-    nvidia: "NVIDIA 引用摘要", disclosure: "啟用 AI 時，問題會送至 NVIDIA；若服務不可用，仍保留本機搜尋結果。",
-  } : {
-    nvidia: "NVIDIA cited summary", disclosure: "When AI is enabled, your question is sent to NVIDIA. Local results remain available if the service fails.",
-  };
+  const ai = { nvidia: locale === "zh-TW" ? "NVIDIA 引用摘要" : "NVIDIA cited summary" };
   const frame = <div className="navigator-frame">
     {!inline ? <><header className="navigator-header">
       <p className="eyebrow">{inline ? content.hire.askTitle : N.eyebrow}</p>
@@ -594,20 +600,21 @@ function PortfolioNavigator({ content, locale, inline = false, header = false })
       <p>{N.intro}</p>
     </div></> : <h3 className="sr-only" id={titleId}>{content.hire.askTitle}</h3>}
     <div className="navigator-suggestions" aria-label={N.label}>
-      {suggestions.map((suggestion, index) => inline
-        ? <a href={lp(suggestionFallbacks[index], locale)} data-navigator-query={suggestion} key={suggestion}><span>{suggestion}</span><span aria-hidden="true">→</span></a>
-        : <button type="button" data-navigator-query={suggestion} key={suggestion}><span>{suggestion}</span><span aria-hidden="true">→</span></button>)}
+      {inline ? suggestions.map((suggestion, index) => <a href={lp(suggestionFallbacks[index], locale)} data-navigator-query={suggestion} key={suggestion}><span>{suggestion}</span><ArrowRight aria-hidden="true" size={16} /></a>) : GUIDE_INTENTS.map(intent => intent.href
+        ? <a key={intent.id} href={lp(intent.href, locale)} data-guide-collaboration><span>{intent.label[locale]}</span><ArrowUpRight aria-hidden="true" size={16} /></a>
+        : <button type="button" data-guide-intent={intent.id} aria-pressed="false" key={intent.id}><span>{intent.label[locale]}</span><ArrowRight aria-hidden="true" size={16} /></button>)}
     </div>
     <form className="navigator-form" role="search" action={lp("/work/", locale)} method="get">
       <label className="sr-only" htmlFor={queryId}>{N.label}</label>
-      <input id={queryId} name="query" type="search" placeholder={N.placeholder} maxLength="180" autoComplete="off" />
-      <button className="navigator-submit" type="submit" aria-label={N.submit} title={N.submit}><ArrowRight aria-hidden="true" size={18} /></button>
+      <input id={queryId} name="query" type="search" placeholder={N.placeholder} maxLength="180" autoComplete="off" aria-describedby={`${queryId}-privacy`} />
+      <p className="navigator-privacy" id={`${queryId}-privacy`}>{N.privacy}</p>
+      <button className="navigator-submit" type="submit"><Sparkles aria-hidden="true" size={18} /><span>{N.submit}</span></button>
     </form>
     <div className="navigator-feedback" aria-live="polite"><span data-navigator-status>{N.ready}</span><span data-navigator-mode /></div>
     <div className="navigator-answer" data-navigator-answer hidden />
+    {!inline && <p className="guide-reading-intro" data-guide-intro />}
     <ol className="navigator-results" data-navigator-results />
     <div className="navigator-turnstile" data-turnstile-container />
-    <p className="navigator-privacy">{ai.disclosure}</p>
   </div>;
   return (
     <div
@@ -621,6 +628,7 @@ function PortfolioNavigator({ content, locale, inline = false, header = false })
       data-semantic={N.semantic}
       data-fallback={N.fallback}
       data-ready={N.ready}
+      data-generated-ready={N.generatedReady}
       data-result-label={N.resultLabel}
       data-nvidia={ai.nvidia}
     >

@@ -1,11 +1,23 @@
 {
-  "checkedAt": "2026-08-23",
+  "checkedAt": "2026-10-13",
   "items": [
     {
       "type": { "en": "LinkedIn", "zh-TW": "LinkedIn" },
-      "title": { "en": "An open research stack for agentic AI and Model Context Protocol workflows", "zh-TW": "面向代理式 AI 與模型上下文協議工作流的開放研究工具組" },
-      "summary": { "en": "A public note on research-hub, composable research skills, and verified agent workflows.", "zh-TW": "介紹 research-hub、可組合研究技能與可驗證代理工作流的公開貼文。" },
-      "url": "https://www.linkedin.com/posts/wenyu-chiou_aiide-agenticai-modelcontextprotocol-activity-7408822754180755457-pKY5"
+      "title": { "en": "Beyond predicting a choice: is the decision process coherent?", "zh-TW": "不只預測選擇：決策過程是否合理？" },
+      "summary": { "en": "My perspective on testing the factors behind a simulated preference, rather than treating a higher predicted probability as sufficient evidence of human-like behavior.", "zh-TW": "分享我對行為模擬的看法：應檢驗偏好背後的決策因素，而不是僅憑較高的預測機率，就認定模型的行為像真人。" },
+      "url": "https://www.linkedin.com/feed/update/urn:li:activity:7498152461145399296/"
+    },
+    {
+      "type": { "en": "LinkedIn", "zh-TW": "LinkedIn" },
+      "title": { "en": "Building a learning path through agentic AI", "zh-TW": "為代理式 AI 建立清楚的學習路線" },
+      "summary": { "en": "Why I built awesome-agentic-ai-zh: connect scattered resources into a trilingual path through LLM foundations, tools, memory, evaluation, and multi-agent systems.", "zh-TW": "說明我為何建立 awesome-agentic-ai-zh：將零散資源串成三語學習路線，涵蓋 LLM 基礎、工具、記憶、評估與多代理系統。" },
+      "url": "https://www.linkedin.com/feed/update/urn:li:activity:7496271834011734016/"
+    },
+    {
+      "type": { "en": "LinkedIn", "zh-TW": "LinkedIn" },
+      "title": { "en": "Connecting research tools with Model Context Protocol", "zh-TW": "以模型上下文協議串接科研工具" },
+      "summary": { "en": "A public account of my research-tool setup: connecting AI coding environments, literature retrieval, project files, and manuscript preparation through MCP.", "zh-TW": "記錄我的科研工具配置：透過 MCP 串接 AI 程式開發環境、文獻檢索、專案檔案與論文撰寫流程。" },
+      "url": "https://www.linkedin.com/posts/wenyu-chiou_aiide-agenticai-modelcontextprotocol-share-7408822751135842304-7qLB/"
     },
     {
       "type": { "en": "Journal Article", "zh-TW": "期刊論文" },

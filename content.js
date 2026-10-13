@@ -2,11 +2,12 @@ import { EN } from "./content.en.js";
 import { ZH_TW } from "./content.zh-TW.js";
 import { FEATURE_CONTENT } from "./feature-content.js";
 import { EDITORIAL } from "./editorial-content.js";
+import { GUIDE_COPY } from "./portfolio-guide-data.js";
 
 function composeContent(base, feature) {
   const editorial = EDITORIAL[base.locale];
   const nav = [base.nav.find(item => item.id === "work"), base.nav.find(item => item.id === "research"), { ...feature.articlesNav, label: editorial.writingLabel }, base.nav.find(item => item.id === "about")];
-  return { ...base, ...feature, nav, editorial };
+  return { ...base, ...feature, nav, editorial, navigator: { ...base.navigator, ...GUIDE_COPY[base.locale] } };
 }
 
 export const CONTENT = {

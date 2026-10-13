@@ -1,4 +1,5 @@
 import { NAVIGATOR_INDEX } from "./navigator-data.js";
+import { GUIDE_INTENTS, buildReadingPath } from "./portfolio-guide-data.js";
 
 const normalize = (value) => value
   .normalize("NFKC")
@@ -214,6 +215,8 @@ export function initPortfolioNavigator(root = document) {
   const mode = shell.querySelector("[data-navigator-mode]");
   const results = shell.querySelector("[data-navigator-results]");
   const answer = shell.querySelector("[data-navigator-answer]");
+  const readingIntro = shell.querySelector("[data-guide-intro]");
+  const submit = form.querySelector('[type="submit"]');
   const turnstileContainer = shell.querySelector("[data-turnstile-container]");
   const endpoint = document.querySelector('meta[name="portfolio-ai-endpoint"]')?.content.trim() || "";
   const sitekey = document.querySelector('meta[name="turnstile-site-key"]')?.content.trim() || "";
@@ -262,10 +265,37 @@ export function initPortfolioNavigator(root = document) {
     });
   };
 
+  const invalidate = () => {
+    requestGate.next();
+    submit.disabled = false;
+    form.removeAttribute('aria-busy');
+  };
+  const renderLocal = (rawQuery, intentId) => {
+    invalidate();
+    answer.hidden = true;
+    answer.textContent = '';
+    const query = rawQuery.trim().slice(0, 180);
+    const path = intentId || !query ? buildReadingPath(intentId || 'research', locale) : null;
+    if (readingIntro) {
+      readingIntro.hidden = !path;
+      readingIntro.textContent = path?.intro || '';
+    }
+    renderResults(path ? path.matches : rankLocally(query, locale));
+    setStatus(path ? copy.ready : copy.matching, copy.local);
+  };
+  const chooseIntent = (id) => {
+    const intent = GUIDE_INTENTS.find(item => item.id === id && item.query);
+    if (!intent) return;
+    input.value = intent.query[locale];
+    shell.querySelectorAll('[data-guide-intent]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.guideIntent === id)));
+    renderLocal(input.value, id);
+  };
+
   const openDialog = () => {
     if (!dialog) return;
     const wasOpen = dialog.open;
     if (!wasOpen) dialog.showModal();
+    if (!input.value.trim()) renderLocal('', 'research');
     requestAnimationFrame(() => input.focus());
     if (!wasOpen && !inline) {
       trackImpression();
@@ -289,8 +319,11 @@ export function initPortfolioNavigator(root = document) {
     if (inline) trackPortfolioEvent("recruiter_navigator_use", locale, "hire");
     else trackPortfolioEvent("navigator_query_submit", locale, "home");
     const currentRequest = requestGate.next();
+    submit.disabled = true;
+    form.setAttribute('aria-busy', 'true');
     answer.hidden = true;
     answer.textContent = "";
+    if (readingIntro) readingIntro.hidden = true;
     results.setAttribute("aria-busy", "true");
     setStatus(copy.matching, copy.local);
     const localResults = rankLocally(query, locale);
@@ -299,6 +332,8 @@ export function initPortfolioNavigator(root = document) {
 
     if (!navigator.onLine || navigator.connection?.saveData) {
       setStatus(copy.fallback, copy.local);
+      submit.disabled = false;
+      form.removeAttribute('aria-busy');
       trackResultMode("local");
       return;
     }
@@ -307,12 +342,15 @@ export function initPortfolioNavigator(root = document) {
       setStatus(copy.loading, copy.local);
       try {
         const turnstileToken = await getTurnstileToken(turnstileContainer, sitekey);
+        if (!requestGate.isCurrent(currentRequest)) return;
         const nvidia = await requestNvidiaSummary({ endpoint, query, locale, turnstileToken });
         if (!requestGate.isCurrent(currentRequest)) return;
         answer.textContent = nvidia.answer;
         answer.hidden = false;
         renderResults(nvidia.matches);
-        setStatus(copy.ready, copy.nvidia);
+        setStatus(copy.generatedReady, copy.nvidia);
+        submit.disabled = false;
+        form.removeAttribute('aria-busy');
         trackPortfolioEvent(inline ? "recruiter_navigator_use" : "navigator_answer", locale, eventTarget, "success");
         trackResultMode("nvidia");
         return;
@@ -328,30 +366,45 @@ export function initPortfolioNavigator(root = document) {
       });
       if (!requestGate.isCurrent(currentRequest)) return;
       renderResults(semanticResults);
-      setStatus(copy.ready, copy.semantic);
+      setStatus(copy.fallback, copy.semantic);
       trackResultMode("semantic");
     } catch {
       if (!requestGate.isCurrent(currentRequest)) return;
       setStatus(copy.fallback, copy.local);
       trackResultMode("local");
+    } finally {
+      if (requestGate.isCurrent(currentRequest)) {
+        submit.disabled = false;
+        form.removeAttribute('aria-busy');
+      }
     }
   };
 
   launch?.addEventListener("click", openDialog);
   close?.addEventListener("click", () => dialog?.close());
-  dialog?.addEventListener("close", () => launch?.focus());
+  dialog?.addEventListener("close", () => {
+    if (form.getAttribute('aria-busy') === 'true') renderLocal(input.value);
+    else invalidate();
+    launch?.focus();
+  });
   dialog?.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
   });
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+    if (submit.disabled) return;
     runSearch(input.value);
   });
+  input.addEventListener('input', () => {
+    shell.querySelectorAll('[data-guide-intent]').forEach(button => button.setAttribute('aria-pressed', 'false'));
+    renderLocal(input.value);
+  });
+  shell.querySelectorAll('[data-guide-intent]').forEach(control => control.addEventListener('click', () => chooseIntent(control.dataset.guideIntent)));
   shell.querySelectorAll("[data-navigator-query]").forEach((control) => {
     control.addEventListener("click", (event) => {
       event.preventDefault();
       input.value = control.dataset.navigatorQuery;
-      runSearch(input.value);
+      renderLocal(input.value);
     });
   });
   results.addEventListener("click", (event) => {

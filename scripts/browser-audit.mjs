@@ -8,6 +8,7 @@ import { DEPLOYMENT_CONFIG } from "../deployment-config.mjs";
 import { SEO } from "../seo.js";
 import githubData from "../data/github.json" with { type: "json" };
 import { auditEditorialInteractions } from "./audit-editorial-interactions.mjs";
+import { auditPortfolioGuide } from "./audit-portfolio-guide.mjs";
 
 const root = process.cwd();
 const browserCandidates = [process.env.CHROME_PATH, "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, "Google", "Chrome", "Application", "chrome.exe") : null, "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe", "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe", "/usr/bin/google-chrome", "/usr/bin/google-chrome-stable", "/usr/bin/chromium"].filter(Boolean);
@@ -442,6 +443,13 @@ const auditSemanticNavigator = async () => {
   await page.close();
 };
 
+if (process.argv.includes("--guide-only")) {
+  try { await auditPortfolioGuide(browser, origin, failures); }
+  finally { await browser.close(); server.close(); }
+  if (failures.length) { failures.forEach(failure => console.error(failure)); process.exit(1); }
+  process.exit(0);
+}
+
 if (process.argv.includes("--semantic-only")) {
   try {
     await auditSemanticNavigator();
@@ -459,6 +467,7 @@ if (process.argv.includes("--semantic-only")) {
 
 try {
   await auditEditorialInteractions(browser, origin);
+  await auditPortfolioGuide(browser, origin, failures);
   for (const route of Object.keys(SEO.routes)) {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
