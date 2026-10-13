@@ -32,7 +32,7 @@ const internalTargets = new Map();
 const anchorTargets = new Map();
 const origin = `http://127.0.0.1:${port}`;
 const firstFoldSelectors = {
-  home: ".fit-teaser",
+  home: ".flagship",
   work: ".flagship",
   research: "main > .section",
   publications: ".publication-groups",
@@ -194,13 +194,13 @@ const auditSelectedWork = async (route) => {
   const page = await openPage(route, { width: 1440, height: 1000, deviceScaleFactor: 1 });
   const initial = await page.evaluate(() => [...document.querySelectorAll(".flagship-entry")].map((entry) => ({ open: entry.open, explicitAria: entry.querySelector("summary")?.hasAttribute("aria-expanded") })));
   if (initial.length !== 3 || initial.filter((entry) => entry.open).length !== 1 || !initial[0]?.open || initial.some((entry) => entry.explicitAria)) failures.push(`${route}: Selected Work did not start with exactly the first native disclosure expanded`);
-  await page.$eval(".flagship-entry:nth-child(2)", (entry) => entry.scrollIntoView({ block: "center", behavior: "instant" }));
-  await page.focus(".flagship-entry:nth-child(2) > summary");
+  await page.$eval(".flagship-record:nth-child(2) .flagship-entry", (entry) => entry.scrollIntoView({ block: "center", behavior: "instant" }));
+  await page.focus(".flagship-record:nth-child(2) .flagship-entry > summary");
   await page.keyboard.press("Enter");
   await new Promise((resolve) => setTimeout(resolve, 500));
   const switched = await page.evaluate(() => [...document.querySelectorAll(".flagship-entry")].map((entry) => entry.open));
   if (switched.filter(Boolean).length !== 1 || !switched[1]) failures.push(`${route}: Selected Work did not keep a single native disclosure open`);
-  const revealed = await page.$eval(".flagship-entry:nth-child(2)", (entry) => Number.parseFloat(getComputedStyle(entry).opacity) > 0.98 && entry.classList.contains("is-visible"));
+  const revealed = await page.$eval(".flagship-record:nth-child(2) .flagship-entry", (entry) => Number.parseFloat(getComputedStyle(entry).opacity) > 0.98 && entry.classList.contains("is-visible"));
   if (!revealed) failures.push(`${route}: active Selected Work entry remained hidden after entering the viewport`);
   await page.close();
 };
@@ -554,10 +554,10 @@ try {
   const socialLinks = await heroPage.$$eval(".hero-social-link", (links) => links.map((link) => ({ href: link.getAttribute("href"), name: link.textContent.trim(), title: link.title, width: link.getBoundingClientRect().width, height: link.getBoundingClientRect().height })));
   if (socialLinks.length !== 4 || socialLinks.some((link, index) => link.href !== expectedSocialLinks[index] || !link.name || !link.title || link.width < 44 || link.height < 44)) failures.push(`/: Hero social links are incomplete, misordered, unlabeled, or undersized: ${JSON.stringify(socialLinks)}`);
   const desktopHero = await heroPage.$eval(".hero-media", (image) => ({ width: image.getBoundingClientRect().width, fit: getComputedStyle(image).objectFit }));
-  if (desktopHero.width < 319 || desktopHero.width > 361 || desktopHero.fit !== "contain") failures.push(`/: contained desktop Hero photo is ${Math.round(desktopHero.width)}px with object-fit ${desktopHero.fit}`);
+  if (desktopHero.width < 219 || desktopHero.width > 241 || desktopHero.fit !== "contain") failures.push(`/: contained desktop Hero photo is ${Math.round(desktopHero.width)}px with object-fit ${desktopHero.fit}`);
   await heroPage.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
   const mobileHeroWidth = await heroPage.$eval(".hero-media", (image) => image.getBoundingClientRect().width);
-  if (mobileHeroWidth < 95 || mobileHeroWidth > 97) failures.push(`/: mobile Hero photo is ${Math.round(mobileHeroWidth)}px, expected 96px`);
+  if (mobileHeroWidth < 95 || mobileHeroWidth > 121) failures.push(`/: mobile Hero photo is ${Math.round(mobileHeroWidth)}px, expected 96–120px`);
   const articleTitles = await heroPage.$$eval(".article-preview-list h3", (titles) => titles.map((title) => title.textContent.trim()));
   if (articleTitles.length !== 3 || articleTitles.some((title) => !title)) failures.push(`/: homepage does not expose all three articles`);
   await heroPage.close();
@@ -637,7 +637,7 @@ try {
     await page.click(".work-dropdown > summary");
     if (!(await page.$eval(".work-dropdown", (details) => details.open))) failures.push(`${route}: no-JavaScript Work disclosure did not open natively`);
     if (pageType === "home") {
-      await page.click(".flagship-entry:nth-child(2) > summary");
+      await page.click(".flagship-record:nth-child(2) .flagship-entry > summary");
       const openProjects = await page.$$eval(".flagship-entry", (entries) => entries.filter((entry) => entry.open).length);
       if (openProjects !== 1) failures.push(`${route}: no-JavaScript Selected Work disclosures did not remain mutually exclusive`);
     }

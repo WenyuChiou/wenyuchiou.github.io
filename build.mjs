@@ -97,10 +97,12 @@ for (const [from, target] of Object.entries(LEGACY_REDIRECTS)) {
 const hash = (value) => createHash("sha256").update(value).digest("hex").slice(0, 8);
 const bundleHash = hash(bundle);
 const cssHash = hash(readFileSync("styles.css", "utf8").replace(/\r\n/g, "\n"));
+const editorialHash = hash(readFileSync("editorial.css", "utf8").replace(/\r\n/g, "\n"));
 const generatedPages = [...routeValues.map((route) => route.path === "/" ? "index.html" : `${route.path.slice(1)}index.html`), ...Object.keys(LEGACY_REDIRECTS).map((route) => `${route.slice(1)}index.html`)];
 for (const page of generatedPages) {
   const html = readFileSync(page, "utf8")
     .replace(/(href=")\/styles\.css(?:\?v=[a-f0-9]+)?(")/g, `$1/styles.css?v=${cssHash}$2`)
+    .replace(/(href=")\/editorial\.css(?:\?v=[a-f0-9]+)?(")/g, `$1/editorial.css?v=${editorialHash}$2`)
     .replace(/(src=")\/assets\/app\.bundle\.js(?:\?v=[a-f0-9]+)?(")/g, `$1/assets/app.bundle.js?v=${bundleHash}$2`);
   writeFileSync(page, html);
 }
