@@ -59,6 +59,8 @@ test('all three tasks and both depths have bilingual controlled evidence and sch
     assert.ok(request.response_format.json_schema.schema.properties.matches.items.properties.id.enum.length);
     assert.match(request.messages[0].content, /FLOODABM does NOT integrate LLMs/);
     assert.match(request.messages[0].content, /requires visitor click/);
+    assert.match(request.messages[0].content, /Keep phrasing close to the cited EVIDENCE/);
+    assert.match(request.messages[0].content, /primaryEvidenceId.*matches\[0\]/);
     assert.equal(validateGuidePayload(fixture(task), GUIDE_EVIDENCE, options).matches.length, 1);
   }
 });
@@ -67,6 +69,26 @@ test('context rejects unknown properties, executable text and invalid scene stat
   for (const context of [{ ...scene, resources: 999 }, { ...scene, stage: 'repair-and-apply' }, { ...scene, mode: '<script>' }, { ...scene, repaired: 'yes' }]) assert.throws(() => validateGuideOptions({ task: 'observatory', context }));
   assert.throws(() => validateGuideOptions({ task: 'tools', context: scene }));
   assert.throws(() => validateGuideOptions({ task: 'admin' }));
+});
+
+test('scene generation selects controlled explanations while research and tools retain generated prose', () => {
+  for (const locale of ['en', 'zh-TW']) for (const lens of ['evaluation', 'governance', 'simulation']) {
+    const request = buildGuideRequest('Explain this scene', locale, validateGuideOptions({ task: 'observatory', context: { ...scene, lens } }));
+    const schema = request.response_format.json_schema.schema;
+    const primary = { evaluation: 'human-grounded-llm-evaluation', governance: 'wagf', simulation: 'floodabm' }[lens];
+    assert.deepEqual(schema.properties.matches.items.properties.id.enum, [primary]);
+    assert.equal(schema.properties.sections.items.properties.text.enum.length, 5);
+    assert.match(request.messages[0].content, /select section text verbatim/);
+    const payload = fixture('observatory');
+    payload.matches[0].id = primary;
+    const record = GUIDE_EVIDENCE.find(item => item.id === primary);
+    payload.sections.forEach(section => { section.text = record[section.kind][locale]; section.evidenceIds = [primary]; });
+    const options = validateGuideOptions({ task: 'observatory', context: { ...scene, lens } });
+    assert.ok(validateGuidePayload(payload, GUIDE_EVIDENCE, options));
+    payload.sections[0].text += ' This unsupported extra claim must not be accepted.';
+    assert.throws(() => validateGuidePayload(payload, GUIDE_EVIDENCE, options), /invalid_scene_prose/);
+  }
+  for (const task of ['research', 'tools']) assert.equal(buildGuideRequest('Explain research', 'en', validateGuideOptions({ task })).response_format.json_schema.schema.properties.sections.items.properties.text.enum, undefined);
 });
 
 test('generated output requires complete ordered citations and task-matched sources', () => {

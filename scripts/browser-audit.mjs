@@ -386,6 +386,10 @@ const auditSemanticNavigator = async () => {
   const requests = [];
   const failedResponses = [];
   const consoleErrors = [];
+  // This suite checks local semantic fallback, not genuine CAPTCHA acceptance.
+  await page.evaluateOnNewDocument(() => {
+    window.turnstile = { render(_container, options) { queueMicrotask(() => options['error-callback']?.()); return 'semantic-test-failure'; }, remove() {} };
+  });
   await page.setRequestInterception(true);
   page.on("request", (request) => {
     requests.push({ url: request.url(), type: request.resourceType() });
@@ -403,7 +407,13 @@ const auditSemanticNavigator = async () => {
     request.continue().catch((error) => consoleErrors.push(`request continuation failed: ${error.message}`));
   });
   page.on("response", (response) => { if (response.status() >= 400) failedResponses.push(`${response.status()} ${response.url()}`); });
-  page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
+  page.on("console", (message) => {
+    if (message.type() !== "error") return;
+    const location = message.location();
+    let source = "unknown source";
+    try { const url = new URL(location.url); source = `${url.origin}${url.pathname}:${location.lineNumber}`; } catch {}
+    consoleErrors.push(`${message.text()} [${source}]`);
+  });
   page.on("pageerror", (error) => consoleErrors.push(error.message));
   const response = await page.goto(`${origin}${route}`, { waitUntil: "networkidle0" });
   if (!response || response.status() !== 200) failures.push(`${route}: semantic navigator HTTP ${response?.status()}`);
@@ -438,6 +448,7 @@ const auditSemanticNavigator = async () => {
   const remoteScripts = requests.filter(({ url, type }) => type === "script" && !url.startsWith(origin) && !url.startsWith("https://challenges.cloudflare.com/") && !url.startsWith("blob:https://challenges.cloudflare.com/"));
   if (remoteScripts.length) failures.push(`${route}: semantic navigator loaded remote executable code: ${remoteScripts.map(({ url }) => url).join(", ")}`);
   const leakedQuery = requests.some(({ url }) => decodeURIComponent(url).toLocaleLowerCase().includes("private-query-marker"));
+  if (requests.some(({ url }) => url === DEPLOYMENT_CONFIG.aiEndpoint)) failures.push(`${route}: local semantic test unexpectedly called NVIDIA`);
   if (leakedQuery) failures.push(`${route}: semantic navigator included visitor query text in a network request`);
   if (consoleErrors.length) failures.push(`${route}: semantic navigator console errors: ${consoleErrors.join(" | ")}`);
   await page.close();

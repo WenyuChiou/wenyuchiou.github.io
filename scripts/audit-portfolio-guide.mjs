@@ -1,5 +1,6 @@
 import { DEPLOYMENT_CONFIG } from '../deployment-config.mjs';
 import axe from 'axe-core';
+import { GUIDE_EVIDENCE } from '../guide-evidence.js';
 
 export async function auditPortfolioGuide(browser, origin, failures, { screenshots } = {}) {
   const startFailures = failures.length;
@@ -32,6 +33,10 @@ export async function auditPortfolioGuide(browser, origin, failures, { screensho
           submittedBodies.push(body);
           const id = body.task === 'tools' ? 'repo-research-hub' : body.task === 'observatory' ? { evaluation: 'human-grounded-llm-evaluation', governance: 'wagf', simulation: 'floodabm' }[body.context?.lens] : 'wagf';
           const payload = { mode: 'nvidia', answer: 'Test-only model explanation', matches: [{ id: responseMode === 'invalid' ? 'invented' : id, reason: 'A source relevant to this request.' }], sections: ['why', 'how', 'contribution'].map(kind => ({ kind, text: locale === 'en' ? 'Test-only generated explanation with a verifiable source.' : '測試用生成講解，附上可核對來源。', evidenceIds: [id] })), suggestedView: body.task === 'observatory' ? { lens: 'simulation', stage: 'consequence' } : null };
+          if (body.task === 'observatory') {
+            const record = GUIDE_EVIDENCE.find(item => item.id === id);
+            payload.sections.forEach(section => { section.text = record[section.kind][locale]; });
+          }
           const respond = () => request.respond({ status: 200, headers: { 'access-control-allow-origin': origin, 'content-type': 'application/json' }, body: JSON.stringify(payload) }).catch(() => {});
           if (responseMode === 'delayed') { pending.push(respond); return; }
           return void respond();

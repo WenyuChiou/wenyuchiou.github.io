@@ -144,7 +144,8 @@ export function validateNavigatorResponse(payload, guideOptions) {
   return { answer: payload.answer.trim().slice(0, 1200), matches, ...(guideOptions ? { sections: payload.sections, suggestedView: payload.suggestedView } : {}) };
 }
 
-export async function requestNvidiaSummary({ endpoint, query, locale, turnstileToken, task, depth, context, signal, fetchImpl = fetch, timeoutMs = 8000 }) {
+export async function requestNvidiaSummary({ endpoint, query, locale, turnstileToken, task, depth, context, signal, fetchImpl = fetch, timeoutMs = 15000 }) {
+  // The overall deadline includes verification and transport; the Worker caps NVIDIA generation at 8 seconds.
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {

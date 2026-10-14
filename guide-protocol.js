@@ -83,12 +83,17 @@ export function validateGuidePayload(payload, evidence, options) {
   }
   if (options.task === 'observatory' && options.context) {
     const primary = { evaluation: 'human-grounded-llm-evaluation', governance: 'wagf', simulation: 'floodabm' }[options.context.lens];
-    if (payload.matches[0].id !== primary) throw new Error('invalid_scene_citation');
+    if (payload.matches.length !== 1 || payload.matches[0].id !== primary) throw new Error('invalid_scene_citation');
   }
   if (!Array.isArray(payload.sections) || payload.sections.length !== 3) throw new Error('invalid_guide_sections');
   const kinds = ['why', 'how', 'contribution'];
   payload.sections.forEach((section, index) => {
     if (!section || Object.keys(section).length !== 3 || section.kind !== kinds[index] || !text(section.text, 480) || !Array.isArray(section.evidenceIds) || section.evidenceIds.length < 1 || section.evidenceIds.length > 3 || new Set(section.evidenceIds).size !== section.evidenceIds.length || section.evidenceIds.some(id => !payload.matches.some(match => match.id === id))) throw new Error('invalid_guide_sections');
+    if (options.task === 'observatory' && options.context) {
+      const record = byId.get(payload.matches[0].id);
+      const sceneTexts = ['en', 'zh-TW'].flatMap(locale => [sceneGrounding(options.context, locale), ...['why', 'how', 'contribution', 'limitations'].map(field => record[field][locale])]);
+      if (!sceneTexts.includes(section.text)) throw new Error('invalid_scene_prose');
+    }
   });
   if (!Object.hasOwn(payload, 'suggestedView')) throw new Error('invalid_guide_view');
   if (payload.suggestedView !== null) {
