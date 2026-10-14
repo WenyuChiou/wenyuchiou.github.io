@@ -127,7 +127,7 @@ export function Workbench({ provenance: P, locale, compact = false, initialLens 
   const icons = [Users, ShieldCheck, Waves];
   const href = locale === 'zh-TW' ? `/zh${active.caseHref}` : active.caseHref;
 
-  return <div ref={root} className="provenance-workbench" data-compact={compact} data-running={running} data-motion={running ? 'running' : 'paused'} data-ready={ready} data-lens={lens} data-guide-stage={STAGES[stage]} data-guide-mode={mode} data-guide-tenure={tenure} data-guide-repaired={repaired}>
+  return <div ref={root} className="provenance-workbench" data-compact={compact} data-running={running} data-motion={running ? 'running' : 'paused'} data-ready={ready} data-lens={lens} data-guide-stage={STAGES[stage]} data-guide-mode={{ direction: 'direction', groups: 'subgroup', repeats: 'stability' }[mode]} data-guide-tenure={tenure} data-guide-repaired={repaired}>
     <DecisionObservatory {...{ locale, lens, stage, selectLens, selectStage }} motion={running} />
     <div className="pw-toolbar"><span>{C.synthetic}</span><div><button type="button" data-scene-play aria-label={paused ? C.play : C.pause} title={paused ? C.play : C.pause} aria-pressed={paused} disabled={reduced} onClick={() => setPaused(value => !value)}>{paused || reduced ? <Play aria-hidden="true" size={20} /> : <Pause aria-hidden="true" size={20} />}</button><button type="button" data-scene-reset aria-label={C.reset} title={C.reset} onClick={reset}><RotateCcw aria-hidden="true" size={20} /></button></div></div>
     <div className="pw-lenses" role="tablist" aria-label={P.controlLabel}>{LENSES.map((id, index) => {

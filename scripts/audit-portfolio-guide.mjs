@@ -12,6 +12,7 @@ export async function auditPortfolioGuide(browser, origin, failures, { screensho
       let calls = 0;
       let responseMode = 'success';
       const pending = [];
+      const submittedBodies = [];
       await page.evaluateOnNewDocument(() => {
         window.guideTestTokens = [];
         window.turnstile = { render(element, options) {
@@ -28,6 +29,7 @@ export async function auditPortfolioGuide(browser, origin, failures, { screensho
           if (request.method() === 'OPTIONS') return void request.respond({ status: 204, headers: { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST', 'access-control-allow-headers': 'Content-Type' } });
           calls++;
           const body = JSON.parse(request.postData());
+          submittedBodies.push(body);
           const id = body.task === 'tools' ? 'repo-research-hub' : body.task === 'observatory' ? { evaluation: 'human-grounded-llm-evaluation', governance: 'wagf', simulation: 'floodabm' }[body.context?.lens] : 'wagf';
           const payload = { mode: 'nvidia', answer: 'Test-only model explanation', matches: [{ id: responseMode === 'invalid' ? 'invented' : id, reason: 'A source relevant to this request.' }], sections: ['why', 'how', 'contribution'].map(kind => ({ kind, text: locale === 'en' ? 'Test-only generated explanation with a verifiable source.' : '測試用生成講解，附上可核對來源。', evidenceIds: [id] })), suggestedView: body.task === 'observatory' ? { lens: 'simulation', stage: 'consequence' } : null };
           const respond = () => request.respond({ status: 200, headers: { 'access-control-allow-origin': origin, 'content-type': 'application/json' }, body: JSON.stringify(payload) }).catch(() => {});
@@ -104,6 +106,26 @@ export async function auditPortfolioGuide(browser, origin, failures, { screensho
       }
       await page.keyboard.press('Escape');
       if (await page.$eval('dialog', element => element.open)) failures.push(`${locale}: Escape did not close Guide`);
+      await page.setViewport({ width: 390, height: 844 });
+      await page.goto(`${origin}${locale === 'en' ? '' : '/zh'}/work/human-grounded-llm-evaluation/`, { waitUntil: 'networkidle0' });
+      await page.$eval('[data-provenance-island]', element => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
+      await page.waitForSelector('[data-provenance-island][data-ready="true"]');
+      for (const [fixture, apiMode] of [['direction', 'direction'], ['groups', 'subgroup'], ['repeats', 'stability']]) {
+        await page.click(`[data-comparison-mode="${fixture}"]`);
+        await page.waitForFunction(expected => document.querySelector('.provenance-workbench').dataset.guideMode === expected, {}, apiMode);
+        await page.click('[data-guide-open="observatory"]');
+        await page.waitForSelector('dialog[open]');
+        if (await page.$eval('[data-guide-context]', element => element.hidden)) failures.push(`${locale}/${fixture}: selected comparison context lost`);
+        const modeLabel = await page.$eval(`[data-comparison-mode="${fixture}"]`, element => element.textContent.trim());
+        if (!(await page.$eval('[data-guide-context]', element => element.textContent)).includes(modeLabel)) failures.push(`${locale}/${fixture}: selected mode is not disclosed`);
+        if (await page.$eval('dialog[open]', element => element.scrollWidth > element.clientWidth + 1)) failures.push(`${locale}/${fixture}: context label overflows the mobile guide`);
+        const beforeCalls = calls;
+        await page.click('.navigator-submit');
+        await page.waitForSelector('[data-guide-sections]:not([hidden])');
+        const body = submittedBodies.at(-1);
+        if (calls !== beforeCalls + 1 || body.context?.lens !== 'evaluation' || body.context?.mode !== apiMode) failures.push(`${locale}/${fixture}: generation request does not describe the selected fixture`);
+        await page.click('[data-navigator-close]');
+      }
       await page.close();
     }
   } finally { await context.close(); }

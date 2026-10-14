@@ -19,12 +19,16 @@ export function sceneGrounding(context, locale) {
   return locale === 'zh-TW' ? '合成人類參考與模型紀錄，檢查方向、群體差異或穩定性，不是個別問卷或實測結果。' : 'Synthetic human reference and model records compare direction, subgroup differences or stability, not individual surveys or measured results.';
 }
 
+function mentionsGuideName(query, name) {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(^|[^a-z0-9-])${escaped}($|[^a-z0-9-])`).test(query);
+}
+
 export function namedGuideTools(query, evidence) {
   const text = query.toLocaleLowerCase();
   return evidence.filter(record => {
     if (record.kind !== 'tool' || !record.id.startsWith('repo-')) return false;
-    const name = record.id.slice(5).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return new RegExp(`(^|[^a-z0-9-])${name}($|[^a-z0-9-])`).test(text);
+    return mentionsGuideName(text, record.id.slice(5));
   });
 }
 
@@ -33,7 +37,7 @@ export function isSupportedGuideQuery(query, task, evidence) {
   const allowed = evidence.filter(record => record.tasks.includes(task));
   const terms = allowed.flatMap(record => [...record.keywords.en, ...record.keywords['zh-TW'], record.title.en, record.title['zh-TW']]);
   const domain = /\b(wenyu|llm|agent|agents|research|literature|citation|citations|zotero|obsidian|notebooklm|evidence|workflow|workflows|proposal|validation|simulation|synthetic|flood|codex|skills)\b|邱文昱|研究|文獻|引用|證據|代理|決策|工作流|驗證|模擬|洪災|提案|合成|工具/i;
-  return namedGuideTools(text, allowed).length > 0 || domain.test(text) || terms.some(term => text.includes(term.toLocaleLowerCase()));
+  return namedGuideTools(text, allowed).length > 0 || allowed.some(record => record.kind === 'case' && mentionsGuideName(text, record.id)) || domain.test(text) || terms.some(term => text.includes(term.toLocaleLowerCase()));
 }
 
 export function verifyGuideGrounding(payload, evidence, options, locale) {

@@ -12,6 +12,30 @@ const fixture = (task = 'research') => {
 const scene = { lens: 'governance', stage: 'validation', mode: 'direction', tenure: 'renter', repaired: false };
 const env = { ALLOWED_ORIGIN: 'https://wenyuchiou.github.io', ALLOWED_HOSTNAME: 'wenyuchiou.github.io', NVIDIA_API_KEY: 'test-only', TURNSTILE_SECRET: 'test-only', RATE_LIMITER: { limit: async () => ({ success: true }) } };
 
+test('comparison API modes are canonical and raw fixture aliases stay outside the protocol', () => {
+  for (const mode of ['direction', 'subgroup', 'stability']) {
+    assert.equal(validateGuideOptions({ task: 'observatory', context: { ...scene, lens: 'evaluation', mode } }).context.mode, mode);
+  }
+  for (const mode of ['groups', 'repeats']) assert.throws(() => validateGuideOptions({ task: 'observatory', context: { ...scene, mode } }));
+});
+
+test('known case names reach bilingual generation without admitting unknown case aliases (mock provider)', async () => {
+  for (const locale of ['en', 'zh-TW']) {
+    const query = locale === 'en' ? 'What is WAGF?' : 'WAGF 是什麼？';
+    assert.equal(isSupportedGuideQuery(query, 'research', GUIDE_EVIDENCE), true);
+    assert.equal(isSupportedGuideQuery(query, 'observatory', GUIDE_EVIDENCE), true);
+    assert.equal(isSupportedGuideQuery(query, 'tools', GUIDE_EVIDENCE), false);
+    const payload = fixture('observatory');
+    const record = GUIDE_EVIDENCE.find(item => item.id === 'wagf');
+    payload.sections.forEach(section => { section.text = record[section.kind][locale]; });
+    const request = new Request('https://worker.example/v1/navigate', { method: 'POST', headers: { Origin: env.ALLOWED_ORIGIN }, body: JSON.stringify({ query, locale, task: 'research', turnstileToken: 'test' }) });
+    const response = await handleRequest(request, env, async url => String(url).includes('siteverify') ? Response.json({ success: true, action: 'navigate', hostname: env.ALLOWED_HOSTNAME }) : Response.json({ choices: [{ message: { content: JSON.stringify(payload) } }] }));
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).mode, 'nvidia');
+  }
+  for (const query of ['What is WAGF-clone?', 'WAGF-copy 是什麼？']) assert.equal(isSupportedGuideQuery(query, 'research', GUIDE_EVIDENCE), false);
+});
+
 test('all five curated repository entries are in scope in both languages', () => {
   for (const record of GUIDE_EVIDENCE.filter(item => item.kind === 'tool')) {
     const name = record.id.slice(5);

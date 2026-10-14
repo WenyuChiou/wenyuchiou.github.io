@@ -287,7 +287,8 @@ export function initPortfolioNavigator(root = document) {
       contextLabel.hidden = !context;
       const selectedLens = document.querySelector(`[data-provenance-lens="${context?.lens}"] strong`);
       const selectedStage = document.querySelector(`[data-provenance-stage="${GUIDE_STAGES.indexOf(context?.stage) + 1}"] strong`);
-      contextLabel.textContent = context ? `${copy.contextLabel}: ${selectedLens?.textContent || context.lens} / ${selectedStage?.textContent || context.stage}` : '';
+      const detail = context?.lens === 'evaluation' ? document.querySelector('[data-comparison-mode][aria-pressed="true"]') : context?.lens === 'simulation' ? document.querySelector('[data-tenure][aria-pressed="true"]') : null;
+      contextLabel.textContent = context ? `${copy.contextLabel}: ${selectedLens?.textContent || context.lens} / ${selectedStage?.textContent || context.stage}${detail ? ` / ${detail.textContent.trim()}` : ''}` : '';
     }
     return context;
   };
