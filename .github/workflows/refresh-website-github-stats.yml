@@ -73,6 +73,7 @@ jobs:
             data/github.json \
             assets/app.bundle.js \
             assets/github \
+            assets/provenance \
             index.html \
             about \
             articles \
