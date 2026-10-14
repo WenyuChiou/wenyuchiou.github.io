@@ -1,4 +1,5 @@
 import { FIT_EVIDENCE } from "./fit-data.js";
+import { GUIDE_EVIDENCE } from "./guide-evidence.js";
 
 export const NAVIGATOR_INDEX = {
   model: {
@@ -87,8 +88,8 @@ export const NAVIGATOR_INDEX = {
       href: "/work/human-grounded-llm-evaluation/",
       title: { en: "Human-Grounded LLM Evaluation", "zh-TW": "以人類行為為基礎的 LLM 評估" },
       summary: {
-        en: "Compare generated decisions with measured human pathways, subgroup differences, and repeated-run stability.",
-        "zh-TW": "比較生成決策與實測人類路徑、次群體差異及重複執行穩定性。",
+        en: "Compare real household flood-insurance surveys with LLM-generated responses, checking measurement quality, household differences, decision relationships, and repeated runs.",
+        "zh-TW": "以真人家庭的洪水保險問卷檢查 LLM 生成回答，對照測量品質、家庭差異、決策關係與重複執行。",
       },
       semantic: "Evaluation design for comparing LLM-generated decisions with human survey evidence across social groups using psychometrics, confirmatory factor analysis, structural equation modeling, and repeated-run stability checks.",
       keywords: {
@@ -157,13 +158,13 @@ export const NAVIGATOR_INDEX = {
       },
     },
     {
-      id: "articles",
-      fit: FIT_EVIDENCE.articles,
-      href: "/articles/",
-      title: { en: "Methods articles", "zh-TW": "方法文章" },
-      summary: { en: "Practical writing on LLM evaluation, agent validators, and coupled decision consequences.", "zh-TW": "LLM 評估、代理驗證與耦合決策後果的實務文章。" },
-      semantic: "Technical articles explaining human grounded LLM evaluation, governed agent validation and targeted repair, and feedback from individual decisions to system consequences.",
-      keywords: { en: ["articles", "methods", "failure modes", "engineering judgment", "validators"], "zh-TW": ["文章", "方法", "失敗模式", "工程判斷", "驗證器"] },
+      id: "public-updates",
+      fit: FIT_EVIDENCE["public-updates"],
+      href: "/#public-updates",
+      title: { en: "Public LinkedIn posts", "zh-TW": "公開 LinkedIn 貼文" },
+      summary: { en: "Selected posts I shared about model behavior, agentic AI, and research tools, with original LinkedIn sources.", "zh-TW": "我分享的模型行為、Agentic AI 與研究工具貼文，附 LinkedIn 原文來源。" },
+      semantic: "Wenyu's public LinkedIn posts and discussions about model behavior evaluation, agentic AI, and research tools. Commentary, not a published methods article.",
+      keywords: { en: ["LinkedIn", "posts", "public updates", "research tools"], "zh-TW": ["LinkedIn", "貼文", "公開近況", "研究工具"] },
     },
     {
       id: "open-source",
@@ -225,5 +226,10 @@ export const NAVIGATOR_INDEX = {
         "zh-TW": ["聯絡", "電子郵件", "實習", "2027 暑期", "LinkedIn", "時間"],
       },
     },
+    ...GUIDE_EVIDENCE.filter(record => record.kind === "tool").map(record => ({
+      id: record.id, title: record.title, href: record.href, summary: record.why, keywords: record.keywords,
+      semantic: `${record.title.en} ${record.why.en} ${record.how.en} ${record.limitations.en}`,
+      fit: { capabilities: [], roleRelevance: [], evidenceStrength: "contextual", sourceType: "github-repository", verifiedTerms: [] },
+    })),
   ],
 };

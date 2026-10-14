@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wenyu-portfolio-navigator",
+  "main": "src/preview.js",
+  "compatibility_date": "2026-08-25",
+  "workers_dev": false,
+  "preview_urls": false,
+  "vars": {
+    "ALLOWED_ORIGIN": "http://localhost:4187",
+    "ALLOWED_HOSTNAME": "localhost",
+    "NVIDIA_MODEL": "nvidia/nemotron-3.5-lightning-30b-a3b"
+  },
+  "ratelimits": [{
+    "name": "RATE_LIMITER",
+    "namespace_id": "1101",
+    "simple": { "limit": 5, "period": 60 }
+  }]
+}

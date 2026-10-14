@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Timeline } from "./features/editorial/Timeline.jsx";
+import { GUIDE_INTENTS } from "./portfolio-guide-data.js";
 import {
   AlertTriangle,
   AtSign,
@@ -139,16 +141,16 @@ function SiteHeader({ content, locale, page, basePath }) {
         <nav id="primary-navigation" className={open ? "primary-nav is-open" : "primary-nav"} aria-label="Primary">
           <ul>
             {content.nav.map((item) => {
-              const isCurrent = page === item.id || (page.startsWith("case:") && item.id === "work") || (page.startsWith("article:") && item.id === "articles");
-              if (item.id !== "work") return <li key={item.id}><a href={localizedPath(item.href, locale)} aria-current={isCurrent ? "page" : undefined}>{item.label}</a></li>;
+              const isCurrent = page === item.id || (page.startsWith("case:") && item.id === "work") || (page.startsWith("article:") && item.id === "articles") || (page === "publications" && item.id === "research");
+              if (!["work", "research"].includes(item.id)) return <li key={item.id}><a href={localizedPath(item.href, locale)} aria-current={isCurrent ? "page" : undefined}>{item.label}</a></li>;
               return (
                 <li className="work-dropdown-item" key={item.id}>
-                  <details className="work-dropdown" data-work-dropdown>
+                  <details className="work-dropdown" data-work-dropdown={item.id === "work" || undefined} data-nav-group={item.id}>
                     <summary aria-current={isCurrent ? "page" : undefined}>
                       <span>{item.label}</span><ChevronDown className="work-dropdown-chevron" aria-hidden="true" size={16} />
                     </summary>
                     <div className="work-dropdown-panel">
-                      <SmartLink className="work-dropdown-all" href={item.href} locale={locale}>
+                      {item.id === "research" ? content.editorial.researchLinks.map(link => <SmartLink className="work-dropdown-all" href={link.href} locale={locale} key={link.href}><span>{link.label}</span><ArrowUpRight aria-hidden="true" size={15} /></SmartLink>) : <><SmartLink className="work-dropdown-all" href={item.href} locale={locale}>
                         <span>{content.labels.allWork}</span><ArrowUpRight aria-hidden="true" size={15} />
                       </SmartLink>
                       {content.flagship.items.map((project) => (
@@ -156,7 +158,7 @@ function SiteHeader({ content, locale, page, basePath }) {
                           <span className="work-dropdown-index">{project.index}</span>
                           <span><strong>{project.title}</strong><small>{project.line}</small></span>
                         </SmartLink>
-                      ))}
+                      ))}</>}
                     </div>
                   </details>
                 </li>
@@ -169,7 +171,7 @@ function SiteHeader({ content, locale, page, basePath }) {
             <a className="button button-small" href="#contact"><Mail aria-hidden="true" size={16} />{content.labels.contact}</a>
           </div>
         </nav>
-        {page !== "hire" ? <PortfolioNavigator content={content} locale={locale} header /> : null}
+        <PortfolioNavigator content={content} locale={locale} header />
       </div>
     </header>
   );
@@ -185,12 +187,11 @@ function Hero({ content, locale }) {
           <h1 id="hero-name">{content.hero.title}</h1>
           <p className="hero-headline">{content.hero.headline}</p>
           <p className="hero-intro">{content.hero.intro}</p>
-          <ul className="hero-capabilities" aria-label={content.expertise.eyebrow}>{content.heroCapabilities.map((item) => <li key={item}>{item}</li>)}</ul>
           <div className="hero-actions">
-            <SmartLink className="button button-light" href="/hire/" locale={locale}>{content.hire.primaryLabel}<ArrowRight aria-hidden="true" size={17} /></SmartLink>
-            <a className="button button-ghost" href={resume.href} download>{resume.label}<Download aria-hidden="true" size={17} /></a>
+            <SmartLink className="button" href={content.hero.primary.href} locale={locale}>{content.hero.primary.label}<ArrowRight aria-hidden="true" size={17} /></SmartLink>
+            <SmartLink className="button button-outline" href={content.hero.secondary.href} locale={locale}>{content.hero.secondary.label}<ArrowUpRight aria-hidden="true" size={17} /></SmartLink>
           </div>
-          <a className="hero-work-link" href="#selected-work">{content.hire.selectedWorkLabel}<ArrowDown aria-hidden="true" size={15} /></a>
+          <a className="hero-work-link" href={resume.href} download>{resume.label}<Download aria-hidden="true" size={15} /></a>
           <div className="hero-meta">
             <HeroSocialLinks content={content} locale={locale} />
             <p className="hero-availability">{content.hero.availability}</p>
@@ -199,7 +200,7 @@ function Hero({ content, locale }) {
         <figure className="hero-figure">
           <picture>
             <source media="(max-width: 620px)" srcSet="/assets/agu2025-photo-mobile.webp" />
-            <img className="hero-media" src="/assets/agu2025-photo.webp" srcSet="/assets/agu2025-photo-tablet.webp 828w, /assets/agu2025-photo.webp 1108w" sizes="(max-width: 620px) 120px, (max-width: 980px) 260px, 360px" width="1108" height="1477" alt={content.hero.imageAlt} fetchPriority="high" />
+            <img className="hero-media" src="/assets/agu2025-photo-tablet.webp" sizes="(max-width: 620px) 100px, 220px" width="1108" height="1477" alt={content.hero.imageAlt} fetchPriority="high" />
           </picture>
           <figcaption className="hero-caption">{content.hero.imageCaption}</figcaption>
         </figure>
@@ -268,22 +269,22 @@ function FlagshipCards({ content, locale, full = false }) {
   return (
     <section id="selected-work" className="section flagship" aria-labelledby="flagship-title"><div className="wrap">
       <SectionHead eyebrow={F.eyebrow} title={F.title} intro={F.intro} id="flagship-title" />
+      <div className="application-contexts">{content.editorial.contexts.map((context, index) => <div key={context.title}><p className="section-label">0{index + 1}</p><h3>{context.title}</h3><p>{context.text}</p><SmartLink className="text-link" href={context.href} locale={locale}>{content.labels.evidence}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>)}</div>
+      <p className="agent-distinction">{content.editorial.distinction}</p>
       <div className="flagship-list">{F.items.map((item, index) => {
         const { role, Icon } = CASE_ROLES[item.slug];
         return (
-        <details className={`flagship-entry case-${role}`} name="selected-work-projects" key={item.slug} open={index === 0}>
+        <article className={`flagship-record case-${role}`} key={item.slug}><details className={`flagship-entry case-${role}`} name="selected-work-projects" open={index === 0}>
           <summary className="flagship-trigger">
-            <span className="flagship-meta"><span>{item.index}</span><span>{item.status}</span></span>
-            <span className="flagship-summary"><h3>{item.title}</h3><span>{item.line}</span></span>
+            <span className="flagship-meta">{item.index}</span>
+            <span className="flagship-summary"><h3>{item.title}</h3><span>{item.line}</span><span className="flagship-role"><strong>{content.editorial.contributionLabel}</strong> {item.role}</span><span className="flagship-outcome"><strong>{content.editorial.outcomeLabel}</strong> {item.outcome}</span></span>
             <span className="flagship-signal" aria-hidden="true"><Icon size={20} /><span>{role}</span></span>
-            <span className="flagship-capability-preview">{item.practice.join(" · ")}</span>
             <ChevronDown className="flagship-chevron" aria-hidden="true" size={20} />
           </summary>
           <div className="flagship-panel">
-            <div className="flagship-contribution"><p>{item.role}</p><ul>{item.practice.map((practice) => <li key={practice}>{practice}</li>)}</ul></div>
-            <SmartLink className="text-link flagship-case-link" href={item.href} locale={locale}>{content.labels.details}<ArrowUpRight aria-hidden="true" size={16} /><span className="sr-only">: {item.title}</span></SmartLink>
+            <dl className="flagship-detail"><div><dt>{content.editorial.methodLabel}</dt><dd>{item.practice.join(" · ")}</dd></div><div><dt>{content.editorial.limitsLabel}</dt><dd>{content.editorial.limits[item.slug]}</dd></div></dl>
           </div>
-        </details>
+        </details><SmartLink className="text-link flagship-case-link" href={item.href} locale={locale}>{content.labels.details}<ArrowUpRight aria-hidden="true" size={16} /><span className="sr-only">: {item.title}</span></SmartLink></article>
       );})}</div>
       {full ? null : <div className="section-tail"><SmartLink className="text-link" href="/work/" locale={locale}>{content.workPage.title}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>}
     </div></section>
@@ -325,7 +326,7 @@ function OpenSource({ content, locale, compact = false }) {
         return (
           <article className={`repo-row${stats?.previewUrl ? " has-preview" : ""}`} key={repo.key}>
             <RepoPreview previewUrl={stats?.previewUrl} />
-            <div className="repo-copy"><h3>{repo.name}</h3><p>{repo.desc}</p></div>
+            <div className="repo-copy"><h3>{repo.name}</h3><p>{repo.desc}</p><button className="text-link guide-context-entry" type="button" data-guide-open="tools" data-guide-query={locale === 'zh-TW' ? `何時適合使用 ${repo.name}？` : `When should I use ${repo.name}?`}>{locale === 'zh-TW' ? '了解用途' : 'Find its use'}<ArrowRight aria-hidden="true" size={16} /></button></div>
             {stats ? <p className="repo-stats"><strong>{formatCount(stats.stars, locale)}</strong> {content.labels.stars} <span>·</span> {formatCount(stats.forks, locale)} {content.labels.forks}</p> : null}
             <SmartLink className="icon-link" href={repo.href} locale={locale}><ArrowUpRight aria-hidden="true" /><span className="sr-only">{repo.name}</span></SmartLink>
           </article>
@@ -402,41 +403,28 @@ function ResearchIllustration({ content }) {
 
 function DecisionProvenanceExplorer({ content }) {
   const P = content.provenance;
-  return <section id="decision-provenance" className="section provenance decision-trace" data-provenance-explorer aria-labelledby="provenance-title"><div className="wrap"><SectionHead eyebrow={P.eyebrow} title={P.title} intro={P.intro} id="provenance-title" /><ResearchIllustration content={content} /><ProvenanceIsland content={content} compact /></div></section>;
+  return <section id="decision-provenance" className="section provenance decision-trace" data-provenance-explorer aria-labelledby="provenance-title"><div className="wrap"><SectionHead eyebrow={content.editorial.observatoryLabel} title={content.editorial.observatoryTitle} intro={content.editorial.observatoryIntro} id="provenance-title" /><ProvenanceIsland content={content} compact /></div></section>;
 }
 
 function EvidenceSlice({ content, locale, slug }) {
   const E = content.evidenceSlices[slug];
   const L = content.evidenceLabels;
   const fields = [[L.problem, E.problem], [L.role, E.role], [L.input, E.input], [L.decision, E.decision], [L.validation, E.validation], [L.consequence, E.consequence]];
-  return <section className="section evidence-slice" aria-labelledby="evidence-slice-title"><div className="wrap"><SectionHead eyebrow={L.eyebrow} title={L.title} id="evidence-slice-title" /><p className="evidence-status"><strong>{L.publicStatus}</strong>{E.status}</p><dl>{fields.map(([label, value], index) => <div key={label}><dt><span>0{index + 1}</span>{label}</dt><dd>{value}</dd></div>)}</dl><p className="evidence-sources"><strong>{L.sources}</strong>{E.sources.map((source) => <SmartLink href={source.href} locale={locale} className="text-link" key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></div></section>;
+  return <section className="section evidence-slice" aria-labelledby="evidence-slice-title"><div className="wrap"><SectionHead eyebrow={L.eyebrow} title={L.title} id="evidence-slice-title" /><dl>{fields.map(([label, value], index) => <div key={label}><dt><span>0{index + 1}</span>{label}</dt><dd>{value}</dd></div>)}</dl><p className="evidence-sources"><strong>{L.sources}</strong>{E.sources.map((source) => <SmartLink href={source.href} locale={locale} className="text-link" key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></div></section>;
 }
 
-function ArticleDiagram({ type, content }) {
-  const isZh = content.locale === "zh-TW";
-  const diagrams = {
-    evaluation: isZh ? ["實測行為", "受控人物設定", "重複決策", "結構與穩定性"] : ["Measured behavior", "Controlled persona", "Repeated decisions", "Structure + stability"],
-    governance: isZh ? ["結構化提案", "確定性驗證", "針對性修正", "允許狀態更新"] : ["Structured proposal", "Deterministic checks", "Targeted repair", "Authorized update"],
-    feedback: isZh ? ["理解風險", "受限決策", "危害與損失", "更新後的情境"] : ["Interpret risk", "Constrained choice", "Hazard + loss", "Updated context"],
-  };
-  const roles = type === "evaluation" ? ["human", "context", "model", "validation"] : type === "governance" ? ["model", "validation", "repair", "system"] : ["human", "context", "environment", "system"];
-  return <figure className={`article-diagram diagram-${type}`}><ol>{diagrams[type].map((label, index) => <li data-color-role={roles[index]} key={label}><span>0{index + 1}</span><strong>{label}</strong>{index < 3 ? <ArrowRight aria-hidden="true" size={18} /> : <RotateCcw aria-hidden="true" size={18} />}</li>)}</ol><figcaption>{content.articlesPage.diagram}</figcaption></figure>;
-}
 
-function ArticlesPreview({ content, locale }) {
-  const A = content.articlesPage;
-  return <section className="section articles-preview" aria-labelledby="articles-preview-title"><div className="wrap"><SectionHead eyebrow={A.eyebrow} title={A.title} intro={A.intro} action={{ href: "/articles/", label: A.eyebrow }} locale={locale} id="articles-preview-title" /><div className="article-preview-list">{A.articles.map((article, index) => <article key={article.slug}><span>0{index + 1}</span><div><p className="article-meta"><time dateTime={article.date}>{article.date}</time> · {article.readingTime}</p><h3>{article.title}</h3><p>{article.dek}</p></div><SmartLink className="icon-link" href={`/articles/${article.slug}/`} locale={locale}><ArrowUpRight aria-hidden="true" /><span className="sr-only">{A.read}: {article.title}</span></SmartLink></article>)}</div></div></section>;
-}
 
-function ArticlesPage({ content, locale }) {
-  const A = content.articlesPage;
-  return <><PageHero eyebrow={A.eyebrow} title={A.title} intro={A.intro} /><section className="section articles-index"><div className="wrap">{A.articles.map((article, index) => <article className="article-index-item" key={article.slug}><span>0{index + 1}</span><div><p className="article-meta"><time dateTime={article.date}>{article.date}</time> · {article.readingTime}</p><h2>{article.title}</h2><p>{article.dek}</p><SmartLink className="text-link" href={`/articles/${article.slug}/`} locale={locale}>{A.read}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div><ArticleDiagram type={article.diagramType} content={content} /></article>)}</div></section><Contact content={content} /></>;
-}
-
-function ArticlePage({ content, locale, slug }) {
-  const A = content.articlesPage;
-  const article = A.articles.find((item) => item.slug === slug) || A.articles[0];
-  return <article className="tech-article"><header className="article-hero wrap"><p className="eyebrow">{A.eyebrow}</p><p className="article-meta"><time dateTime={article.date}>{article.date}</time> · {article.readingTime}</p><h1>{article.title}</h1><p>{article.dek}</p><p className="article-byline">{locale === "zh-TW" ? "作者" : "By"} <SmartLink href="/about/" locale={locale}>{content.name}</SmartLink></p></header><section className="section article-body"><div className="wrap article-layout"><aside><p className="eyebrow">{A.thesis}</p><p>{article.thesis}</p><ArticleDiagram type={article.diagramType} content={content} /></aside><div className="article-prose">{article.sections.map((section) => <section key={section.title}><h2>{section.title}</h2>{section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</section>)}<footer className="article-sources"><h2>{A.sources}</h2>{article.sources.map((source) => <SmartLink className="text-link" href={source.href} locale={locale} key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={15} /></SmartLink>)}<SmartLink className="text-link" href={article.relatedCase} locale={locale}>{A.related}<ArrowUpRight aria-hidden="true" size={15} /></SmartLink></footer></div></div></section><Contact content={content} /></article>;
+function PublicUpdates({ content, locale }) {
+  const E = content.editorial;
+  const posts = updatesData.items.filter(item => item.type.en === "LinkedIn").slice(0, 3);
+  return <section id="public-updates" className="section public-updates" aria-labelledby="public-updates-title"><div className="wrap">
+    <SectionHead eyebrow={E.updatesEyebrow} title={E.updatesTitle} intro={E.updatesIntro} id="public-updates-title" />
+    <div className="curated-notes">{posts.map(post => <article className="curated-note" key={post.url}>
+      <p className="section-label">LinkedIn{post.date && /^\d{4}-\d{2}-\d{2}$/.test(post.date) ? <> · <time dateTime={post.date}>{post.date}</time></> : null}</p>
+      <div><h3>{post.title[locale]}</h3><p>{post.summary[locale]}</p><SmartLink className="text-link" href={post.url} locale={locale}>{E.originalPost}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>
+    </article>)}<SmartLink className="text-link" href="https://www.linkedin.com/in/wenyu-chiou/recent-activity/all/" locale={locale}>{E.allPosts}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>
+  </div></section>;
 }
 
 function PublicationsPreview({ content, locale }) {
@@ -456,11 +444,11 @@ function Documents({ content }) {
 
 function Contact({ content }) {
   const C = content.contact;
-  return <section id="contact" className="contact-band" aria-labelledby="contact-title"><div className="wrap contact-layout"><div><p className="eyebrow">{C.eyebrow}</p><h2 id="contact-title">{C.title}</h2><p>{C.text}</p><SmartLink className="contact-brief-link" href="/hire/" locale={content.locale}>{C.recruiterLink}<ArrowRight aria-hidden="true" size={15} /></SmartLink></div><div className="contact-actions"><a className="button button-light" href={`mailto:${C.email}`}><Mail aria-hidden="true" size={18} />{C.email}</a>{C.workAuth && <p>{C.workAuth}</p>}<ul>{C.links.map((link) => <li key={link.href}><SmartLink href={link.href} locale={content.locale}>{link.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink></li>)}</ul></div></div></section>;
+  return <section id="contact" className="contact-band" aria-labelledby="contact-title"><div className="wrap contact-layout"><div><p className="eyebrow">{C.eyebrow}</p><h2 id="contact-title">{C.title}</h2><p>{C.text}</p><SmartLink className="contact-brief-link" href="/about/#documents-title" locale={content.locale}>{content.editorial.aboutLink}<ArrowRight aria-hidden="true" size={15} /></SmartLink></div><div className="contact-actions"><a className="button button-light" href={`mailto:${C.email}`}><Mail aria-hidden="true" size={18} />{C.email}</a>{C.workAuth && <p>{C.workAuth}</p>}<ul>{C.links.map((link) => <li key={link.href}><SmartLink href={link.href} locale={content.locale}>{link.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink></li>)}</ul></div></div></section>;
 }
 
 function Home({ content, locale }) {
-  return <><Hero content={content} locale={locale} /><RecruiterFitTeaser content={content} locale={locale} /><FlagshipCards content={content} locale={locale} /><DecisionProvenanceExplorer content={content} /><OpenSource content={content} locale={locale} compact /><ArticlesPreview content={content} locale={locale} /><Contact content={content} /></>;
+  return <><Hero content={content} locale={locale} /><FlagshipCards content={content} locale={locale} /><DecisionProvenanceExplorer content={content} /><OpenSource content={content} locale={locale} compact /><PublicUpdates content={content} locale={locale} /><Contact content={content} /></>;
 }
 
 function PageHero({ eyebrow, title, intro }) {
@@ -471,14 +459,10 @@ function Breadcrumbs({ content, locale, page }) {
   if (page === "home") return null;
   const parent = page.startsWith("case:")
     ? { label: content.workPage.title, href: "/work/" }
-    : page.startsWith("article:")
-      ? { label: content.articlesPage.eyebrow, href: "/articles/" }
-      : null;
+    : null;
   const current = page.startsWith("case:")
     ? content.caseStudies[page.slice(5)]?.title
-    : page.startsWith("article:")
-      ? content.articlesPage.articles.find((item) => item.slug === page.slice(8))?.title
-      : ({ work: content.workPage.title, research: content.researchPage.title, publications: content.publicationsPage.title, articles: content.articlesPage.title, hire: content.hire.navLabel, about: content.aboutPage.title })[page];
+    : ({ work: content.workPage.title, research: content.researchPage.title, publications: content.publicationsPage.title, hire: content.hire.navLabel, about: content.aboutPage.title })[page];
   return <nav className="breadcrumbs wrap" aria-label={locale === "zh-TW" ? "階層導覽" : "Breadcrumb"}><ol><li><SmartLink href="/" locale={locale}>{locale === "zh-TW" ? "首頁" : "Home"}</SmartLink></li>{parent ? <li><SmartLink href={parent.href} locale={locale}>{parent.label}</SmartLink></li> : null}<li aria-current="page">{current}</li></ol></nav>;
 }
 
@@ -502,7 +486,20 @@ function PublicationsPage({ content, locale }) {
 
 function AboutPage({ content, locale }) {
   const A = content.aboutPage;
-  return <><PageHero eyebrow={A.eyebrow} title={A.title} intro={A.bio[0]} /><section className="section about-body"><div className="wrap about-layout"><figure><img src="/assets/portrait.jpg" width="768" height="1024" alt={content.hero.imageAlt} loading="eager" /><figcaption>{content.hero.eyebrow}</figcaption></figure><div className="prose">{A.bio.slice(1).map((text) => <p key={text}>{text}</p>)}<SmartLink className="button button-outline about-brief-link" href="/hire/" locale={locale}>{content.hire.primaryLabel}<ArrowRight aria-hidden="true" size={16} /></SmartLink></div></div></section><section className="section"><div className="wrap two-column"><div><p className="eyebrow"><GraduationCap aria-hidden="true" size={16} />{A.educationTitle}</p><h2>{A.educationTitle}</h2><ol className="education-list">{A.education.map((item) => <li key={item.degree}><h3>{item.degree}</h3><p>{item.school}</p><span>{item.date}</span></li>)}</ol></div><div><p className="eyebrow">{A.timelineLabel}</p><h2>{A.trajectoryTitle}</h2><ol className="trajectory-list">{A.trajectory.map((item) => <li key={item.year}><span>{item.year}</span><p>{item.text}</p></li>)}</ol></div></div></section><Documents content={content} /><Contact content={content} /></>;
+  return <>
+    <PageHero eyebrow={A.eyebrow} title={A.title} intro={A.bio[0]} />
+    <section className="section about-body">
+      <div className="wrap about-layout">
+        <figure><img src="/assets/portrait.jpg" width="560" height="751" alt={content.editorial.portraitAlt} loading="eager" /><figcaption>{content.hero.eyebrow}</figcaption></figure>
+        <div className="prose">{A.bio.slice(1).map((text) => <p key={text}>{text}</p>)}<SmartLink className="button button-outline about-brief-link" href="/hire/" locale={locale}>{content.hire.primaryLabel}<ArrowRight aria-hidden="true" size={16} /></SmartLink></div>
+      </div>
+    </section>
+    <section className="section"><div className="wrap">
+      <div><p className="eyebrow"><GraduationCap aria-hidden="true" size={16} />{A.educationTitle}</p><h2>{A.educationTitle}</h2><ol className="education-list">{A.education.map((item) => <li key={item.degree}><h3>{item.degree}</h3><p>{item.school}</p><span>{item.date}</span></li>)}</ol></div>
+    </div></section>
+    <section className="section" id="experience"><div className="wrap"><SectionHead eyebrow={A.timelineLabel} title={A.trajectoryTitle} /><Timeline content={content} locale={locale} /></div></section>
+    <Documents content={content} /><Contact content={content} />
+  </>;
 }
 
 function RecruiterFitExplorer({ content, locale, resume }) {
@@ -517,7 +514,7 @@ function HirePage({ content, locale }) {
   return <div className="hire-page">
     <header className="hire-hero wrap"><div><p className="eyebrow">{H.eyebrow}</p><h1>{H.title}</h1><p>{H.intro}</p></div><figure><img src="/assets/agu2025-photo-mobile.webp" width="360" height="480" alt={content.hero.imageAlt} /><figcaption>{content.hero.imageCaption}</figcaption></figure></header>
     <section className="section hire-profile" aria-labelledby="hire-role-title"><div className="wrap"><div className="hire-split hire-role"><div><p className="hire-number">01</p><h2 id="hire-role-title">{H.roleFitTitle}</h2></div><p>{H.roleFitText}</p></div><div className="hire-section-title hire-own-title"><p className="hire-number">02</p><h2 id="hire-own-title">{H.ownTitle}</h2></div><ol className="hire-ownership">{H.own.map((item, index) => <li data-color-role={["human", "validation", "system"][index]} key={item.title}><span>0{index + 1}</span><div><h3>{item.title}</h3><p>{item.text}</p></div></li>)}</ol></div></section>
-    <section className="section hire-evidence" aria-labelledby="hire-evidence-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">03</p><h2 id="hire-evidence-title">{H.evidenceTitle}</h2><p>{H.evidenceIntro}</p></div><div className="hire-evidence-list">{content.flagship.items.map((project) => { const slice = content.evidenceSlices[project.slug]; const role = CASE_ROLES[project.slug].role; return <article className={`case-${role}`} key={project.slug}><header><span>{project.index}</span><div><p>{project.status}</p><h3>{project.title}</h3></div></header><dl><div><dt>{H.evidenceLabels.problem}</dt><dd>{project.line}</dd></div><div><dt>{H.evidenceLabels.role}</dt><dd>{project.role}</dd></div><div><dt>{H.evidenceLabels.capabilities}</dt><dd>{project.practice.join(" · ")}</dd></div><div><dt>{H.evidenceLabels.status}</dt><dd>{slice.status}</dd></div></dl><p className="hire-evidence-links"><SmartLink className="text-link" href={project.href} locale={locale}>{H.evidenceLabels.source}<ArrowRight aria-hidden="true" size={15} /></SmartLink>{slice.sources.slice(0, 1).map((source) => <SmartLink className="text-link" href={source.href} locale={locale} key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></article>; })}</div></div></section>
+    <section className="section hire-evidence" aria-labelledby="hire-evidence-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">03</p><h2 id="hire-evidence-title">{H.evidenceTitle}</h2><p>{H.evidenceIntro}</p></div><div className="hire-evidence-list">{content.flagship.items.map((project) => { const slice = content.evidenceSlices[project.slug]; const role = CASE_ROLES[project.slug].role; return <article className={`case-${role}`} key={project.slug}><header><span>{project.index}</span><div><h3>{project.title}</h3></div></header><dl><div><dt>{H.evidenceLabels.problem}</dt><dd>{project.line}</dd></div><div><dt>{H.evidenceLabels.role}</dt><dd>{project.role}</dd></div><div><dt>{H.evidenceLabels.capabilities}</dt><dd>{project.practice.join(" · ")}</dd></div></dl><p className="hire-evidence-links"><SmartLink className="text-link" href={project.href} locale={locale}>{H.evidenceLabels.source}<ArrowRight aria-hidden="true" size={15} /></SmartLink>{slice.sources.slice(0, 1).map((source) => <SmartLink className="text-link" href={source.href} locale={locale} key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></article>; })}</div></div></section>
     <section className="section hire-fit" aria-labelledby="hire-fit-title"><div className="wrap hire-fit-grid"><div><div className="hire-section-title"><p className="hire-number">04</p><h2 id="hire-fit-title">{H.fitTitle}</h2><p>{H.fitIntro}</p></div><dl className="hire-skills">{H.skillGroups.map((group, index) => <div data-color-role={skillRoles[index]} key={group.label}><dt>{group.label}</dt><dd>{group.items.join(" · ")}</dd></div>)}</dl></div><aside className="hire-availability" aria-labelledby="hire-availability-title"><p className="hire-number">05</p><h2 id="hire-availability-title">{H.availabilityTitle}</h2><ul>{H.availability.map((item) => <li key={item}><Check aria-hidden="true" size={18} />{item}</li>)}</ul></aside></div></section>
     <RecruiterFitExplorer content={content} locale={locale} resume={resume} />
     <section id="contact" className="section hire-contact" aria-labelledby="hire-contact-title"><div className="wrap hire-split"><div><p className="hire-number">07</p><h2 id="hire-contact-title">{H.contactTitle}</h2><p>{H.contactText}</p></div><div className="hire-contact-actions"><a className="button button-dark" href={resume.href} download><Download aria-hidden="true" size={17} />{H.resumeLabel}</a><a className="button button-outline" href={`mailto:${content.contact.email}`}><Mail aria-hidden="true" size={17} />{H.emailLabel}</a><SmartLink className="button button-outline" href="https://www.linkedin.com/in/wenyu-chiou" locale={locale}><Linkedin aria-hidden="true" size={17} />{H.linkedinLabel}</SmartLink></div></div></section>
@@ -553,11 +550,29 @@ function CaseInteraction({ type, content }) {
 function CaseStudyPage({ content, locale, slug }) {
   const C = content.caseStudies[slug];
   const labels = content.caseLabels;
-  return <article className="case-study"><header className="case-hero wrap"><p className="eyebrow">{C.eyebrow}</p><p className="case-status">{C.status}</p><h1>{C.title}</h1><p className="case-lede">{C.lede}</p><ul>{C.scale.map((item) => <li key={item}>{item}</li>)}</ul></header><section className="section case-overview"><div className="wrap two-column"><div><p className="eyebrow">{labels.problem}</p><h2>{labels.why}</h2><p>{C.problem}</p></div><aside><p className="eyebrow">{labels.aiTeams}</p><p>{C.relevance}</p></aside></div></section><EvidenceSlice content={content} locale={locale} slug={slug} /><section className="section"><div className="wrap"><SectionHead eyebrow={labels.artifact} title={labels.inspect} intro={C.artifact} id="artifact-title" /><CaseInteraction type={C.interaction} content={content} /></div></section><section className="section case-method"><div className="wrap two-column"><div><p className="eyebrow">{labels.roleMethod}</p><h2>{labels.built}</h2><p>{C.role}</p><ol>{C.method.map((item) => <li key={item}>{item}</li>)}</ol></div><div className="limits-panel"><AlertTriangle aria-hidden="true" /><h2>{labels.validation}</h2><h3>{labels.validationShort}</h3><ul>{C.validation.map((item) => <li key={item}>{item}</li>)}</ul><h3>{labels.limitations}</h3><ul>{C.limitations.map((item) => <li key={item}>{item}</li>)}</ul></div></div></section><section className="section case-learned"><div className="wrap"><p className="eyebrow">{labels.changed}</p><blockquote>{C.learned}</blockquote><p className="record-links">{C.links.map((link) => <SmartLink key={link.href} className="button button-outline" href={link.href} locale={locale}>{link.label}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>)}</p></div></section><Contact content={content} /></article>;
+  return <article className="case-study">
+    <header className="case-hero wrap"><p className="eyebrow">{C.eyebrow}</p><h1>{C.title}</h1><p className="case-lede">{C.lede}</p><ul>{C.scale.map((item) => <li key={item}>{item}</li>)}</ul></header>
+    <section className="section case-overview"><div className="wrap two-column">
+      <div data-case-why><h2>{labels.why}</h2><p>{C.problem}</p></div>
+      <div data-case-how><h2>{labels.built}</h2><p>{C.role}</p></div>
+    </div></section>
+    <section className="section case-learned"><div className="wrap" data-case-contribution>
+      <h2>{labels.changed}</h2><p>{C.learned}</p>
+      <p>{C.relevance}</p>
+      <p className="record-links">{C.links.map((link) => <SmartLink key={link.href} className="button button-outline" href={link.href} locale={locale}>{link.label}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>)}</p>
+    </div></section>
+    <section className="section"><div className="wrap"><SectionHead eyebrow={labels.artifact} title={labels.inspect} intro={C.artifact} id="artifact-title" /><CaseInteraction type={C.interaction} content={content} /></div></section>
+    <section className="section case-method"><div className="wrap two-column">
+      <div><h2>{labels.roleMethod}</h2><ol>{C.method.map((item) => <li key={item}>{item}</li>)}</ol></div>
+      <div className="limits-panel"><AlertTriangle aria-hidden="true" /><h2>{labels.validation}</h2><h3>{labels.validationShort}</h3><ul>{C.validation.map((item) => <li key={item}>{item}</li>)}</ul><h3>{labels.limitations}</h3><ul>{C.limitations.map((item) => <li key={item}>{item}</li>)}</ul></div>
+    </div></section>
+    <EvidenceSlice content={content} locale={locale} slug={slug} />
+    <Contact content={content} />
+  </article>;
 }
 
 function SiteFooter({ content, locale }) {
-  return <footer className="site-footer"><div className="wrap"><div><strong>{content.name}</strong><p>{content.footer.line}</p><SmartLink href="/hire/" locale={locale}>{content.hire.footerLabel}<ArrowRight aria-hidden="true" size={14} /></SmartLink></div><p>{content.footer.note}<br />© 2026 Wenyu Chiou</p></div></footer>;
+  return <footer className="site-footer"><div className="wrap"><div><strong>{content.name}</strong><p>{content.footer.line}</p><SmartLink href="/about/" locale={locale}>{content.editorial.aboutLink}<ArrowRight aria-hidden="true" size={14} /></SmartLink></div><p>{content.footer.note}<br />© 2026 Wenyu Chiou</p></div></footer>;
 }
 
 function PortfolioNavigator({ content, locale, inline = false, header = false }) {
@@ -566,35 +581,31 @@ function PortfolioNavigator({ content, locale, inline = false, header = false })
   const suggestionFallbacks = inline ? ["/work/human-grounded-llm-evaluation/", "/work/wagf/", "/work/"] : [];
   const titleId = inline ? "recruiter-navigator-title" : "navigator-title";
   const queryId = inline ? "recruiter-navigator-query" : "navigator-query";
-  const ai = locale === "zh-TW" ? {
-    nvidia: "NVIDIA 引用摘要", disclosure: "啟用 AI 時，問題會送至 NVIDIA；若服務不可用，仍保留本機搜尋結果。",
-  } : {
-    nvidia: "NVIDIA cited summary", disclosure: "When AI is enabled, your question is sent to NVIDIA. Local results remain available if the service fails.",
-  };
+  const ai = { nvidia: locale === "zh-TW" ? "NVIDIA 引用摘要" : "NVIDIA cited summary" };
   const frame = <div className="navigator-frame">
-    {!inline ? <><header className="navigator-header">
-      <p className="eyebrow">{inline ? content.hire.askTitle : N.eyebrow}</p>
-      <button className="icon-button navigator-close" type="button" data-navigator-close aria-label={N.close} title={N.close}><X aria-hidden="true" size={18} /></button>
-    </header>
-    <div className="navigator-intro">
+    {!inline ? <><div className="navigator-intro">
       <h2 id={titleId}>{N.title}</h2>
       <p>{N.intro}</p>
     </div></> : <h3 className="sr-only" id={titleId}>{content.hire.askTitle}</h3>}
     <div className="navigator-suggestions" aria-label={N.label}>
-      {suggestions.map((suggestion, index) => inline
-        ? <a href={lp(suggestionFallbacks[index], locale)} data-navigator-query={suggestion} key={suggestion}><span>{suggestion}</span><span aria-hidden="true">→</span></a>
-        : <button type="button" data-navigator-query={suggestion} key={suggestion}><span>{suggestion}</span><span aria-hidden="true">→</span></button>)}
+      {inline ? suggestions.map((suggestion, index) => <a href={lp(suggestionFallbacks[index], locale)} data-navigator-query={suggestion} key={suggestion}><span>{suggestion}</span><ArrowRight aria-hidden="true" size={16} /></a>) : GUIDE_INTENTS.map(intent => intent.href
+        ? <a key={intent.id} href={lp(intent.href, locale)} data-guide-collaboration><span>{intent.label[locale]}</span><ArrowUpRight aria-hidden="true" size={16} /></a>
+        : <button type="button" data-guide-intent={intent.id} aria-pressed="false" key={intent.id}><span>{intent.label[locale]}</span><ArrowRight aria-hidden="true" size={16} /></button>)}
     </div>
+    {!inline && <fieldset className="guide-depth"><legend>{N.depthLabel}</legend><button type="button" data-guide-depth="beginner" aria-pressed="true">{N.beginner}</button><button type="button" data-guide-depth="method" aria-pressed="false">{N.method}</button></fieldset>}
+    {!inline && <p className="guide-context" data-guide-context hidden />}
     <form className="navigator-form" role="search" action={lp("/work/", locale)} method="get">
       <label className="sr-only" htmlFor={queryId}>{N.label}</label>
-      <input id={queryId} name="query" type="search" placeholder={N.placeholder} maxLength="180" autoComplete="off" />
-      <button className="navigator-submit" type="submit" aria-label={N.submit} title={N.submit}><ArrowRight aria-hidden="true" size={18} /></button>
+      <input id={queryId} name="query" type="search" placeholder={N.placeholder} maxLength="180" autoComplete="off" aria-describedby={`${queryId}-privacy`} />
+      <p className="navigator-privacy" id={`${queryId}-privacy`}>{N.privacy}</p>
+      <button className="navigator-submit" type="submit"><Sparkles aria-hidden="true" size={18} /><span>{N.submit}</span></button>
     </form>
+    <div className="navigator-turnstile" data-turnstile-container />
     <div className="navigator-feedback" aria-live="polite"><span data-navigator-status>{N.ready}</span><span data-navigator-mode /></div>
     <div className="navigator-answer" data-navigator-answer hidden />
+    {!inline && <><div className="guide-explanation" data-guide-sections hidden /><button type="button" className="text-link guide-next-view" data-guide-view hidden>{N.viewAction}<ArrowRight aria-hidden="true" size={18} /></button><h3 className="guide-evidence-heading" data-guide-evidence-heading>{N.evidence}</h3></>}
+    {!inline && <p className="guide-reading-intro" data-guide-intro />}
     <ol className="navigator-results" data-navigator-results />
-    <div className="navigator-turnstile" data-turnstile-container />
-    <p className="navigator-privacy">{ai.disclosure}</p>
   </div>;
   return (
     <div
@@ -607,16 +618,24 @@ function PortfolioNavigator({ content, locale, inline = false, header = false })
       data-local={N.local}
       data-semantic={N.semantic}
       data-fallback={N.fallback}
+      data-unsupported={N.unsupported}
       data-ready={N.ready}
+      data-generated-ready={N.generatedReady}
       data-result-label={N.resultLabel}
       data-nvidia={ai.nvidia}
+      data-why={N.why}
+      data-how={N.how}
+      data-contribution={N.contribution}
+      data-context-label={N.contextLabel}
+      data-boundaries={N.boundaries}
+      data-source-label={N.source}
     >
       {!inline ? <button className="navigator-launch" type="button" data-navigator-launch aria-haspopup="dialog" aria-controls="portfolio-navigator-dialog" aria-label={`${N.launchShort}: ${N.launch}. ${N.launchScope}`} title={`${N.launch}: ${N.launchScope}`}>
         {header ? <Sparkles aria-hidden="true" size={18} /> : <Search aria-hidden="true" size={18} />}
         <span className="navigator-launch-copy"><strong>{N.launch}</strong><small>{N.launchScope}</small></span>
         <span className="navigator-launch-short" aria-hidden="true">{N.launchShort}</span>
       </button> : null}
-      {inline ? <div className="navigator-inline-panel" aria-labelledby={titleId}>{frame}</div> : <dialog className="navigator-dialog" id="portfolio-navigator-dialog" aria-labelledby={titleId}>{frame}</dialog>}
+      {inline ? <div className="navigator-inline-panel" aria-labelledby={titleId}>{frame}</div> : <dialog className="navigator-dialog" id="portfolio-navigator-dialog" aria-labelledby={titleId}><header className="navigator-header"><p className="eyebrow">{N.eyebrow}</p><button className="icon-button navigator-close" type="button" data-navigator-close aria-label={N.close} title={N.close}><X aria-hidden="true" size={18} /></button></header>{frame}</dialog>}
     </div>
   );
 }
@@ -628,8 +647,6 @@ export function App({ page = "home", locale = "en", basePath = "/" }) {
   else if (page === "work") body = <WorkPage content={content} locale={locale} />;
   else if (page === "research") body = <ResearchPage content={content} locale={locale} />;
   else if (page === "publications") body = <PublicationsPage content={content} locale={locale} />;
-  else if (page === "articles") body = <ArticlesPage content={content} locale={locale} />;
-  else if (page.startsWith("article:")) body = <ArticlePage content={content} locale={locale} slug={page.slice(8)} />;
   else if (page === "hire") body = <HirePage content={content} locale={locale} />;
   else if (page === "about") body = <AboutPage content={content} locale={locale} />;
   else if (page.startsWith("case:")) body = <CaseStudyPage content={content} locale={locale} slug={page.slice(5)} />;

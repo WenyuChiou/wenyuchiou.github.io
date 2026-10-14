@@ -1,4 +1,8 @@
 import { NAVIGATOR_INDEX } from "./navigator-data.js";
+import { GUIDE_INTENTS, buildReadingPath } from "./portfolio-guide-data.js";
+import { GUIDE_EVIDENCE } from "./guide-evidence.js";
+import { GUIDE_STAGES, validateGuideOptions, validateGuidePayload } from "./guide-protocol.js";
+import { activateProvenance } from "./features/provenance/loader.js";
 
 const normalize = (value) => value
   .normalize("NFKC")
@@ -126,8 +130,9 @@ export function createRequestGate() {
   };
 }
 
-export function validateNavigatorResponse(payload) {
+export function validateNavigatorResponse(payload, guideOptions) {
   if (!payload || payload.mode !== "nvidia" || typeof payload.answer !== "string" || !Array.isArray(payload.matches)) throw new Error("invalid_nvidia_response");
+  if (guideOptions) validateGuidePayload({ sections: payload.sections, matches: payload.matches.map(match => ({ id: match.id, reason: match.reason })), suggestedView: payload.suggestedView }, GUIDE_EVIDENCE, guideOptions);
   const records = new Map(NAVIGATOR_INDEX.records.map((record) => [record.id, record]));
   const seen = new Set();
   const matches = payload.matches.map((match) => {
@@ -136,16 +141,18 @@ export function validateNavigatorResponse(payload) {
     return { record: records.get(match.id), reason: typeof match.reason === "string" ? match.reason.slice(0, 240) : "" };
   });
   if (!payload.answer.trim() || matches.length < 1 || matches.length > 3) throw new Error("invalid_nvidia_response");
-  return { answer: payload.answer.trim().slice(0, 1200), matches };
+  return { answer: payload.answer.trim().slice(0, 1200), matches, ...(guideOptions ? { sections: payload.sections, suggestedView: payload.suggestedView } : {}) };
 }
 
-export async function requestNvidiaSummary({ endpoint, query, locale, turnstileToken, fetchImpl = fetch, timeoutMs = 8000 }) {
+export async function requestNvidiaSummary({ endpoint, query, locale, turnstileToken, task, depth, context, signal, fetchImpl = fetch, timeoutMs = 15000 }) {
+  // The overall deadline includes verification and transport; the Worker caps NVIDIA generation at 8 seconds.
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetchImpl(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query, locale, turnstileToken }), signal: controller.signal });
+    const options = task ? validateGuideOptions({ task, depth, context }) : null;
+    const response = await fetchImpl(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query, locale, turnstileToken, ...(options || {}) }), signal: signal ? AbortSignal.any([signal, controller.signal]) : controller.signal });
     if (!response.ok) throw new Error(`navigator_${response.status}`);
-    return validateNavigatorResponse(await response.json());
+    return validateNavigatorResponse(await response.json(), options);
   } finally { clearTimeout(timeout); }
 }
 
@@ -164,15 +171,50 @@ function loadTurnstile() {
   return turnstileLoader;
 }
 
-export async function getTurnstileToken(container, sitekey, action = "navigate") {
-  if (!sitekey) throw new Error("turnstile_not_configured");
-  const turnstile = await loadTurnstile();
+const turnstileRequests = new WeakMap();
+
+export function cancelTurnstile(container) {
+  turnstileRequests.get(container)?.cancel();
+}
+
+export function getTurnstileToken(container, sitekey, action = "navigate") {
+  if (!sitekey) return Promise.reject(new Error("turnstile_not_configured"));
+  cancelTurnstile(container);
   return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error("turnstile_timeout")), 10000);
-    if (container.dataset.widgetId) turnstile.remove(container.dataset.widgetId);
-    container.replaceChildren();
-    const widgetId = turnstile.render(container, { sitekey, action, theme: "auto", size: "flexible", callback: (token) => { clearTimeout(timer); resolve(token); }, "error-callback": () => { clearTimeout(timer); reject(new Error("turnstile_failed")); }, "expired-callback": () => { clearTimeout(timer); reject(new Error("turnstile_expired")); } });
-    container.dataset.widgetId = String(widgetId);
+    let settled = false;
+    let widgetId;
+    let turnstile;
+    const owner = { cancel: () => finish(new Error("turnstile_cancelled")) };
+    const finish = (error, token) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      try { if (widgetId !== undefined) turnstile?.remove(widgetId); } catch {}
+      if (turnstileRequests.get(container) === owner) {
+        turnstileRequests.delete(container);
+        delete container.dataset.widgetId;
+        container.replaceChildren();
+      }
+      if (error) reject(error);
+      else resolve(token);
+    };
+    const timer = setTimeout(() => finish(new Error("turnstile_timeout")), 45000);
+    turnstileRequests.set(container, owner);
+    loadTurnstile().then((api) => {
+      if (settled || turnstileRequests.get(container) !== owner) return;
+      turnstile = api;
+      try {
+        container.replaceChildren();
+        widgetId = turnstile.render(container, {
+          sitekey, action, theme: "auto", size: "flexible",
+          callback: (token) => finish(typeof token === "string" && token ? null : new Error("turnstile_failed"), token),
+          "error-callback": () => finish(new Error("turnstile_failed")),
+          "expired-callback": () => finish(new Error("turnstile_expired")),
+        });
+        if (!settled) container.dataset.widgetId = String(widgetId);
+        else { try { turnstile.remove(widgetId); } catch {} }
+      } catch { finish(new Error("turnstile_failed")); }
+    }, () => finish(new Error("turnstile_load_failed")));
   });
 }
 
@@ -214,6 +256,11 @@ export function initPortfolioNavigator(root = document) {
   const mode = shell.querySelector("[data-navigator-mode]");
   const results = shell.querySelector("[data-navigator-results]");
   const answer = shell.querySelector("[data-navigator-answer]");
+  const readingIntro = shell.querySelector("[data-guide-intro]");
+  const sections = shell.querySelector('[data-guide-sections]');
+  const viewButton = shell.querySelector('[data-guide-view]');
+  const contextLabel = shell.querySelector('[data-guide-context]');
+  const submit = form.querySelector('[type="submit"]');
   const turnstileContainer = shell.querySelector("[data-turnstile-container]");
   const endpoint = document.querySelector('meta[name="portfolio-ai-endpoint"]')?.content.trim() || "";
   const sitekey = document.querySelector('meta[name="turnstile-site-key"]')?.content.trim() || "";
@@ -223,6 +270,29 @@ export function initPortfolioNavigator(root = document) {
   const requestGate = createRequestGate();
   let impressionTracked = false;
   let openTracked = false;
+  let activeTask = 'research';
+  let depth = 'beginner';
+  let providerController;
+  let suggestedView;
+  let viewContext;
+  let returnFocus;
+
+  const readContext = () => {
+    const scene = document.querySelector('.provenance-workbench');
+    if (!scene) return null;
+    try { return validateGuideOptions({ task: 'observatory', context: { lens: scene.dataset.lens, stage: scene.dataset.guideStage, mode: scene.dataset.guideMode, tenure: scene.dataset.guideTenure, repaired: scene.dataset.guideRepaired === 'true' } }).context; } catch { return null; }
+  };
+  const refreshContext = () => {
+    const context = activeTask === 'observatory' ? readContext() : null;
+    if (contextLabel) {
+      contextLabel.hidden = !context;
+      const selectedLens = document.querySelector(`[data-provenance-lens="${context?.lens}"] strong`);
+      const selectedStage = document.querySelector(`[data-provenance-stage="${GUIDE_STAGES.indexOf(context?.stage) + 1}"] strong`);
+      const detail = context?.lens === 'evaluation' ? document.querySelector('[data-comparison-mode][aria-pressed="true"]') : context?.lens === 'simulation' ? document.querySelector('[data-tenure][aria-pressed="true"]') : null;
+      contextLabel.textContent = context ? `${copy.contextLabel}: ${selectedLens?.textContent || context.lens} / ${selectedStage?.textContent || context.stage}${detail ? ` / ${detail.textContent.trim()}` : ''}` : '';
+    }
+    return context;
+  };
 
   const trackImpression = () => {
     if (impressionTracked) return;
@@ -258,14 +328,75 @@ export function initPortfolioNavigator(root = document) {
       text.append(title, summary);
       link.append(number, text, arrow);
       item.append(link);
+      const details = GUIDE_EVIDENCE.find(evidence => evidence.id === record.id);
+      if (details) {
+        const disclosure = document.createElement('details');
+        const label = document.createElement('summary');
+        label.textContent = copy.boundaries;
+        const boundary = document.createElement('p');
+        boundary.textContent = details.limitations[locale];
+        const source = document.createElement('a');
+        source.href = details.source.url;
+        source.textContent = copy.sourceLabel;
+        source.rel = 'noopener noreferrer';
+        disclosure.append(label, boundary, source);
+        item.append(disclosure);
+      }
       results.append(item);
     });
+  };
+
+  const invalidate = () => {
+    providerController?.abort();
+    cancelTurnstile(turnstileContainer);
+    requestGate.next();
+    submit.disabled = false;
+    form.removeAttribute('aria-busy');
+    suggestedView = null;
+    if (viewButton) viewButton.hidden = true;
+  };
+  const localGuideResults = (query, context) => {
+    const path = buildReadingPath(activeTask, locale, { query, context });
+    if (activeTask !== 'research' || !query) return path.matches;
+    const allowed = new Set(GUIDE_EVIDENCE.filter(record => record.tasks.includes(activeTask)).map(record => record.id));
+    const seen = new Set();
+    return [...rankLocally(query, locale, NAVIGATOR_INDEX.records.length).filter(item => allowed.has(item.record.id)), ...path.matches].filter(item => {
+      if (seen.has(item.record.id)) return false;
+      seen.add(item.record.id); return true;
+    }).slice(0, 3);
+  };
+  const renderLocal = (rawQuery, intentId) => {
+    invalidate();
+    answer.hidden = true;
+    answer.textContent = '';
+    const query = rawQuery.trim().slice(0, 180);
+    const path = !inline ? buildReadingPath(intentId || activeTask, locale, { query, context: refreshContext() }) : null;
+    if (sections) { sections.replaceChildren(); sections.hidden = true; }
+    if (readingIntro) {
+      readingIntro.hidden = !path;
+      readingIntro.textContent = path?.intro || '';
+    }
+    renderResults(path ? localGuideResults(query, refreshContext()) : rankLocally(query, locale));
+    setStatus(path ? copy.ready : copy.matching, copy.local);
+  };
+  const chooseIntent = (id) => {
+    const intent = GUIDE_INTENTS.find(item => item.id === id && item.query);
+    if (!intent) return;
+    activeTask = id;
+    input.value = intent.query[locale];
+    shell.querySelectorAll('[data-guide-intent]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.guideIntent === id)));
+    renderLocal(input.value, id);
+    if (id === 'observatory') void activateProvenance().then(() => refreshContext()).catch(() => {});
   };
 
   const openDialog = () => {
     if (!dialog) return;
     const wasOpen = dialog.open;
-    if (!wasOpen) dialog.showModal();
+    if (!wasOpen) { returnFocus = document.activeElement; dialog.showModal(); }
+    if (!input.value.trim()) {
+      renderLocal('', 'research');
+      shell.querySelectorAll('[data-guide-intent]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.guideIntent === activeTask)));
+    }
     requestAnimationFrame(() => input.focus());
     if (!wasOpen && !inline) {
       trackImpression();
@@ -281,7 +412,7 @@ export function initPortfolioNavigator(root = document) {
   };
 
   const runSearch = async (rawQuery) => {
-    const query = rawQuery.trim().slice(0, 180);
+    const query = (rawQuery.trim() || (!inline && GUIDE_INTENTS.find(intent => intent.id === activeTask)?.query[locale]) || '').slice(0, 180);
     if (!query) {
       input.focus();
       return;
@@ -289,16 +420,30 @@ export function initPortfolioNavigator(root = document) {
     if (inline) trackPortfolioEvent("recruiter_navigator_use", locale, "hire");
     else trackPortfolioEvent("navigator_query_submit", locale, "home");
     const currentRequest = requestGate.next();
+    providerController?.abort();
+    providerController = new AbortController();
+    const controller = providerController;
+    const context = refreshContext();
+    const contextKey = JSON.stringify(context);
+    const current = () => requestGate.isCurrent(currentRequest) && (!context || contextKey === JSON.stringify(readContext()));
+    const options = inline ? null : { task: activeTask, depth, context };
+    submit.disabled = true;
+    form.setAttribute('aria-busy', 'true');
     answer.hidden = true;
     answer.textContent = "";
+    if (sections) { sections.replaceChildren(); sections.hidden = true; }
+    if (viewButton) viewButton.hidden = true;
+    if (readingIntro) readingIntro.hidden = true;
     results.setAttribute("aria-busy", "true");
     setStatus(copy.matching, copy.local);
-    const localResults = rankLocally(query, locale);
+    const localResults = inline ? rankLocally(query, locale) : localGuideResults(query, context);
     renderResults(localResults);
     results.removeAttribute("aria-busy");
 
     if (!navigator.onLine || navigator.connection?.saveData) {
       setStatus(copy.fallback, copy.local);
+      submit.disabled = false;
+      form.removeAttribute('aria-busy');
       trackResultMode("local");
       return;
     }
@@ -307,51 +452,129 @@ export function initPortfolioNavigator(root = document) {
       setStatus(copy.loading, copy.local);
       try {
         const turnstileToken = await getTurnstileToken(turnstileContainer, sitekey);
-        const nvidia = await requestNvidiaSummary({ endpoint, query, locale, turnstileToken });
-        if (!requestGate.isCurrent(currentRequest)) return;
-        answer.textContent = nvidia.answer;
-        answer.hidden = false;
+        if (!current()) return;
+        const nvidia = await requestNvidiaSummary({ endpoint, query, locale, turnstileToken, ...(options || {}), signal: controller.signal });
+        if (!current()) return;
+        if (sections && nvidia.sections) {
+          nvidia.sections.forEach(section => {
+            const block = document.createElement('section');
+            const heading = document.createElement('h3');
+            heading.textContent = copy[section.kind];
+            const paragraph = document.createElement('p');
+            paragraph.textContent = section.text;
+            const citations = document.createElement('nav');
+            citations.setAttribute('aria-label', `${heading.textContent}: ${copy.resultLabel}`);
+            section.evidenceIds.forEach(id => {
+              const record = NAVIGATOR_INDEX.records.find(item => item.id === id);
+              const link = document.createElement('a');
+              link.href = localizeHref(record.href, locale);
+              link.textContent = record.title[locale];
+              citations.append(link);
+            });
+            block.append(heading, paragraph, citations);
+            sections.append(block);
+          });
+          sections.hidden = false;
+          suggestedView = nvidia.suggestedView;
+          viewContext = contextKey;
+          if (viewButton) viewButton.hidden = !suggestedView;
+        } else { answer.textContent = nvidia.answer; answer.hidden = false; }
         renderResults(nvidia.matches);
-        setStatus(copy.ready, copy.nvidia);
+        setStatus(copy.generatedReady, copy.nvidia);
+        submit.disabled = false;
+        form.removeAttribute('aria-busy');
         trackPortfolioEvent(inline ? "recruiter_navigator_use" : "navigator_answer", locale, eventTarget, "success");
         trackResultMode("nvidia");
         return;
-      } catch {
-        if (!requestGate.isCurrent(currentRequest)) return;
+      } catch (error) {
+        if (!current()) return;
+        if (error.message === 'navigator_422') {
+          setStatus(copy.unsupported || copy.fallback, copy.local);
+          submit.disabled = false;
+          form.removeAttribute('aria-busy');
+          return;
+        }
       }
     }
 
-    setStatus(copy.loading, copy.local);
+    setStatus(copy.fallback, copy.local);
     try {
       const semanticResults = await rankSemantically(query, locale, () => {
-        if (requestGate.isCurrent(currentRequest)) setStatus(copy.loading, copy.local);
+        if (current()) setStatus(copy.fallback, copy.local);
       });
-      if (!requestGate.isCurrent(currentRequest)) return;
-      renderResults(semanticResults);
-      setStatus(copy.ready, copy.semantic);
+      if (!current()) return;
+      const allowed = new Set(GUIDE_EVIDENCE.filter(record => record.tasks.includes(activeTask)).map(record => record.id));
+      const filtered = inline ? semanticResults : semanticResults.filter(item => allowed.has(item.record.id)).sort((a, b) => (b.score + lexicalScore(b.record, query, locale) * 0.1) - (a.score + lexicalScore(a.record, query, locale) * 0.1));
+      if (filtered.length) renderResults(filtered);
+      setStatus(copy.fallback, copy.semantic);
       trackResultMode("semantic");
     } catch {
-      if (!requestGate.isCurrent(currentRequest)) return;
+      if (!current()) return;
       setStatus(copy.fallback, copy.local);
       trackResultMode("local");
+    } finally {
+      if (current()) {
+        submit.disabled = false;
+        form.removeAttribute('aria-busy');
+      }
     }
   };
 
   launch?.addEventListener("click", openDialog);
   close?.addEventListener("click", () => dialog?.close());
-  dialog?.addEventListener("close", () => launch?.focus());
+  dialog?.addEventListener("close", () => {
+    if (form.getAttribute('aria-busy') === 'true') renderLocal(input.value);
+    else invalidate();
+    (returnFocus?.isConnected ? returnFocus : launch)?.focus();
+  });
   dialog?.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
   });
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+    if (submit.disabled) return;
     runSearch(input.value);
   });
+  input.addEventListener('input', () => {
+    shell.querySelectorAll('[data-guide-intent]').forEach(button => button.setAttribute('aria-pressed', 'false'));
+    renderLocal(input.value);
+  });
+  shell.querySelectorAll('[data-guide-intent]').forEach(control => control.addEventListener('click', () => chooseIntent(control.dataset.guideIntent)));
+  shell.querySelectorAll('[data-guide-depth]').forEach(control => control.addEventListener('click', () => {
+    depth = control.dataset.guideDepth;
+    shell.querySelectorAll('[data-guide-depth]').forEach(button => button.setAttribute('aria-pressed', String(button === control)));
+    renderLocal(input.value);
+  }));
+  document.addEventListener('click', event => {
+    const entry = event.target.closest?.('[data-guide-open]');
+    if (!entry || !dialog) return;
+    chooseIntent(entry.dataset.guideOpen);
+    if (entry.dataset.guideQuery) { input.value = entry.dataset.guideQuery; renderLocal(input.value); }
+    openDialog();
+  });
+  document.addEventListener('provenance:change', () => {
+    if (activeTask === 'observatory' && dialog?.open) renderLocal(input.value);
+  });
+  viewButton?.addEventListener('click', async () => {
+    if (!suggestedView || viewContext !== JSON.stringify(readContext())) return;
+    const target = suggestedView;
+    dialog?.close();
+    try {
+      await activateProvenance();
+      document.querySelector(`[data-provenance-lens="${target.lens}"]`)?.click();
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      if (document.querySelector('.provenance-workbench')?.dataset.lens !== target.lens) return;
+      document.querySelector(`[data-provenance-stage="${GUIDE_STAGES.indexOf(target.stage) + 1}"]`)?.click();
+      document.querySelector('[data-provenance-inspector]')?.scrollIntoView({ block: 'center', behavior: 'instant' });
+      document.querySelector(`[data-provenance-stage="${GUIDE_STAGES.indexOf(target.stage) + 1}"]`)?.focus();
+    } catch { /* Existing scene and static sources remain readable. */ }
+  });
+  window.addEventListener('pagehide', invalidate);
   shell.querySelectorAll("[data-navigator-query]").forEach((control) => {
     control.addEventListener("click", (event) => {
       event.preventDefault();
       input.value = control.dataset.navigatorQuery;
-      runSearch(input.value);
+      renderLocal(input.value);
     });
   });
   results.addEventListener("click", (event) => {

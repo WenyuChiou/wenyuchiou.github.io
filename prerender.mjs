@@ -83,7 +83,7 @@ function extraHead(meta) {
   }
   if (meta.page === "home") {
     parts.push('<link rel="preload" href="/assets/agu2025-photo-mobile.webp" as="image" type="image/webp" media="(max-width:620px)" fetchpriority="high">');
-    parts.push('<link rel="preload" href="/assets/agu2025-photo.webp" as="image" type="image/webp" media="(min-width:621px)" imagesrcset="/assets/agu2025-photo-tablet.webp 828w, /assets/agu2025-photo.webp 1108w" imagesizes="100vw" fetchpriority="high">');
+    parts.push('<link rel="preload" href="/assets/agu2025-photo-tablet.webp" as="image" type="image/webp" media="(min-width:621px)" fetchpriority="high">');
   }
   if (["home", "about", "hire"].includes(meta.page)) {
     parts.push(jsonLd(SEO.person));

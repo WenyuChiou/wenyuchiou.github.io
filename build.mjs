@@ -5,22 +5,7 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import sharp from "sharp";
 import { SEO, LEGACY_REDIRECTS } from "./seo.js";
-import { FEATURE_CONTENT } from "./feature-content.js";
 
-const escapeSvg = (value) => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const titleLines = {
-  "evaluating-llm-agents-against-measured-human-behavior": ["Evaluating LLM Agents", "Against Measured", "Human Behavior"],
-  "why-governed-agents-need-validators-before-state-changes": ["Why Governed Agents", "Need Validators Before", "State Changes"],
-  "from-individual-decisions-to-system-consequences": ["From Individual Decisions", "to System Consequences"],
-};
-
-mkdirSync("assets/og", { recursive: true });
-for (const article of FEATURE_CONTENT.en.articlesPage.articles) {
-  const lines = titleLines[article.slug];
-  const title = lines.map((line, index) => `<text x="92" y="${250 + index * 92}" class="title">${escapeSvg(line)}</text>`).join("");
-  const graphic = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="630" fill="#10201b"/><path d="M92 104H1108" stroke="#5ea99f" stroke-width="3"/><text x="92" y="162" class="meta">WENYU CHIOU · ARTICLES</text>${title}<circle cx="988" cy="426" r="78" fill="none" stroke="#5ea99f" stroke-width="3"/><path d="M862 426H1114M988 300V552" stroke="#d8ece7" stroke-width="2"/><text x="92" y="570" class="foot">LLM evaluation · agent governance · behavioral simulation</text><style>.meta,.foot{font-family:Arial,sans-serif;fill:#9fd5cd;font-size:24px;font-weight:700}.title{font-family:Georgia,serif;fill:#f3f8f5;font-size:68px;font-weight:600}.foot{font-size:21px;font-weight:400;fill:#c6d5d0}</style></svg>`;
-  await sharp(Buffer.from(graphic)).png({ compressionLevel: 9 }).toFile(`assets/og/${article.slug}.png`);
-}
 
 const recruiterGraphic = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="630" fill="#10201b"/><path d="M92 98H1108" stroke="#62b7aa" stroke-width="3"/><text x="92" y="158" class="meta">WENYU CHIOU</text><text x="92" y="272" class="title">LLM Evaluation &amp;</text><text x="92" y="354" class="title">AI Research Engineer</text><g class="cap"><text x="92" y="456">01  Human-grounded evaluation</text><text x="92" y="505">02  Governed agent systems</text><text x="92" y="554">03  Behavioral simulation</text></g><text x="1108" y="584" text-anchor="end" class="foot">Recruiter profile · wenyuchiou.github.io/hire/</text><style>.meta,.cap,.foot{font-family:Arial,sans-serif;fill:#9fd5cd}.meta{font-size:25px;font-weight:700}.title{font-family:Georgia,serif;fill:#f3f8f5;font-size:70px;font-weight:600}.cap{font-size:24px;fill:#d6e6e1}.foot{font-size:19px}</style></svg>`;
 await sharp(Buffer.from(recruiterGraphic)).png({ compressionLevel: 9 }).toFile("assets/og/recruiter-brief.png");
@@ -55,9 +40,10 @@ await esbuild.build({
   outfile: "assets/app.bundle.js",
   minify: true,
   jsx: "automatic",
-  define: { "process.env.NODE_ENV": '"production"', __PROVENANCE_MODULE__: JSON.stringify(provenanceModule) },
+  define: { "process.env.NODE_ENV": '"production"', __PROVENANCE_MODULE__: JSON.stringify(provenanceModule), __TIMELINE_MODULE__: JSON.stringify("/features/editorial/timeline.js?v=" + createHash("sha256").update(readFileSync("features/editorial/timeline.js")).digest("hex").slice(0, 8)) },
   external: ["/assets/provenance/*"],
   plugins: [{ name: "deferred-provenance", setup(build) {
+    build.onResolve({ filter: /^\/features\/editorial\/timeline\.js\?v=/ }, args => ({ path: args.path, external: true }));
     build.onResolve({ filter: /features\/provenance\/island\.jsx$/ }, () => ({ path: path.resolve("features/provenance/client-island.jsx") }));
   } }],
   target: "es2020",
@@ -87,7 +73,7 @@ const sitemap = [
 writeFileSync("sitemap.xml", sitemap);
 writeFileSync("robots.txt", `User-agent: *\nAllow: /\n\nSitemap: ${SEO.siteUrl}/sitemap.xml\n`);
 
-const redirectHtml = (target) => `<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=${target}"><link rel="canonical" href="${SEO.siteUrl}${target}"><title>Moved — Wenyu Chiou</title></head><body><p>This page moved to <a href="${target}">${target}</a>.</p></body></html>\n`;
+const redirectHtml = (target) => `<!doctype html>\n<html lang="${target.startsWith("/zh/") ? "zh-Hant-TW" : "en"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><meta http-equiv="refresh" content="0;url=${target}"><link rel="canonical" href="${SEO.siteUrl}${target.split("#")[0]}"><title>Moved — Wenyu Chiou</title></head><body><p>This page moved to <a href="${target}">${target}</a>.</p></body></html>\n`;
 for (const [from, target] of Object.entries(LEGACY_REDIRECTS)) {
   const relative = `${from.slice(1)}index.html`;
   mkdirSync(path.dirname(relative), { recursive: true });
@@ -97,10 +83,14 @@ for (const [from, target] of Object.entries(LEGACY_REDIRECTS)) {
 const hash = (value) => createHash("sha256").update(value).digest("hex").slice(0, 8);
 const bundleHash = hash(bundle);
 const cssHash = hash(readFileSync("styles.css", "utf8").replace(/\r\n/g, "\n"));
+const editorialHash = hash(readFileSync("editorial.css", "utf8").replace(/\r\n/g, "\n"));
+const interactionHash = hash(readFileSync("features/editorial/interactions.css", "utf8").replace(/\r\n/g, "\n"));
 const generatedPages = [...routeValues.map((route) => route.path === "/" ? "index.html" : `${route.path.slice(1)}index.html`), ...Object.keys(LEGACY_REDIRECTS).map((route) => `${route.slice(1)}index.html`)];
 for (const page of generatedPages) {
   const html = readFileSync(page, "utf8")
     .replace(/(href=")\/styles\.css(?:\?v=[a-f0-9]+)?(")/g, `$1/styles.css?v=${cssHash}$2`)
+    .replace(/(href=")\/editorial\.css(?:\?v=[a-f0-9]+)?(")/g, `$1/editorial.css?v=${editorialHash}$2`)
+    .replace(/(href=")\/features\/editorial\/interactions\.css(?:\?v=[a-f0-9]+)?(")/g, `$1/features/editorial/interactions.css?v=${interactionHash}$2`)
     .replace(/(src=")\/assets\/app\.bundle\.js(?:\?v=[a-f0-9]+)?(")/g, `$1/assets/app.bundle.js?v=${bundleHash}$2`);
   writeFileSync(page, html);
 }

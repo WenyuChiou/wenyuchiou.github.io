@@ -11,7 +11,7 @@ const cases = [
   ["找洪水模型", "zh-TW", "floodabm"],
   ["找論文", "zh-TW", "publications"],
   ["我想了解你的實習時間", "zh-TW", "contact"],
-  ["驗證器與失敗模式文章", "zh-TW", "articles"],
+  ["LinkedIn 公開近況貼文", "zh-TW", "public-updates"],
   ["AI research engineer role fit", "en", "hire"],
   ["LangChain MATLAB Claude Code skills", "en", "hire"],
   ["模型上下文協定", "zh-TW", "hire"],

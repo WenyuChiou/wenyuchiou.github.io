@@ -7,7 +7,8 @@ import axe from "axe-core";
 import { DEPLOYMENT_CONFIG } from "../deployment-config.mjs";
 import { SEO } from "../seo.js";
 import githubData from "../data/github.json" with { type: "json" };
-import { auditResearchIllustration } from "./audit-research-illustration.mjs";
+import { auditEditorialInteractions } from "./audit-editorial-interactions.mjs";
+import { auditPortfolioGuide } from "./audit-portfolio-guide.mjs";
 
 const root = process.cwd();
 const browserCandidates = [process.env.CHROME_PATH, "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, "Google", "Chrome", "Application", "chrome.exe") : null, "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe", "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe", "/usr/bin/google-chrome", "/usr/bin/google-chrome-stable", "/usr/bin/chromium"].filter(Boolean);
@@ -32,7 +33,7 @@ const internalTargets = new Map();
 const anchorTargets = new Map();
 const origin = `http://127.0.0.1:${port}`;
 const firstFoldSelectors = {
-  home: ".fit-teaser",
+  home: ".flagship",
   work: ".flagship",
   research: "main > .section",
   publications: ".publication-groups",
@@ -194,13 +195,13 @@ const auditSelectedWork = async (route) => {
   const page = await openPage(route, { width: 1440, height: 1000, deviceScaleFactor: 1 });
   const initial = await page.evaluate(() => [...document.querySelectorAll(".flagship-entry")].map((entry) => ({ open: entry.open, explicitAria: entry.querySelector("summary")?.hasAttribute("aria-expanded") })));
   if (initial.length !== 3 || initial.filter((entry) => entry.open).length !== 1 || !initial[0]?.open || initial.some((entry) => entry.explicitAria)) failures.push(`${route}: Selected Work did not start with exactly the first native disclosure expanded`);
-  await page.$eval(".flagship-entry:nth-child(2)", (entry) => entry.scrollIntoView({ block: "center", behavior: "instant" }));
-  await page.focus(".flagship-entry:nth-child(2) > summary");
+  await page.$eval(".flagship-record:nth-child(2) .flagship-entry", (entry) => entry.scrollIntoView({ block: "center", behavior: "instant" }));
+  await page.focus(".flagship-record:nth-child(2) .flagship-entry > summary");
   await page.keyboard.press("Enter");
   await new Promise((resolve) => setTimeout(resolve, 500));
   const switched = await page.evaluate(() => [...document.querySelectorAll(".flagship-entry")].map((entry) => entry.open));
   if (switched.filter(Boolean).length !== 1 || !switched[1]) failures.push(`${route}: Selected Work did not keep a single native disclosure open`);
-  const revealed = await page.$eval(".flagship-entry:nth-child(2)", (entry) => Number.parseFloat(getComputedStyle(entry).opacity) > 0.98 && entry.classList.contains("is-visible"));
+  const revealed = await page.$eval(".flagship-record:nth-child(2) .flagship-entry", (entry) => Number.parseFloat(getComputedStyle(entry).opacity) > 0.98 && entry.classList.contains("is-visible"));
   if (!revealed) failures.push(`${route}: active Selected Work entry remained hidden after entering the viewport`);
   await page.close();
 };
@@ -217,7 +218,7 @@ const auditPortfolioNavigator = async (route, query, expectedPath) => {
       accessibleScope: button.getAttribute("aria-label") || "",
     };
   });
-  if (!launchVisible.visible || !launchVisible.menuClosed || !/AI/i.test(launchVisible.visibleLabel) || !/(projects|專案)/i.test(launchVisible.accessibleScope)) failures.push(`${route}: portfolio navigator launch is not independently visible or clearly scoped from the closed mobile menu`);
+  if (!launchVisible.visible || !launchVisible.menuClosed || !/AI/i.test(launchVisible.visibleLabel) || !/(research|研究)/i.test(launchVisible.accessibleScope) || !/(tools|工具)/i.test(launchVisible.accessibleScope)) failures.push(`${route}: portfolio guide launch is not independently visible or scoped to research and tools`);
   await page.click(".navigator-launch");
   await new Promise((resolve) => setTimeout(resolve, 300));
   const opened = await page.$eval(".navigator-dialog", (dialog) => {
@@ -247,7 +248,7 @@ const auditPortfolioNavigator = async (route, query, expectedPath) => {
 
 const auditRecruiterFitExplorer = async (route, role, jobDescription, expectedPath) => {
   const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
-  if (await page.$(".navigator-launch")) failures.push(`${route}: recruiter brief should use the fit explorer instead of a floating navigator`);
+  if (await page.$$eval('[data-portfolio-navigator]', elements => elements.length) !== 1 || !await page.$('.navigator-header-entry')) failures.push(`${route}: expected one shared header Guide beside the separate fit explorer`);
   const sections = await page.$$eval(".hire-page .section", (items) => items.map((item) => item.querySelector("h2")?.textContent.trim()));
   if (sections.length !== 5 || sections.some((title) => !title)) failures.push(`${route}: recruiter brief does not expose five ordered sections`);
   const controls = await page.$eval("[data-recruiter-fit-explorer]", (shell) => ({ roles: shell.querySelectorAll("[data-fit-role]").length, maxLength: shell.querySelector("[data-fit-jd]")?.maxLength, resultHidden: shell.querySelector("[data-fit-result]")?.hidden }));
@@ -285,7 +286,7 @@ const auditProvenance = async (route) => {
       stages: stages.length,
       current: section.querySelector('[aria-current="step"]')?.textContent,
       inspector: section.querySelector(".pw-inspector h3")?.textContent,
-      visual: Boolean(section.querySelector('.research-illustration')) && !section.querySelector('[data-provenance-scene]'),
+      visual: Boolean(section.querySelector('[data-provenance-signature]')) && !section.querySelector('[data-provenance-scene]'),
       panelLabel: section.querySelector('[role="tabpanel"]')?.getAttribute("aria-labelledby"),
       semanticColors: stageColors.size,
       smallestKeyText: Math.min(...keyText.map((item) => Number.parseFloat(getComputedStyle(item).fontSize))),
@@ -385,6 +386,10 @@ const auditSemanticNavigator = async () => {
   const requests = [];
   const failedResponses = [];
   const consoleErrors = [];
+  // This suite checks local semantic fallback, not genuine CAPTCHA acceptance.
+  await page.evaluateOnNewDocument(() => {
+    window.turnstile = { render(_container, options) { queueMicrotask(() => options['error-callback']?.()); return 'semantic-test-failure'; }, remove() {} };
+  });
   await page.setRequestInterception(true);
   page.on("request", (request) => {
     requests.push({ url: request.url(), type: request.resourceType() });
@@ -402,7 +407,13 @@ const auditSemanticNavigator = async () => {
     request.continue().catch((error) => consoleErrors.push(`request continuation failed: ${error.message}`));
   });
   page.on("response", (response) => { if (response.status() >= 400) failedResponses.push(`${response.status()} ${response.url()}`); });
-  page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
+  page.on("console", (message) => {
+    if (message.type() !== "error") return;
+    const location = message.location();
+    let source = "unknown source";
+    try { const url = new URL(location.url); source = `${url.origin}${url.pathname}:${location.lineNumber}`; } catch {}
+    consoleErrors.push(`${message.text()} [${source}]`);
+  });
   page.on("pageerror", (error) => consoleErrors.push(error.message));
   const response = await page.goto(`${origin}${route}`, { waitUntil: "networkidle0" });
   if (!response || response.status() !== 200) failures.push(`${route}: semantic navigator HTTP ${response?.status()}`);
@@ -437,10 +448,18 @@ const auditSemanticNavigator = async () => {
   const remoteScripts = requests.filter(({ url, type }) => type === "script" && !url.startsWith(origin) && !url.startsWith("https://challenges.cloudflare.com/") && !url.startsWith("blob:https://challenges.cloudflare.com/"));
   if (remoteScripts.length) failures.push(`${route}: semantic navigator loaded remote executable code: ${remoteScripts.map(({ url }) => url).join(", ")}`);
   const leakedQuery = requests.some(({ url }) => decodeURIComponent(url).toLocaleLowerCase().includes("private-query-marker"));
+  if (requests.some(({ url }) => url === DEPLOYMENT_CONFIG.aiEndpoint)) failures.push(`${route}: local semantic test unexpectedly called NVIDIA`);
   if (leakedQuery) failures.push(`${route}: semantic navigator included visitor query text in a network request`);
   if (consoleErrors.length) failures.push(`${route}: semantic navigator console errors: ${consoleErrors.join(" | ")}`);
   await page.close();
 };
+
+if (process.argv.includes("--guide-only")) {
+  try { await auditPortfolioGuide(browser, origin, failures); }
+  finally { await browser.close(); server.close(); }
+  if (failures.length) { failures.forEach(failure => console.error(failure)); process.exit(1); }
+  process.exit(0);
+}
 
 if (process.argv.includes("--semantic-only")) {
   try {
@@ -458,7 +477,8 @@ if (process.argv.includes("--semantic-only")) {
 }
 
 try {
-  await auditResearchIllustration(browser, origin);
+  await auditEditorialInteractions(browser, origin);
+  await auditPortfolioGuide(browser, origin, failures);
   for (const route of Object.keys(SEO.routes)) {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
@@ -523,8 +543,8 @@ try {
     await auditProvenance(route);
     await auditWebMcp(route, 4);
   }
-  await auditWebMcp("/articles/", 3);
-  await auditWebMcp("/zh/articles/", 3);
+  await auditWebMcp("/about/", 3);
+  await auditWebMcp("/zh/about/", 3);
   for (const prefix of ["", "/zh"]) for (const slug of ["human-grounded-llm-evaluation", "wagf", "floodabm"]) {
     await auditWebMcp(`${prefix}/work/${slug}/`, 4);
   }
@@ -554,12 +574,13 @@ try {
   const socialLinks = await heroPage.$$eval(".hero-social-link", (links) => links.map((link) => ({ href: link.getAttribute("href"), name: link.textContent.trim(), title: link.title, width: link.getBoundingClientRect().width, height: link.getBoundingClientRect().height })));
   if (socialLinks.length !== 4 || socialLinks.some((link, index) => link.href !== expectedSocialLinks[index] || !link.name || !link.title || link.width < 44 || link.height < 44)) failures.push(`/: Hero social links are incomplete, misordered, unlabeled, or undersized: ${JSON.stringify(socialLinks)}`);
   const desktopHero = await heroPage.$eval(".hero-media", (image) => ({ width: image.getBoundingClientRect().width, fit: getComputedStyle(image).objectFit }));
-  if (desktopHero.width < 319 || desktopHero.width > 361 || desktopHero.fit !== "contain") failures.push(`/: contained desktop Hero photo is ${Math.round(desktopHero.width)}px with object-fit ${desktopHero.fit}`);
+  if (desktopHero.width < 219 || desktopHero.width > 241 || desktopHero.fit !== "contain") failures.push(`/: contained desktop Hero photo is ${Math.round(desktopHero.width)}px with object-fit ${desktopHero.fit}`);
   await heroPage.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
   const mobileHeroWidth = await heroPage.$eval(".hero-media", (image) => image.getBoundingClientRect().width);
-  if (mobileHeroWidth < 95 || mobileHeroWidth > 97) failures.push(`/: mobile Hero photo is ${Math.round(mobileHeroWidth)}px, expected 96px`);
-  const articleTitles = await heroPage.$$eval(".article-preview-list h3", (titles) => titles.map((title) => title.textContent.trim()));
-  if (articleTitles.length !== 3 || articleTitles.some((title) => !title)) failures.push(`/: homepage does not expose all three articles`);
+  if (mobileHeroWidth < 95 || mobileHeroWidth > 121) failures.push(`/: mobile Hero photo is ${Math.round(mobileHeroWidth)}px, expected 96–120px`);
+  const postTitles = await heroPage.$$eval(".curated-note h3", (titles) => titles.map((title) => title.textContent.trim()));
+  if (postTitles.length !== 3 || postTitles.some((title) => !title)) failures.push(`/: homepage does not expose all three verified public posts`);
+  if (await heroPage.$(".article-preview-list, .article-byline")) failures.push("/: withdrawn generated writing remains visible");
   await heroPage.close();
 
   const zhArticlePage = await openPage("/zh/");
@@ -568,8 +589,8 @@ try {
   const zhPreviewPaths = await zhArticlePage.$$eval(".repo-preview img", (images) => images.map((image) => new URL(image.src).pathname));
   const expectedPreviewPaths = expectedPreviews.map(([, repo]) => repo.previewUrl);
   if (zhPreviewPaths.join("|") !== expectedPreviewPaths.join("|")) failures.push(`/zh/: GitHub social previews drifted from the English home page: ${zhPreviewPaths.join("|")}`);
-  const zhArticleTitles = await zhArticlePage.$$eval(".article-preview-list h3", (titles) => titles.map((title) => title.textContent.trim()));
-  if (zhArticleTitles.length !== 3 || zhArticleTitles.some((title) => !title)) failures.push(`/zh/: homepage does not expose all three localized articles`);
+  const zhPostTitles = await zhArticlePage.$$eval(".curated-note h3", (titles) => titles.map((title) => title.textContent.trim()));
+  if (zhPostTitles.length !== 3 || zhPostTitles.some((title) => !title)) failures.push(`/zh/: homepage does not expose all three localized public posts`);
   await zhArticlePage.close();
 
   const publicationCopyPage = await openPage("/publications/");
@@ -637,7 +658,7 @@ try {
     await page.click(".work-dropdown > summary");
     if (!(await page.$eval(".work-dropdown", (details) => details.open))) failures.push(`${route}: no-JavaScript Work disclosure did not open natively`);
     if (pageType === "home") {
-      await page.click(".flagship-entry:nth-child(2) > summary");
+      await page.click(".flagship-record:nth-child(2) .flagship-entry > summary");
       const openProjects = await page.$$eval(".flagship-entry", (entries) => entries.filter((entry) => entry.open).length);
       if (openProjects !== 1) failures.push(`${route}: no-JavaScript Selected Work disclosures did not remain mutually exclusive`);
     }

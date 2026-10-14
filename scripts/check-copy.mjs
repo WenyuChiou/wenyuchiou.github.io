@@ -6,7 +6,7 @@ import { CONTENT } from "../content.js";
 
 const strict = process.argv.includes("--strict");
 const requirePdfs = process.argv.includes("--require-pdfs");
-const sourceFiles = ["features/provenance/copy.js", "features/provenance/workbench.jsx", "content.en.js", "content.zh-TW.js", "seo.js", "app.jsx", "template.html", "cv/academic.html", "cv/resume.html", "cv/academic.zh-TW.html", "cv/resume.zh-TW.html"];
+const sourceFiles = ["features/provenance/copy.js", "features/provenance/workbench.jsx", "editorial-content.js", "portfolio-guide-data.js", "content.en.js", "content.zh-TW.js", "seo.js", "app.jsx", "template.html", "cv/academic.html", "cv/resume.html", "cv/academic.zh-TW.html", "cv/resume.zh-TW.html"];
 const routeFiles = Object.keys(SEO.routes).map((route) => route === "/" ? "index.html" : `${route.slice(1)}index.html`);
 const files = [...sourceFiles, ...routeFiles];
 const publicInfrastructureHosts = ["wenyu-portfolio-navigator.wenyuchiou12.workers.dev"];

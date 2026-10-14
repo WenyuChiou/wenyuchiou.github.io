@@ -1,8 +1,7 @@
 import { PAGE_DEFINITIONS, localizedPath } from "./content.js";
-import { FEATURE_CONTENT } from "./feature-content.js";
 
 const siteUrl = "https://wenyuchiou.github.io";
-const checkedAt = "2026-08-25";
+const checkedAt = "2026-10-13";
 const personId = `${siteUrl}/#wenyu-chiou`;
 
 const EN_META = {
@@ -16,7 +15,7 @@ const EN_META = {
   },
   "case:human-grounded-llm-evaluation": {
     title: "Human-Grounded LLM Evaluation — Wenyu Chiou",
-    description: "A subgroup-aware study comparing LLM-generated decisions with pathways measured in 937 household profiles, with repeated-run stability checks.",
+    description: "Comparing real household flood-insurance survey responses with LLM-generated answers through measurement-quality checks, decision pathways, household differences, and repeated runs.",
   },
   "case:floodabm": {
     title: "FLOODABM — Wenyu Chiou",
@@ -24,7 +23,7 @@ const EN_META = {
   },
   "case:wagf": {
     title: "WAGF Governed Agent System — Wenyu Chiou",
-    description: "An in-preparation framework that parses, checks, repairs, and audits LLM-agent decisions before coupled simulation state updates.",
+    description: "A framework that parses, checks, repairs, and audits LLM-agent decisions before coupled simulation state updates.",
   },
   research: {
     title: "Research Program — Wenyu Chiou",
@@ -54,9 +53,9 @@ const EN_META = {
 const ZH_META = {
   home: { title: "邱文昱｜LLM Evaluation 與 AI Research Engineer", description: "以實測人類行為為基礎的 LLM 評估、在狀態更新前驗證行動的受治理代理，以及用於 AI for Science 的行為模擬。" },
   work: { title: "精選工作｜邱文昱", description: "以人類證據為基礎的 LLM 評估、家戶洪水模擬、受治理代理與開源研究系統案例。" },
-  "case:human-grounded-llm-evaluation": { title: "以人類證據為基礎的 LLM 評估｜邱文昱", description: "以 937 份家戶資料為基準，從整體與社會群體路徑比較 LLM 生成決策，並檢查重複執行穩定性。" },
+  "case:human-grounded-llm-evaluation": { title: "以人類證據為基礎的 LLM 評估｜邱文昱", description: "比較真人家戶與 LLM 生成的洪水保險問卷回答，檢查量測品質、決策路徑、家戶差異與重複回答。" },
   "case:floodabm": { title: "FLOODABM｜邱文昱", description: "涵蓋 52,141 個家戶、27 個人口普查區、2011 至 2023 年，且每個情境執行 50 次的耦合代理與巨災模型。" },
-  "case:wagf": { title: "WAGF 受治理代理系統｜邱文昱", description: "在代理決策更新耦合模擬狀態前，進行解析、限制檢查、針對性修正與稽核的開發中框架。" },
+  "case:wagf": { title: "WAGF 受治理代理系統｜邱文昱", description: "在代理決策更新耦合模擬狀態前，進行解析、限制檢查、針對性修正與稽核的框架。" },
   research: { title: "研究計畫｜邱文昱", description: "串連心理計量、群體感知 LLM 評估、代理模擬、治理與人類—環境回饋的研究計畫。" },
   publications: { title: "出版與演講｜邱文昱", description: "期刊文章、論文手稿與公開發表，包括 2026 Water Resources Research、ISDSA 2026、AGU25 與 ISHC 2025。" },
   articles: { title: "LLM 評估、代理治理與行為模擬文章｜邱文昱", description: "以實測人類行為評估 LLM、在狀態更新前驗證代理提案，以及追蹤個別決策到系統後果的實務文章。" },
@@ -167,24 +166,18 @@ export const SEO = {
     isPartOf: { "@type": "Periodical", name: "Water Resources Research" },
     sameAs: "https://doi.org/10.1029/2025WR042111",
   },
-  techArticles: Object.fromEntries(["en", "zh-TW"].flatMap((locale) => FEATURE_CONTENT[locale].articlesPage.articles.map((article) => {
-    const path = localizedPath(`/articles/${article.slug}/`, locale);
-    return [path, {
-      "@context": "https://schema.org",
-      "@type": "TechArticle",
-      headline: article.title,
-      description: article.dek,
-      datePublished: article.date,
-      dateModified: article.date,
-      inLanguage: locale === "en" ? "en" : "zh-Hant-TW",
-      author: { "@type": "Person", "@id": personId, name: "Wenyu Chiou", url: siteUrl },
-      mainEntityOfPage: siteUrl + path,
-      image: `${siteUrl}/assets/og/${article.slug}.png`,
-    }];
-  }))),
+  techArticles: {},
 };
 
 export const LEGACY_REDIRECTS = {
+  "/articles/": "/#public-updates",
+  "/articles/evaluating-llm-agents-against-measured-human-behavior/": "/work/human-grounded-llm-evaluation/",
+  "/articles/why-governed-agents-need-validators-before-state-changes/": "/work/wagf/",
+  "/articles/from-individual-decisions-to-system-consequences/": "/work/floodabm/",
+  "/zh/articles/": "/zh/#public-updates",
+  "/zh/articles/evaluating-llm-agents-against-measured-human-behavior/": "/zh/work/human-grounded-llm-evaluation/",
+  "/zh/articles/why-governed-agents-need-validators-before-state-changes/": "/zh/work/wagf/",
+  "/zh/articles/from-individual-decisions-to-system-consequences/": "/zh/work/floodabm/",
   "/engineering/": "/work/",
   "/projects/llm-evaluation/": "/work/human-grounded-llm-evaluation/",
   "/projects/floodabm/": "/work/floodabm/",
