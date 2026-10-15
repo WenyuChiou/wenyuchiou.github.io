@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { CONTENT, PAGE_DEFINITIONS } from '../content.js';
 import { NAVIGATOR_INDEX } from '../navigator-data.js';
 import { LEGACY_REDIRECTS } from '../seo.js';
+import { linkedInEmbedSource } from '../features/editorial/linkedin.js';
 
 test('both locales keep three primary destinations and two application contexts', () => {
   for (const content of Object.values(CONTENT)) {
@@ -16,6 +17,34 @@ test('both locales keep three primary destinations and two application contexts'
     assert.deepEqual(Object.keys(content.editorial.limits), content.flagship.items.map(item => item.slug));
   }
   assert.equal(PAGE_DEFINITIONS.length * 2, 18);
+});
+
+test('only the verified featured post can supply a LinkedIn embed and no frame is prerendered', () => {
+  const posts = JSON.parse(readFileSync('data/updates.json', 'utf8')).items;
+  const featured = posts.filter(post => post.embedUrl);
+  assert.equal(featured.length, 1);
+  const source = 'https://www.linkedin.com/embed/feed/update/urn:li:share:7496270988519735296';
+  assert.equal(featured[0].url, 'https://www.linkedin.com/feed/update/urn:li:activity:7496271834011734016/');
+  assert.equal(linkedInEmbedSource(featured[0].embedUrl), source);
+  for (const value of [null, {}, 42, 'javascript:alert(1)', source.replace('https:', 'http:'), source.replace('www.linkedin.com', 'www.linkedin.com.evil.test'), source.replace('/embed/', '/feed/'), source + '?url=evil', source + '#hash', source.replace('https://', 'https://user@'), 'x'.repeat(161)]) {
+    assert.equal(linkedInEmbedSource(value), null);
+  }
+  const previewKeys = ['previewOriginal', 'previewClose', 'previewTitle', 'previewPrivacy', 'previewLoading', 'previewSlow', 'previewFallback', 'previewNoScript'];
+  for (const prefix of ['', 'zh/']) {
+    const html = readFileSync(`${prefix}index.html`, 'utf8');
+    const copy = CONTENT[prefix ? 'zh-TW' : 'en'].editorial;
+    for (const key of previewKeys) assert.ok(copy[key]?.trim(), key);
+    assert.equal((html.match(/class="linkedin-preview"/g) || []).length, 1);
+    assert.doesNotMatch(html, /<iframe/);
+    assert.ok(html.includes(copy.previewOriginal));
+    assert.ok(html.includes(copy.previewNoScript));
+    const csp = html.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
+    assert.match(csp, /frame-src https:\/\/challenges.cloudflare.com https:\/\/www.linkedin.com\/embed\//);
+    assert.doesNotMatch(csp, /https:\/\/\*\.linkedin.com/);
+    const about = readFileSync(`${prefix}about/index.html`, 'utf8');
+    const aboutCsp = about.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
+    assert.doesNotMatch(aboutCsp, /linkedin.com/);
+  }
 });
 
 test('prerendered first screen and visible evidence links do not depend on JavaScript', () => {

@@ -56,7 +56,7 @@ let aiOrigin = "";
 try { aiOrigin = aiEndpoint ? new URL(aiEndpoint).origin : ""; } catch { throw new Error("PORTFOLIO_AI_ENDPOINT must be an absolute HTTPS URL"); }
 if (aiOrigin && !aiOrigin.startsWith("https://")) throw new Error("PORTFOLIO_AI_ENDPOINT must use HTTPS");
 
-function contentSecurityPolicy(headExtra) {
+function contentSecurityPolicy(headExtra, page) {
   const inlineScripts = [...headExtra.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map((match) => match[1]);
   const scriptHashes = [THEME_SCRIPT, APP_LOADER_SCRIPT, ...inlineScripts].map(cspHash).join(" ");
   return [
@@ -66,7 +66,7 @@ function contentSecurityPolicy(headExtra) {
     "img-src 'self' data:",
     "font-src 'self'",
     `connect-src 'self' https://huggingface.co https://us.aws.cdn.hf.co${aiOrigin ? ` ${aiOrigin}` : ""}`,
-    ...(turnstileSiteKey ? ["frame-src https://challenges.cloudflare.com"] : []),
+    ...((turnstileSiteKey || page === "home") ? [`frame-src ${[turnstileSiteKey ? "https://challenges.cloudflare.com" : "", page === "home" ? "https://www.linkedin.com/embed/" : ""].filter(Boolean).join(" ")}`] : []),
     "worker-src 'self' blob:",
     "object-src 'none'",
     "base-uri 'self'",
@@ -121,7 +121,7 @@ for (const meta of Object.values(SEO.routes)) {
     OG_IMAGE_ALT: meta.ogImageAlt || (meta.page.startsWith("article:") ? meta.title : SEO.ogImage.alt),
     AI_ENDPOINT: aiEndpoint,
     TURNSTILE_SITE_KEY: turnstileSiteKey,
-    CSP: contentSecurityPolicy(headExtra),
+    CSP: contentSecurityPolicy(headExtra, meta.page),
     HEAD_EXTRA: headExtra,
     THEME_SCRIPT,
     APP_LOADER_SCRIPT,
