@@ -73,6 +73,23 @@ h1,h2,h3{line-height:1.2;overflow-wrap:break-word}
 .curated-note{display:grid;grid-template-columns:120px minmax(0,1fr);gap:28px;padding:24px 8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .curated-note h3{font-family:var(--display);font-size:1.5rem;line-height:1.35}
 .curated-note>div>p{margin:12px 0;color:var(--muted);max-width:64ch}
+.curated-note>div{min-width:0}
+.linkedin-feature{margin-top:16px}
+.linkedin-preview{margin-top:8px}
+.linkedin-preview>summary{display:flex;align-items:center;gap:8px;width:fit-content;min-height:44px;padding:8px 12px;list-style:none;border:1px solid var(--line);border-radius:8px;color:var(--teal);font-size:1rem;line-height:1.5;cursor:pointer}
+.linkedin-preview>summary::-webkit-details-marker{display:none}
+.linkedin-preview>summary svg{flex-shrink:0;transition:transform 160ms cubic-bezier(.22,1,.36,1)}
+.linkedin-preview[open]>summary svg{transform:rotate(180deg)}
+.linkedin-preview>summary:hover{background:var(--surface-2)}
+.linkedin-preview>summary:focus-visible,.linkedin-preview-close:focus-visible{outline:2px solid var(--teal);outline-offset:4px}
+.linkedin-preview-content{max-width:504px}
+.linkedin-preview-notice,.linkedin-preview-status,.linkedin-preview-content noscript p{margin:14px 0;font-size:1rem;line-height:1.65;color:var(--muted)}
+.linkedin-preview-status{min-height:1.65em}
+.linkedin-preview-frame{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;color-scheme:light}
+.linkedin-preview-frame iframe{display:block;width:100%;height:1300px;border:0}
+.linkedin-preview-close,.linkedin-preview-fallback{display:flex;align-items:center;gap:8px;min-height:44px;width:fit-content;margin-top:8px;font-size:1rem;line-height:1.5}
+.linkedin-preview-close{background:none;border:0;padding:8px 0;color:var(--teal);cursor:pointer}
+@media(prefers-reduced-motion:reduce){.linkedin-preview>summary svg{transition:none}}
 .repo-stats,.data-note,.record-year,.breadcrumbs ol,.case-status,.document-link small,.education-list span,.trajectory-list span,.site-footer p,.site-footer a{font-size:.875rem}
 .contact-band{background:var(--surface-2);color:var(--ink);padding:64px 0}
 .contact-layout>div:first-child>p:last-of-type,.contact-actions>p{color:var(--muted)}

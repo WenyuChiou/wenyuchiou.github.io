@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Timeline } from "./features/editorial/Timeline.jsx";
+import { LinkedInPreview } from "./features/editorial/LinkedInPreview.jsx";
 import { GUIDE_INTENTS } from "./portfolio-guide-data.js";
 import {
   AlertTriangle,
@@ -422,7 +423,7 @@ function PublicUpdates({ content, locale }) {
     <SectionHead eyebrow={E.updatesEyebrow} title={E.updatesTitle} intro={E.updatesIntro} id="public-updates-title" />
     <div className="curated-notes">{posts.map(post => <article className="curated-note" key={post.url}>
       <p className="section-label">LinkedIn{post.date && /^\d{4}-\d{2}-\d{2}$/.test(post.date) ? <> · <time dateTime={post.date}>{post.date}</time></> : null}</p>
-      <div><h3>{post.title[locale]}</h3><p>{post.summary[locale]}</p><SmartLink className="text-link" href={post.url} locale={locale}>{E.originalPost}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>
+      <div><h3>{post.title[locale]}</h3><p>{post.summary[locale]}</p><SmartLink className="text-link" href={post.url} locale={locale}>{E.originalPost}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>{post.embedUrl && <LinkedInPreview post={post} copy={E} />}</div>
     </article>)}<SmartLink className="text-link" href="https://www.linkedin.com/in/wenyu-chiou/recent-activity/all/" locale={locale}>{E.allPosts}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>
   </div></section>;
 }

@@ -9,6 +9,7 @@ import { SEO } from "../seo.js";
 import githubData from "../data/github.json" with { type: "json" };
 import { auditEditorialInteractions } from "./audit-editorial-interactions.mjs";
 import { auditPortfolioGuide } from "./audit-portfolio-guide.mjs";
+import { auditLinkedInPreview } from "./audit-linkedin-preview.mjs";
 
 const root = process.cwd();
 const browserCandidates = [process.env.CHROME_PATH, "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, "Google", "Chrome", "Application", "chrome.exe") : null, "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe", "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe", "/usr/bin/google-chrome", "/usr/bin/google-chrome-stable", "/usr/bin/chromium"].filter(Boolean);
@@ -478,6 +479,7 @@ if (process.argv.includes("--semantic-only")) {
 
 try {
   await auditEditorialInteractions(browser, origin);
+  await auditLinkedInPreview(browser, origin);
   await auditPortfolioGuide(browser, origin, failures);
   for (const route of Object.keys(SEO.routes)) {
     const page = await browser.newPage();
