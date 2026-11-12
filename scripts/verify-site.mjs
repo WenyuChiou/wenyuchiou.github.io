@@ -1,22 +1,17 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
 import { SEO } from "../seo.js";
 import { CONTENT, PAGE_DEFINITIONS, localizedPath } from "../content.js";
 
 const errors = [];
 const githubData = JSON.parse(readFileSync("data/github.json", "utf8"));
-const previewEntries = Object.entries(githubData.repositories).filter(([, repo]) => repo.previewUrl);
-if (!previewEntries.length) errors.push("GitHub snapshot has no custom repository social previews");
-const expectedPreviewAssets = new Set(previewEntries.map(([, repo]) => repo.previewUrl.slice(1)));
-for (const [name, repo] of previewEntries) {
-  const source = new URL(repo.previewSourceUrl);
-  if (!repo.previewUrl.startsWith("/assets/github/") || !existsSync(repo.previewUrl.slice(1))) errors.push(`${name}: missing local repository preview asset`);
-  if (source.protocol !== "https:" || source.hostname !== "repository-images.githubusercontent.com") errors.push(`${name}: invalid custom repository preview source URL`);
-}
-for (const entry of existsSync("assets/github") ? readdirSync("assets/github", { withFileTypes: true }) : []) {
-  const assetPath = `assets/github/${entry.name}`;
-  if (entry.isFile() && entry.name.endsWith(".webp") && !expectedPreviewAssets.has(assetPath)) errors.push(`${assetPath}: orphaned repository preview asset`);
-}
+const HOME_REPOS = ["awesome-agentic-ai-zh", "ai-research-skills", "academic-writing-skills", "zotero-skills", "research-hub", "codex-delegate", "agent-board", "agent-collab-skills"];
+for (const name of HOME_REPOS) if (!Number.isInteger(githubData.repositories[name]?.stars)) errors.push(`data/github.json: no star count for ${name}`);
+const year = existsSync("assets/commit-maps/year.json") ? JSON.parse(readFileSync("assets/commit-maps/year.json", "utf8")) : null;
+if (!year || year.days?.length !== 365 || year.days.some(([date, count]) => !/^\d{4}-\d\d-\d\d$/.test(date) || !Number.isInteger(count) || count < 0)) errors.push("assets/commit-maps/year.json: expected 365 [date, count] days");
+for (const file of ["assets/commit-maps/activity-dam.svg", "assets/commit-maps/activity-snake.svg"]) if (!existsSync(file) || !readFileSync(file, "utf8").startsWith("<svg")) errors.push(`${file}: missing or not an SVG`);
+const assetVersion = (file) => createHash("sha256").update(readFileSync(file)).digest("hex").slice(0, 8);
 const routes = Object.values(SEO.routes);
 if (routes.length !== PAGE_DEFINITIONS.length * 2) errors.push(`expected ${PAGE_DEFINITIONS.length * 2} routes, found ${routes.length}`);
 
@@ -29,7 +24,7 @@ for (const page of PAGE_DEFINITIONS) {
     if (!existsSync(file)) { errors.push(`missing generated file ${file}`); continue; }
     const html = readFileSync(file, "utf8");
     const expectedLang = locale === "en" ? "en" : "zh-Hant-TW";
-    if (!html.includes(`<html lang="${expectedLang}">`)) errors.push(`${file}: wrong lang`);
+    if (!html.includes(`<html lang="${expectedLang}" data-lang="${locale === "en" ? "en" : "zh"}" data-theme="dark">`)) errors.push(`${file}: wrong lang`);
     if (!html.includes(`<link rel="canonical" href="${meta.canonical}">`)) errors.push(`${file}: missing canonical`);
     if (!html.includes(`data-page="${page.id}"`)) errors.push(`${file}: wrong page id`);
     if (!html.includes("<h1")) errors.push(`${file}: no h1`);
@@ -48,7 +43,22 @@ for (const file of ["index.html", "zh/index.html"]) {
   const html = readFileSync(file, "utf8");
   const visibleCopy = html.replace(/<svg[\s\S]*?<\/svg>/g, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").toLowerCase();
   if (["937 human profiles", "52,141 simulated households", "50 runs per", "937 份人類", "52,141 戶", "50 次模擬"].some((value) => visibleCopy.includes(value.toLowerCase()))) errors.push(`${file}: research scale leaked onto homepage`);
-  for (const selectorCopy of ["selected-work", "decision-provenance", "open-source", "public-updates-title", "contact"]) if (!html.includes(selectorCopy)) errors.push(`${file}: missing homepage section ${selectorCopy}`);
+  for (const id of ["research", "cv", "projects", "activity", "contact", "act5", "main"]) if (!html.includes(` id="${id}"`)) errors.push(`${file}: missing homepage section ${id}`);
+  /* the page's Content-Security-Policy blocks inline styles and inline scripts other than the hashed ones */
+  if (/\sstyle="/.test(html)) errors.push(`${file}: inline style attribute on the homepage`);
+  if (html.includes(file === "index.html" ? '<span class="zh">' : '<span class="en">')) errors.push(`${file}: the other language leaked onto the page`);
+  if (/WAGF/i.test(visibleCopy)) errors.push(`${file}: unreleased project named on the homepage`);
+  for (const asset of ["assets/home/home.css", "assets/home/home.js"]) {
+    if (!existsSync(asset)) { errors.push(`missing ${asset}`); continue; }
+    if (!html.includes(`/${asset}?v=${assetVersion(asset)}"`)) errors.push(`${file}: ${asset} is stale or not linked; run npm run build`);
+  }
+  for (const [name, repo] of Object.entries(githubData.repositories)) if (HOME_REPOS.includes(name) && !html.includes(`<b>${repo.stars.toLocaleString("en-US")}</b>`)) errors.push(`${file}: star count for ${name} does not match data/github.json`);
+  /* the daily job rewrites year.json without rebuilding the pages, so the page's own copy may be older; it still has to be a full year */
+  const builtDays = html.match(/data-days='([^']+)'/)?.[1];
+  let days = null; try { days = JSON.parse(builtDays); } catch { /* reported below */ }
+  if (!Array.isArray(days) || days.length !== 365 || days.some(([date, count]) => !/^\d{4}-\d\d-\d\d$/.test(date) || !Number.isInteger(count) || count < 0)) errors.push(`${file}: the homepage's built-in commit data is not 365 valid days`);
+  else if (year && days.at(-1)[0] > year.days.at(-1)[0]) errors.push(`${file}: the homepage's commit data is newer than assets/commit-maps/year.json`);
+  if (!/connect-src [^;]*https:\/\/raw\.githubusercontent\.com\/WenyuChiou\/wenyuchiou\.github\.io\/standalone-portfolio\/assets\/commit-maps\/year\.json[ ;]/.test(html)) errors.push(`${file}: the homepage policy does not allow reading the daily commit data`);
 }
 const recruiterFiles = ["hire/index.html", "zh/hire/index.html"];
 for (const file of recruiterFiles) {

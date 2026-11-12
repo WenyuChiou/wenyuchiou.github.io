@@ -56,18 +56,18 @@ test('main bundle defers workbench code and static markup remains available', ()
   assert.ok(!bundle.includes('pw-state-fields'));
   const manifest=JSON.parse(readFileSync('assets/provenance/manifest.json','utf8'));
   assert.match(manifest.js,/workbench-[A-Z0-9]+\.js$/);
-  const html=readFileSync('index.html','utf8');
+  const html=readFileSync('work/floodabm/index.html','utf8');
   assert.ok(html.includes('data-provenance-island'));
   assert.ok(html.includes('pw-static-flow'));
   assert.ok(html.includes(manifest.css));
 });
 
-test('home is compact while all bilingual cases retain full scenes and research context', () => {
+test('home carries no workbench while all bilingual cases retain full scenes and research context', () => {
   for(const prefix of ['', 'zh/']) {
     const home=readFileSync(`${prefix}index.html`,'utf8');
-    assert.ok(home.includes('data-compact="true"'));
+    assert.ok(!home.includes('data-provenance-island'));
     assert.ok(!home.includes('data-provenance-scene'));
-    for(const [slug,lens] of [['human-grounded-llm-evaluation','evaluation'],['wagf','governance'],['floodabm','simulation']]) {
+    for(const [slug,lens] of [['human-grounded-llm-evaluation','evaluation'],['floodabm','simulation']]) {
       const html=readFileSync(`${prefix}work/${slug}/index.html`,'utf8');
       assert.ok(html.includes('data-provenance-scene'));
       assert.ok(html.includes(`data-initial-lens="${lens}"`));

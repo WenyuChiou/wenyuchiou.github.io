@@ -21,10 +21,6 @@ const EN_META = {
     title: "FLOODABM — Wenyu Chiou",
     description: "A 52,141-household coupled agent-based and catastrophe flood model spanning 27 census tracts, 2011–2023, with 50 runs per scenario.",
   },
-  "case:wagf": {
-    title: "WAGF Governed Agent System — Wenyu Chiou",
-    description: "A framework that parses, checks, repairs, and audits LLM-agent decisions before coupled simulation state updates.",
-  },
   research: {
     title: "Research Program — Wenyu Chiou",
     description: "Research connecting psychometrics, subgroup-aware LLM evaluation, agent-based simulation, governance, and human–environment feedback.",
@@ -46,7 +42,7 @@ const EN_META = {
   },
   about: {
     title: "About — Wenyu Chiou",
-    description: "Wenyu Chiou is a Lehigh University Ph.D. candidate working across human decision evidence, LLM evaluation, governed agents, and coupled simulation.",
+    description: "Wenyu Chiou does doctoral research at Lehigh University across human decision evidence, LLM evaluation, governed agents, and coupled simulation.",
   },
 };
 
@@ -55,7 +51,6 @@ const ZH_META = {
   work: { title: "精選工作｜邱文昱", description: "以人類證據為基礎的 LLM 評估、家戶洪水模擬、受治理代理與開源研究系統案例。" },
   "case:human-grounded-llm-evaluation": { title: "以人類證據為基礎的 LLM 評估｜邱文昱", description: "比較真人家戶與 LLM 生成的洪水保險問卷回答，檢查量測品質、決策路徑、家戶差異與重複回答。" },
   "case:floodabm": { title: "FLOODABM｜邱文昱", description: "涵蓋 52,141 個家戶、27 個人口普查區、2011 至 2023 年，且每個情境執行 50 次的耦合代理與巨災模型。" },
-  "case:wagf": { title: "WAGF 受治理代理系統｜邱文昱", description: "在代理決策更新耦合模擬狀態前，進行解析、限制檢查、針對性修正與稽核的框架。" },
   research: { title: "研究計畫｜邱文昱", description: "串連心理計量、群體感知 LLM 評估、代理模擬、治理與人類—環境回饋的研究計畫。" },
   publications: { title: "出版與演講｜邱文昱", description: "期刊文章、論文手稿與公開發表，包括 2026 Water Resources Research、ISDSA 2026、AGU25 與 ISHC 2025。" },
   articles: { title: "LLM 評估、代理治理與行為模擬文章｜邱文昱", description: "以實測人類行為評估 LLM、在狀態更新前驗證代理提案，以及追蹤個別決策到系統後果的實務文章。" },
@@ -63,7 +58,7 @@ const ZH_META = {
   "article:why-governed-agents-need-validators-before-state-changes": { title: "為何代理必須在狀態更新前通過驗證｜邱文昱", description: "把 LLM 輸出視為提案，在改變狀態前完成驗證、針對性修正與稽核。" },
   "article:from-individual-decisions-to-system-consequences": { title: "從個別決策到系統後果｜邱文昱", description: "以耦合模擬追蹤受限決策、環境損害、狀態更新與後續行為。" },
   hire: { title: "招聘邱文昱｜LLM 評估與 AI 研究職位摘要", description: "邱文昱的招聘摘要：以人類行為為基礎的 LLM 評估、受治理代理、行為模擬、可驗證技術能力、可任職時間、履歷與聯絡方式。" },
-  about: { title: "關於邱文昱", description: "理海大學土木與環境工程博士候選人，研究人類決策證據、LLM 評估、受治理代理與耦合模擬。" },
+  about: { title: "關於邱文昱", description: "在理海大學土木與環境工程系做博士研究，主題是人類決策證據、LLM 評估、受治理代理與耦合模擬。" },
 };
 
 const routes = {};
@@ -120,7 +115,7 @@ const pageSchemas = Object.fromEntries(["en", "zh-TW"].flatMap((locale) => {
   ];
 }));
 
-const breadcrumbParents = { "case:human-grounded-llm-evaluation": "/work/", "case:floodabm": "/work/", "case:wagf": "/work/", "article:evaluating-llm-agents-against-measured-human-behavior": "/articles/", "article:why-governed-agents-need-validators-before-state-changes": "/articles/", "article:from-individual-decisions-to-system-consequences": "/articles/" };
+const breadcrumbParents = { "case:human-grounded-llm-evaluation": "/work/", "case:floodabm": "/work/", "article:evaluating-llm-agents-against-measured-human-behavior": "/articles/", "article:why-governed-agents-need-validators-before-state-changes": "/articles/", "article:from-individual-decisions-to-system-consequences": "/articles/" };
 const breadcrumbs = Object.fromEntries(Object.values(routes).filter((route) => route.page !== "home").map((route) => {
   const homePath = localizedPath("/", route.locale);
   const parentBase = breadcrumbParents[route.page];
@@ -139,7 +134,7 @@ export const SEO = {
   routes,
   ogImage: {
     file: "/assets/og-card.png",
-    alt: "Wenyu Chiou — Human-Grounded LLM Evaluation, Governed Agents, and Behavioral Simulation",
+    alt: "Wenyu Chiou. I study how people decide under flood risk, using surveys, simulation and LLM agents.",
   },
   citationMeta: {
     paths: ["/publications/", "/zh/publications/"],
@@ -172,12 +167,14 @@ export const SEO = {
 export const LEGACY_REDIRECTS = {
   "/articles/": "/#public-updates",
   "/articles/evaluating-llm-agents-against-measured-human-behavior/": "/work/human-grounded-llm-evaluation/",
-  "/articles/why-governed-agents-need-validators-before-state-changes/": "/work/wagf/",
+  "/articles/why-governed-agents-need-validators-before-state-changes/": "/research/#observatory-stage-governance-repair",
   "/articles/from-individual-decisions-to-system-consequences/": "/work/floodabm/",
   "/zh/articles/": "/zh/#public-updates",
   "/zh/articles/evaluating-llm-agents-against-measured-human-behavior/": "/zh/work/human-grounded-llm-evaluation/",
-  "/zh/articles/why-governed-agents-need-validators-before-state-changes/": "/zh/work/wagf/",
+  "/zh/articles/why-governed-agents-need-validators-before-state-changes/": "/zh/research/#observatory-stage-governance-repair",
   "/zh/articles/from-individual-decisions-to-system-consequences/": "/zh/work/floodabm/",
+  "/work/wagf/": "/research/#observatory-stage-governance-repair",
+  "/zh/work/wagf/": "/zh/research/#observatory-stage-governance-repair",
   "/engineering/": "/work/",
   "/projects/llm-evaluation/": "/work/human-grounded-llm-evaluation/",
   "/projects/floodabm/": "/work/floodabm/",

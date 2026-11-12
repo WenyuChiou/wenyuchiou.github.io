@@ -148,11 +148,11 @@ export function Workbench({ provenance: P, locale, compact = false, initialLens 
           <h3 data-provenance-title>{names[stage]}</h3>
           <p data-provenance-description>{active.stages[stage][1]}</p>
           <dl><div><dt>{P.detailLabels.focus}</dt><dd data-provenance-focus>{active.focus[stage]}</dd></div><div><dt>{P.detailLabels.output}</dt><dd data-provenance-output>{active.outcomes[stage]}</dd></div></dl>
-          <a className="text-link" data-provenance-case href={compact ? `${href}#trace=${lens}&stage=${STAGES[stage]}` : href}>{compact ? C.explore : P.detailLabels.caseLink}<ArrowUpRight aria-hidden="true" size={18} /></a>
+          <a className="text-link" data-provenance-case href={compact && !href.includes('#') ? `${href}#trace=${lens}&stage=${STAGES[stage]}` : href}>{compact ? C.explore : active.caseLinkLabel || P.detailLabels.caseLink}<ArrowUpRight aria-hidden="true" size={18} /></a>
           <p className="sr-only" data-provenance-summary>{active.summary}</p>
         </aside>
       </div>
     </div>
-    <div className="pw-static-flow"><p>{C.staticNotice}</p>{LENSES.map(id => <section key={id}><h3>{P.lenses[id].label}</h3><ol>{P.lenses[id].stages.map(([status, text], index) => <li key={index}><strong>{id === 'simulation' && index === 2 ? C.agent : C.stages[index]}</strong><p>{text}</p><small>{P.statuses[status]}</small></li>)}</ol><a href={`${locale === 'zh-TW' ? '/zh' : ''}${P.lenses[id].caseHref}`}>{P.detailLabels.caseLink}</a></section>)}</div>
+    <div className="pw-static-flow"><p>{C.staticNotice}</p>{LENSES.map(id => <section key={id}><h3>{P.lenses[id].label}</h3><ol>{P.lenses[id].stages.map(([status, text], index) => <li key={index}><strong>{id === 'simulation' && index === 2 ? C.agent : C.stages[index]}</strong><p>{text}</p><small>{P.statuses[status]}</small></li>)}</ol><a href={`${locale === 'zh-TW' ? '/zh' : ''}${P.lenses[id].caseHref}`}>{P.lenses[id].caseLinkLabel || P.detailLabels.caseLink}</a></section>)}</div>
   </div>;
 }

@@ -7,13 +7,12 @@ export async function auditEditorialInteractions(browser, origin) {
   const context = await browser.createBrowserContext();
   try {
   for (const locale of ["", "/zh"]) {
-    for (const width of [360, 390, 768, 1440]) for (const theme of ["light", "dark"]) for (const reduced of [false, true]) {
+    for (const width of [360, 390, 768, 1440]) for (const reduced of [false, true]) {
       const page = await context.newPage();
       try {
         await page.setViewport({ width, height: 900, deviceScaleFactor: 1 });
         await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: reduced ? "reduce" : "no-preference" }]);
-        await page.evaluateOnNewDocument(value => localStorage.setItem("wy-theme", value), theme);
-        await page.goto(origin + locale + "/", { waitUntil: "load" });
+        await page.goto(origin + locale + "/work/floodabm/", { waitUntil: "load" });
         await page.$eval("[data-provenance-signature]", node => node.scrollIntoView({ block: "center", behavior: "instant" }));
         await page.waitForFunction(() => document.querySelector(".provenance-workbench")?.dataset.ready === "true");
         const signature = await page.$("[data-provenance-signature]");
@@ -29,7 +28,7 @@ export async function auditEditorialInteractions(browser, origin) {
         assert.equal(await page.$eval('[data-provenance-stage][aria-current="step"]', node => node.dataset.provenanceStage), "4");
         assert.equal(await page.$eval(".provenance-workbench", node => node.dataset.lens), "governance");
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
-        if (!reduced && width === 1440 && theme === "light") {
+        if (!reduced && width === 1440) {
           await page.click("[data-scene-play]");
           await page.$eval("[data-provenance-signature]", node => node.scrollIntoView({ block: "center", behavior: "instant" }));
           await page.evaluate(() => document.fonts.ready);
@@ -117,6 +116,6 @@ export async function auditEditorialInteractions(browser, origin) {
       assert.equal(await summaries[0].evaluate(node => node.hasAttribute('aria-expanded')), false, 'mobile uses native disclosure semantics');
     } finally { await page.close(); }
   }
-  console.log("editorial-interactions: 64 observatory locale/theme/viewport/motion states and bilingual timeline preview/pin/Escape/mobile passed");
+  console.log("editorial-interactions: 32 observatory locale/viewport/motion states (case page, single dark theme) and bilingual timeline preview/pin/Escape/mobile passed");
   } finally { await context.close(); }
 }

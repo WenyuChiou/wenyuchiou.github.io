@@ -100,7 +100,7 @@ export const NAVIGATOR_INDEX = {
     {
       id: "wagf",
       fit: FIT_EVIDENCE.wagf,
-      href: "/work/wagf/",
+      href: "/research/#observatory-stage-governance-repair",
       title: { en: "WAGF · Governed Agent System", "zh-TW": "WAGF · 受治理代理系統" },
       summary: {
         en: "Parse, validate, repair, and audit agent decisions before they can update simulation state.",

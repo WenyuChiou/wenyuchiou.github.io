@@ -6,7 +6,6 @@ import puppeteer from "puppeteer-core";
 import axe from "axe-core";
 import { DEPLOYMENT_CONFIG } from "../deployment-config.mjs";
 import { SEO } from "../seo.js";
-import githubData from "../data/github.json" with { type: "json" };
 import { auditEditorialInteractions } from "./audit-editorial-interactions.mjs";
 import { auditPortfolioGuide } from "./audit-portfolio-guide.mjs";
 
@@ -33,7 +32,7 @@ const internalTargets = new Map();
 const anchorTargets = new Map();
 const origin = `http://127.0.0.1:${port}`;
 const firstFoldSelectors = {
-  home: ".flagship",
+  home: ".hero .links",
   work: ".flagship",
   research: "main > .section",
   publications: ".publication-groups",
@@ -45,7 +44,6 @@ const firstFoldSelectors = {
   about: ".about-body img",
   "case:human-grounded-llm-evaluation": ".case-overview",
   "case:floodabm": ".case-overview",
-  "case:wagf": ".case-overview",
 };
 const foldViewports = [
   ["narrow-mobile", { width: 360, height: 800, deviceScaleFactor: 1 }],
@@ -76,13 +74,30 @@ const auditCaseControl = async (route, selector, expectedClass, resultSelector) 
   if (!response || response.status() !== 200) failures.push(`${route}: HTTP ${response?.status()}`);
   const activeTheme = await page.evaluate(() => document.documentElement.dataset.theme);
   if (activeTheme !== "dark") failures.push(`${route}: expected dark theme before axe, found ${activeTheme || "unset"}`);
+  /* the app script loads after the load event, and opening the section fades its content in: wait for both,
+     so axe reads final colours and the key press reaches a hydrated control (a page that never gets there still fails) */
+  const settle = () => page.waitForFunction((control) => Object.keys(document.querySelector(control) || {}).some((key) => key.startsWith("__reactFiber"))
+    && !document.getAnimations().some((animation) => animation.playState === "running" && animation.effect?.getComputedTiming().iterations !== Infinity), { timeout: 15000 }, selector)
+    .catch(() => failures.push(`${route}: page did not hydrate and settle within 15 s`));
+  /* the control lives inside the collapsed section, and sections slide up as they scroll into view: bring the target to the
+     middle of the screen and let that movement finish first, or the pointer click lands on a neighbour and the section stays shut */
+  const steady = async (target) => {
+    await page.$eval(target, (element) => element.scrollIntoView({ block: "center", behavior: "instant" }));
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, 80)))));
+    await settle();
+  };
+  await steady('.case-research-context > summary');
   await page.click('.case-research-context > summary');
+  if (!await page.$eval('.case-research-context', (element) => element.open)) failures.push(`${route}: the research context section did not open on click`);
+  await steady(selector);
   await page.addScriptTag({ content: axe.source });
   const axeResult = await page.evaluate(async () => window.axe.run(document, { resultTypes: ["violations"] }));
   for (const violation of axeResult.violations) failures.push(`${route}: dark-theme axe ${violation.id} (${violation.impact}) on ${violation.nodes.length} node(s)`);
   const initial = await page.$eval(resultSelector, (element) => element.textContent.trim());
   await page.focus(selector);
   await page.keyboard.press("Space");
+  await page.waitForFunction(({ selector, resultSelector, initial }) => document.querySelector(selector)?.getAttribute("aria-pressed") === "true"
+    && document.querySelector(resultSelector)?.textContent.trim() !== initial, { timeout: 3000 }, { selector, resultSelector, initial }).catch(() => {});
   const state = await page.evaluate(({ selector, expectedClass, resultSelector }) => {
     const button = document.querySelector(selector);
     return {
@@ -191,21 +206,6 @@ const auditWorkDropdown = async (route) => {
   await mobile.close();
 };
 
-const auditSelectedWork = async (route) => {
-  const page = await openPage(route, { width: 1440, height: 1000, deviceScaleFactor: 1 });
-  const initial = await page.evaluate(() => [...document.querySelectorAll(".flagship-entry")].map((entry) => ({ open: entry.open, explicitAria: entry.querySelector("summary")?.hasAttribute("aria-expanded") })));
-  if (initial.length !== 3 || initial.filter((entry) => entry.open).length !== 1 || !initial[0]?.open || initial.some((entry) => entry.explicitAria)) failures.push(`${route}: Selected Work did not start with exactly the first native disclosure expanded`);
-  await page.$eval(".flagship-record:nth-child(2) .flagship-entry", (entry) => entry.scrollIntoView({ block: "center", behavior: "instant" }));
-  await page.focus(".flagship-record:nth-child(2) .flagship-entry > summary");
-  await page.keyboard.press("Enter");
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  const switched = await page.evaluate(() => [...document.querySelectorAll(".flagship-entry")].map((entry) => entry.open));
-  if (switched.filter(Boolean).length !== 1 || !switched[1]) failures.push(`${route}: Selected Work did not keep a single native disclosure open`);
-  const revealed = await page.$eval(".flagship-record:nth-child(2) .flagship-entry", (entry) => Number.parseFloat(getComputedStyle(entry).opacity) > 0.98 && entry.classList.contains("is-visible"));
-  if (!revealed) failures.push(`${route}: active Selected Work entry remained hidden after entering the viewport`);
-  await page.close();
-};
-
 const auditPortfolioNavigator = async (route, query, expectedPath) => {
   const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
   const launchVisible = await page.$eval(".navigator-launch", (button) => {
@@ -271,43 +271,6 @@ const auditRecruiterFitExplorer = async (route, role, jobDescription, expectedPa
   await page.close();
 };
 
-const auditProvenance = async (route) => {
-  const page = await openPage(route, { width: 390, height: 844, deviceScaleFactor: 1 });
-  await page.$eval("[data-provenance-island]", (section) => section.scrollIntoView({ block: "start", behavior: "instant" }));
-  await page.waitForSelector('[data-provenance-island][data-ready="true"]');
-  const initial = await page.$eval(".decision-trace", (section) => {
-    const stages = [...section.querySelectorAll(".pw-stages li")];
-    const stageColors = new Set(stages.map((item) => getComputedStyle(item).getPropertyValue("--pw-stage").trim()).filter(Boolean));
-    const keyText = [section.querySelector("[data-provenance-summary]"), ...section.querySelectorAll(".pw-stages strong"), section.querySelector(".pw-inspector h3")].filter(Boolean);
-    const tabs = [...section.querySelectorAll('[role="tab"]')];
-    return {
-      tabs: tabs.length,
-      tabbableTabs: tabs.filter((tab) => tab.tabIndex === 0).length,
-      stages: stages.length,
-      current: section.querySelector('[aria-current="step"]')?.textContent,
-      inspector: section.querySelector(".pw-inspector h3")?.textContent,
-      visual: Boolean(section.querySelector('[data-provenance-signature]')) && !section.querySelector('[data-provenance-scene]'),
-      panelLabel: section.querySelector('[role="tabpanel"]')?.getAttribute("aria-labelledby"),
-      semanticColors: stageColors.size,
-      smallestKeyText: Math.min(...keyText.map((item) => Number.parseFloat(getComputedStyle(item).fontSize))),
-    };
-  });
-  if (initial.tabs !== 3 || initial.tabbableTabs !== 1 || initial.stages !== 5 || !initial.current || !initial.inspector || !initial.visual || initial.panelLabel !== "trace-tab-evaluation") failures.push(`${route}: Decision Trace Studio lacks its complete initial state or ARIA tab relationships`);
-  if (initial.semanticColors < 4) failures.push(`${route}: Decision Trace stages do not expose enough semantic color roles (${initial.semanticColors})`);
-  if (initial.smallestKeyText < 15) failures.push(`${route}: Decision Trace key text falls below 15px (${initial.smallestKeyText}px)`);
-  await page.focus('.pw-lenses button:nth-child(1)');
-  await page.keyboard.press("ArrowRight");
-  const tabKeyboard = await page.$eval('.pw-lenses button:nth-child(2)', (tab) => ({ selected: tab.getAttribute("aria-selected"), focused: document.activeElement === tab, tabIndex: tab.tabIndex }));
-  if (tabKeyboard.selected !== "true" || !tabKeyboard.focused || tabKeyboard.tabIndex !== 0) failures.push(`${route}: Decision Trace tab keyboard navigation or roving tabindex failed`);
-  await page.click('.pw-stages li:nth-child(4) button');
-  const changed = await page.$eval(".decision-trace", (section) => ({ lens: section.querySelector('.pw-lenses button:nth-child(2)')?.getAttribute("aria-selected"), step: section.querySelector('.pw-stages li:nth-child(4) button')?.getAttribute("aria-current"), detail: section.querySelector('.pw-inspector h3')?.textContent.trim(), hash: window.location.hash }));
-  if (changed.lens !== "true" || changed.step !== "step" || !changed.detail || !changed.hash.includes("trace=governance") || !changed.hash.includes("stage=validation")) failures.push(`${route}: Decision Trace lens, stage, detail, or shareable hash did not update`);
-  await page.focus('.pw-stages li:nth-child(4) button');
-  await page.keyboard.press("ArrowRight");
-  if (!(await page.$eval('.pw-stages li:nth-child(5) button', (button) => button.getAttribute("aria-current") === "step"))) failures.push(`${route}: Decision Trace keyboard navigation did not advance the stage`);
-  await page.close();
-};
-
 const auditWebMcp = async (route, expectedToolCount) => {
   const page = await browser.newPage();
   await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
@@ -366,19 +329,19 @@ const auditWebMcp = async (route, expectedToolCount) => {
     ? ["search_portfolio", "read_portfolio_evidence", "analyze_recruiter_fit", "inspect_decision_provenance"]
     : ["search_portfolio", "read_portfolio_evidence", "analyze_recruiter_fit"];
   if (state.definitions.map(({ name }) => name).join(",") !== expectedNames.join(",")) failures.push(`${route}: WebMCP tool set or order is incorrect: ${state.definitions.map(({ name }) => name).join(",")}`);
-  if (state.searchFirst !== "wagf" || state.searchEchoedQuery || state.evidenceId !== "wagf" || !state.evidenceUrl.includes(route.startsWith("/zh/") ? "/zh/work/wagf/" : "/work/wagf/")) failures.push(`${route}: WebMCP search/read result is incomplete or not localized`);
+  if (state.searchFirst !== "wagf" || state.searchEchoedQuery || state.evidenceId !== "wagf" || !state.evidenceUrl.includes(route.startsWith("/zh/") ? "/zh/research/#observatory-stage-governance-repair" : "/research/#observatory-stage-governance-repair")) failures.push(`${route}: WebMCP search/read result is incomplete or not localized`);
   if (state.fitMode !== "local_evidence_match" || !state.fitHasGap || /turnstileToken|nvidia|ignore prior|忽略先前|attacker@example\.com/i.test(state.fitSerialized)) failures.push(`${route}: WebMCP recruiter fit did not stay local, bounded, private, and evidence-grounded`);
   if (state.definitions.some((tool) => tool.additionalProperties !== false)) failures.push(`${route}: WebMCP schema accepts unspecified properties`);
   const searchDefinition = state.definitions.find(({ name }) => name === "search_portfolio");
   const fitDefinition = state.definitions.find(({ name }) => name === "analyze_recruiter_fit");
   if (!searchDefinition?.readOnly || searchDefinition.untrusted || !fitDefinition?.readOnly || !fitDefinition.untrusted) failures.push(`${route}: WebMCP annotations do not reflect read-only and untrusted-output boundaries`);
-  const expectedCaseUrl = route.startsWith("/zh/") ? "/zh/work/wagf/" : "/work/wagf/";
+  const expectedCaseUrl = route.startsWith("/zh/") ? "/zh/research/" : "/research/";
   if (expectedToolCount === 4 && (state.provenance?.lens !== "governance" || state.provenance?.stage !== 4 || !state.provenance?.title || new URL(state.provenance.caseUrl).pathname !== expectedCaseUrl || state.selectedLens !== "true" || state.selectedStage !== "step" || !state.hash.includes("trace=governance") || !state.hash.includes("stage=validation"))) failures.push(`${route}: WebMCP provenance tool did not synchronize the visible lens, stage, hash, case URL, and structured result`);
   await page.close();
 };
 
 const auditSemanticNavigator = async () => {
-  const route = "/";
+  const route = "/work/";
   const query = "Which work demonstrates governed LLM agents? private-query-marker";
   const eventsEndpoint = new URL("/v1/events", DEPLOYMENT_CONFIG.aiEndpoint).href;
   const page = await browser.newPage();
@@ -444,13 +407,98 @@ const auditSemanticNavigator = async () => {
     failures.push(`${route}: semantic navigator did not reach on-device semantic mode (${state}; failed resources: ${failedResponses.join(", ") || "none"})`);
   }
   const firstPath = await page.$eval(".navigator-results a", (link) => new URL(link.href).pathname);
-  if (firstPath !== "/work/wagf/") failures.push(`${route}: semantic navigator ranked ${firstPath} instead of /work/wagf/`);
+  if (firstPath !== "/research/") failures.push(`${route}: semantic navigator ranked ${firstPath} instead of /research/ (the governance stage)`);
   const remoteScripts = requests.filter(({ url, type }) => type === "script" && !url.startsWith(origin) && !url.startsWith("https://challenges.cloudflare.com/") && !url.startsWith("blob:https://challenges.cloudflare.com/"));
   if (remoteScripts.length) failures.push(`${route}: semantic navigator loaded remote executable code: ${remoteScripts.map(({ url }) => url).join(", ")}`);
   const leakedQuery = requests.some(({ url }) => decodeURIComponent(url).toLocaleLowerCase().includes("private-query-marker"));
   if (requests.some(({ url }) => url === DEPLOYMENT_CONFIG.aiEndpoint)) failures.push(`${route}: local semantic test unexpectedly called NVIDIA`);
   if (leakedQuery) failures.push(`${route}: semantic navigator included visitor query text in a network request`);
   if (consoleErrors.length) failures.push(`${route}: semantic navigator console errors: ${consoleErrors.join(" | ")}`);
+  await page.close();
+};
+
+const homeSectionIds = ["research", "cv", "projects", "activity", "contact"];
+
+const auditHomepage = async (route, width) => {
+  const label = `${route} @${width}px`;
+  const otherRoute = route === "/" ? "/zh/" : "/";
+  const page = await browser.newPage();
+  const problems = [];
+  const offHost = [];
+  await page.setViewport({ width, height: width < 700 ? 844 : 1000, deviceScaleFactor: 1 });
+  await page.evaluateOnNewDocument(() => {
+    window.__cspViolations = [];
+    document.addEventListener("securitypolicyviolation", (event) => window.__cspViolations.push(`${event.violatedDirective} ${event.blockedURI}`));
+  });
+  await page.setRequestInterception(true);
+  page.on("request", (request) => {
+    const url = request.url();
+    if (!url.startsWith(origin) && !/^(data|blob|about):/.test(url)) {
+      offHost.push(url);
+      request.abort().catch(() => {});
+      return;
+    }
+    request.continue().catch(() => {});
+  });
+  page.on("console", (message) => { if (message.type() === "error") problems.push(`console ${message.text()}`); });
+  page.on("pageerror", (error) => problems.push(`uncaught ${error.message}`));
+  const response = await page.goto(`${origin}${route}`, { waitUntil: "networkidle0" });
+  if (!response || response.status() !== 200) failures.push(`${label}: homepage HTTP ${response?.status()}`);
+  const missing = await page.evaluate((ids) => ids.filter((id) => !document.getElementById(id)), homeSectionIds);
+  if (missing.length) failures.push(`${label}: homepage sections missing: ${missing.join(", ")}`);
+  try {
+    await page.waitForFunction(() => document.querySelector("#act5 svg"), { timeout: 10000 });
+  } catch {
+    failures.push(`${label}: #act5 commit map has no drawn SVG after load`);
+  }
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  if (overflow > 0) failures.push(`${label}: horizontal overflow ${overflow}px`);
+  const cspViolations = await page.evaluate(() => window.__cspViolations);
+  if (cspViolations.length) failures.push(`${label}: CSP violations: ${cspViolations.join(" | ")}`);
+  for (const problem of problems) failures.push(`${label}: ${problem}`);
+  if (offHost.length) failures.push(`${label}: homepage requested hosts other than the local server: ${offHost.join(", ")}`);
+  const langPath = await page.$eval("a#lang", (link) => new URL(link.href).pathname);
+  if (langPath !== otherRoute) failures.push(`${label}: a#lang points to ${langPath}, expected ${otherRoute}`);
+  const [navigation] = await Promise.all([page.waitForNavigation({ waitUntil: "load" }), page.click("a#lang")]);
+  const landed = new URL(page.url()).pathname;
+  if (landed !== otherRoute || !navigation || navigation.status() !== 200) failures.push(`${label}: a#lang landed on ${landed} (HTTP ${navigation?.status()}), expected ${otherRoute}`);
+  await page.close();
+};
+
+const auditHomepageBlockedYear = async (route, width) => {
+  const label = `${route} @${width}px with year.json blocked`;
+  const page = await browser.newPage();
+  const errors = [];
+  let blocked = 0;
+  await page.setViewport({ width, height: width < 700 ? 844 : 1000, deviceScaleFactor: 1 });
+  await page.setRequestInterception(true);
+  page.on("request", (request) => {
+    if (request.url().includes("/assets/commit-maps/year.json")) { blocked++; request.abort().catch(() => {}); return; }
+    request.continue().catch(() => {});
+  });
+  page.on("pageerror", (error) => errors.push(`uncaught ${error.message}`));
+  // The aborted request itself is reported by Chrome as a network console line; any other console error is a real one.
+  page.on("console", (message) => { if (message.type() === "error" && !/ERR_FAILED|ERR_BLOCKED_BY_CLIENT|Failed to load resource/i.test(message.text())) errors.push(`console ${message.text()}`); });
+  await page.goto(`${origin}${route}`, { waitUntil: "networkidle0" });
+  try {
+    await page.waitForFunction(() => document.querySelector("#act5 svg"), { timeout: 10000 });
+  } catch {
+    failures.push(`${label}: #act5 did not draw from its built-in data`);
+  }
+  if (!blocked) failures.push(`${label}: the page never requested /assets/commit-maps/year.json, so the fallback was not exercised`);
+  for (const error of errors) failures.push(`${label}: ${error}`);
+  await page.close();
+};
+
+const auditHomepageSource = async (route) => {
+  const html = await (await fetch(`${origin}${route}`)).text();
+  if (/\sstyle\s*=\s*["']/i.test(html)) failures.push(`${route}: served homepage HTML contains style attributes`);
+  const page = await browser.newPage();
+  await page.setJavaScriptEnabled(false);
+  await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+  await page.goto(`${origin}${route}`, { waitUntil: "load" });
+  const staticSections = await page.evaluate((ids) => ids.filter((id) => !document.getElementById(id)), homeSectionIds);
+  if (staticSections.length) failures.push(`${route}: no-JavaScript homepage lacks sections ${staticSections.join(", ")}`);
   await page.close();
 };
 
@@ -479,6 +527,13 @@ if (process.argv.includes("--semantic-only")) {
 try {
   await auditEditorialInteractions(browser, origin);
   await auditPortfolioGuide(browser, origin, failures);
+  for (const route of ["/", "/zh/"]) {
+    for (const width of [390, 1440]) {
+      await auditHomepage(route, width);
+      await auditHomepageBlockedYear(route, width);
+    }
+    await auditHomepageSource(route);
+  }
   for (const route of Object.keys(SEO.routes)) {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
@@ -493,7 +548,7 @@ try {
     for (const violation of result.violations) failures.push(`${route}: axe ${violation.id} (${violation.impact}) on ${violation.nodes.length} node(s): ${violation.nodes.map((node) => node.target.join(" ")).join("; ")}`);
     const initialScrollY = await page.evaluate(() => window.scrollY);
     if (initialScrollY > 1) failures.push(`${route}: page auto-scrolled to ${Math.round(initialScrollY)}px before user interaction`);
-    const layout = await page.evaluate(() => ({ overflow: document.documentElement.scrollWidth - window.innerWidth, h1: document.querySelectorAll("h1").length, undersized: [...document.querySelectorAll(".button,.icon-button,.locale-link,summary,.segmented-control button,.document-link,.icon-link,.hero-social-link")].filter((element) => { const rect = element.getBoundingClientRect(); const style = getComputedStyle(element); return style.display !== "none" && rect.width > 0 && rect.height > 0 && (rect.width < 44 || rect.height < 44); }).length }));
+    const layout = await page.evaluate(() => ({ overflow: document.documentElement.scrollWidth - window.innerWidth, h1: document.querySelectorAll("h1").length, undersized: [...document.querySelectorAll(".button,.icon-button,.locale-link,summary,.segmented-control button,.document-link,.icon-link,.hero .links .ib,header.nav a#lang")].filter((element) => { const rect = element.getBoundingClientRect(); const style = getComputedStyle(element); return style.display !== "none" && rect.width > 0 && rect.height > 0 && (rect.width < 44 || rect.height < 44); }).length }));
     if (layout.overflow > 1) failures.push(`${route}: horizontal overflow ${layout.overflow}px`);
     if (layout.h1 !== 1) failures.push(`${route}: expected 1 h1, found ${layout.h1}`);
     if (layout.undersized) failures.push(`${route}: ${layout.undersized} key target(s) below 44px`);
@@ -501,7 +556,7 @@ try {
       await page.setViewport(viewport);
       await page.evaluate(() => { window.scrollTo(0, 0); return new Promise((resolve) => requestAnimationFrame(() => resolve())); });
       const fold = await page.evaluate((selector) => {
-        const header = document.querySelector(".site-header")?.getBoundingClientRect();
+        const header = document.querySelector(".site-header, header.nav")?.getBoundingClientRect();
         const h1 = document.querySelector("h1")?.getBoundingClientRect();
         const next = document.querySelector(selector)?.getBoundingClientRect();
         return { headerBottom: header?.bottom, h1Top: h1?.top, h1Bottom: h1?.bottom, nextTop: next?.top, overflow: document.documentElement.scrollWidth - window.innerWidth, viewportHeight: window.innerHeight };
@@ -512,7 +567,7 @@ try {
     }
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
     const links = await page.evaluate(() => [...document.querySelectorAll("a[href]")].map((link) => ({ href: link.getAttribute("href"), target: link.target, rel: link.rel })));
-    const localePath = await page.$eval(".locale-link", (link) => new URL(link.href).pathname);
+    const localePath = await page.$eval(".locale-link, a#lang", (link) => new URL(link.href).pathname);
     const expectedLocalePath = new URL(SEO.routes[route].alternate).pathname;
     if (localePath !== expectedLocalePath) failures.push(`${route}: locale switch points to ${localePath}, expected ${expectedLocalePath}`);
     for (const link of links) {
@@ -526,72 +581,43 @@ try {
     await page.close();
   }
 
-  for (const route of ["/", "/zh/", "/work/wagf/", "/zh/work/wagf/"]) await auditMobileMenu(route);
+  for (const route of ["/work/", "/zh/work/", "/work/floodabm/", "/zh/work/floodabm/"]) await auditMobileMenu(route);
 
-  const themePage = await openPage("/", { width: 1440, height: 1000, deviceScaleFactor: 1 });
-  await themePage.evaluate(() => localStorage.removeItem("wy-theme"));
-  await themePage.click(".theme-button");
-  const darkTheme = await themePage.evaluate(() => ({ theme: document.documentElement.dataset.theme, stored: localStorage.getItem("wy-theme"), sunVisible: getComputedStyle(document.querySelector(".theme-sun")).display !== "none" }));
-  if (darkTheme.theme !== "dark" || darkTheme.stored !== "dark" || !darkTheme.sunVisible) failures.push("/: theme control did not apply and persist dark mode");
-  await themePage.reload({ waitUntil: "networkidle0" });
-  if (await themePage.evaluate(() => document.documentElement.dataset.theme) !== "dark") failures.push("/: saved theme did not survive reload");
-  await themePage.close();
-
-  for (const route of ["/", "/zh/"]) {
-    await auditWorkDropdown(route);
-    await auditSelectedWork(route);
-    await auditProvenance(route);
-    await auditWebMcp(route, 4);
+  for (const route of Object.keys(SEO.routes)) {
+    const themePage = await openPage(route, { width: 1440, height: 1000, deviceScaleFactor: 1 });
+    const themeState = await themePage.evaluate(() => ({ theme: document.documentElement.dataset.theme, buttons: document.querySelectorAll(".theme-button").length, colorScheme: getComputedStyle(document.documentElement).colorScheme }));
+    if (themeState.theme !== "dark" || themeState.buttons !== 0) failures.push(`${route}: expected the single static dark theme with no theme control (theme=${themeState.theme}, buttons=${themeState.buttons})`);
+    await themePage.close();
   }
+
+  for (const route of ["/work/", "/zh/work/"]) await auditWorkDropdown(route);
   await auditWebMcp("/about/", 3);
   await auditWebMcp("/zh/about/", 3);
-  for (const prefix of ["", "/zh"]) for (const slug of ["human-grounded-llm-evaluation", "wagf", "floodabm"]) {
+  for (const prefix of ["", "/zh"]) for (const slug of ["human-grounded-llm-evaluation", "floodabm"]) {
     await auditWebMcp(`${prefix}/work/${slug}/`, 4);
   }
   for (const route of ["/research/", "/zh/research/"]) await auditEvidenceStage(route);
-  await auditPortfolioNavigator("/", "agent governance constraints", "/work/wagf/");
-  await auditPortfolioNavigator("/zh/", "找洪水模型", "/zh/work/floodabm/");
-  await auditRecruiterFitExplorer("/hire/", "agent-systems", "Build validators and audit traces for agent actions. Operate a production Kubernetes platform.", "/work/wagf/");
+  await auditPortfolioNavigator("/work/", "agent governance constraints", "/research/");
+  await auditPortfolioNavigator("/zh/work/", "找洪水模型", "/zh/work/floodabm/");
+  await auditRecruiterFitExplorer("/hire/", "agent-systems", "Build validators and audit traces for agent actions. Operate a production Kubernetes platform.", "/research/");
   await auditRecruiterFitExplorer("/zh/hire/", "ai-science", "建立水文與社會水文模型。管理正式環境 Kubernetes 平台。", "/zh/work/floodabm/");
   await auditSemanticNavigator();
-  await auditWorkDropdown("/work/wagf/");
+  await auditWorkDropdown("/work/floodabm/");
 
-  const heroPage = await openPage("/", { width: 1440, height: 1000, deviceScaleFactor: 1 });
-  const expectedPreviews = Object.entries(githubData.repositories).filter(([, repo]) => repo.previewUrl);
-  await heroPage.$eval(".repo-list", (list) => list.scrollIntoView({ block: "center" }));
-  await heroPage.waitForFunction(() => [...document.querySelectorAll(".repo-preview img")].every((image) => image.complete && image.naturalWidth > 0), { timeout: 15000 });
-  const repoPreviews = await heroPage.$$eval(".repo-preview", (previews) => previews.map((preview) => {
-    const image = preview.querySelector("img");
-    const rect = preview.getBoundingClientRect();
-    return { src: image?.src, loaded: image?.complete && image?.naturalWidth > 0, ratio: rect.width / rect.height };
-  }));
-  if (repoPreviews.length !== expectedPreviews.length || repoPreviews.some((preview, index) => new URL(preview.src).pathname !== expectedPreviews[index][1].previewUrl || !preview.loaded || Math.abs(preview.ratio - 2) > 0.03)) failures.push(`/: GitHub social previews are missing, unloaded, misordered, or incorrectly sized: ${JSON.stringify(repoPreviews)}`);
-  await heroPage.$eval(".repo-preview img", (image) => { image.src = "/assets/github/__missing-preview__.webp"; });
-  await heroPage.waitForFunction(() => { const image = document.querySelector(".repo-preview img"); return image?.complete && image.naturalWidth === 0; }, { timeout: 5000 });
-  const previewFallback = await heroPage.$eval(".repo-preview", (preview) => ({ failed: preview.querySelector("img").naturalWidth === 0, fallbackVisible: getComputedStyle(preview.querySelector("svg")).display !== "none" }));
-  if (!previewFallback.failed || !previewFallback.fallbackVisible) failures.push(`/: GitHub social preview failure does not expose its fallback`);
-  const expectedSocialLinks = ["https://www.linkedin.com/in/wenyu-chiou", "https://github.com/WenyuChiou", "mailto:wec324@lehigh.edu", "https://www.threads.com/@wenyu_chiou"];
-  const socialLinks = await heroPage.$$eval(".hero-social-link", (links) => links.map((link) => ({ href: link.getAttribute("href"), name: link.textContent.trim(), title: link.title, width: link.getBoundingClientRect().width, height: link.getBoundingClientRect().height })));
-  if (socialLinks.length !== 4 || socialLinks.some((link, index) => link.href !== expectedSocialLinks[index] || !link.name || !link.title || link.width < 44 || link.height < 44)) failures.push(`/: Hero social links are incomplete, misordered, unlabeled, or undersized: ${JSON.stringify(socialLinks)}`);
-  const desktopHero = await heroPage.$eval(".hero-media", (image) => ({ width: image.getBoundingClientRect().width, fit: getComputedStyle(image).objectFit }));
-  if (desktopHero.width < 219 || desktopHero.width > 241 || desktopHero.fit !== "contain") failures.push(`/: contained desktop Hero photo is ${Math.round(desktopHero.width)}px with object-fit ${desktopHero.fit}`);
-  await heroPage.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
-  const mobileHeroWidth = await heroPage.$eval(".hero-media", (image) => image.getBoundingClientRect().width);
-  if (mobileHeroWidth < 95 || mobileHeroWidth > 121) failures.push(`/: mobile Hero photo is ${Math.round(mobileHeroWidth)}px, expected 96–120px`);
-  const postTitles = await heroPage.$$eval(".curated-note h3", (titles) => titles.map((title) => title.textContent.trim()));
-  if (postTitles.length !== 3 || postTitles.some((title) => !title)) failures.push(`/: homepage does not expose all three verified public posts`);
-  if (await heroPage.$(".article-preview-list, .article-byline")) failures.push("/: withdrawn generated writing remains visible");
-  await heroPage.close();
+  const workRepoPage = await openPage("/work/", { width: 390, height: 844, deviceScaleFactor: 1 });
+  const repoRows = await workRepoPage.evaluate(() => ({ previews: document.querySelectorAll(".repo-preview").length, glyphs: document.querySelectorAll(".repo-glyph").length, rows: document.querySelectorAll(".repo-list > *").length }));
+  if (repoRows.previews !== 0 || repoRows.glyphs === 0) failures.push(`/work/: repository rows should show a glyph icon and no preview image (previews=${repoRows.previews}, glyphs=${repoRows.glyphs})`);
+  await workRepoPage.close();
 
-  const zhArticlePage = await openPage("/zh/");
-  const zhSocialLabels = await zhArticlePage.$$eval(".hero-social-link", (links) => links.map((link) => link.textContent.trim()));
-  if (zhSocialLabels.join("|") !== "LinkedIn|GitHub|電子郵件|Threads") failures.push(`/zh/: Hero social links are not localized: ${zhSocialLabels.join("|")}`);
-  const zhPreviewPaths = await zhArticlePage.$$eval(".repo-preview img", (images) => images.map((image) => new URL(image.src).pathname));
-  const expectedPreviewPaths = expectedPreviews.map(([, repo]) => repo.previewUrl);
-  if (zhPreviewPaths.join("|") !== expectedPreviewPaths.join("|")) failures.push(`/zh/: GitHub social previews drifted from the English home page: ${zhPreviewPaths.join("|")}`);
-  const zhPostTitles = await zhArticlePage.$$eval(".curated-note h3", (titles) => titles.map((title) => title.textContent.trim()));
-  if (zhPostTitles.length !== 3 || zhPostTitles.some((title) => !title)) failures.push(`/zh/: homepage does not expose all three localized public posts`);
-  await zhArticlePage.close();
+  for (const route of ["/", "/zh/"]) {
+    const page = await openPage(route, { width: 1440, height: 1000, deviceScaleFactor: 1 });
+    const expectedSocialHrefs = ["https://github.com/WenyuChiou", "https://www.linkedin.com/in/wenyu-chiou", "https://scholar.google.com/citations?user=vSQ3zT4AAAAJ&hl=en", "mailto:wec324@lehigh.edu", "#cv"];
+    const socialLinks = await page.$$eval(".hero .links .ib", (links) => links.map((link) => ({ href: link.getAttribute("href"), name: link.textContent.trim(), title: link.title, width: link.getBoundingClientRect().width, height: link.getBoundingClientRect().height })));
+    if (socialLinks.length !== 5 || socialLinks.some((link, index) => link.href !== expectedSocialHrefs[index] || !link.name || !link.title || link.width < 44 || link.height < 44)) failures.push(`${route}: Hero social links are incomplete, misordered, unlabeled, or undersized: ${JSON.stringify(socialLinks)}`);
+    const removed = await page.evaluate(() => [".hero-media", ".hero-social-link", ".flagship", ".repo-preview", ".curated-note", "[data-provenance-island]", ".theme-button", ".menu-button", ".work-dropdown", ".navigator-launch", ".article-preview-list", ".article-byline"].filter((selector) => document.querySelector(selector)));
+    if (removed.length) failures.push(`${route}: retired homepage elements are still present: ${removed.join(", ")}`);
+    await page.close();
+  }
 
   const publicationCopyPage = await openPage("/publications/");
   const publicationCopy = await publicationCopyPage.$eval("main", (main) => main.textContent);
@@ -605,7 +631,6 @@ try {
   for (const prefix of ["", "/zh"]) {
     await auditCaseControl(`${prefix}/work/human-grounded-llm-evaluation/`, ".segmented-control button:nth-child(3)", ".pathway-diagram.lens-renters", ".artifact-result");
     await auditCaseControl(`${prefix}/work/floodabm/`, ".segmented-control button:nth-child(2)", ".feedback-timeline.is-renter", ".artifact-result");
-    await auditCaseControl(`${prefix}/work/wagf/`, ".segmented-control button:nth-child(2)", ".governance-trace.is-repaired", ".trace-result");
   }
 
   const reducedMotionPage = await browser.newPage();
@@ -654,13 +679,10 @@ try {
     const response = await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: "load" });
     const staticState = await page.evaluate(() => { const floatingNavigator = document.querySelector(".portfolio-navigator"); const fitExplorer = document.querySelector("[data-recruiter-fit-explorer]"); const fitForm = fitExplorer?.querySelector("[data-fit-form]"); const fitNoScript = fitExplorer?.querySelector(".fit-noscript"); return { h1: document.querySelector("h1")?.textContent?.trim(), stages: document.querySelectorAll(".stage").length, provenanceStages: document.querySelectorAll(".pw-stages>li").length, visibleProvenance: [...document.querySelectorAll(".pw-static-flow section:first-of-type li>p")].filter((item) => getComputedStyle(item).display !== "none").length, artifacts: document.querySelectorAll(".interactive-artifact").length, links: document.querySelectorAll("a[href]").length, recruiterSections: document.querySelectorAll(".hire-page .section").length, fitExplorerVisible: fitExplorer ? getComputedStyle(fitExplorer).display !== "none" : false, fitFormVisible: fitForm ? getComputedStyle(fitForm).display !== "none" : false, fitNoScriptVisible: fitNoScript ? getComputedStyle(fitNoScript).display !== "none" : false, explicitDisclosureAria: document.querySelectorAll("details > summary[aria-expanded]").length, navigatorVisible: floatingNavigator ? getComputedStyle(floatingNavigator).display !== "none" : false }; });
     const pageType = SEO.routes[route].page;
-    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || staticState.navigatorVisible || (pageType === "home" && (staticState.provenanceStages !== 5 || staticState.visibleProvenance !== 5)) || (pageType.startsWith("case:") && staticState.artifacts !== 1) || (pageType === "hire" && (staticState.recruiterSections !== 5 || !staticState.fitExplorerVisible || staticState.fitFormVisible || !staticState.fitNoScriptVisible))) failures.push(`${route}: no-JavaScript fallback incomplete`);
-    await page.click(".work-dropdown > summary");
-    if (!(await page.$eval(".work-dropdown", (details) => details.open))) failures.push(`${route}: no-JavaScript Work disclosure did not open natively`);
-    if (pageType === "home") {
-      await page.click(".flagship-record:nth-child(2) .flagship-entry > summary");
-      const openProjects = await page.$$eval(".flagship-entry", (entries) => entries.filter((entry) => entry.open).length);
-      if (openProjects !== 1) failures.push(`${route}: no-JavaScript Selected Work disclosures did not remain mutually exclusive`);
+    if (!response || response.status() !== 200 || !staticState.h1 || staticState.links < 5 || staticState.explicitDisclosureAria !== 0 || staticState.navigatorVisible || (pageType.startsWith("case:") && staticState.artifacts !== 1) || (pageType === "hire" && (staticState.recruiterSections !== 5 || !staticState.fitExplorerVisible || staticState.fitFormVisible || !staticState.fitNoScriptVisible))) failures.push(`${route}: no-JavaScript fallback incomplete`);
+    if (pageType !== "home") {
+      await page.click(".work-dropdown > summary");
+      if (!(await page.$eval(".work-dropdown", (details) => details.open))) failures.push(`${route}: no-JavaScript Work disclosure did not open natively`);
     }
     await page.close();
   }

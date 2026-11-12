@@ -8,7 +8,7 @@ import { DEPLOYMENT_CONFIG } from '../deployment-config.mjs';
 import { fileURLToPath } from 'node:url';
 
 test('preview exposes only rendered routes and public assets', () => {
-  for (const value of ['index.html', 'zh/index.html', 'work/wagf/index.html', 'zh/work/floodabm/index.html', 'assets/app.bundle.js', 'data/github.json', 'features/editorial/interactions.css', 'features/editorial/timeline.js']) assert.equal(isPublicPath(value), true);
+  for (const value of ['index.html', 'zh/index.html', 'work/human-grounded-llm-evaluation/index.html', 'zh/work/floodabm/index.html', 'assets/app.bundle.js', 'data/github.json', 'features/editorial/interactions.css', 'features/editorial/timeline.js']) assert.equal(isPublicPath(value), true);
   for (const value of ['.env', '.git/config', 'worker/src/index.js', 'navigator.js', 'scripts/preview.mjs', 'assets/../.env', 'assets/.env', 'assets/secret\\file.js']) assert.equal(isPublicPath(value), false);
 });
 
