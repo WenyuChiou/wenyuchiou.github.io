@@ -165,11 +165,11 @@ export const SEO = {
 };
 
 export const LEGACY_REDIRECTS = {
-  "/articles/": "/#public-updates",
+  "/articles/": "/work/",
   "/articles/evaluating-llm-agents-against-measured-human-behavior/": "/work/human-grounded-llm-evaluation/",
   "/articles/why-governed-agents-need-validators-before-state-changes/": "/research/#observatory-stage-governance-repair",
   "/articles/from-individual-decisions-to-system-consequences/": "/work/floodabm/",
-  "/zh/articles/": "/zh/#public-updates",
+  "/zh/articles/": "/zh/work/",
   "/zh/articles/evaluating-llm-agents-against-measured-human-behavior/": "/zh/work/human-grounded-llm-evaluation/",
   "/zh/articles/why-governed-agents-need-validators-before-state-changes/": "/zh/research/#observatory-stage-governance-repair",
   "/zh/articles/from-individual-decisions-to-system-consequences/": "/zh/work/floodabm/",

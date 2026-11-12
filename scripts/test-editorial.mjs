@@ -4,6 +4,8 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { CONTENT, PAGE_DEFINITIONS } from '../content.js';
 import { NAVIGATOR_INDEX } from '../navigator-data.js';
 import { LEGACY_REDIRECTS } from '../seo.js';
+import { GUIDE_EVIDENCE } from '../guide-evidence.js';
+import { FEATURE_CONTENT } from '../feature-content.js';
 import { createRequire } from 'node:module';
 
 const { starTone, irisTone, ratio } = createRequire(import.meta.url)('../home/tiles.cjs');
@@ -124,4 +126,44 @@ test('the WAGF page is taken down: no route, no sitemap entry, its old address a
   };
   walk('.');
   assert.deepEqual(offenders, []);
+});
+
+test('every internal link that names a section lands on a page and an anchor that exist', () => {
+  const pageFile = path => (path === '/' ? 'index.html' : `${path.slice(1)}${path.endsWith('/') ? '' : '/'}index.html`);
+  const cache = new Map();
+  const idsOf = file => {
+    if (!cache.has(file)) cache.set(file, new Set([...readFileSync(file, 'utf8').matchAll(/\sid="([^"]+)"/g)].map(match => match[1])));
+    return cache.get(file);
+  };
+  const missing = [];
+  const check = (href, from, origin = '/') => {
+    const [path, hash] = href.split('#');
+    if (/^(https?:|mailto:)/.test(path) || (hash && hash.startsWith('trace='))) return;
+    const file = pageFile(path || origin);
+    let ids;
+    try { ids = idsOf(file); } catch { missing.push(`${from}: ${href} has no page ${file}`); return; }
+    if (hash && !ids.has(hash)) missing.push(`${from}: ${href} has no id "${hash}" in ${file}`);
+  };
+  const zh = href => (href.startsWith('/zh/') ? href : href === '/' ? '/zh/' : `/zh${href}`);
+  const internal = [
+    ...NAVIGATOR_INDEX.records.map(record => [record.href, `navigator record ${record.id}`]),
+    ...GUIDE_EVIDENCE.map(record => [record.href, `guide evidence ${record.id}`]),
+    ...Object.entries(FEATURE_CONTENT.en.provenance.lenses).map(([id, lens]) => [lens.caseHref, `workbench lens ${id}`]),
+  ].filter(([href]) => href.startsWith('/'));
+  assert.ok(internal.length >= 10, 'the data sources must still expose their internal links');
+  for (const [href, from] of internal) { check(href, from); check(zh(href), `${from} (zh)`); }
+  for (const [from, to] of Object.entries(LEGACY_REDIRECTS)) check(to, `redirect ${from}`);
+  const walk = dir => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (['node_modules', '.git', '.ai', 'worker', 'docs', 'outputs'].includes(entry.name)) continue;
+      const full = dir === '.' ? entry.name : `${dir}/${entry.name}`;
+      if (entry.isDirectory()) walk(full);
+      else if (entry.name === 'index.html') {
+        const origin = `/${full.slice(0, -'index.html'.length)}`;
+        for (const match of readFileSync(full, 'utf8').matchAll(/href="([^"]*#[^"]+)"/g)) check(match[1], `built page ${full}`, origin);
+      }
+    }
+  };
+  walk('.');
+  assert.deepEqual(missing, []);
 });

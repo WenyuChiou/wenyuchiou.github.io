@@ -70,7 +70,7 @@ export const NAVIGATOR_INDEX = {
     {
       id: "expertise",
       fit: FIT_EVIDENCE.expertise,
-      href: "/#selected-work",
+      href: "/work/#selected-work",
       title: { en: "Core expertise", "zh-TW": "核心專長" },
       summary: {
         en: "Human-grounded LLM evaluation, governed agents, behavioral simulation, and reproducible research systems.",
@@ -160,16 +160,16 @@ export const NAVIGATOR_INDEX = {
     {
       id: "public-updates",
       fit: FIT_EVIDENCE["public-updates"],
-      href: "/#public-updates",
+      href: "https://www.linkedin.com/in/wenyu-chiou",
       title: { en: "Public LinkedIn posts", "zh-TW": "公開 LinkedIn 貼文" },
-      summary: { en: "Selected posts I shared about model behavior, agentic AI, and research tools, with original LinkedIn sources.", "zh-TW": "我分享的模型行為、Agentic AI 與研究工具貼文，附 LinkedIn 原文來源。" },
+      summary: { en: "Posts I share on LinkedIn about model behavior, agentic AI, and research tools. Opens my LinkedIn profile.", "zh-TW": "我在 LinkedIn 分享的模型行為、Agentic AI 與研究工具貼文；連結會開啟我的 LinkedIn 個人頁。" },
       semantic: "Wenyu's public LinkedIn posts and discussions about model behavior evaluation, agentic AI, and research tools. Commentary, not a published methods article.",
       keywords: { en: ["LinkedIn", "posts", "public updates", "research tools"], "zh-TW": ["LinkedIn", "貼文", "公開近況", "研究工具"] },
     },
     {
       id: "open-source",
       fit: FIT_EVIDENCE["open-source"],
-      href: "/#open-source",
+      href: "/work/#open-source",
       title: { en: "Open-source systems", "zh-TW": "開源研究系統" },
       summary: {
         en: "Research operations, multi-agent collaboration, and cross-platform delegation repositories.",
