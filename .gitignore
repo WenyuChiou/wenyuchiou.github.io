@@ -8,27 +8,25 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+/worker/.wrangler/
 dist
 dist-ssr
 .env.local
 .env
 *.local
 
+# Browser-audit screenshots are test artifacts, not website data.
+/outputs/research-illustration/*.png
+/outputs/browser-audit/pause-failure/*.png
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
+.ai/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-
-# Python (added: .venv was accidentally tracked, polluting GitHub language detection)
-.venv/
-venv/
-__pycache__/
-*.pyc
-*.pyo
-.pytest_cache/

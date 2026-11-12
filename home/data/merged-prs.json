@@ -1,0 +1,260 @@
+{
+ "asOf": "2026-11-11",
+ "source": "GitHub search: is:pr is:merged author:WenyuChiou, repositories owned by other people, public only",
+ "stars": {
+  "BuilderIO/agent-native": 7680,
+  "langchain-ai/openwiki": 17900,
+  "morluto/rea": 452912,
+  "Nanako0129/coralline": 554,
+  "NVIDIA/skills": 3940,
+  "punkpeye/awesome-mcp-servers": 97623,
+  "ZhuLinsen/daily_stock_analysis": 70341
+ },
+ "items": [
+  {
+   "repo": "BuilderIO/agent-native",
+   "num": 1332,
+   "title": "docs: fix broken cd path in DEVELOPMENT.md quickstart",
+   "merged": "2026-06-20T14:02:11Z",
+   "url": "https://github.com/BuilderIO/agent-native/pull/1332"
+  },
+  {
+   "repo": "BuilderIO/agent-native",
+   "num": 1333,
+   "title": "docs: fix broken references in desktop-app, videos, and core docs",
+   "merged": "2026-06-20T14:03:17Z",
+   "url": "https://github.com/BuilderIO/agent-native/pull/1333"
+  },
+  {
+   "repo": "BuilderIO/agent-native",
+   "num": 1334,
+   "title": "docs(remotion skill): trim SKILL.md index to the rule files that exist",
+   "merged": "2026-06-20T14:04:10Z",
+   "url": "https://github.com/BuilderIO/agent-native/pull/1334"
+  },
+  {
+   "repo": "BuilderIO/agent-native",
+   "num": 1362,
+   "title": "fix(cli): route AGENT_ENGINE=codex-cli to the Codex CLI runner instead of crashing",
+   "merged": "2026-06-22T14:43:44Z",
+   "url": "https://github.com/BuilderIO/agent-native/pull/1362"
+  },
+  {
+   "repo": "langchain-ai/openwiki",
+   "num": 365,
+   "title": "fix: record interrupted runs so the update no-op check retries them",
+   "merged": "2026-07-24T06:54:19Z",
+   "url": "https://github.com/langchain-ai/openwiki/pull/365"
+  },
+  {
+   "repo": "langchain-ai/openwiki",
+   "num": 367,
+   "title": "fix: restrict ~/.openwiki ACLs on Windows where chmod is a no-op",
+   "merged": "2026-07-20T01:05:46Z",
+   "url": "https://github.com/langchain-ai/openwiki/pull/367"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7023,
+   "title": "fix(lldb): retain completed trace facts through cleanup failures",
+   "merged": "2026-10-24T17:16:27Z",
+   "url": "https://github.com/morluto/rea/pull/7023"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7028,
+   "title": "fix(evidence): link composed workflows to consumed observations",
+   "merged": "2026-10-24T18:11:32Z",
+   "url": "https://github.com/morluto/rea/pull/7028"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7031,
+   "title": "fix(electron): retain scoped IPC registration provenance",
+   "merged": "2026-10-24T19:57:02Z",
+   "url": "https://github.com/morluto/rea/pull/7031"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7037,
+   "title": "fix(snapshot): decline ambiguous exact evidence replay",
+   "merged": "2026-10-24T22:35:28Z",
+   "url": "https://github.com/morluto/rea/pull/7037"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7039,
+   "title": "fix(analysis-view): preserve current observation paths in summaries",
+   "merged": "2026-10-24T22:35:12Z",
+   "url": "https://github.com/morluto/rea/pull/7039"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7053,
+   "title": "fix(javascript): invalidate Electron reads after direct eval",
+   "merged": "2026-10-25T03:29:46Z",
+   "url": "https://github.com/morluto/rea/pull/7053"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7076,
+   "title": "fix(artifacts): preserve integrity contradictions for one-sided members",
+   "merged": "2026-10-25T05:47:42Z",
+   "url": "https://github.com/morluto/rea/pull/7076"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7087,
+   "title": "fix(javascript): ignore async exec stdio options",
+   "merged": "2026-10-26T15:16:29Z",
+   "url": "https://github.com/morluto/rea/pull/7087"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7183,
+   "title": "fix(setup): preserve Linux Hopper HTTP failure status",
+   "merged": "2026-10-26T12:45:07Z",
+   "url": "https://github.com/morluto/rea/pull/7183"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7495,
+   "title": "fix(evidence): Reject non-file destinations before overwrite advice",
+   "merged": "2026-10-27T19:41:27Z",
+   "url": "https://github.com/morluto/rea/pull/7495"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7667,
+   "title": "fix(reference): Exclude Git pointer files from source identities",
+   "merged": "2026-11-03T06:49:28Z",
+   "url": "https://github.com/morluto/rea/pull/7667"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7673,
+   "title": "fix(environment): disclose truncated comparison differences",
+   "merged": "2026-11-03T06:48:55Z",
+   "url": "https://github.com/morluto/rea/pull/7673"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7722,
+   "title": "fix(adb): align CLI selector schemas with canonical inputs",
+   "merged": "2026-10-28T23:44:43Z",
+   "url": "https://github.com/morluto/rea/pull/7722"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7967,
+   "title": "fix(javascript): reuse shared AST child traversal",
+   "merged": "2026-11-04T11:36:01Z",
+   "url": "https://github.com/morluto/rea/pull/7967"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7977,
+   "title": "test(native): bind lipo refusal fixture to a real source",
+   "merged": "2026-11-04T11:39:00Z",
+   "url": "https://github.com/morluto/rea/pull/7977"
+  },
+  {
+   "repo": "morluto/rea",
+   "num": 7978,
+   "title": "fix(cli): preserve Markdown validation error cells",
+   "merged": "2026-11-04T11:54:30Z",
+   "url": "https://github.com/morluto/rea/pull/7978"
+  },
+  {
+   "repo": "Nanako0129/coralline",
+   "num": 10,
+   "title": "Fix auto-layout over-wrapping: measure display columns, not bytes",
+   "merged": "2026-06-17T03:05:46Z",
+   "url": "https://github.com/Nanako0129/coralline/pull/10"
+  },
+  {
+   "repo": "NVIDIA/skills",
+   "num": 76,
+   "title": "docs: Fix Skill Catalog link in contributing guide",
+   "merged": "2026-07-15T14:11:59Z",
+   "url": "https://github.com/NVIDIA/skills/pull/76"
+  },
+  {
+   "repo": "punkpeye/awesome-mcp-servers",
+   "num": 6921,
+   "title": "Add WenyuChiou/research-hub to Research category",
+   "merged": "2026-06-06T22:39:34Z",
+   "url": "https://github.com/punkpeye/awesome-mcp-servers/pull/6921"
+  },
+  {
+   "repo": "ZhuLinsen/daily_stock_analysis",
+   "num": 1773,
+   "title": "feat(market): Taiwan (台股) suffix-only market detection + routing (Refs #1772)",
+   "merged": "2026-06-25T14:55:08Z",
+   "url": "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1773"
+  },
+  {
+   "repo": "ZhuLinsen/daily_stock_analysis",
+   "num": 1801,
+   "title": "feat(market): accept tw on decision-signal / portfolio / intelligence service + API enums",
+   "merged": "2026-06-26T13:21:38Z",
+   "url": "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1801"
+  },
+  {
+   "repo": "ZhuLinsen/daily_stock_analysis",
+   "num": 1829,
+   "title": "feat(market): tw institutional-flows (三大法人) data-layer fetcher",
+   "merged": "2026-06-28T10:49:09Z",
+   "url": "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1829"
+  },
+  {
+   "repo": "ZhuLinsen/daily_stock_analysis",
+   "num": 1841,
+   "title": "perf(market): coalesce concurrent tw-institutional fetches (cache-stampede guard)",
+   "merged": "2026-06-30T11:01:38Z",
+   "url": "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1841"
+  },
+  {
+   "repo": "ZhuLinsen/daily_stock_analysis",
+   "num": 1855,
+   "title": "test(tw): live-network drift smoke + network-marked tests for 三大法人 fetcher",
+   "merged": "2026-06-30T11:05:26Z",
+   "url": "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1855"
+  },
+  {
+   "repo": "ZhuLinsen/daily_stock_analysis",
+   "num": 1863,
+   "title": "feat(market): surface tw 三大法人 in the tw report institution block (Refs #1777)",
+   "merged": "2026-06-30T14:31:56Z",
+   "url": "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1863"
+  },
+  {
+   "repo": "ZhuLinsen/daily_stock_analysis",
+   "num": 1864,
+   "title": "perf(market): harden tw institutional fetcher — circuit breaker + TPEx date guard (Refs #1777)",
+   "merged": "2026-07-01T11:10:45Z",
+   "url": "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1864"
+  },
+  {
+   "repo": "ZhuLinsen/daily_stock_analysis",
+   "num": 1866,
+   "title": "feat(market): v2.1 — surface tw 三大法人 in report + LLM prompt, fix TWD currency (Refs #1777)",
+   "merged": "2026-07-01T11:11:27Z",
+   "url": "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1866"
+  },
+  {
+   "repo": "ZhuLinsen/daily_stock_analysis",
+   "num": 1867,
+   "title": "fix(data): parse yfinance dividends from the single-column DataFrame (1.2.x) — TTM was silently wrong",
+   "merged": "2026-07-02T10:52:08Z",
+   "url": "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1867"
+  },
+  {
+   "repo": "ZhuLinsen/daily_stock_analysis",
+   "num": 1869,
+   "title": "fix(market-phase): detect the tw closing auction (13:25-13:30)",
+   "merged": "2026-07-01T11:11:55Z",
+   "url": "https://github.com/ZhuLinsen/daily_stock_analysis/pull/1869"
+  }
+ ]
+}

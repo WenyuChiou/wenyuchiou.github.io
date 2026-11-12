@@ -1,0 +1,9 @@
+{
+  "name": "portfolio-transformers-runtime-build",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@huggingface/transformers": "4.2.0"
+  }
+}

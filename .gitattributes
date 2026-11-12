@@ -1,0 +1,2 @@
+assets/vendor/*.mjs text eol=lf
+assets/vendor/onnxruntime/*.mjs text eol=lf

@@ -1,0 +1,36 @@
+<!doctype html>
+<!-- template.html is the source for all generated route documents. -->
+<html lang="{{LANG}}" data-lang="{{DATA_LANG}}" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="{{CSP}}">
+  <meta name="theme-color" content="#081316">
+  <meta name="portfolio-ai-endpoint" content="{{AI_ENDPOINT}}">
+  <meta name="turnstile-site-key" content="{{TURNSTILE_SITE_KEY}}">
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{DESCRIPTION}}">
+  <link rel="canonical" href="{{CANONICAL}}">
+  <link rel="alternate" hreflang="en" href="{{HREFLANG_EN}}">
+  <link rel="alternate" hreflang="zh-Hant-TW" href="{{HREFLANG_ZH}}">
+  <link rel="alternate" hreflang="x-default" href="{{HREFLANG_DEFAULT}}">
+  <meta property="og:type" content="{{OG_TYPE}}">
+  <meta property="og:locale" content="{{OG_LOCALE}}">
+  <meta property="og:title" content="{{TITLE}}">
+  <meta property="og:description" content="{{DESCRIPTION}}">
+  <meta property="og:url" content="{{CANONICAL}}">
+  <meta property="og:image" content="{{OG_IMAGE}}">
+  <meta property="og:image:alt" content="{{OG_IMAGE_ALT}}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{TITLE}}">
+  <meta name="twitter:description" content="{{DESCRIPTION}}">
+  <meta name="twitter:image" content="{{OG_IMAGE}}">
+{{HEAD_EXTRA}}
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+{{STYLES}}
+  <script>{{APP_LOADER_SCRIPT}}</script>
+</head>
+<body>
+  <div id="root" data-page="{{PAGE}}" data-locale="{{LOCALE}}" data-base-path="{{BASE_PATH}}">{{APP_HTML}}</div>
+</body>
+</html>

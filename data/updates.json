@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-10-13",
+  "items": [
+    {
+      "type": { "en": "LinkedIn", "zh-TW": "LinkedIn" },
+      "title": { "en": "Beyond predicting a choice: is the decision process coherent?", "zh-TW": "不只預測選擇：決策過程是否合理？" },
+      "summary": { "en": "My perspective on testing the factors behind a simulated preference, rather than treating a higher predicted probability as sufficient evidence of human-like behavior.", "zh-TW": "分享我對行為模擬的看法：應檢驗偏好背後的決策因素，而不是僅憑較高的預測機率，就認定模型的行為像真人。" },
+      "url": "https://www.linkedin.com/feed/update/urn:li:activity:7498152461145399296/"
+    },
+    {
+      "type": { "en": "LinkedIn", "zh-TW": "LinkedIn" },
+      "title": { "en": "Building a learning path through agentic AI", "zh-TW": "為代理式 AI 建立清楚的學習路線" },
+      "summary": { "en": "Why I built awesome-agentic-ai-zh: connect scattered resources into a trilingual path through LLM foundations, tools, memory, evaluation, and multi-agent systems.", "zh-TW": "說明我為何建立 awesome-agentic-ai-zh：將零散資源串成三語學習路線，涵蓋 LLM 基礎、工具、記憶、評估與多代理系統。" },
+      "url": "https://www.linkedin.com/feed/update/urn:li:activity:7496271834011734016/"
+    },
+    {
+      "type": { "en": "LinkedIn", "zh-TW": "LinkedIn" },
+      "title": { "en": "Connecting research tools with Model Context Protocol", "zh-TW": "以模型上下文協議串接科研工具" },
+      "summary": { "en": "A public account of my research-tool setup: connecting AI coding environments, literature retrieval, project files, and manuscript preparation through MCP.", "zh-TW": "記錄我的科研工具配置：透過 MCP 串接 AI 程式開發環境、文獻檢索、專案檔案與論文撰寫流程。" },
+      "url": "https://www.linkedin.com/posts/wenyu-chiou_aiide-agenticai-modelcontextprotocol-share-7408822751135842304-7qLB/"
+    },
+    {
+      "type": { "en": "Journal Article", "zh-TW": "期刊論文" },
+      "title": { "en": "Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions", "zh-TW": "Leveraging Large Language Models for Agent-Based Simulation of Human–Water System Interactions" },
+      "summary": { "en": "Published in Water Resources Research, volume 62, issue 6.", "zh-TW": "刊登於 Water Resources Research，第 62 卷第 6 期。" },
+      "url": "https://doi.org/10.1029/2025WR042111"
+    },
+    {
+      "type": { "en": "Presentation", "zh-TW": "會議發表" },
+      "title": { "en": "What Makes AI Believable?", "zh-TW": "What Makes AI Believable?" },
+      "summary": { "en": "ISDSA 2026 presentation comparing AI and human responses in mental-health risk assessment.", "zh-TW": "ISDSA 2026 會議發表，比較 AI 與人類在心理健康風險評估中的回應。" },
+      "url": "https://www.mgt.ntnu.edu.tw/%E9%82%B1%E7%9A%93%E6%94%BF"
+    }
+  ]
+}

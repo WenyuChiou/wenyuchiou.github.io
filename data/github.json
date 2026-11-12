@@ -1,0 +1,46 @@
+{
+  "checkedAt": "2026-11-12T15:16:25.203Z",
+  "owner": "WenyuChiou",
+  "repositories": {
+    "awesome-agentic-ai-zh": {
+      "stars": 8747,
+      "forks": 1084,
+      "url": "https://github.com/WenyuChiou/awesome-agentic-ai-zh"
+    },
+    "ai-research-skills": {
+      "stars": 651,
+      "forks": 45,
+      "url": "https://github.com/WenyuChiou/ai-research-skills"
+    },
+    "academic-writing-skills": {
+      "stars": 422,
+      "forks": 23,
+      "url": "https://github.com/WenyuChiou/academic-writing-skills"
+    },
+    "zotero-skills": {
+      "stars": 78,
+      "forks": 7,
+      "url": "https://github.com/WenyuChiou/zotero-skills"
+    },
+    "research-hub": {
+      "stars": 67,
+      "forks": 15,
+      "url": "https://github.com/WenyuChiou/research-hub"
+    },
+    "codex-delegate": {
+      "stars": 62,
+      "forks": 6,
+      "url": "https://github.com/WenyuChiou/codex-delegate"
+    },
+    "agent-board": {
+      "stars": 58,
+      "forks": 7,
+      "url": "https://github.com/WenyuChiou/agent-board"
+    },
+    "agent-collab-skills": {
+      "stars": 34,
+      "forks": 7,
+      "url": "https://github.com/WenyuChiou/agent-collab-skills"
+    }
+  }
+}

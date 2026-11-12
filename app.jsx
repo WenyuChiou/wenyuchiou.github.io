@@ -1,1247 +1,525 @@
-// Wenyu Chiou — personal site (v2 editorial)
-const { useState, useEffect, useRef } = React;
-const T = (val, lang) => (typeof val === "string" ? val : val?.[lang] ?? "");
+import React, { useEffect, useRef, useState } from "react";
+import { Timeline } from "./features/editorial/Timeline.jsx";
+import { GUIDE_INTENTS } from "./portfolio-guide-data.js";
+import {
+  AlertTriangle,
+  ArrowDown,
+  ArrowRight,
+  ArrowUpRight,
+  BookOpenText,
+  Check,
+  Compass,
+  ChevronDown,
+  ChevronRight,
+  Download,
+  Droplets,
+  FileText,
+  GitCompareArrows,
+  Github,
+  House,
+  GraduationCap,
+  Linkedin,
+  Mail,
+  Menu,
+  RotateCcw,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  Waves,
+  X,
+} from "lucide-react";
+import { CONTENT, counterpartPath, localizedPath } from "./content.js";
+import githubData from "./data/github.json";
+import { FIT_ROLE_PRESETS } from "./fit-data.js";
+import { ProvenanceIsland } from "./features/provenance/island.jsx";
 
-// Mode-specific CV downloads: ACADEMIC and INDUSTRY versions
-const CV_FILES = {
-  academic: "assets/Wenyu_Chiou_CV_Academic.pdf",
-  industry: "assets/Wenyu_Chiou_CV_Industry.pdf",
+const isExternal = (href) => /^(https?:)?\/\//.test(href);
+const lp = (href, locale) => (href.startsWith("/assets/") ? href : href.startsWith("/") ? localizedPath(href, locale) : href);
+const CASE_ROLE_LABELS = {
+  en: { evaluation: "Evaluation", governance: "Governance", simulation: "Simulation" },
+  "zh-TW": { evaluation: "評估", governance: "治理", simulation: "模擬" },
+};
+const ROLE_ICONS = { respondent: Users, household: House, llm: GitCompareArrows, research: BookOpenText };
+const CASE_ROLES = {
+  "human-grounded-llm-evaluation": { role: "evaluation", Icon: GitCompareArrows },
+  floodabm: { role: "simulation", Icon: Waves },
 };
 
-// Reveal-on-scroll. Content is NEVER allowed to depend on JS to be visible:
-// the effect re-runs whenever `deps` change (e.g. mode/lang swap remounts
-// sections) and a scroll listener re-sweeps so fast scrolling can't outrun
-// the reveal. prefers-reduced-motion → reveal everything immediately.
-function useScrollReveal(deps = []) {
-  useEffect(() => {
-    const reveal = (el) => {
-      el.classList.add("in");
-      el.getAnimations().forEach(a => a.finish());
-    };
-    const all = () => document.querySelectorAll(".reveal:not(.in), .reveal-stagger:not(.in)");
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      all().forEach(reveal);
-      return;
-    }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); } });
-    }, { threshold: 0.05, rootMargin: "0px 0px -10% 0px" });
-    const sweep = () => {
-      all().forEach(el => {
-        const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight * 0.95 && r.bottom > 0) reveal(el);
-        else io.observe(el);
-      });
-    };
-    requestAnimationFrame(sweep);
-    const timers = [250, 800, 1500].map(ms => setTimeout(sweep, ms));
-    // Fail-safe: re-sweep on scroll so a fast flick never leaves a section blank.
-    let raf = 0;
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; sweep(); }); };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      io.disconnect();
-      timers.forEach(clearTimeout);
-      window.removeEventListener("scroll", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, deps);
-}
-
-function useActiveSection(ids) {
-  const [active, setActive] = useState(ids[0]);
-  useEffect(() => {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
-    }, { rootMargin: "-40% 0px -55% 0px" });
-    ids.forEach(id => { const el = document.getElementById(id); if (el) io.observe(el); });
-    return () => io.disconnect();
-  }, [ids.join(",")]);
-  return active;
-}
-
-function nowMs() { return new Date().getTime(); }
-
-// Map a GitHub repo URL -> "owner/repo" slug's repo name (or null).
-function repoFromHref(href) {
-  const m = (href || "").match(/github\.com\/[^/]+\/([^/?#]+)/);
-  return m ? m[1].replace(/\/$/, "") : null;
-}
-
-// Live GitHub star/fork counts, cached in localStorage for 6h. Returns a map
-// { repoName: {stars, forks} } or null (loading / error -> consumers fall back
-// to the hardcoded counts in content.js). Never blocks render.
-function useGitHubStars(user = "WenyuChiou") {
-  const [data, setData] = useState(() => {
-    try {
-      const c = JSON.parse(localStorage.getItem("wy-gh-stars") || "null");
-      if (c && c.data && nowMs() - c.ts < 6 * 3600 * 1000) return c.data;
-    } catch (e) {}
-    return null;
-  });
-  useEffect(() => {
-    try {
-      const c = JSON.parse(localStorage.getItem("wy-gh-stars") || "null");
-      if (c && c.data && nowMs() - c.ts < 6 * 3600 * 1000) return; // fresh cache
-    } catch (e) {}
-    let alive = true;
-    fetch(`https://api.github.com/users/${user}/repos?per_page=100&sort=pushed`)
-      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then(repos => {
-        if (!alive || !Array.isArray(repos)) return;
-        const map = {};
-        repos.forEach(r => { map[r.name] = { stars: r.stargazers_count, forks: r.forks_count }; });
-        setData(map);
-        try { localStorage.setItem("wy-gh-stars", JSON.stringify({ ts: nowMs(), data: map })); } catch (e) {}
-      })
-      .catch(() => {}); // keep fallback
-    return () => { alive = false; };
-  }, [user]);
-  return data;
-}
-
-// Counts up 0 -> end when scrolled into view; respects reduced motion; restarts
-// when `end` changes (e.g. the live GitHub value resolves after first paint).
-function CountUp({ end, format }) {
-  const [val, setVal] = useState(end);
-  const ref = useRef(null);
-  const seen = useRef(false);
-  const fmt = format || ((n) => String(n));
-  useEffect(() => {
-    const target = Number(end) || 0;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setVal(target); return; }
-    const run = () => {
-      const dur = 900, t0 = performance.now();
-      const tick = (t) => {
-        const p = Math.min(1, (t - t0) / dur);
-        const eased = 1 - Math.pow(1 - p, 3);
-        setVal(Math.round(target * eased));
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    };
-    if (seen.current) { run(); return; } // already visible: animate to new target
-    const el = ref.current;
-    if (!el) { setVal(target); return; }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) { seen.current = true; run(); io.disconnect(); } });
-    }, { threshold: 0.1 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [end]);
-  return <span ref={ref}>{fmt(val)}</span>;
-}
-
-// Per-mode section ordering (W3 part 2). Industry leads with shipped work +
-// proof (Projects/Skills first); academic leads with research identity + papers.
-// Numbers in the section heads + nav are derived from position, not hardcoded.
-const SECTION_ORDER = {
-  industry: ["projects", "skills", "research", "pubs", "repos", "about", "contact"],
-  academic: ["about", "research", "pubs", "projects", "skills", "repos", "contact"],
-};
-
-// Single source of truth for section id -> {en,zh} label, shared by the top
-// Nav and the SectionRail so the two can never drift. Reuses window.CONTENT.nav.
-function sectionLabel(id) {
-  const C = window.CONTENT.nav;
-  const map = {
-    about: C.about, research: C.research, projects: C.projects,
-    skills: { en: "Skills", zh: "技能" }, pubs: C.pubs, repos: C.repos, contact: C.contact,
-  };
-  return map[id] || { en: id, zh: id };
-}
-
-function Nav({ lang, setLang, theme, setTheme, active, mode = "industry", setMode, onCmdK }) {
-  const C = window.CONTENT.nav;
-  const [menuOpen, setMenuOpen] = useState(false);
-  useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (e) => { if (e.key === "Escape") setMenuOpen(false); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [menuOpen]);
-  const cvFile = CV_FILES[mode] || CV_FILES.industry;
-  const cvName = (mode === "academic" ? "Wenyu_Chiou_CV_Academic.pdf" : "Wenyu_Chiou_CV_Industry.pdf");
-  const links = (SECTION_ORDER[mode] || SECTION_ORDER.academic)
-    .map((id, i) => [id, sectionLabel(id), String(i + 1).padStart(2, "0")]);
+function SmartLink({ href, locale, children, className, download = false, title, provenanceCase = false }) {
+  const resolved = lp(href, locale);
+  const external = isExternal(resolved);
   return (
-    <nav className="nav">
-      <div className="wrap nav-row">
-        <a href="#top" className="brand">
-          <div className="brand-mark"><span>w</span></div>
-          <div className="brand-name">
-            Wenyu Chiou
-            <span className="zh">{lang === "en" ? "邱文昱" : "Wenyu"}</span>
-          </div>
-        </a>
-        <div className="nav-links">
-          {links.map(([id, label, num]) => (
-            <a key={id} href={`#${id}`} data-num={num} className={active === id ? "active" : ""}>{T(label, lang)}</a>
-          ))}
-        </div>
-        <div className="nav-tools">
-          {setMode && <div className="nav-mode"><ModeSwitch mode={mode} setMode={setMode} lang={lang}/></div>}
-          <button className="nav-cmdk" onClick={onCmdK} title={lang === "en" ? "Quick nav (⌘K)" : "快速導覽 (⌘K)"} aria-label={lang === "en" ? "Open quick navigation" : "開啟快速導覽"}>
-            {window.Icons.search}<span className="nav-cmdk-keys mono">⌘K</span>
-          </button>
-          <a className="nav-cv" href={cvFile} download={cvName} title={T(window.CONTENT.hero.cv, lang)}>{window.Icons.download}<span>CV</span></a>
-          <button className="icon-btn" onClick={() => setLang(lang === "en" ? "zh" : "en")} title="Language" aria-label={lang === "en" ? "切換至中文 · Switch to Chinese" : "Switch to English · 切換至英文"}>
-            <span style={{fontFamily: "var(--serif)", fontStyle: "italic", fontSize: 14}}>{lang === "en" ? "中" : "EN"}</span>
-          </button>
-          <button className="icon-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} title="Theme" aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}>
-            {theme === "dark" ? window.Icons.sun : window.Icons.moon}
-          </button>
-          <button className="icon-btn nav-burger" onClick={() => setMenuOpen(o => !o)} aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen ? "true" : "false"} aria-controls="mobile-nav-menu">
-            {menuOpen ? window.Icons.close : window.Icons.menu}
-          </button>
-        </div>
-      </div>
-      {menuOpen && (
-        <div className="nav-menu" id="mobile-nav-menu">
-          <div className="wrap nav-menu-list">
-            {setMode && <div className="nav-menu-mode"><ModeSwitch mode={mode} setMode={setMode} lang={lang}/></div>}
-            {links.map(([id, label, num]) => (
-              <a key={id} href={`#${id}`} className={active === id ? "active" : ""} onClick={() => setMenuOpen(false)}>
-                <span className="nav-menu-num">{num}</span>{T(label, lang)}
-              </a>
-            ))}
-            <a className="nav-menu-cv" href={cvFile} download={cvName} onClick={() => setMenuOpen(false)}>
-              {window.Icons.download}{T(window.CONTENT.hero.cv, lang)}
-            </a>
-          </div>
-        </div>
-      )}
-    </nav>
+    <a className={className} href={resolved} download={download || undefined} target={external ? "_blank" : undefined} rel={external ? "noreferrer" : undefined} title={title} data-provenance-case={provenanceCase || undefined}>
+      {children}
+    </a>
   );
 }
 
-function Hero({ lang, mode = "academic" }) {
-  const C = window.CONTENT.hero;
-  const I = window.CONTENT.industry?.hero;
-  if (mode === "industry" && I) return <HeroIndustry lang={lang} C={C} I={I}/>;
-  return <HeroAcademic lang={lang} C={C}/>;
-}
-
-function HeroIndustry({ lang, C, I }) {
-  const eye = I.eyebrow[lang];
-  const h1 = I.h1[lang];
+function SectionHead({ eyebrow, title, intro, action, locale, id }) {
   return (
-    <header className="hero-v2 hero-industry" id="top">
-      <div className="wrap hero-v2-grid">
-        <div className="hero-v2-photo reveal">
-          <img src="assets/cover.jpg" alt="Wenyu Chiou presenting at AGU 2025"/>
-          <div className="hero-v2-photo-cap">
-            <span className="dot"/>
-            <span>{lang === "en" ? "AGU Fall Meeting 2025 · New Orleans" : "AGU 2025 · 紐奧良"}</span>
-          </div>
-        </div>
-
-        <div className="hero-v2-text">
-          <div className="hero-v2-eyebrow reveal">
-            <span>{eye[0]}</span>
-            <span className="sep"/>
-            <span>{eye[1]}</span>
-            <span className="sep"/>
-            <span className="live">{eye[2]}</span>
-          </div>
-
-          <h1 className="hero-v2-h1 reveal">
-            {h1.a}{" "}<em>{h1.b}</em>{" "}{h1.c}{" "}
-            <span className="serif-italic tail">{h1.d}</span>
-          </h1>
-
-          <p className="hero-v2-lede reveal">{T(I.lede, lang)}</p>
-
-          {I.pipeline && (
-            <div className="wagf-pipeline reveal">
-              <span className="wagf-pipeline-kicker">{T(I.pipeline.kicker, lang)}</span>
-              <ol className="wagf-stages">
-                {I.pipeline.stages.map((s, i) => (
-                  <li className={"wagf-stage" + (s.signal ? " is-signal" : "")} key={s.key}
-                      tabIndex={s.tip ? 0 : undefined}
-                      aria-label={s.tip ? T(s.label, lang) + " — " + T(s.tip, lang) : undefined}>
-                    <span className="wagf-node" aria-hidden="true"/>
-                    <span className="wagf-stage-label">{T(s.label, lang)}</span>
-                    {s.tip && <span className="wagf-tip" aria-hidden="true">{T(s.tip, lang)}</span>}
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-
-          <div className="hero-v2-currently reveal">
-            <span className="hero-currently-label">{T(I.currently.label, lang)}</span>
-            <ul className="hero-currently-list">
-              {I.currently.items.map((it, i) => (
-                <li key={i}><span className="hero-currently-dot" style={{background: it.dot}}/>{T(it.text, lang)}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="hero-v2-cta reveal">
-            <a className="btn primary" href="#contact">{window.Icons.mail}{T(I.cta_primary, lang)}</a>
-            <a className="btn" href={CV_FILES.industry} download="Wenyu_Chiou_CV_Industry.pdf">{window.Icons.download}{T(C.cv, lang)}</a>
-            <a className="btn ghost" href="https://www.linkedin.com/in/wenyu-chiou" target="_blank" rel="noopener noreferrer">{window.Icons.linkedin}{T(I.cta_linkedin, lang)}</a>
-            <a className="btn ghost" href="https://github.com/WenyuChiou" target="_blank" rel="noopener noreferrer">{window.Icons.github}GitHub</a>
-          </div>
-
-          <dl className="hero-v2-facts reveal">
-            <div><dt>{lang === "en" ? "Role sought" : "職位"}</dt><dd>{lang === "en" ? "AI Agent / ML Engineer · Applied Scientist" : "AI 代理 / ML 工程師 · 應用科學家"}</dd></div>
-            <div><dt>{lang === "en" ? "Location" : "地點"}</dt><dd>{lang === "en" ? "US · Taiwan · Remote" : "美國 · 台灣 · 遠端"}</dd></div>
-            <div><dt>{lang === "en" ? "Available" : "可用時程"}</dt><dd>{lang === "en" ? "Summer 2027 (intern) · Full-time 2027–28" : "2027 夏實習 · 2027–28 全職"}</dd></div>
-            <div><dt>{lang === "en" ? "Based in" : "現居"}</dt><dd>Bethlehem, PA · US</dd></div>
-          </dl>
-        </div>
+    <header className="section-head">
+      <div>
+        <p className="eyebrow">{eyebrow}</p>
+        <h2 id={id}>{title}</h2>
+        {intro ? <p className="section-intro">{intro}</p> : null}
       </div>
+      {action ? (
+        <SmartLink className="text-link section-action" href={action.href} locale={locale}>
+          {action.label}<ArrowUpRight aria-hidden="true" size={16} />
+        </SmartLink>
+      ) : null}
     </header>
   );
 }
 
-function HeroAcademic({ lang, C }) {
-  return (
-    <header className="hero-v2" id="top">
-      <div className="wrap hero-v2-grid">
-        <div className="hero-v2-photo reveal">
-          <img src="assets/cover.jpg" alt="Wenyu Chiou presenting at AGU 2025"/>
-          <div className="hero-v2-photo-cap">
-            <span className="dot"/>
-            <span>{lang === "en" ? "AGU Fall Meeting 2025 · New Orleans" : "AGU 2025 · 紐奧良"}</span>
-          </div>
-        </div>
-
-        <div className="hero-v2-text">
-          <div className="hero-v2-eyebrow reveal">
-            <span>{lang === "en" ? "Ph.D. Candidate" : "博士候選人"}</span>
-            <span className="sep"/>
-            <span>Lehigh · CEE</span>
-            <span className="sep"/>
-            <span className="live">{lang === "en" ? "Open for 2027" : "2027 開放合作"}</span>
-          </div>
-
-          <h1 className="hero-v2-h1 reveal">
-            {lang === "en" ? (
-              <>Modeling how households <em>decide</em> under <span className="mark">flood risk</span>, <span className="serif-italic tail">and how cities adapt.</span></>
-            ) : (
-              <>以 LLM 智能體模擬家戶面對 <span className="mark">洪水風險</span> 的<em>決策</em>，<span className="serif-italic tail">以及城市如何調適。</span></>
-            )}
-          </h1>
-
-          <p className="hero-v2-lede reveal">{T(C.lede, lang)}</p>
-
-          <div className="hero-v2-currently reveal">
-            <span className="hero-currently-label">{T(C.currently.label, lang)}</span>
-            <ul className="hero-currently-list">
-              {C.currently.items.map((it, i) => (
-                <li key={i}><span className="hero-currently-dot" style={{background: it.dot}}/>{T(it.text, lang)}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="hero-v2-cta reveal">
-            <a className="btn primary" href="#contact">{window.Icons.mail}{T(C.contact, lang)}</a>
-            <a className="btn" href={CV_FILES.academic} download="Wenyu_Chiou_CV_Academic.pdf">{window.Icons.download}{T(C.cv, lang)}</a>
-            <a className="btn ghost" href="https://github.com/WenyuChiou" target="_blank" rel="noopener noreferrer">{window.Icons.github}GitHub</a>
-            <a className="btn ghost" href="#projects">{lang === "en" ? "See work" : "看作品"}{window.Icons.arrow}</a>
-          </div>
-
-          <dl className="hero-v2-facts reveal">
-            <div><dt>{lang === "en" ? "Advisor" : "指導教授"}</dt><dd>Dr. Ethan Yang</dd></div>
-            <div><dt>{lang === "en" ? "Group" : "研究群"}</dt><dd>Complex Water Adaptive System</dd></div>
-            <div><dt>{lang === "en" ? "Center" : "中心"}</dt><dd>{lang === "en" ? "Catastrophe Modeling & Resilience" : "災害建模與韌性中心"}</dd></div>
-            <div><dt>{lang === "en" ? "Focus" : "重心"}</dt><dd>ABM · LLM Agents · Flood Risk</dd></div>
-            <div><dt>{lang === "en" ? "Since" : "起始"}</dt><dd>Aug 2024</dd></div>
-            <div><dt>{lang === "en" ? "Based in" : "地點"}</dt><dd>Bethlehem, PA · US</dd></div>
-          </dl>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-function SectionHead({ num, kicker, lang, sub }) {
-  return (
-    <header className="section-head reveal">
-      <div className="section-head-meta">
-        <span className="section-num">{num}</span>
-        <div className="section-rule reveal"/>
-        {sub && <span className="section-sub">{T(sub, lang)}</span>}
-      </div>
-      <h2 className="section-title">{T(kicker, lang)}</h2>
-    </header>
-  );
-}
-
-function About({ lang, num }) {
-  const C = window.CONTENT.about;
-  return (
-    <section id="about" className="wrap section-pad">
-      <SectionHead num={num} kicker={C.kicker} lang={lang}/>
-
-      <div className="about-v2">
-        <div className="about-v2-lead reveal">
-          <p className="lead-text">
-            {lang === "en" ? (
-              <>I build <span className="lead-uline">agent-based models</span> coupled with catastrophe simulators, and use <em>LLM agents</em> to study long-term household adaptation to flood risk.</>
-            ) : (
-              <>我結合 <span className="lead-uline">智能體模擬 (ABM)</span> 與災害模型，並以 <em>LLM 智能體</em> 研究家戶面對洪水風險的長期調適行為。</>
-            )}
-          </p>
-        </div>
-
-        <div className="about-v2-body reveal">
-          <p>{T(C.p1, lang)}</p>
-          <p>{T(C.p2, lang)}</p>
-        </div>
-
-        <div className="about-keywords reveal">
-          {/* decorative attention/concept-graph — the keywords related to one another,
-              as an interpretability view draws self-attention. Draws once then rests. */}
-          <svg className="keyword-attn" aria-hidden="true" viewBox="0 0 300 200" preserveAspectRatio="none">
-            <g className="kw-edges" fill="none" stroke="var(--accent)" strokeLinecap="round">
-              <path d="M40,46 C110,20 180,70 250,40"/>
-              <path d="M40,46 C90,110 150,120 250,150"/>
-              <path d="M250,40 C200,90 150,80 70,140"/>
-              <path d="M250,40 C260,100 180,150 130,165"/>
-              <path d="M40,46 C120,60 170,40 250,150"/>
-              <path d="M70,140 C140,120 200,130 250,150"/>
-              <path d="M130,165 C90,120 120,70 250,40"/>
-              <path d="M40,46 C30,110 50,150 130,165"/>
-            </g>
-            <g className="kw-nodes" fill="var(--accent)">
-              <circle cx="40" cy="46" r="3.5"/>
-              <circle cx="250" cy="40" r="3.5"/>
-              <circle cx="70" cy="140" r="3"/>
-              <circle cx="250" cy="150" r="3"/>
-              <circle cx="130" cy="165" r="3"/>
-              <circle cx="160" cy="90" r="2.5"/>
-            </g>
-          </svg>
-          <span className="about-keywords-label">{T(C.interests_label, lang)}</span>
-          <div className="interests">
-            {C.interests.map((i, idx) => <span className="chip" key={idx}>{T(i, lang)}</span>)}
-          </div>
-        </div>
-      </div>
-
-      <div className="field-strip reveal-stagger">
-        <figure className="field-item">
-          <img src="assets/ies.jpg" alt="Institute of Earth Sciences internship"/>
-          <figcaption>
-            <span className="y">2020</span>
-            <span className="t">{lang === "en" ? "Academia Sinica — IES Summer Research" : "中研院 · 地科所暑期研究"}</span>
-          </figcaption>
-        </figure>
-        <figure className="field-item">
-          <img src="assets/ncdr.jpg" alt="NCDR summer internship"/>
-          <figcaption>
-            <span className="y">2022</span>
-            <span className="t">{lang === "en" ? "NCDR — Climate Adaptation Internship" : "NCDR · 氣候調適實習"}</span>
-          </figcaption>
-        </figure>
-        <figure className="field-item">
-          <img src="assets/cover.jpg" alt="AGU 2025 poster"/>
-          <figcaption>
-            <span className="y">2025</span>
-            <span className="t">{lang === "en" ? "AGU Fall Meeting — Poster NH41E-0449" : "AGU 年會 · 海報 NH41E-0449"}</span>
-          </figcaption>
-        </figure>
-      </div>
-    </section>
-  );
-}
-
-function Timeline({ items, lang }) {
-  // Vertical fallback (used for Education)
-  return (
-    <div className="timeline reveal-stagger">
-      {items.map((it, i) => (
-        <div className="t-item" key={i}>
-          <div className="t-date">{T(it.date, lang)}</div>
-          <div className="t-dot" aria-hidden="true"></div>
-          <div className="t-body">
-            <h3>{T(it.role, lang)}</h3>
-            <span className="t-org">{T(it.org, lang)}</span>
-            <p>{T(it.desc, lang)}</p>
-            <div className="t-tags">
-              {it.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// Horizontal interactive timeline — industry-facing
-function CareerTrack({ items, lang, mode }) {
-  // items come newest-first from content; reverse so time reads left→right
-  const chrono = [...items].reverse();
-  const defaultIdx = chrono.length - 1; // most recent selected
-  const [sel, setSel] = useState(defaultIdx);
-  const [hover, setHover] = useState(null);
-  const active = hover != null ? hover : sel;
-  const cur = chrono[active];
-
-  // Short year label for axis (e.g. "2020", "2024")
-  const yearOf = (it) => {
-    const d = T(it.date, "en");
-    const m = d.match(/(19|20)\d{2}/);
-    return m ? m[0] : "";
-  };
-  const shortRole = (it) => {
-    const r = T(it.role, "en");
-    // abbreviations suitable for the tick labels
-    if (/Ph\.?D/i.test(r)) return "Ph.D.";
-    if (/Candidate/i.test(r)) return "Ph.D.";
-    if (/Summer Intern/i.test(r)) return "Intern";
-    if (/Research Intern/i.test(r)) return "Intern";
-    if (/Research Assistant/i.test(r)) return "RA";
-    return r.split(" ")[0];
-  };
-  const shortOrg = (it) => {
-    const o = T(it.org, "en");
-    if (/Lehigh/.test(o)) return "Lehigh";
-    if (/National Central/.test(o)) return "NCU";
-    if (/NCDR/.test(o)) return "NCDR";
-    if (/Academia Sinica/.test(o)) return "IES";
-    return o.split(/[·,]/)[0].trim();
-  };
-
-  const nodeRefs = useRef([]);
-  const onKey = (e) => {
-    let ni;
-    if (e.key === "ArrowRight") ni = Math.min(chrono.length - 1, sel + 1);
-    else if (e.key === "ArrowLeft") ni = Math.max(0, sel - 1);
-    else return;
-    e.preventDefault();
-    setSel(ni);
-    const n = nodeRefs.current[ni]; if (n) n.focus();
-  };
-
-  return (
-    <div className="career" onKeyDown={onKey}>
-      {/* Axis with nodes + a ghost "next" node on the right */}
-      <div className="career-axis" role="tablist" aria-label={lang === "en" ? "Career timeline" : "職涯時間軸"}>
-        <div className="career-line"/>
-        {chrono.map((it, i) => (
-          <button
-            key={i}
-            ref={el => { nodeRefs.current[i] = el; }}
-            className={"career-node" + (active === i ? " is-active" : "") + (sel === i ? " is-selected" : "")}
-            role="tab"
-            tabIndex={sel === i ? 0 : -1}
-            aria-selected={sel === i ? "true" : "false"}
-            onClick={() => setSel(i)}
-            onMouseEnter={() => setHover(i)}
-            onMouseLeave={() => setHover(null)}
-          >
-            <span className="node-dot" aria-hidden="true"></span>
-            <span className="node-year mono">{yearOf(it)}</span>
-            <span className="node-label">
-              <span className="node-role">{shortRole(it)}</span>
-              <span className="node-org">{shortOrg(it)}</span>
-            </span>
-          </button>
-        ))}
-        <div className="career-node career-node-next" aria-hidden="true">
-          <span className="node-dot node-dot-future"></span>
-          <span className="node-year mono">2026</span>
-          <span className="node-label">
-            <span className="node-role">{lang === "en" ? "Next" : "下一步"}</span>
-            <span className="node-org">{mode === "academic" ? (lang === "en" ? "Dissertation" : "博士論文") : (lang === "en" ? "Industry" : "業界")}</span>
-          </span>
-        </div>
-      </div>
-
-      {/* Detail panel */}
-      <div className="career-panel" key={active}>
-        <div className="career-panel-head">
-          <span className="career-date mono">{T(cur.date, lang)}</span>
-          <span className="career-org-line">{T(cur.org, lang)}</span>
-        </div>
-        <h3 className="career-role">{T(cur.role, lang)}</h3>
-        <p className="career-desc">{T(cur.desc, lang)}</p>
-        {cur.bullets && cur.bullets.length > 0 && (
-          <ul className="career-bullets">
-            {cur.bullets.map((b, j) => (
-              <li key={j} className="career-bullet">
-                <span className="career-bullet-num mono">{String(j + 1).padStart(2, "0")}</span>
-                <span className="career-bullet-text">{T(b, lang)}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-        <div className="career-tags">
-          {cur.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="career-controls">
-        <button className="career-btn" onClick={() => setSel(i => Math.max(0, i - 1))} disabled={sel === 0} aria-label="Previous">←</button>
-        <span className="career-count mono">{String(sel + 1).padStart(2, "0")} / {String(chrono.length).padStart(2, "0")}</span>
-        <button className="career-btn" onClick={() => setSel(i => Math.min(chrono.length - 1, i + 1))} disabled={sel === chrono.length - 1} aria-label="Next">→</button>
-      </div>
-    </div>
-  );
-}
-
-function Research({ lang, num, mode }) {
-  const E = window.CONTENT.experience;
-  const D = window.CONTENT.education;
-  return (
-    <section id="research" className="wrap section-pad">
-      <SectionHead num={num} kicker={E.kicker} lang={lang} sub={mode === "academic" ? {en: "Research trajectory & training", zh: "研究歷程與訓練"} : {en: "Career trajectory · open for 2027 industry roles", zh: "職涯軌跡 · 2027 業界機會開放中"}}/>
-      <CareerTrack items={E.items} lang={lang} mode={mode}/>
-      <div className="edu-compact reveal-stagger">
-        <h4 className="col-title">{lang === "en" ? "Education" : "學歷"}</h4>
-        <ul className="edu-list">
-          {D.items.map((it, i) => (
-            <li className="edu-row" key={i}>
-              <span className="edu-date mono">{T(it.date, lang)}</span>
-              <div className="edu-body">
-                <span className="edu-role">{T(it.role, lang)}</span>
-                <span className="edu-org">{T(it.org, lang)}</span>
-              </div>
-              <div className="edu-tags">{it.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}</div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-function Projects({ lang, gh, num }) {
-  const C = window.CONTENT.projects;
-  const [open, setOpen] = useState(null);     // expanded compact card key
-  const [lightbox, setLightbox] = useState(null); // {src, alt} or null
-
-  // Live star count for a project (by repo slug), falling back to hardcoded.
-  const liveStars = (p) => {
-    const n = repoFromHref(p.href);
-    const l = n && gh && gh[n];
-    return (l ? l.stars : p.stars) || 0;
-  };
-
-  // Derive a short compact-card name from the project's URL (repo slug)
-  // and fall back to the first 1–2 words of the title.
-  const compactName = (p) => {
-    const url = p.href || "";
-    const m = url.match(/github\.com\/[^/]+\/([^/?#]+)/) ||
-              url.match(/wenyuchiou\.github\.io\/([^/?#]+)/);
-    if (m && m[1]) return m[1].replace(/\/$/, "");
-    const title = (p.title.en || "").split(" — ")[0];
-    return title.split(" ").slice(0, 2).join(" ");
-  };
-
-  // Star highlight threshold — items with stars >= this get a visible badge
-  const STAR_HIGHLIGHT = 30;
-
-  const renderCompact = (p, i) => {
-    const key = p.href + i;
-    const isOpen = open === key;
-    const stars = liveStars(p);
-    const did = ("projd-" + (p.href || compactName(p))).replace(/[^a-zA-Z0-9_-]/g, "-");
-    return (
-      <article className={"proj-compact" + (isOpen ? " open" : "")} key={i}>
-        <div className="proj-compact-trigger" role="button" tabIndex={0}
-             aria-expanded={isOpen ? "true" : "false"} aria-controls={isOpen ? did : undefined}
-             title={lang === "en" ? "Click for details" : "點擊看詳情"}
-             onClick={() => setOpen(isOpen ? null : key)}
-             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(isOpen ? null : key); } }}>
-          <div className="proj-compact-head">
-            <span className="proj-compact-name">{compactName(p)}</span>
-            {stars >= STAR_HIGHLIGHT
-              ? <span className="proj-compact-stars" title={stars + " stars"}>★ <CountUp end={stars}/></span>
-              : <span className="proj-compact-chevron" aria-hidden="true">{isOpen ? "–" : "+"}</span>}
-          </div>
-          <div className="proj-compact-meta">{T(p.meta, lang)}</div>
-          {p.tldr && <p className="proj-compact-tldr">{T(p.tldr, lang)}</p>}
-          <div className="proj-compact-tags">
-            {(p.tags || []).slice(0, 3).map((t, j) => <span className="chip chip-sm" key={j}>{t}</span>)}
-          </div>
-        </div>
-        {isOpen && (
-          <div className="proj-detail" id={did}>
-            {p.desc && <p className="proj-detail-desc">{T(p.desc, lang)}</p>}
-            {p.image && (
-              <button className="proj-detail-poster" onClick={() => setLightbox({ src: p.image, alt: T(p.title, lang) })}
-                      aria-label={lang === "en" ? "Enlarge image" : "放大圖片"}>
-                <img src={p.image} alt={T(p.title, lang)} loading="lazy"/>
-              </button>
-            )}
-            <a className="proj-detail-link" href={p.href} target="_blank" rel="noopener noreferrer">
-              {window.Icons.github}<span>{lang === "en" ? "View on GitHub" : "前往 GitHub"} ↗</span>
-            </a>
-          </div>
-        )}
-      </article>
-    );
-  };
-
-  const renderFlagship = (p, i) => {
-   const fstars = liveStars(p);
-   return (
-    <div className={"proj-flagship reveal" + (p.image ? " has-media" : "")} key={i}>
-      <div className="proj-flagship-main">
-        <div className="proj-flagship-head">
-          <span className="proj-flagship-star">{String(i + 1).padStart(2, "0")}</span>
-          <span className="proj-flagship-tag">{lang === "en" ? "CASE STUDY" : "案例研究"}</span>
-          <span className="proj-flagship-meta">{T(p.meta, lang)}</span>
-        </div>
-        <h3 className="proj-flagship-title">{T(p.title, lang)}</h3>
-        {p.stack && (
-          <div className="proj-flagship-subtitle">
-            {p.stack.slice(0, 4).map((s, j) => (
-              <React.Fragment key={j}>
-                {j > 0 && <span className="proj-flagship-dot"> · </span>}
-                <span>{s}</span>
-              </React.Fragment>
-            ))}
-          </div>
-        )}
-        <p className="proj-flagship-desc">{T(p.desc, lang)}</p>
-        <div className="proj-flagship-tags">
-          {p.tags.map((t, j) => <span className="chip" key={j}>{t}</span>)}
-        </div>
-        <div className="proj-flagship-foot">
-          {fstars >= STAR_HIGHLIGHT && <span className="proj-flagship-stars">★ <CountUp end={fstars}/></span>}
-          <div className="proj-flagship-links">
-            <a className="proj-flagship-btn primary" href={p.href} target="_blank" rel="noopener noreferrer">
-              {window.Icons.github}
-              <span>{lang === "en" ? "View on GitHub" : "前往 GitHub"} ↗</span>
-            </a>
-          </div>
-        </div>
-      </div>
-      {p.image && (
-        <button className="proj-flagship-poster" onClick={() => setLightbox({ src: p.image, alt: T(p.title, lang) })}
-                aria-label={lang === "en" ? "Enlarge image" : "放大圖片"}>
-          <img src={p.image} alt={T(p.title, lang)} loading="lazy"/>
-        </button>
-      )}
-    </div>
-   );
-  };
-
-  return (
-    <section id="projects" className="wrap section-pad">
-      <SectionHead num={num} kicker={C.kicker} lang={lang} sub={{en: "Four flagship case studies", zh: "四個旗艦案例"}}/>
-      <p className="reveal section-intro">{T(C.intro, lang)}</p>
-
-      <div className="proj-flagships">
-        {C.items.filter(p => p.featured).map((p, i) => renderFlagship(p, i))}
-      </div>
-      {C.items.some(p => !p.featured) && (
-        <div className="proj-compact-grid reveal-stagger">
-          {C.items.filter(p => !p.featured).map((p, i) => renderCompact(p, i))}
-        </div>
-      )}
-      <a className="proj-crosslink reveal" href="#repos">
-        <span>{lang === "en"
-          ? "See all " + window.CONTENT.repos.items.length + " repositories in Open Source"
-          : "查看「開源」中全部 " + window.CONTENT.repos.items.length + " 個儲存庫"}</span>
-        <span className="proj-crosslink-arrow" aria-hidden="true">↓</span>
-      </a>
-      {lightbox && <Lightbox {...lightbox} onClose={() => setLightbox(null)} lang={lang}/>}
-    </section>
-  );
-}
-
-// Dimmed full-image overlay. Esc / click-outside / close button dismisses;
-// focus moves to the close button and the page scroll is locked while open.
-function Lightbox({ src, alt, onClose, lang }) {
-  const btn = useRef(null);
+function SiteHeader({ content, locale, page, basePath }) {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef(null);
   useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-      else if (e.key === "Tab") { e.preventDefault(); if (btn.current) btn.current.focus(); } // trap focus
+    if (!open) return undefined;
+    const closeOnEscape = (event) => {
+      if (event.key !== "Escape") return;
+      if (document.querySelector(".work-dropdown[open]")) return;
+      if (document.querySelector(".navigator-dialog[open]")) return;
+      setOpen(false);
+      menuRef.current?.focus();
     };
-    document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    if (btn.current) btn.current.focus();
-    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
-  }, [onClose]);
-  return (
-    <div className="lightbox" role="dialog" aria-modal="true" aria-label={alt} onClick={onClose}>
-      <button ref={btn} className="lightbox-close" onClick={onClose} aria-label={lang === "en" ? "Close" : "關閉"}>{window.Icons.close}</button>
-      <img className="lightbox-img" src={src} alt={alt} onClick={(e) => e.stopPropagation()}/>
-    </div>
-  );
-}
-
-// Cmd/Ctrl-K quick-nav palette: jump to a section or fire an action. Filter by
-// typing, Arrow-Up/Down to move, Enter to run, Esc / click-outside to close.
-function CommandPalette({ open, onClose, lang, mode, setLang, setTheme, setMode }) {
-  const [q, setQ] = useState("");
-  const [sel, setSel] = useState(0);
-  const inputRef = useRef(null);
-  const restore = useRef(null);
-
-  const nav = window.CONTENT.nav;
-  const go = (id) => { onClose(); requestAnimationFrame(() => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: "smooth" }); }); };
-  const ext = (url) => { onClose(); window.open(url, "_blank", "noopener,noreferrer"); };
-  const items = [
-    { label: nav.about,    hint: "01", run: () => go("about") },
-    { label: nav.research, hint: "02", run: () => go("research") },
-    { label: nav.projects, hint: "03", run: () => go("projects") },
-    { label: { en: "Skills", zh: "技能" }, hint: "04", run: () => go("skills") },
-    { label: nav.pubs,     hint: "05", run: () => go("pubs") },
-    { label: nav.repos,    hint: "06", run: () => go("repos") },
-    { label: nav.contact,  hint: "07", run: () => go("contact") },
-    { label: { en: "Download CV", zh: "下載 CV" }, hint: "↓", run: () => { onClose(); window.location.href = CV_FILES[mode] || CV_FILES.industry; } },
-    { label: { en: "Email Wenyu", zh: "寄信給我" }, run: () => { onClose(); window.location.href = "mailto:wec324@lehigh.edu"; } },
-    { label: { en: "GitHub", zh: "GitHub" }, run: () => ext("https://github.com/WenyuChiou") },
-    { label: { en: "LinkedIn profile", zh: "LinkedIn 個人頁" }, run: () => ext("https://www.linkedin.com/in/wenyu-chiou") },
-    { label: { en: "Toggle dark / light", zh: "切換深 / 淺色" }, run: () => { onClose(); setTheme(t => t === "dark" ? "light" : "dark"); } },
-    { label: { en: mode === "industry" ? "Switch to Academic view" : "Switch to Industry view", zh: mode === "industry" ? "切換到學術版" : "切換到業界版" }, run: () => { onClose(); setMode(m => m === "industry" ? "academic" : "industry"); } },
-    { label: { en: "Switch language 中/EN", zh: "切換語言 中/EN" }, run: () => { onClose(); setLang(l => l === "en" ? "zh" : "en"); } },
-  ];
-  const shown = items.filter(it => T(it.label, lang).toLowerCase().includes(q.trim().toLowerCase()));
-
-  useEffect(() => {
-    if (!open) return;
-    setQ(""); setSel(0);
-    restore.current = document.activeElement;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    requestAnimationFrame(() => { if (inputRef.current) inputRef.current.focus(); });
-    return () => { document.body.style.overflow = prev; if (restore.current && restore.current.focus) restore.current.focus(); };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
   }, [open]);
-  useEffect(() => { setSel(0); }, [q]);
-
-  if (!open) return null;
-  const onKey = (e) => {
-    if (e.key === "ArrowDown") { e.preventDefault(); setSel(s => Math.min(s + 1, shown.length - 1)); }
-    else if (e.key === "ArrowUp") { e.preventDefault(); setSel(s => Math.max(s - 1, 0)); }
-    else if (e.key === "Enter") { e.preventDefault(); const it = shown[sel]; if (it) it.run(); }
-    else if (e.key === "Escape") { e.preventDefault(); onClose(); }
-    else if (e.key === "Tab") { e.preventDefault(); if (inputRef.current) inputRef.current.focus(); } // trap focus to palette
-  };
+  const otherLocale = locale === "en" ? "zh-TW" : "en";
+  const otherPath = counterpartPath(basePath, locale);
   return (
-    <div className="cmdk-overlay" onClick={onClose}>
-      <div className="cmdk-panel" role="dialog" aria-modal="true" aria-label={lang === "en" ? "Quick navigation" : "快速導覽"} onClick={(e) => e.stopPropagation()}>
-        <input ref={inputRef} className="cmdk-input" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={onKey}
-               placeholder={lang === "en" ? "Jump to a section or action…" : "跳到區塊或執行動作…"}
-               aria-label={lang === "en" ? "Search" : "搜尋"} autoComplete="off"/>
-        <ul className="cmdk-list" role="listbox">
-          {shown.length === 0 && <li className="cmdk-empty">{lang === "en" ? "No matches" : "無相符項目"}</li>}
-          {shown.map((it, i) => (
-            <li key={i} role="option" aria-selected={i === sel ? "true" : "false"}
-                className={"cmdk-item" + (i === sel ? " active" : "")}
-                onMouseEnter={() => setSel(i)} onClick={() => it.run()}>
-              <span>{T(it.label, lang)}</span>
-              {it.hint && <span className="cmdk-hint mono">{it.hint}</span>}
-            </li>
-          ))}
-        </ul>
-        <div className="cmdk-foot mono">↑↓ {lang === "en" ? "navigate" : "移動"} · ↵ {lang === "en" ? "select" : "選擇"} · esc {lang === "en" ? "close" : "關閉"}</div>
+    <header className="site-header">
+      <a className="skip-link" href="#main">{content.skip}</a>
+      <div className="header-inner">
+        <a className="brand" href={localizedPath("/", locale)} aria-label={content.name}>
+          <span className="brand-mark" aria-hidden="true">{content.initials}</span>
+          <span>{content.name}</span>
+        </a>
+        <button ref={menuRef} className="icon-button menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-controls="primary-navigation" aria-label={open ? content.labels.close : content.labels.menu} data-open-label={content.labels.menu} data-close-label={content.labels.close}>
+          <Menu className="menu-open-icon" aria-hidden="true" />
+          <X className="menu-close-icon" aria-hidden="true" />
+        </button>
+        <nav id="primary-navigation" className={open ? "primary-nav is-open" : "primary-nav"} aria-label="Primary">
+          <ul>
+            {content.nav.map((item) => {
+              const isCurrent = page === item.id || (page.startsWith("case:") && item.id === "work") || (page.startsWith("article:") && item.id === "articles") || (page === "publications" && item.id === "research");
+              if (!["work", "research"].includes(item.id)) return <li key={item.id}><a href={localizedPath(item.href, locale)} aria-current={isCurrent ? "page" : undefined}>{item.label}</a></li>;
+              return (
+                <li className="work-dropdown-item" key={item.id}>
+                  <details className="work-dropdown" data-work-dropdown={item.id === "work" || undefined} data-nav-group={item.id}>
+                    <summary aria-current={isCurrent ? "page" : undefined}>
+                      <span>{item.label}</span><ChevronDown className="work-dropdown-chevron" aria-hidden="true" size={16} />
+                    </summary>
+                    <div className="work-dropdown-panel">
+                      {item.id === "research" ? content.editorial.researchLinks.map(link => <SmartLink className="work-dropdown-all" href={link.href} locale={locale} key={link.href}><span>{link.label}</span><ArrowUpRight aria-hidden="true" size={15} /></SmartLink>) : <><SmartLink className="work-dropdown-all" href={item.href} locale={locale}>
+                        <span>{content.labels.allWork}</span><ArrowUpRight aria-hidden="true" size={15} />
+                      </SmartLink>
+                      {content.flagship.items.map((project) => (
+                        <SmartLink className="work-dropdown-project" href={project.href} locale={locale} key={project.slug}>
+                          <span className="work-dropdown-index">{project.index}</span>
+                          <span><strong>{project.title}</strong><small>{project.line}</small></span>
+                        </SmartLink>
+                      ))}</>}
+                    </div>
+                  </details>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="nav-actions">
+            <a className="locale-link" href={otherPath} hrefLang={otherLocale}>{content.switchLabel}</a>
+            <a className="button button-small" href="#contact"><Mail aria-hidden="true" size={16} />{content.labels.contact}</a>
+          </div>
+        </nav>
+        <PortfolioNavigator content={content} locale={locale} header />
       </div>
-    </div>
+    </header>
   );
 }
 
-function Publications({ lang, num }) {
-  const C = window.CONTENT.pubs;
-  const [expanded, setExpanded] = React.useState(null);
-  const [copied, setCopied] = React.useState(null);
-
-  const typeLabel = {
-    journal: lang === "en" ? "Journal" : "期刊",
-    poster:  lang === "en" ? "Poster"  : "海報",
-    report:  lang === "en" ? "Report"  : "報告",
-    preprint: lang === "en" ? "Preprint" : "預印本",
-  };
-
-  const journalCount = C.items.filter(p => p.type === "journal" && !p.status).length;
-  const posterCount = C.items.filter(p => p.type === "poster").length;
-
-  const makeBibtex = (p) => {
-    const first = p.authors.split(",")[0].trim().toLowerCase().replace(/[^a-z]/g, "");
-    const key = `${first}${p.year}`;
-    return `@${p.type === "journal" ? "article" : "misc"}{${key},\n  author = {${p.authors}},\n  title  = {${T(p.title, "en")}},\n  venue  = {${p.venue}},\n  year   = {${p.year}}${p.doi ? `,\n  doi    = {${p.doi}}` : ""}\n}`;
-  };
-
-  const copyBib = (e, p, i) => {
-    e.preventDefault(); e.stopPropagation();
-    navigator.clipboard.writeText(makeBibtex(p));
-    setCopied(i);
-    setTimeout(() => setCopied(null), 1600);
-  };
-
+function Observatory({ content, locale }) {
+  const O = content.observatory;
   return (
-    <section id="pubs" className="wrap section-pad">
-      <SectionHead num={num} kicker={C.kicker} lang={lang}/>
-      <p className="reveal section-intro">{T(C.intro, lang)}</p>
-
-      <div className="pub-summary reveal">
-        <div className="pub-sum-item"><span className="pub-sum-num">{C.items.length}</span><span className="pub-sum-lbl">{lang === "en" ? "Publications" : "著作"}</span></div>
-        <div className="pub-sum-item"><span className="pub-sum-num">{posterCount}</span><span className="pub-sum-lbl">{lang === "en" ? "Conference posters" : "會議海報"}</span></div>
-        <div className="pub-sum-item"><span className="pub-sum-num">{journalCount}</span><span className="pub-sum-lbl">{lang === "en" ? "Journal articles" : "期刊論文"}</span></div>
-      </div>
-
-      <div className="pub-list reveal-stagger">
-        {C.items.map((p, i) => {
-          const meToken = p.meToken || "Chiou, W.-Y.";
-          // case-insensitive split so author highlight never silently drops on format variance
-          const parts = p.authors.split(new RegExp(meToken.replace(/[.*+?^${}()|[\]\\]/g, "\$&"), "i"));
-          const isOpen = expanded === i;
-          return (
-            <article className={"pub" + (p.featured ? " pub-featured" : "") + (isOpen ? " pub-open" : "")} key={i}>
-              <div className="pub-num">{String(i + 1).padStart(2, "0")}</div>
-              <div className="pub-body">
-                <div className="pub-meta-top">
-                  <span className={"pub-type pub-type-" + p.type}>{typeLabel[p.type] || p.type}</span>
-                  {p.status && <span className="pub-status-pill mono">{p.status === "under review" ? (lang === "en" ? "Under review" : "審查中") : p.status === "in prep" ? (lang === "en" ? "In preparation" : "撰寫中") : p.status}</span>}
-                  {p.quartile && <span className="pub-q">{p.quartile}</span>}
-                  {p.featured && <span className="pub-featured-badge">★ {lang === "en" ? "Featured" : "精選"}</span>}
-                  <span className="pub-venue-short mono">{p.venue_short || p.venue}</span>
-                </div>
-                <h4 className="pub-title" role="button" tabIndex={0} aria-expanded={isOpen ? "true" : "false"} aria-controls={isOpen ? ("puba-" + i) : undefined} onClick={() => setExpanded(isOpen ? null : i)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpanded(isOpen ? null : i); } }}>
-                  {T(p.title, lang)}
-                </h4>
-                <div className="pub-authors">
-                  {parts.map((chunk, j) => (
-                    <React.Fragment key={j}>
-                      {chunk}
-                      {j < parts.length - 1 && <span className="me">{meToken}</span>}
-                    </React.Fragment>
-                  ))}
-                </div>
-                {isOpen && p.abstract && (
-                  <p className="pub-abstract" id={"puba-" + i}>{T(p.abstract, lang)}</p>
-                )}
-                <div className="pub-actions">
-                  {p.cites > 0 && (
-                    <span className="pub-cites">
-                      <svg viewBox="0 0 16 16" width="11" height="11" fill="currentColor"><path d="M6 2a1 1 0 000 2h4a1 1 0 100-2H6zM4 6a1 1 0 011-1h6a1 1 0 110 2H5a1 1 0 01-1-1zm-1 4a1 1 0 011-1h8a1 1 0 110 2H4a1 1 0 01-1-1zm1 4a1 1 0 011-1h6a1 1 0 110 2H5a1 1 0 01-1-1z"/></svg>
-                      {lang === "en" ? "Cited by " : "被引用 "}{p.cites}
-                    </span>
-                  )}
-                  {p.pdf && (
-                    <a className="pub-link" href={p.pdf} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()}>
-                      {lang === "en" ? (p.type === "poster" ? "Poster PDF" : "Paper PDF") : (p.type === "poster" ? "海報 PDF" : "論文 PDF")} ↗
-                    </a>
-                  )}
-                  {p.code && (
-                    <a className="pub-link" href={p.code} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()}>
-                      {lang === "en" ? "Code" : "程式碼"} ↗
-                    </a>
-                  )}
-                  {p.doi && (
-                    <a className="pub-link" href={`https://doi.org/${p.doi}`} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()}>
-                      DOI ↗
-                    </a>
-                  )}
-                  {!p.status && (
-                    <button className="pub-link" onClick={(e) => copyBib(e, p, i)}>
-                      {copied === i ? (lang === "en" ? "✓ Copied" : "✓ 已複製") : "BibTeX"}
-                    </button>
-                  )}
-                  <button className="pub-link pub-expand" onClick={(e) => { e.preventDefault(); setExpanded(isOpen ? null : i); }}>
-                    {isOpen ? (lang === "en" ? "Hide abstract ↑" : "收合摘要 ↑") : (lang === "en" ? "Abstract ↓" : "摘要 ↓")}
-                  </button>
-                </div>
+    <section id="observatory" className="section observatory" aria-labelledby="observatory-title">
+      <div className="wrap">
+        <SectionHead eyebrow={O.eyebrow} title={O.title} intro={O.intro} id="observatory-title" />
+        <p className="interaction-hint">{O.hint}</p>
+        <div className="stage-chain">
+          {O.stages.map((stage, index) => (
+            <details className="stage" id={`observatory-stage-${stage.id}`} name="observatory-stages" key={stage.id} open={index === 0}>
+              <summary><span className="stage-number">{stage.number}</span><span className="stage-title">{stage.title}</span><ChevronRight className="stage-chevron" aria-hidden="true" size={18} /></summary>
+              <div className="stage-body">
+                <p className="stage-question">{stage.question}</p>
+                <dl className="stage-evidence">
+                  <div><dt>{O.fields.input}</dt><dd>{stage.input}</dd></div><div><dt>{O.fields.method}</dt><dd>{stage.method}</dd></div><div><dt>{O.fields.output}</dt><dd>{stage.output}</dd></div><div className="stage-risk"><dt>{O.fields.risk}</dt><dd>{stage.risk}</dd></div>
+                </dl>
+                <div className="stage-relevance"><span>{O.fields.teams}</span><p>{stage.relevance}</p></div>
+                {stage.caseStudy && <SmartLink className="text-link" href={stage.caseStudy} locale={locale}>{content.labels.details}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>}
               </div>
-              {!p.status && <div className="pub-year">{p.year}</div>}
-            </article>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function RolesLegend({ content }) {
+  const R = content.editorial.roles;
+  return (
+    <div className="roles-legend">
+      <h3 className="roles-title">{R.title}</h3>
+      <dl className="roles-grid">
+        {R.items.map((item) => {
+          const Icon = ROLE_ICONS[item.id] || Users;
+          return (
+            <div className="role-item" key={item.id} data-color-role={item.colorRole}>
+              <dt><span className="role-mark" aria-hidden="true"><Icon size={18} /></span><strong>{item.name}</strong></dt>
+              <dd>{item.text}</dd>
+            </div>
           );
         })}
-      </div>
-    </section>
-  );
-}
-
-function Skills({ lang, mode, num }) {
-  const ind = mode === "industry" && window.CONTENT.industry && window.CONTENT.industry.skills;
-  const C = ind ? { kicker: window.CONTENT.skills.kicker, cats: ind.cats } : window.CONTENT.skills;
-  const iconMap = {
-    brain: window.Icons.brain || window.Icons.repo,
-    code:  window.Icons.code  || window.Icons.repo,
-    ai:    window.Icons.ai    || window.Icons.repo,
-    flow:  window.Icons.flow  || window.Icons.repo,
-    data:  window.Icons.data  || window.Icons.repo,
-    write: window.Icons.write || window.Icons.repo,
-  };
-  return (
-    <section id="skills" className="wrap section-pad">
-      <SectionHead num={num} kicker={C.kicker} lang={lang} sub={ind ? ind.intro : {en: "Methods, tools, and AI-native workflows", zh: "方法、工具與 AI 原生工作流"}}/>
-      <div className="skills-grid reveal-stagger">
-        {C.cats.map((cat, i) => (
-          <div className="skill-card" key={i}>
-            <div className="skill-head">
-              <span className="skill-icon">{iconMap[cat.icon]}</span>
-              <h4>{T(cat.name, lang)}</h4>
-            </div>
-            <div className="skill-items">
-              {cat.items.map((it, j) => <span className="chip" key={j}>{it}</span>)}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function Repos({ lang, gh, num }) {
-  const C = window.CONTENT.repos;
-  // Group repos by theme so the reading flow matches the About story
-  // Repos that have a detailed case study in the Projects section above.
-  const CASE = new Set(["WAGF", "FLOODABM", "ai-research-skills", "awesome-agentic-ai-zh"]);
-  const groups = [
-    {
-      label: { en: "Research code", zh: "研究程式碼" },
-      tag:   { en: "Dissertation & catastrophe modeling", zh: "博士研究與災害建模" },
-      names: ["FLOODABM", "WAGF", "Cat_framework"]
-    },
-    {
-      label: { en: "AI skills & agentic workflows", zh: "AI 技能與代理工作流" },
-      tag:   { en: "Composable tools for researchers", zh: "給研究者的可組合工具" },
-      names: ["ai-research-skills", "codex-delegate", "gemini-delegate-skill", "agent-collab-skills", "zotero-skills", "research-hub", "academic-writing-skills", "session-sweep"]
-    },
-    {
-      label: { en: "Learning & community", zh: "學習資源與社群" },
-      tag:   { en: "Curricula & open-source roadmaps", zh: "課程與開源學習地圖" },
-      names: ["awesome-agentic-ai-zh"]
-    },
-    {
-      label: { en: "Trading & market sensing", zh: "量化與市場感測" },
-      tag:   { en: "Multi-agent desks & sentiment", zh: "多代理交易桌與情緒分析" },
-      names: ["multi-analyst-desk", "ai-trader-ollama", "moodring", "Event-Driven-Strategy"]
-    },
-  ];
-  // Orphan guard — any repo not placed in a group above still renders, so the
-  // index can never silently drop a repository again (the P0-2 missing-repos bug).
-  const claimed = new Set(groups.flatMap(g => g.names));
-  const orphans = C.items.filter(r => !claimed.has(r.name)).map(r => r.name);
-  if (orphans.length) {
-    groups.push({
-      label: { en: "More", zh: "其他" },
-      tag:   { en: "Additional repositories", zh: "其他儲存庫" },
-      names: orphans
-    });
-  }
-  const byName = Object.fromEntries(C.items.map(r => [r.name, r]));
-  return (
-    <section id="repos" className="wrap section-pad">
-      <SectionHead num={num} kicker={C.kicker} lang={lang} sub={{en: "Every public repo, grouped", zh: "所有公開儲存庫 · 依用途分組"}}/>
-      <p className="reveal section-intro">{T(C.intro, lang)}</p>
-      <div className="repo-groups reveal-stagger">
-        {groups.map((g, gi) => (
-          <div className="repo-group" key={gi}>
-            <div className="repo-group-head">
-              <h3 className="repo-group-label">{T(g.label, lang)}</h3>
-              <span className="repo-group-tag">{T(g.tag, lang)}</span>
-            </div>
-            <div className="repo-list">
-              {g.names.map((n, i) => {
-                const r = byName[n]; if (!r) return null;
-                const live = gh && gh[r.name];
-                const stars = live ? live.stars : r.stars;
-                const forks = live ? live.forks : r.forks;
-                const statusLabel = {
-                  active: lang === "en" ? "Active" : "活躍",
-                  experimental: lang === "en" ? "Experimental" : "實驗中",
-                  archived: lang === "en" ? "Archived" : "已封存",
-                }[r.status] || null;
-                return (
-                  <a className="repo-row" key={i} href={r.href} target="_blank" rel="noopener noreferrer">
-                    <span className="repo-row-num mono">{String(i + 1).padStart(2, "0")}</span>
-                    <div className="repo-row-body">
-                      <div className="repo-row-top">
-                        <span className="repo-row-name">{r.name}</span>
-                        {CASE.has(r.name) && <span className="repo-cs-flag" title={lang === "en" ? "Detailed case study in Projects above" : "上方精選專案有詳細案例"}>★ {lang === "en" ? "Case study" : "案例"}</span>}
-                        <span className="repo-row-lang" style={{"--lang-color": r.color}}>{r.lang}</span>
-                        {statusLabel && <span className={"repo-status repo-status-" + r.status}>{statusLabel}</span>}
-                      </div>
-                      <p className="repo-row-desc">{T(r.desc, lang)}</p>
-                      <div className="repo-row-stats">
-                        <span className="repo-stat"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M8 .25l2.39 4.84 5.34.78-3.87 3.77.91 5.32L8 12.48l-4.77 2.48.91-5.32L.27 5.87l5.34-.78z"/></svg>{stars}</span>
-                        <span className="repo-stat"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v5.256a2.251 2.251 0 101.5 0V5.372zM5 13a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm9.75-.75a.75.75 0 110 1.5.75.75 0 010-1.5zM13.25 7a3.251 3.251 0 11-3.25-3.25h.879l-.44-.44a.75.75 0 011.06-1.06l1.72 1.72a.75.75 0 010 1.06l-1.72 1.72a.75.75 0 11-1.06-1.06l.44-.44H10A1.75 1.75 0 0011.75 7z"/></svg>{forks}</span>
-                        <span className="repo-stat repo-stat-date mono">↻ {T(r.updated, lang)}</span>
-                      </div>
-                    </div>
-                    <span className="repo-row-arrow">{window.Icons.external}</span>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function Contact({ lang, num }) {
-  const C = window.CONTENT.contact;
-  return (
-    <section id="contact" className="wrap section-pad contact">
-      <SectionHead num={num} kicker={C.kicker} lang={lang}/>
-      <div className="contact-inner reveal">
-        <h2 className="serif italic">{T(C.title, lang)}</h2>
-        <p>{T(C.body, lang)}</p>
-        <div className="contact-actions">
-          <a className="btn primary" href="mailto:wec324@lehigh.edu">{window.Icons.mail}wec324@lehigh.edu</a>
-          <a className="btn" href="https://github.com/WenyuChiou" target="_blank" rel="noopener noreferrer">{window.Icons.github}{T(C.github_label, lang)}</a>
-          <a className="btn" href="https://www.linkedin.com/in/wenyu-chiou" target="_blank" rel="noopener noreferrer">{window.Icons.linkedin}{T(C.linkedin_label, lang)}</a>
-          <a className="btn" href="https://www.threads.com/@wenyu_chiou" target="_blank" rel="noopener noreferrer">{window.Icons.threads}Threads</a>
-          <a className="btn" href="https://orcid.org/0009-0005-8006-1288" target="_blank" rel="noopener noreferrer">{T(C.orcid_label, lang)}</a>
-          <a className="btn" href="https://scholar.google.com/citations?user=vSQ3zT4AAAAJ" target="_blank" rel="noopener noreferrer">{T(C.scholar_label, lang)}</a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Footer({ lang }) {
-  const C = window.CONTENT.footer;
-  return (
-    <footer className="footer wrap">
-      <div className="footer-row">
-        <span>{T(C.copy, lang)}</span>
-        <span className="mono">{T(C.note, lang)}</span>
-      </div>
-    </footer>
-  );
-}
-
-function TweaksPanel({ lang, theme, setTheme, setLang }) {
-  const [active, setActive] = useState(false);
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.data?.type === "__activate_edit_mode") setActive(true);
-      if (e.data?.type === "__deactivate_edit_mode") setActive(false);
-    };
-    window.addEventListener("message", handler);
-    window.parent.postMessage({type: "__edit_mode_available"}, "*");
-    return () => window.removeEventListener("message", handler);
-  }, []);
-  if (!active) return null;
-  return (
-    <div className="tweaks-panel active">
-      <h5>Tweaks</h5>
-      <div className="tweak-row"><span>Theme</span>
-        <div className="seg">
-          <button className={theme === "light" ? "on" : ""} onClick={() => setTheme("light")}>Light</button>
-          <button className={theme === "dark" ? "on" : ""} onClick={() => setTheme("dark")}>Dark</button>
-        </div>
-      </div>
-      <div className="tweak-row"><span>Language</span>
-        <div className="seg">
-          <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
-          <button className={lang === "zh" ? "on" : ""} onClick={() => setLang("zh")}>中文</button>
-        </div>
-      </div>
+      </dl>
+      <p className="roles-note">{R.note}</p>
     </div>
   );
 }
 
-function ModeSwitch({ mode, setMode, lang }) {
+function FlagshipCards({ content, locale, full = false }) {
+  const F = content.flagship;
+  const E = content.editorial;
   return (
-    <div className="mode-switch" role="group" aria-label={lang === "en" ? "Site view: Industry or Academic" : "網站版本：業界或學術"}>
-      <span className="mode-switch-label" aria-hidden="true">{lang === "en" ? "View" : "版本"}</span>
-      <button className={"mode-opt" + (mode === "industry" ? " active" : "")} onClick={() => setMode("industry")} aria-pressed={mode === "industry" ? "true" : "false"}>
-        <span className="mode-dot"/>
-        {lang === "en" ? "Industry" : "業界"}
-      </button>
-      <button className={"mode-opt" + (mode === "academic" ? " active" : "")} onClick={() => setMode("academic")} aria-pressed={mode === "academic" ? "true" : "false"}>
-        <span className="mode-dot"/>
-        {lang === "en" ? "Academic" : "學術"}
-      </button>
-    </div>
-  );
-}
-
-function ImpactStrip({ lang, data, label }) {
-  const I = data || window.CONTENT.industry?.impact;
-  if (!I) return null;
-  return (
-    <section className="impact-strip reveal" aria-label={label || "Key impact numbers"}>
-      <div className="wrap">
-        <div className="impact-grid">
-          {I.items.map((it, i) => (
-            <div className="impact-item" key={i}>
-              <div className="impact-num">{it.num}</div>
-              <div className="impact-lbl">{T(it.lbl, lang)}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// Fixed right-edge vertical dot rail: one dot per section (in per-mode order),
-// the active dot tracks the same `active` the nav uses, a static spine line
-// connects the dots, and a bilingual label pill appears on hover/focus. Hidden
-// ≤1024px (the burger covers mobile). Reuses --accent family only (never --mark).
-function SectionRail({ lang, mode, active }) {
-  const order = SECTION_ORDER[mode] || SECTION_ORDER.academic;
-  return (
-    <nav className="section-rail" aria-label={lang === "en" ? "Section navigation" : "區塊導覽"}>
-      <span className="rail-spine" aria-hidden="true"/>
-      {order.map((id, i) => {
-        const isActive = active === id;
+    <section id="selected-work" className="section flagship" aria-labelledby="flagship-title"><div className="wrap">
+      <SectionHead eyebrow={F.eyebrow} title={F.title} intro={F.intro} id="flagship-title" />
+      <div className="application-contexts">{E.contexts.map((context, index) => <div key={context.title}><p className="section-label">0{index + 1}</p><h3>{context.title}</h3><p>{context.text}</p><SmartLink className="text-link" href={context.href} locale={locale}>{content.labels.evidence}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>)}</div>
+      <RolesLegend content={content} />
+      <div className="flagship-list">{F.items.map((item, index) => {
+        const { role, Icon } = CASE_ROLES[item.slug];
+        const source = content.evidenceSlices[item.slug]?.sources?.[0];
         return (
-          <a key={id} className={"rail-dot" + (isActive ? " is-active" : "")} href={"#" + id}
-             aria-current={isActive ? "location" : undefined}>
-            <span className="rail-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-            <span className="rail-tick" aria-hidden="true"/>
-            <span className="rail-label">{T(sectionLabel(id), lang)}</span>
-          </a>
-        );
-      })}
-      <a className="rail-dot rail-top" href="#top">
-        <span className="rail-tick" aria-hidden="true"/>
-        <span className="rail-label">{lang === "en" ? "Top" : "回頂端"}</span>
-      </a>
-    </nav>
+        <article className={`flagship-record case-${role}`} key={item.slug}>
+          <header className="flagship-head">
+            <span className="flagship-meta">{item.index}</span>
+            <h3>{item.title}</h3>
+            <span className="flagship-signal"><Icon aria-hidden="true" size={18} /><span>{CASE_ROLE_LABELS[locale]?.[role] || role}</span></span>
+          </header>
+          <dl className="flagship-facts">
+            <div><dt>{E.whyLabel}</dt><dd>{item.line}</dd></div>
+            <div><dt>{E.howLabel}</dt><dd>{item.role}</dd></div>
+            <div><dt>{E.contributionShortLabel}</dt><dd>{item.outcome}</dd></div>
+          </dl>
+          <p className="flagship-links">
+            <SmartLink className="text-link flagship-case-link" href={item.href} locale={locale}>{content.labels.details}<ArrowUpRight aria-hidden="true" size={16} /><span className="sr-only">: {item.title}</span></SmartLink>
+            {source ? <span className="flagship-source"><span>{E.sourceLabel}</span><SmartLink className="text-link" href={source.href} locale={locale}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink></span> : null}
+          </p>
+          <details className={`flagship-entry case-${role}`} name="selected-work-projects" open={index === 0}>
+            <summary className="flagship-trigger"><span>{E.expandLabel}</span><ChevronDown className="flagship-chevron" aria-hidden="true" size={18} /></summary>
+            <div className="flagship-panel">
+              <dl className="flagship-detail"><div><dt>{E.methodLabel}</dt><dd>{item.practice.join(" · ")}</dd></div><div><dt>{E.limitsLabel}</dt><dd>{E.limits[item.slug]}</dd></div></dl>
+            </div>
+          </details>
+        </article>
+      );})}</div>
+      {full ? null : <div className="section-tail"><SmartLink className="text-link" href="/work/" locale={locale}>{content.workPage.title}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></div>}
+    </div></section>
   );
 }
 
-function App() {
-  const [lang, setLang] = useState(() => localStorage.getItem("wy-lang") || "en");
-  const [theme, setTheme] = useState(() => localStorage.getItem("wy-theme") || "light");
-  const [mode, setMode] = useState(() => localStorage.getItem("wy-mode") || "industry");
-  useEffect(() => { localStorage.setItem("wy-lang", lang); document.documentElement.lang = lang === "zh" ? "zh-TW" : "en"; }, [lang]);
-  useEffect(() => { localStorage.setItem("wy-theme", theme); document.documentElement.setAttribute("data-theme", theme); }, [theme]);
-  useEffect(() => { localStorage.setItem("wy-mode", mode); document.documentElement.setAttribute("data-mode", mode); }, [mode]);
-  useScrollReveal([mode, lang]);
-  const gh = useGitHubStars();
-  const [cmdk, setCmdk] = useState(false);
-  useEffect(() => {
-    const onKey = (e) => {
-      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); setCmdk(true); }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-  const active = useActiveSection(["top","about","research","projects","skills","pubs","repos","contact"]);
-  const SECTION_COMP = { about: About, research: Research, projects: Projects, skills: Skills, pubs: Publications, repos: Repos, contact: Contact };
-  const order = SECTION_ORDER[mode] || SECTION_ORDER.academic;
+function formatCount(value, locale) {
+  if (value < 1000) return String(value);
+  return `${Math.floor(value / 100) / 10}K`;
+}
+
+function OpenSource({ content, locale }) {
+  const O = content.openSource;
+  const F = O.fieldLabels;
   return (
-    <>
-      <a className="skip-link" href="#main-content">{lang === "en" ? "Skip to content" : "跳至內容"}</a>
-      <Nav lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} active={active} mode={mode} setMode={setMode} onCmdK={() => setCmdk(true)}/>
-      <SectionRail lang={lang} mode={mode} active={active}/>
-      <CommandPalette open={cmdk} onClose={() => setCmdk(false)} lang={lang} mode={mode} setLang={setLang} setTheme={setTheme} setMode={setMode}/>
-      <main id="main-content">
-        <Hero lang={lang} mode={mode}/>
-        {mode === "industry" && <ImpactStrip lang={lang}/>}
-        {mode === "academic" && window.CONTENT.academic?.signal && <ImpactStrip lang={lang} data={window.CONTENT.academic.signal} label={lang === "en" ? "Research at a glance" : "研究一覽"}/>}
-        {order.map((key, i) => {
-          const Comp = SECTION_COMP[key];
-          if (!Comp) return null; // defensive: an unknown key is skipped, never crashes the page
-          return <Comp key={key} lang={lang} mode={mode} gh={gh} num={String(i + 1).padStart(2, "0")}/>;
-        })}
-      </main>
-      <Footer lang={lang}/>
-      <TweaksPanel lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>
-    </>
+    <section id="open-source" className="section open-source" aria-labelledby="oss-title"><div className="wrap">
+      <SectionHead eyebrow={O.eyebrow} title={O.title} intro={O.intro} id="oss-title" />
+      <div className="repo-list">{O.repos.map((repo) => {
+        const stats = githubData.repositories[repo.key];
+        return (
+          <article className="repo-row" key={repo.key}>
+            <div className="repo-lead">
+              <Github className="repo-glyph" aria-hidden="true" size={20} />
+              <h3><SmartLink className="repo-name-link" href={repo.href} locale={locale}>{repo.name}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink></h3>
+              <p className="repo-desc">{repo.desc}</p>
+              {stats ? <p className="repo-stats"><strong>{formatCount(stats.stars, locale)}</strong> {content.labels.stars} <span aria-hidden="true">·</span> <strong>{formatCount(stats.forks, locale)}</strong> {content.labels.forks}</p> : null}
+              <button className="text-link guide-context-entry" type="button" data-guide-open="tools" data-guide-query={locale === 'zh-TW' ? `何時適合使用 ${repo.name}？` : `When should I use ${repo.name}?`}>{locale === 'zh-TW' ? '了解用途' : 'Find its use'}<ArrowRight aria-hidden="true" size={16} /></button>
+            </div>
+            <dl className="repo-fields">
+              <div><dt>{F.audience}</dt><dd>{repo.audience}</dd></div>
+              <div><dt>{F.problem}</dt><dd>{repo.problem}</dd></div>
+              <div><dt>{F.contribution}</dt><dd>{repo.contribution}</dd></div>
+              <div><dt>{F.start}</dt><dd><SmartLink className="text-link" href={repo.start.href} locale={locale}>{repo.start.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink></dd></div>
+            </dl>
+          </article>
+        );
+      })}</div>
+      <p className="data-note">{content.labels.updated}: {githubData.checkedAt.slice(0, 10)} · {content.labels.source}: {content.labels.snapshot}</p>
+    </div></section>
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+
+function SystemConsequenceMap({ flow, activeStage = 0, compact = false }) {
+  const humanActive = Math.min(activeStage, 2);
+  const environmentActive = activeStage < 2 ? -1 : Math.min(activeStage - 2, 2);
+  return (
+    <figure className={`system-map${compact ? " is-compact" : ""}`} aria-labelledby="system-map-title system-map-desc">
+      <figcaption>
+        <strong id="system-map-title">{flow.title}</strong>
+        <span id="system-map-desc">{flow.description}</span>
+      </figcaption>
+      <div className="system-map-canvas">
+        <svg viewBox="0 0 1000 360" preserveAspectRatio="none" aria-hidden="true">
+          <defs><marker id="system-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" /></marker></defs>
+          <path className={`system-path is-human${activeStage <= 2 ? " is-active" : ""}`} d="M180 82H820" markerEnd="url(#system-arrow)" />
+          <path className={`system-path is-environment${activeStage >= 2 ? " is-active" : ""}`} d="M180 278H820" markerEnd="url(#system-arrow)" />
+          <path className={`system-path is-impact${activeStage >= 3 ? " is-active" : ""}`} d="M820 105C930 145 930 215 820 255" markerEnd="url(#system-arrow)" />
+          <path className={`system-path is-feedback${activeStage === 4 ? " is-active" : ""}`} d="M180 255C70 215 70 145 180 105" markerEnd="url(#system-arrow)" />
+        </svg>
+        <div className="system-lane system-lane-human">
+          <p><Users aria-hidden="true" size={18} />{flow.humanLabel}</p>
+          <ol>{flow.human.map((label, index) => <React.Fragment key={label}><li className={humanActive === index ? "is-active" : ""}><span>0{index + 1}</span><strong>{label}</strong></li>{index < flow.human.length - 1 ? <ArrowRight className="system-node-arrow" aria-hidden="true" size={18} /> : null}</React.Fragment>)}</ol>
+        </div>
+        <div className="system-lane system-lane-environment">
+          <p><Droplets aria-hidden="true" size={18} />{flow.environmentLabel}</p>
+          <ol>{flow.environment.map((label, index) => <React.Fragment key={label}><li className={environmentActive === index ? "is-active" : ""}><span>0{index + 1}</span><strong>{label}</strong></li>{index < flow.environment.length - 1 ? <ArrowRight className="system-node-arrow" aria-hidden="true" size={18} /> : null}</React.Fragment>)}</ol>
+        </div>
+      </div>
+      <p className="system-feedback"><RotateCcw aria-hidden="true" size={17} />{flow.feedback}</p>
+    </figure>
+  );
+}
+
+
+function EvidenceSlice({ content, locale, slug }) {
+  const E = content.evidenceSlices[slug];
+  const L = content.evidenceLabels;
+  const fields = [[L.problem, E.problem], [L.role, E.role], [L.input, E.input], [L.decision, E.decision], [L.validation, E.validation], [L.consequence, E.consequence]];
+  return <section className="section evidence-slice" aria-labelledby="evidence-slice-title"><div className="wrap"><SectionHead eyebrow={L.eyebrow} title={L.title} id="evidence-slice-title" /><dl>{fields.map(([label, value], index) => <div key={label}><dt><span>0{index + 1}</span>{label}</dt><dd>{value}</dd></div>)}</dl><p className="evidence-sources"><strong>{L.sources}</strong>{E.sources.map((source) => <SmartLink href={source.href} locale={locale} className="text-link" key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></div></section>;
+}
+
+
+
+function Documents({ content }) {
+  return <section className="section documents" aria-labelledby="documents-title"><div className="wrap documents-layout"><div><p className="eyebrow">PDF</p><h2 id="documents-title">{content.documents.title}</h2><p>{content.documents.intro}</p></div><div className="document-list">{content.documents.items.map((doc) => <a className="document-link" key={doc.href} href={doc.href} download><FileText aria-hidden="true" size={20} /><span>{doc.label}</span><small>{doc.type}</small><Download aria-hidden="true" size={18} /></a>)}</div></div></section>;
+}
+
+function Contact({ content, showBrief = true }) {
+  const C = content.contact;
+  return <section id="contact" className="contact-band" aria-labelledby="contact-title"><div className="wrap contact-layout"><div><p className="eyebrow">{C.eyebrow}</p><h2 id="contact-title">{C.title}</h2><p>{C.text}</p>{showBrief ? <SmartLink className="contact-brief-link" href="/about/#documents-title" locale={content.locale}>{content.editorial.aboutLink}<ArrowRight aria-hidden="true" size={15} /></SmartLink> : null}</div><div className="contact-actions"><a className="button button-light" href={`mailto:${C.email}`}><Mail aria-hidden="true" size={18} />{C.email}</a>{C.workAuth && <p>{C.workAuth}</p>}<ul>{C.links.map((link) => <li key={link.href}><SmartLink href={link.href} locale={content.locale}>{link.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink></li>)}</ul></div></div></section>;
+}
+
+/* The homepage is static HTML written by home/render.cjs at build time (header, main and footer included);
+   prerender.mjs hands it over on globalThis and the browser never re-renders it. */
+function Home({ locale }) {
+  return <div id="top" dangerouslySetInnerHTML={{ __html: globalThis.__HOME_HTML__?.[locale] || "" }} />;
+}
+
+function PageHero({ eyebrow, title, intro }) {
+  return <header className="page-hero wrap"><p className="eyebrow">{eyebrow}</p><h1>{title}</h1><p>{intro}</p></header>;
+}
+
+function Breadcrumbs({ content, locale, page }) {
+  if (page === "home") return null;
+  const parent = page.startsWith("case:")
+    ? { label: content.workPage.title, href: "/work/" }
+    : null;
+  const current = page.startsWith("case:")
+    ? content.caseStudies[page.slice(5)]?.title
+    : ({ work: content.workPage.title, research: content.researchPage.title, publications: content.publicationsPage.title, hire: content.hire.navLabel, about: content.aboutPage.title })[page];
+  return <nav className="breadcrumbs wrap" aria-label={locale === "zh-TW" ? "階層導覽" : "Breadcrumb"}><ol><li><SmartLink href="/" locale={locale}>{locale === "zh-TW" ? "首頁" : "Home"}</SmartLink></li>{parent ? <li><SmartLink href={parent.href} locale={locale}>{parent.label}</SmartLink></li> : null}<li aria-current="page">{current}</li></ol></nav>;
+}
+
+function WorkPage({ content, locale }) {
+  const W = content.workPage;
+  return <><PageHero eyebrow={W.eyebrow} title={W.title} intro={W.intro} /><FlagshipCards content={content} locale={locale} full /><OpenSource content={content} locale={locale} /><Documents content={content} /><Contact content={content} /></>;
+}
+
+function ResearchPage({ content, locale }) {
+  const R = content.researchPage;
+  const targets = ["human-evidence", "llm-evaluation", "governance-repair", "external-feedback"];
+  const roles = ["human", "model", "validation", "environment"];
+  const icons = [Users, GitCompareArrows, ShieldCheck, Waves];
+  return <><PageHero eyebrow={R.eyebrow} title={R.title} intro={R.intro} /><section className="section research-program" aria-label={R.eyebrow}><div className="wrap research-map"><svg viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M90 60H910" /></svg><ol>{R.questions.map((item, index) => { const Icon = icons[index]; return <li data-color-role={roles[index]} key={item.title}><a href={`#observatory-stage-${targets[index]}`}><span>0{index + 1}</span><Icon aria-hidden="true" size={22} /><h2>{item.title}</h2><p>{item.text}</p><ArrowDown aria-hidden="true" size={18} /></a></li>; })}</ol></div><div className="wrap"><RolesLegend content={content} /></div></section><section className="section research-methods"><div className="wrap two-column"><div><p className="eyebrow">{R.toolkitLabel}</p><h2>{R.methodsTitle}</h2><ol>{R.methods.map((item) => <li key={item}>{item}</li>)}</ol></div><div className="limits-panel"><AlertTriangle aria-hidden="true" /><h2>{R.limitsTitle}</h2><ul>{R.limits.map((item) => <li key={item}>{item}</li>)}</ul></div></div></section><Observatory content={content} locale={locale} /><Contact content={content} /></>;
+}
+
+function PublicationsPage({ content, locale }) {
+  const P = content.publicationsPage;
+  return <><PageHero eyebrow={P.eyebrow} title={P.title} intro={P.intro} /><div className="wrap publication-groups">{P.groups.map((group, groupIndex) => <section className="publication-group" key={group.title} aria-labelledby={`pub-group-${groupIndex}`}><h2 id={`pub-group-${groupIndex}`}>{group.title}</h2><ol>{group.entries.map((entry) => <li key={entry.title}><span className="record-year">{entry.year}</span><article><p className="status-label">{entry.status}</p><h3>{entry.title}</h3><p>{entry.citation}</p>{entry.links.length ? <p className="record-links">{entry.links.map((link) => <SmartLink key={link.href} className="text-link" href={link.href} locale={locale}>{link.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p> : null}</article></li>)}</ol></section>)}</div><Contact content={content} /></>;
+}
+
+function AboutPage({ content, locale }) {
+  const A = content.aboutPage;
+  return <>
+    <PageHero eyebrow={A.eyebrow} title={A.title} intro={A.bio[0]} />
+    <section className="section about-body">
+      <div className="wrap about-layout">
+        <figure><img src="/assets/portrait.jpg" width="560" height="751" alt={content.editorial.portraitAlt} loading="eager" /><figcaption>{content.hero.eyebrow}</figcaption></figure>
+        <div className="prose">{A.bio.slice(1).map((text) => <p key={text}>{text}</p>)}<SmartLink className="button button-outline about-brief-link" href="/hire/" locale={locale}>{content.hire.primaryLabel}<ArrowRight aria-hidden="true" size={16} /></SmartLink></div>
+      </div>
+    </section>
+    <section className="section"><div className="wrap">
+      <div><p className="eyebrow"><GraduationCap aria-hidden="true" size={16} />{A.educationTitle}</p><h2>{A.educationTitle}</h2><ol className="education-list">{A.education.map((item) => <li key={item.degree}><h3>{item.degree}</h3><p>{item.school}</p><span>{item.date}</span></li>)}</ol></div>
+    </div></section>
+    <section className="section" id="experience"><div className="wrap"><SectionHead eyebrow={A.timelineLabel} title={A.trajectoryTitle} /><Timeline content={content} locale={locale} /></div></section>
+    <Documents content={content} /><Contact content={content} />
+  </>;
+}
+
+function RecruiterFitExplorer({ content, locale, resume }) {
+  const F = content.hire.fitExplorer;
+  return <section id="fit-explorer" className="section recruiter-fit" aria-labelledby="fit-explorer-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">06</p><h2 id="fit-explorer-title">{F.title}</h2><p>{F.intro}</p></div><div className="fit-explorer-shell" data-recruiter-fit-explorer data-locale={locale} data-resume-href={resume.href} data-email-href={`mailto:${content.contact.email}`} data-linkedin-href="https://www.linkedin.com/in/wenyu-chiou"><form data-fit-form><fieldset><legend>{F.roleLabel}</legend><div className="fit-role-options">{Object.entries(FIT_ROLE_PRESETS).map(([id, preset], index) => <label data-color-role={["model", "validation", "environment"][index]} key={id}><input type="radio" name="rolePreset" value={id} data-fit-role defaultChecked={index === 0} /><span>{preset.title[locale]}</span></label>)}</div></fieldset><label className="fit-jd-label" htmlFor="fit-job-description"><span>{F.jdLabel}</span><span><span data-fit-count>0</span> / 8,000</span></label><textarea id="fit-job-description" data-fit-jd rows="8" maxLength="8000" placeholder={F.jdPlaceholder} autoComplete="off" /><div className="fit-submit-row"><button className="button button-dark" type="submit" data-fit-submit><Sparkles aria-hidden="true" size={17} />{F.submit}</button><p><ShieldCheck aria-hidden="true" size={17} />{F.privacy}</p></div><div className="fit-turnstile" data-fit-turnstile /></form><div className="fit-analysis-status" role="status" aria-live="polite"><span className="fit-status-pulse" aria-hidden="true" /><span data-fit-status>{F.ready}</span></div><div className="fit-report" data-fit-result hidden /><noscript><p className="fit-noscript">{F.noScript}</p></noscript></div></div></section>;
+}
+
+function HirePage({ content, locale }) {
+  const H = content.hire;
+  const resume = content.documents.items[0];
+  const skillRoles = ["engineering", "model", "context", "environment"];
+  return <div className="hire-page">
+    <header className="hire-hero wrap"><div><p className="eyebrow">{H.eyebrow}</p><h1>{H.title}</h1><p>{H.intro}</p></div><figure><img src="/assets/agu2025-photo-mobile.webp" width="360" height="480" alt={content.hero.imageAlt} /><figcaption>{content.hero.imageCaption}</figcaption></figure></header>
+    <section className="section hire-profile" aria-labelledby="hire-role-title"><div className="wrap"><div className="hire-split hire-role"><div><p className="hire-number">01</p><h2 id="hire-role-title">{H.roleFitTitle}</h2></div><p>{H.roleFitText}</p></div><div className="hire-section-title hire-own-title"><p className="hire-number">02</p><h2 id="hire-own-title">{H.ownTitle}</h2></div><ol className="hire-ownership">{H.own.map((item, index) => <li data-color-role={["human", "validation", "system"][index]} key={item.title}><span>0{index + 1}</span><div><h3>{item.title}</h3><p>{item.text}</p></div></li>)}</ol></div></section>
+    <section className="section hire-evidence" aria-labelledby="hire-evidence-title"><div className="wrap"><div className="hire-section-title"><p className="hire-number">03</p><h2 id="hire-evidence-title">{H.evidenceTitle}</h2><p>{H.evidenceIntro}</p></div><div className="hire-evidence-list">{content.flagship.items.map((project) => { const slice = content.evidenceSlices[project.slug]; const role = CASE_ROLES[project.slug].role; return <article className={`case-${role}`} key={project.slug}><header><span>{project.index}</span><div><h3>{project.title}</h3></div></header><dl><div><dt>{H.evidenceLabels.problem}</dt><dd>{project.line}</dd></div><div><dt>{H.evidenceLabels.role}</dt><dd>{project.role}</dd></div><div><dt>{H.evidenceLabels.capabilities}</dt><dd>{project.practice.join(" · ")}</dd></div></dl><p className="hire-evidence-links"><SmartLink className="text-link" href={project.href} locale={locale}>{H.evidenceLabels.source}<ArrowRight aria-hidden="true" size={15} /></SmartLink>{slice.sources.slice(0, 1).map((source) => <SmartLink className="text-link" href={source.href} locale={locale} key={source.href}>{source.label}<ArrowUpRight aria-hidden="true" size={14} /></SmartLink>)}</p></article>; })}</div></div></section>
+    <section className="section hire-fit" aria-labelledby="hire-fit-title"><div className="wrap hire-fit-grid"><div><div className="hire-section-title"><p className="hire-number">04</p><h2 id="hire-fit-title">{H.fitTitle}</h2><p>{H.fitIntro}</p></div><dl className="hire-skills">{H.skillGroups.map((group, index) => <div data-color-role={skillRoles[index]} key={group.label}><dt>{group.label}</dt><dd>{group.items.join(" · ")}</dd></div>)}</dl></div><aside className="hire-availability" aria-labelledby="hire-availability-title"><p className="hire-number">05</p><h2 id="hire-availability-title">{H.availabilityTitle}</h2><ul>{H.availability.map((item) => <li key={item}><Check aria-hidden="true" size={18} />{item}</li>)}</ul></aside></div></section>
+    <RecruiterFitExplorer content={content} locale={locale} resume={resume} />
+    <section id="contact" className="section hire-contact" aria-labelledby="hire-contact-title"><div className="wrap hire-split"><div><p className="hire-number">07</p><h2 id="hire-contact-title">{H.contactTitle}</h2><p>{H.contactText}</p></div><div className="hire-contact-actions"><a className="button button-dark" href={resume.href} download><Download aria-hidden="true" size={17} />{H.resumeLabel}</a><a className="button button-outline" href={`mailto:${content.contact.email}`}><Mail aria-hidden="true" size={17} />{H.emailLabel}</a><SmartLink className="button button-outline" href="https://www.linkedin.com/in/wenyu-chiou" locale={locale}><Linkedin aria-hidden="true" size={17} />{H.linkedinLabel}</SmartLink></div></div></section>
+  </div>;
+}
+
+function PathwayExplorer({ content }) {
+  const [lens, setLens] = useState("overall");
+  const labels = content.interactions.pathways;
+  const options = [["overall", labels.overall], ["owners", labels.owners], ["renters", labels.renters]];
+  return <div className="interactive-artifact pathway-artifact"><div className="segmented-control" role="group" aria-label={labels.controlLabel}>{options.map(([id, label]) => <button key={id} type="button" aria-pressed={lens === id} onClick={() => setLens(id)}>{label}</button>)}</div><p className="artifact-note">{labels.note}</p><div className={`pathway-diagram lens-${lens}`} role="img" aria-label={`${labels.input}, ${labels.constructs}, ${labels.pathways}, ${labels.stability}`}>{[labels.input, labels.constructs, labels.pathways, labels.stability].map((label, index) => <React.Fragment key={label}><div><span>0{index + 1}</span><strong>{label}</strong></div>{index < 3 ? <ChevronRight aria-hidden="true" /> : null}</React.Fragment>)}</div><p className="artifact-result" aria-live="polite"><strong>{labels.lensLabel}</strong>{labels.views[lens]}</p></div>;
+}
+
+function FloodTimeline({ content }) {
+  const [tenure, setTenure] = useState("owner");
+  const labels = content.interactions.timeline;
+  return <div className="interactive-artifact timeline-artifact"><div className="segmented-control" role="group" aria-label={labels.controlLabel}>{[["owner", labels.owner], ["renter", labels.renter]].map(([id, label]) => <button key={id} type="button" aria-pressed={tenure === id} onClick={() => setTenure(id)}>{label}</button>)}</div><p className="artifact-note">{labels.note}</p><SystemConsequenceMap flow={content.provenance.flow} activeStage={tenure === "owner" ? 4 : 3} /><ol className={`feedback-timeline is-${tenure}`}>{[labels.start, labels.choice, labels.hazard, labels.finance, labels.repeat].map((label, index) => <li data-color-role={["context", "human", "environment", "validation", "system"][index]} key={label}><span>0{index + 1}</span><strong>{label}</strong>{index === 4 ? <RotateCcw aria-hidden="true" size={18} /> : <ChevronRight aria-hidden="true" size={18} />}</li>)}</ol><p className="artifact-result" aria-live="polite"><strong>{labels.lensLabel}</strong>{labels.views[tenure]}</p></div>;
+}
+
+function GovernanceTrace({ content }) {
+  const [repaired, setRepaired] = useState(false);
+  const labels = content.interactions.governance;
+  const steps = [labels.proposal, labels.parse, labels.physical, labels.financial, labels.behavioral, labels.audit, labels.update];
+  return <div className="interactive-artifact governance-artifact"><div className="segmented-control" role="group" aria-label={labels.controlLabel}><button type="button" aria-pressed={!repaired} onClick={() => setRepaired(false)}>{labels.first}</button><button type="button" aria-pressed={repaired} onClick={() => setRepaired(true)}>{labels.repaired}</button></div><p className="artifact-note">{labels.note}</p><ol className={repaired ? "governance-trace is-repaired" : "governance-trace"}>{steps.map((step, index) => { const failed = !repaired && index === 3; const blocked = !repaired && index > 3; return <li key={step} className={failed ? "is-failed" : blocked ? "is-blocked" : "is-passed"}>{failed ? <AlertTriangle aria-hidden="true" /> : blocked ? <X aria-hidden="true" /> : <Check aria-hidden="true" />}<span>{step}</span></li>; })}</ol><div className={repaired ? "trace-result is-accepted" : "trace-result is-rejected"}>{repaired ? <ShieldCheck aria-hidden="true" /> : <AlertTriangle aria-hidden="true" />}<div><strong>{repaired ? labels.accepted : labels.blocked}</strong><p>{repaired ? labels.passed : labels.failed}</p></div></div></div>;
+}
+
+function CaseInteraction({ type, content }) {
+  const lens = type === "pathways" ? "evaluation" : type === "timeline" ? "simulation" : "governance";
+  const context = type === "pathways" ? <PathwayExplorer content={content} /> : type === "timeline" ? <FloodTimeline content={content} /> : <GovernanceTrace content={content} />;
+  return <><div id="decision-provenance" data-provenance-explorer><ProvenanceIsland content={content} initialLens={lens} /></div><details className="case-research-context"><summary>{content.locale === "zh-TW" ? "研究脈絡與方法" : "Research context and method"}</summary>{context}</details></>;
+}
+
+function CaseStudyPage({ content, locale, slug }) {
+  const C = content.caseStudies[slug];
+  const labels = content.caseLabels;
+  return <article className="case-study">
+    <header className="case-hero wrap"><p className="eyebrow">{C.eyebrow}</p><h1>{C.title}</h1><p className="case-lede">{C.lede}</p><ul>{C.scale.map((item) => <li key={item}>{item}</li>)}</ul></header>
+    <section className="section case-overview"><div className="wrap two-column">
+      <div data-case-why><h2>{labels.why}</h2><p>{C.problem}</p></div>
+      <div data-case-how><h2>{labels.built}</h2><p>{C.role}</p></div>
+    </div></section>
+    <section className="section case-learned"><div className="wrap" data-case-contribution>
+      <h2>{labels.changed}</h2><p>{C.learned}</p>
+      <p>{C.relevance}</p>
+      <p className="record-links">{C.links.map((link) => <SmartLink key={link.href} className="button button-outline" href={link.href} locale={locale}>{link.label}<ArrowUpRight aria-hidden="true" size={16} /></SmartLink>)}</p>
+    </div></section>
+    <section className="section"><div className="wrap"><SectionHead eyebrow={labels.artifact} title={labels.inspect} intro={C.artifact} id="artifact-title" /><CaseInteraction type={C.interaction} content={content} /></div></section>
+    <section className="section case-method"><div className="wrap two-column">
+      <div><h2>{labels.roleMethod}</h2><ol>{C.method.map((item) => <li key={item}>{item}</li>)}</ol></div>
+      <div className="limits-panel"><AlertTriangle aria-hidden="true" /><h2>{labels.validation}</h2><h3>{labels.validationShort}</h3><ul>{C.validation.map((item) => <li key={item}>{item}</li>)}</ul><h3>{labels.limitations}</h3><ul>{C.limitations.map((item) => <li key={item}>{item}</li>)}</ul></div>
+    </div></section>
+    <EvidenceSlice content={content} locale={locale} slug={slug} />
+    <Contact content={content} />
+  </article>;
+}
+
+function SiteFooter({ content, locale }) {
+  return <footer className="site-footer"><div className="wrap"><div><strong>{content.name}</strong><p>{content.footer.line}</p><SmartLink href="/about/" locale={locale}>{content.editorial.aboutLink}<ArrowRight aria-hidden="true" size={14} /></SmartLink></div><p>{content.footer.note}<br />© 2026 Wenyu Chiou</p></div></footer>;
+}
+
+function PortfolioNavigator({ content, locale, inline = false, header = false }) {
+  const N = content.navigator;
+  const suggestions = inline ? content.hire.suggestions : N.suggestions;
+  const suggestionFallbacks = inline ? ["/work/human-grounded-llm-evaluation/", "/research/#observatory-stage-governance-repair", "/work/"] : [];
+  const titleId = inline ? "recruiter-navigator-title" : "navigator-title";
+  const queryId = inline ? "recruiter-navigator-query" : "navigator-query";
+  const ai = { nvidia: locale === "zh-TW" ? "NVIDIA 引用摘要" : "NVIDIA cited summary" };
+  const frame = <div className="navigator-frame">
+    {!inline ? <><div className="navigator-intro">
+      <h2 id={titleId}>{N.title}</h2>
+      <p>{N.intro}</p>
+    </div></> : <h3 className="sr-only" id={titleId}>{content.hire.askTitle}</h3>}
+    <div className="navigator-suggestions" aria-label={N.label}>
+      {inline ? suggestions.map((suggestion, index) => <a href={lp(suggestionFallbacks[index], locale)} data-navigator-query={suggestion} key={suggestion}><span>{suggestion}</span><ArrowRight aria-hidden="true" size={16} /></a>) : GUIDE_INTENTS.map(intent => intent.href
+        ? <a key={intent.id} href={lp(intent.href, locale)} data-guide-collaboration><span>{intent.label[locale]}</span><ArrowUpRight aria-hidden="true" size={16} /></a>
+        : <button type="button" data-guide-intent={intent.id} aria-pressed="false" key={intent.id}><span>{intent.label[locale]}</span><ArrowRight aria-hidden="true" size={16} /></button>)}
+    </div>
+    {!inline && <fieldset className="guide-depth"><legend>{N.depthLabel}</legend><button type="button" data-guide-depth="beginner" aria-pressed="true">{N.beginner}</button><button type="button" data-guide-depth="method" aria-pressed="false">{N.method}</button></fieldset>}
+    {!inline && <p className="guide-context" data-guide-context hidden />}
+    <form className="navigator-form" role="search" action={lp("/work/", locale)} method="get">
+      <label className="sr-only" htmlFor={queryId}>{N.label}</label>
+      <input id={queryId} name="query" type="search" placeholder={N.placeholder} maxLength="180" autoComplete="off" aria-describedby={`${queryId}-privacy`} />
+      <p className="navigator-privacy" id={`${queryId}-privacy`}>{N.privacy}</p>
+      <button className="navigator-submit" type="submit"><Search aria-hidden="true" size={18} /><span>{N.submit}</span></button>
+    </form>
+    <div className="navigator-turnstile" data-turnstile-container />
+    <div className="navigator-feedback" aria-live="polite"><span data-navigator-status>{N.ready}</span><span data-navigator-mode /></div>
+    <div className="navigator-answer" data-navigator-answer hidden />
+    {!inline && <><div className="guide-explanation" data-guide-sections hidden /><button type="button" className="text-link guide-next-view" data-guide-view hidden>{N.viewAction}<ArrowRight aria-hidden="true" size={18} /></button><h3 className="guide-evidence-heading" data-guide-evidence-heading>{N.evidence}</h3></>}
+    {!inline && <p className="guide-reading-intro" data-guide-intro />}
+    <ol className="navigator-results" data-navigator-results />
+  </div>;
+  return (
+    <div
+      className={inline ? "recruiter-navigator" : header ? "portfolio-navigator navigator-header-entry" : "portfolio-navigator"}
+      data-portfolio-navigator
+      data-locale={locale}
+      data-inline={inline ? "true" : "false"}
+      data-loading={N.loading}
+      data-matching={N.matching}
+      data-local={N.local}
+      data-semantic={N.semantic}
+      data-fallback={N.fallback}
+      data-unsupported={N.unsupported}
+      data-ready={N.ready}
+      data-generated-ready={N.generatedReady}
+      data-result-label={N.resultLabel}
+      data-nvidia={ai.nvidia}
+      data-why={N.why}
+      data-how={N.how}
+      data-contribution={N.contribution}
+      data-context-label={N.contextLabel}
+      data-boundaries={N.boundaries}
+      data-source-label={N.source}
+    >
+      {!inline ? <button className="navigator-launch" type="button" data-navigator-launch aria-haspopup="dialog" aria-controls="portfolio-navigator-dialog" aria-label={`${N.launchShort}: ${N.launch}. ${N.launchScope}`} title={`${N.launch}: ${N.launchScope}`}>
+        {header ? <Compass aria-hidden="true" size={18} /> : <Search aria-hidden="true" size={18} />}
+        <span className="navigator-launch-copy"><strong>{N.launch}</strong><small>{N.launchScope}</small></span>
+        <span className="navigator-launch-short" aria-hidden="true">{N.launchShort}</span>
+      </button> : null}
+      {inline ? <div className="navigator-inline-panel" aria-labelledby={titleId}>{frame}</div> : <dialog className="navigator-dialog" id="portfolio-navigator-dialog" aria-labelledby={titleId}><header className="navigator-header"><p className="eyebrow">{N.eyebrow}</p><button className="icon-button navigator-close" type="button" data-navigator-close aria-label={N.close} title={N.close}><X aria-hidden="true" size={18} /></button></header>{frame}</dialog>}
+    </div>
+  );
+}
+
+export function App({ page = "home", locale = "en", basePath = "/" }) {
+  const content = CONTENT[locale] || CONTENT.en;
+  let body;
+  if (page === "home") return <Home locale={locale} />;
+  if (page === "work") body = <WorkPage content={content} locale={locale} />;
+  else if (page === "research") body = <ResearchPage content={content} locale={locale} />;
+  else if (page === "publications") body = <PublicationsPage content={content} locale={locale} />;
+  else if (page === "hire") body = <HirePage content={content} locale={locale} />;
+  else if (page === "about") body = <AboutPage content={content} locale={locale} />;
+  else if (page.startsWith("case:")) body = <CaseStudyPage content={content} locale={locale} slug={page.slice(5)} />;
+  else throw new Error(`Unknown page: ${page}`);
+  return <><SiteHeader content={content} locale={locale} page={page} basePath={basePath} /><main id="main"><Breadcrumbs content={content} locale={locale} page={page} />{body}</main><SiteFooter content={content} locale={locale} /></>;
+}

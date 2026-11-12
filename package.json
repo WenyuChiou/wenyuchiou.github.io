@@ -2,11 +2,46 @@
   "name": "wenyu-portfolio",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "description": "Personal portfolio site. Source is JSX compiled to a single bundle by esbuild (no in-browser Babel). Run `npm run build` after editing *.jsx / content.js, then commit assets/app.bundle.js.",
   "scripts": {
-    "build": "node build.mjs"
+    "preview": "node scripts/preview.mjs",
+    "preview:test-verification": "node scripts/preview.mjs --test-verification",
+    "preview:worker:test-verification": "wrangler dev --remote --config worker/wrangler.preview-test.jsonc --define PORTFOLIO_OWNER_PREVIEW:true --ip 127.0.0.1 --port 8999 --inspector-port 9234 --show-interactive-dev-session false --log-level warn",
+    "preview:worker": "wrangler dev --remote --config worker/wrangler.preview.jsonc --define PORTFOLIO_OWNER_PREVIEW:true --ip 127.0.0.1 --port 8999 --inspector-port 9234 --show-interactive-dev-session false --log-level warn",
+    "test:preview": "node --test scripts/test-preview.mjs worker/src/preview.test.js",
+    "build": "node build.mjs",
+    "pdf": "node cv/build-pdf.mjs",
+    "test": "node scripts/test-research-header.mjs assets/research && node scripts/verify-site.mjs && node scripts/check-copy.mjs --strict --require-pdfs && node --test scripts/test-editorial.mjs scripts/test-portfolio-guide.mjs scripts/test-commit-maps.mjs && node scripts/test-navigator.mjs && npm run test:provenance && npm run test:webmcp && npm run test:worker && npm run test:preview",
+    "test:webmcp": "node scripts/test-webmcp.mjs",
+    "test:provenance": "node --test scripts/test-provenance.mjs scripts/test-editorial-interactions.mjs",
+    "test:worker": "node --test worker/src/index.test.js scripts/test-turnstile.mjs scripts/test-guide-evidence.mjs scripts/test-guide-protocol.mjs",
+    "check:nvidia-model": "node worker/scripts/check-model.mjs",
+    "deploy:worker": "npm run check:nvidia-model && wrangler deploy --config worker/wrangler.jsonc",
+    "qa:browser": "node scripts/browser-audit.mjs",
+    "qa:lighthouse": "node scripts/lighthouse-audit.mjs",
+    "qa:screenshots": "node scripts/capture-screenshots.mjs",
+    "refresh:github": "node scripts/fetch-github-data.mjs",
+    "refresh:commit-maps": "node scripts/commit-maps.mjs"
   },
   "devDependencies": {
-    "esbuild": "^0.24.0"
+    "axe-core": "^4.10.2",
+    "esbuild": "^0.24.0",
+    "lighthouse": "^13.4.1",
+    "puppeteer-core": "^25.3.0",
+    "sharp": "^0.35.3",
+    "wrangler": "^4.33.1"
+  },
+  "dependencies": {
+    "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
+    "@fontsource-variable/chiron-hei-hk": "^5.3.1",
+    "@fontsource-variable/chiron-sung-hk": "^5.3.1",
+    "@fontsource-variable/literata": "^5.3.0",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }

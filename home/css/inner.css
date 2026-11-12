@@ -1,0 +1,19 @@
+/* Inner pages (work, research, publications, recruiter brief, about): the homepage's type, background and shapes
+   on top of styles.css. The palette itself lives in the :root tokens of styles.css. Loaded last. */
+body{background-image:radial-gradient(circle,rgba(236,244,242,.06) 1px,transparent 1.5px),radial-gradient(1100px 760px at 86% 0,#123a42 0,transparent 62%),radial-gradient(900px 700px at -8% 28%,#1b2148 0,transparent 60%);background-size:28px 28px,auto,auto;background-repeat:repeat,no-repeat,no-repeat;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-weight:600;letter-spacing:-.03em}
+:root:lang(zh-Hant-TW) h1,:root:lang(zh-Hant-TW) h2,:root:lang(zh-Hant-TW) h3{letter-spacing:0;line-height:1.2}
+.eyebrow{font-family:var(--mono);font-size:.8125rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+:root:lang(zh-Hant-TW) .eyebrow{font-family:var(--body);letter-spacing:.04em}
+
+.site-header{-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
+.brand-mark{background:var(--teal);color:var(--on-accent);font-weight:700;letter-spacing:-.04em}
+.primary-nav>ul>li>a,.work-dropdown>summary{font-weight:500}
+.primary-nav>ul>li>a[aria-current="page"]:after,.work-dropdown>summary[aria-current="page"]:after{height:3px;border-radius:3px}
+
+.button,.locale-link,.icon-button,.icon-link,.navigator-launch,.navigator-header-entry .navigator-launch,.guide-depth button{border-radius:999px}
+.button,.button-light{border-color:var(--teal);background:var(--teal);color:var(--on-accent)}
+.button-ghost,.button-outline{border-color:var(--line-strong);background:transparent;color:var(--ink)}
+.work-dropdown-panel,.navigator-dialog,.interactive-artifact{border-radius:20px}
+.navigator-form input,.fit-explorer-shell textarea{border-radius:14px}
+.skip-link{border-radius:12px}

@@ -1,0 +1,537 @@
+/*
+ * print.css — shared print stylesheet for the academic CV and industry resume.
+ * Type tokens per visual-design-system.md §5.8.2:
+ *   - academic CV body  = serif stack, 10.5–11pt
+ *   - industry resume   = sans stack, 10–10.5pt, single column
+ *   - mono ONLY for URLs/DOIs
+ *   - no letter-spacing anywhere; grayscale-legible; no color dependence
+ * Font stacks carry robust fallbacks (Georgia / 'Times New Roman'; system sans)
+ * so PDFs render correctly even without self-hosted font files.
+ */
+
+@page {
+  size: Letter;
+  margin: 0.45in 0.55in;
+}
+
+:root {
+  /* Brand families first; hard fallbacks render identically without font files. */
+  --font-serif: "Times New Roman", Times, serif;
+  --font-sans: "Times New Roman", Times, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace;
+
+  /* Ink scale — grayscale-safe; no hue carries meaning. */
+  --ink-1: #1a1a1a;
+  --ink-2: #3d3d3d;
+  --ink-3: #5c5c5c;
+  --rule: #b8b8b8;
+}
+
+* {
+  box-sizing: border-box;
+  letter-spacing: normal; /* VDS §5.8.2: no letter-spacing anywhere */
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  color: var(--ink-1);
+  background: #ffffff;
+}
+
+/* ---- Document body types ---- */
+
+body.doc-cv {
+  font-family: var(--font-serif);
+  font-size: 10.5pt;
+  line-height: 1.45;
+}
+
+body.doc-resume {
+  font-family: var(--font-sans);
+  font-size: 10pt;
+  line-height: 1.4;
+}
+
+/* ---- Header ---- */
+
+.doc-header {
+  margin-bottom: 14pt;
+  padding-bottom: 8pt;
+  border-bottom: 1px solid var(--rule);
+}
+
+h1 {
+  margin: 0 0 3pt 0;
+  font-size: 19pt;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+body.doc-resume h1 {
+  font-size: 16pt;
+}
+
+.title-line {
+  margin: 0 0 3pt 0;
+  font-size: 11pt;
+  color: var(--ink-2);
+}
+
+body.doc-resume .title-line {
+  font-size: 10.5pt;
+}
+
+.contact-line {
+  margin: 0;
+  font-size: 9.5pt;
+  color: var(--ink-2);
+}
+
+/* ---- Sections ---- */
+
+.cv-section,
+.rs-section {
+  margin: 0 0 9pt 0;
+}
+
+/* Resume sections are short — keep each whole on one page. */
+.rs-section {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+h2 {
+  margin: 0 0 5pt 0;
+  font-size: 11.5pt;
+  font-weight: 700;
+  line-height: 1.2;
+  padding-bottom: 2pt;
+  border-bottom: 1px solid var(--rule);
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+body.doc-resume h2 {
+  font-size: 10.5pt;
+}
+
+/* ---- Entries and lists ---- */
+
+.entry-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  margin: 0 0 5pt 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.entry p {
+  margin: 0;
+}
+
+.entry .detail {
+  color: var(--ink-2);
+  font-size: 9.8pt;
+  margin-top: 1pt;
+}
+
+.dates {
+  float: right;
+  color: var(--ink-3);
+  font-size: 9.5pt;
+  white-space: nowrap;
+}
+
+.entry-meta {
+  display: block;
+  font-size: 9.5pt;
+  color: var(--ink-2);
+  margin-top: 1pt;
+}
+
+.status-label {
+  font-weight: 600;
+  font-variant: small-caps;
+}
+
+.prose {
+  margin: 0;
+  text-align: justify;
+  hyphens: none;
+}
+
+.citation p {
+  padding-left: 18pt;
+  text-indent: -18pt; /* hanging-indent citation */
+}
+
+.self {
+  font-weight: 600; /* own name weight 600, never reordered */
+}
+
+/* Resume lists: plain semantic ul for ATS parsing */
+body.doc-resume ul {
+  margin: 0;
+  padding-left: 14pt;
+}
+
+body.doc-resume li {
+  margin: 0 0 4pt 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.positioning p {
+  margin: 0 0 3pt 0;
+}
+
+.positioning .dialect {
+  font-weight: 600;
+}
+
+/* ---- URLs / DOIs — the only mono usage ---- */
+
+.u {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  color: var(--ink-1);         /* grayscale-safe: no color dependence */
+  text-decoration: none;
+  white-space: nowrap; /* never split mid-DOI/ORCID/URL; all .u tokens are short */
+}
+
+/* ---- Print-specific ---- */
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  a {
+    color: var(--ink-1);
+    text-decoration: none;
+  }
+}
+
+/* ---- Screen preview (does not affect the PDF) ---- */
+
+@media screen {
+  body {
+    max-width: 8.5in;
+    margin: 0 auto;
+    padding: 0.7in;
+    background: #ffffff;
+  }
+}
+
+
+/* ============================================================
+   CV2 — Curriculum Vitæ, original-design-based (owner directive 2026-07-17).
+   Times New Roman throughout for stable, recruiter-readable extraction.
+   Resume styles above are kept in the same document face.
+   ============================================================ */
+
+.cv2 { font-family: "Times New Roman", Times, serif; font-size: 9.75pt; }
+
+.cv2-header { display: grid; grid-template-columns: 1fr 100pt; gap: 16pt; align-items: start;
+  border-bottom: 1pt solid #B9BCB4; padding-bottom: 10pt; margin-bottom: 12pt; }
+.cv2-kicker { font-family: "Times New Roman", Times, serif; font-size: 7.5pt; letter-spacing: 0.35em;
+  text-transform: uppercase; color: #6b7280; margin: 0 0 2pt; }
+.cv2 h1 { font-size: 25pt; font-weight: 560; margin: 0 0 3pt; letter-spacing: 0.005em; }
+.cv2-subtitle { font-style: italic; font-size: 9.75pt; color: #374151; margin: 0 0 5pt; }
+.cv2-positioning { font-style: italic; font-size: 9.25pt; line-height: 1.5; color: #4b5563; margin: 0 0 7pt; max-width: 92%; }
+.cv2-contact { font-family: "Times New Roman", Times, serif; font-size: 7.75pt; color: #374151; margin: 0 0 2pt; }
+.cv2-photo { margin: 2pt 0 0; }
+.cv2-photo img { width: 100%; height: auto; border-radius: 4pt; border: 0.5pt solid #c5c8c0; }
+
+.cv2 .cv-section h2 { font-size: 11.5pt; font-weight: 600; border-bottom: 0.75pt solid #9aa0a6;
+  padding-bottom: 2.5pt; margin: 0 0 6pt; }
+.secnum { font-family: "Times New Roman", Times, serif; font-size: 6.75pt; letter-spacing: 0.28em;
+  color: #9aa0a6; margin-right: 5pt; font-weight: 400; }
+.group-label { font-family: "Times New Roman", Times, serif; font-size: 7.25pt; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #6b7280; margin: 6pt 0 3pt; }
+
+.cv2 .bullets { margin: 3pt 0 0 11pt; padding: 0; }
+.cv2 .bullets li { margin: 0 0 2.5pt; line-height: 1.42; }
+.cv2 .bullets.plain { margin-top: 0; }
+
+.chip { font-family: "Times New Roman", Times, serif; font-size: 6.75pt; font-weight: 600; letter-spacing: 0.06em;
+  padding: 0.75pt 5pt 1pt; border-radius: 2.5pt; white-space: nowrap; }
+.chip-published { background: #E6F0E7; color: #1F5C31; border: 0.5pt solid #A9C9AF; }
+.chip-review { background: #FBF2DC; color: #7D5D14; border: 0.5pt solid #DFC98E; }
+.pubnum { font-family: "Times New Roman", Times, serif; font-size: 8pt; color: #6b7280; }
+.pub-list .entry { margin-bottom: 4.5pt; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1.45fr; gap: 0 18pt; }
+
+.card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7pt 12pt; }
+.card { border-left: 1.5pt solid #3D4A6B; padding: 2pt 0 2pt 7pt; break-inside: avoid; }
+.card-title { font-weight: 600; font-size: 9.25pt; margin: 0 0 1pt; }
+.card-meta { font-family: "Times New Roman", Times, serif; font-size: 6.75pt; letter-spacing: 0.04em;
+  color: #6b7280; margin: 0 0 2pt; }
+.card-body { font-size: 8.5pt; line-height: 1.4; color: #374151; margin: 0; }
+
+.cv2-footer { display: flex; justify-content: space-between; font-family: "Times New Roman", Times, serif;
+  font-size: 7pt; letter-spacing: 0.12em; text-transform: uppercase; color: #9aa0a6;
+  border-top: 0.5pt solid #c5c8c0; margin-top: 12pt; padding-top: 5pt; }
+
+/* CV2 layout fixes (2026-07-17): dates pinned to the heading line via flex
+   (the floated/absolute .dates drifted onto neighboring lines in tight
+   sections); the two-column block never splits across pages. */
+/* Only paragraphs that actually carry a date get the reserved right column;
+   the date is absolutely anchored to ITS OWN paragraph (no float drift, and
+   inline text nodes are never turned into flex items — the flex approach
+   fractured multi-node citation paragraphs into columns). */
+.cv2 .entry > p:first-child:has(> .dates) { position: relative; padding-right: 92pt; }
+.cv2 .entry > p:first-child > .dates { position: absolute; right: 0; top: 1pt;
+  float: none; white-space: nowrap; font-family: "Times New Roman", Times, serif;
+  font-size: 7.5pt; color: #6b7280; }
+.cv2 .entry { clear: both; }
+.two-col { break-inside: avoid; }
+.card-grid { break-inside: auto; }
+
+/* CV2 density pass — pull the orphan 4th page back (footer-only page). */
+.cv2 { font-size: 9.5pt; }
+.cv2 .cv-section { margin-bottom: 7pt; }
+.cv2-header { padding-bottom: 8pt; margin-bottom: 9pt; }
+.cv2 .bullets li { line-height: 1.38; margin-bottom: 2pt; }
+.cv2 .entry { margin-bottom: 4pt; }
+.pub-list .entry { margin-bottom: 3.5pt; }
+.card-grid { gap: 6pt 11pt; }
+.card-body { font-size: 8.25pt; line-height: 1.36; }
+.cv2-footer { margin-top: 8pt; }
+.cv2 .cv-section h2 { margin-bottom: 5pt; }
+
+/* CV2 final density micro-pass — reclaim the one-line 4th page. */
+.cv2 { font-size: 9.4pt; }
+.cv2-header { grid-template-columns: 1fr 90pt; padding-bottom: 7pt; margin-bottom: 8pt; }
+.cv2-positioning { max-width: 100%; margin-bottom: 6pt; }
+.cv2 .cv-section { margin-bottom: 6pt; }
+.cv2 .cv-section h2 { margin-bottom: 4pt; padding-bottom: 2pt; }
+.cv2 .entry { margin-bottom: 3.5pt; }
+.cv2 .detail { line-height: 1.36; }
+.group-label { margin: 5pt 0 2.5pt; }
+.card-body { font-size: 8pt; }
+.cv2-footer { margin-top: 6pt; }
+
+/* Footer reclaim — only the footer spilled to a 4th page. */
+.cv2 .lang-line { margin-bottom: 0; }
+.cv2 .lang-line .detail { margin-bottom: 0; }
+.cv2-footer { margin-top: 4pt; padding-top: 3.5pt; break-inside: avoid; }
+.cv2 .card { padding-top: 1.5pt; padding-bottom: 1.5pt; }
+.cv2 .card-grid { gap: 5pt 11pt; }
+
+.lang-foot { text-transform: none; letter-spacing: 0.02em; font-size: 8pt; color: #4b5563; }
+.lang-foot strong { color: #1f2937; }
+
+
+/* ============================================================
+   RESUME2 — industry résumé, harness-forward, distinctive-but-ATS-safe
+   (owner directive 2026-07-17: industry track, agent-infrastructure/harness
+   lead, single column so ATS parses cleanly; visual distinction via indigo
+   accent + type hierarchy + left-bordered system blocks — all CSS, never
+   multi-column or table-of-content, so extraction order = reading order).
+   ============================================================ */
+.resume2 { --acc: #2F3A5C; --acc-2: #5B6788; font-family: "Times New Roman", Times, serif; font-size: 9.5pt; color: #1f2430; }
+
+.r2-header { border-bottom: 2pt solid var(--acc); padding-bottom: 8pt; margin-bottom: 9pt; }
+.resume2 h1 { font-family: "Times New Roman", Times, serif; font-weight: 560; font-size: 24pt; letter-spacing: 0.005em; margin: 0 0 1pt; color: #14181f; }
+.r2-role { font-size: 11pt; font-weight: 600; letter-spacing: 0.02em; color: var(--acc); margin: 0 0 5pt; }
+.r2-contact { font-size: 8pt; color: #3d4453; margin: 0 0 6pt; }
+.r2-lede { font-size: 9.5pt; line-height: 1.5; color: #2b3140; margin: 0 0 4pt; }
+.r2-avail { font-size: 8.75pt; color: var(--acc); font-weight: 600; margin: 0 0 1.5pt; }
+.r2-auth { font-size: 8.25pt; color: #4a5162; margin: 0; }
+
+.resume2 h2 { font-family: "Times New Roman", Times, serif; font-size: 8.75pt; font-weight: 700; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--acc); margin: 9pt 0 5pt; padding-bottom: 2.5pt;
+  border-bottom: 0.75pt solid #C9CEDA; }
+.resume2 h2::before { content: ""; display: inline-block; width: 12pt; height: 3pt; background: var(--acc);
+  vertical-align: middle; margin-right: 6pt; position: relative; top: -1.5pt; }
+
+.sys { border-left: 2pt solid var(--acc-2); padding: 0 0 0 8pt; margin: 0 0 6pt; break-inside: avoid; }
+.sys-head { margin: 0 0 1.5pt; font-size: 9.75pt; }
+.sys-head strong { font-weight: 700; color: #14181f; }
+.sys-tag { font-size: 7pt; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--acc-2); margin-left: 6pt; }
+.sys-val { margin: 0 0 2pt; line-height: 1.42; color: #2b3140; }
+.sys-ev { font-family: 'JetBrains Mono', monospace; font-size: 7.5pt; line-height: 1.4; color: #5a6273; margin: 0; }
+
+.resume2 .r2-list { list-style: none; margin: 0; padding: 0; }
+.resume2 .r2-bullets { margin: 0 0 0 13pt; padding: 0; }
+.resume2 .r2-bullets li { margin: 0 0 2pt; line-height: 1.42; }
+.resume2 .publine, .resume2 .domline, .resume2 .commline { margin: 0 0 3pt; line-height: 1.44; }
+.resume2 .chip-published { font-size: 6.75pt; font-weight: 700; letter-spacing: 0.05em; color: #1F5C31;
+  background: #E6F0E7; border: 0.5pt solid #A9C9AF; border-radius: 2.5pt; padding: 0.5pt 4pt; white-space: nowrap; }
+.resume2 .self { font-weight: 700; }
+.resume2 .edu-line { display: flex; justify-content: space-between; gap: 12pt; margin: 0 0 2pt; line-height: 1.4; }
+.resume2 .edu-line .d { color: #6b7280; font-size: 8.25pt; white-space: nowrap; flex-shrink: 0; }
+.resume2 .skill-line { margin: 0 0 2.5pt; line-height: 1.42; }
+.resume2 .skill-k { font-weight: 700; color: var(--acc); }
+.resume2 .u { color: inherit; text-decoration: none; border-bottom: 0.4pt solid #b9c0cd; }
+
+/* CV2 reclaim after reframe (2026-07-17): cards slightly denser to hold 3pp. */
+.cv2 { font-size: 9.25pt; }
+.cv2 .card-body { font-size: 7.85pt; line-height: 1.34; }
+.cv2 .card-grid { gap: 5pt 10pt; }
+.cv2 .cv-section { margin-bottom: 5.5pt; }
+.cv2 .detail { line-height: 1.34; }
+
+/* CV2: reclaim the single orphan footer line (2026-07-17). */
+.cv2 .card { padding-top: 1pt; padding-bottom: 1pt; }
+.cv2 .card-grid { gap: 4pt 10pt; }
+.cv2-footer { margin-top: 2pt; padding-top: 3pt; }
+.cv2 .two-col { margin-bottom: 2pt; }
+
+/* Résumé Experience entries (2026-07-17): dated job headers + bullets, ATS-safe. */
+.resume2 .job { margin: 0 0 8pt; break-inside: avoid; }
+.resume2 .job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12pt; margin: 0 0 2pt; }
+.resume2 .job-head .d { color: #6b7280; font-size: 8.25pt; white-space: nowrap; flex-shrink: 0; }
+.resume2 .job .r2-bullets { margin: 0 0 0 13pt; }
+.resume2 .job .r2-bullets li { margin: 0 0 2.5pt; line-height: 1.42; }
+
+/* CV2: photo removed + font restore per design review (2026-07-17). */
+.cv2-header { grid-template-columns: 1fr; }
+.cv2 { font-size: 9.7pt; }
+.cv2 .card-body { font-size: 8.4pt; line-height: 1.38; }
+.cv2 .detail { line-height: 1.4; }
+.cv2 .cv-section { margin-bottom: 6.5pt; }
+
+/* Résumé 1-page compaction (2026-07-17, owner: fit one clean page). resume2-only. */
+.resume2 h2 { margin: 6pt 0 4pt; }
+.resume2 .r2-header { padding-bottom: 6pt; margin-bottom: 6pt; }
+.resume2 .r2-lede { margin-top: 2pt; }
+.resume2 .job { margin-bottom: 5pt; }
+.resume2 .job .r2-bullets li { margin-bottom: 1.5pt; line-height: 1.37; }
+.resume2 .r2-bullets li { margin-bottom: 1.5pt; }
+.resume2 .skill-line { margin-bottom: 1.5pt; line-height: 1.37; }
+.resume2 .publine, .resume2 .edu-line { margin-bottom: 1.5pt; }
+
+.resume2 { font-size: 9.5pt; }
+
+/* Résumé final 1-page reclaim after re-adding availability + work-eligibility. */
+.resume2 .r2-avail { margin-bottom: 0; }
+.resume2 .r2-auth { margin: 1pt 0 0; }
+.resume2 .r2-header { margin-bottom: 5pt; padding-bottom: 5pt; }
+.resume2 h2 { margin: 5pt 0 3.5pt; }
+.resume2 .job { margin-bottom: 4pt; }
+
+/* CV2 reclaim after adding fable card + ISDSA (2026-07-17). */
+.cv2 { font-size: 9.45pt; }
+.cv2 .card { padding-top: 0.5pt; padding-bottom: 0.5pt; }
+.cv2 .card-grid { gap: 4pt 9pt; }
+
+/* Résumé re-fit to 1 page after adding ISDSA presentation (2026-07-17). */
+.resume2 { font-size: 9.3pt; }
+.resume2 h2 { margin: 4.5pt 0 3pt; }
+.resume2 .job { margin-bottom: 4pt; }
+.resume2 .job .r2-bullets li { margin-bottom: 1pt; line-height: 1.35; }
+.resume2 .r2-bullets li { margin-bottom: 1pt; line-height: 1.35; }
+.resume2 .skill-line { margin-bottom: 1pt; line-height: 1.35; }
+.resume2 .publine, .resume2 .edu-line { margin-bottom: 1pt; }
+.resume2 .r2-header { margin-bottom: 4pt; padding-bottom: 4pt; }
+.resume2 .r2-avail { margin-bottom: 0; } .resume2 .r2-auth { margin: 0.5pt 0 0; }
+/* CV reclaim */
+.cv2 { font-size: 9.3pt; }
+.resume2 { font-size: 9.15pt; }
+.cv2 { font-size: 9.2pt; }
+.cv2 .cv-section { margin-bottom: 5.5pt; }
+.cv2 { font-size: 9.1pt; }
+
+/* final résumé line-height reclaim */
+.resume2 .job .r2-bullets li, .resume2 .r2-bullets li, .resume2 .skill-line, .resume2 .publine, .resume2 .edu-line { line-height: 1.3; margin-bottom: 0.5pt; }
+.resume2 h2 { margin: 4pt 0 2.5pt; }
+.resume2 .job { margin-bottom: 3pt; }
+.resume2, .resume2 * { hyphens: none; -webkit-hyphens: none; }
+.cv2 .card-grid { gap: 3.5pt 8pt; }
+.cv2 .lang-foot { font-size: 7.5pt; }
+.cv2 .cv-section { margin-bottom: 6pt; }
+.cv2 .cv2-footer { margin-top: 2pt; padding-top: 2.5pt; }
+.cv2 .card { padding: 1pt 0 1pt 7pt; }
+.cv2 h2 { margin-bottom: 3pt; font-size: 10.8pt; }
+.cv2 .two-col { break-inside: auto; page-break-inside: auto; }
+.cv2 .group-label { break-after: avoid; page-break-after: avoid; }
+
+/* Industry resume reframe — restore readable density after reducing the
+   infrastructure inventory and foregrounding behavioral simulation. */
+.resume2 { font-size: 9.4pt; }
+.resume2 .r2-header { padding-bottom: 6pt; margin-bottom: 6pt; }
+.resume2 .r2-lede { line-height: 1.4; margin-bottom: 4pt; }
+.resume2 .r2-auth { margin-top: 2pt; }
+.resume2 h2 { margin: 5pt 0 2.5pt; padding-bottom: 2pt; }
+.resume2 .job { margin-bottom: 4pt; }
+.resume2 .job .r2-bullets li,
+.resume2 .r2-bullets li,
+.resume2 .publine,
+.resume2 .edu-line,
+.resume2 .skill-line { line-height: 1.32; margin-bottom: 1pt; }
+.resume2 .chip-review { font-size: 6.75pt; font-weight: 700; letter-spacing: 0.05em; color: #7D5D14;
+  background: #FBF2DC; border: 0.5pt solid #DFC98E; border-radius: 2.5pt; padding: 0.5pt 4pt; white-space: nowrap; }
+
+/* Industry resume typography — owner request: Times New Roman throughout. */
+.resume2,
+.resume2 * {
+  font-family: "Times New Roman", Times, serif;
+  letter-spacing: normal;
+}
+.resume2 h1,
+.resume2 h2,
+.resume2 .u {
+  font-family: "Times New Roman", Times, serif;
+}
+.resume2 .u { font-size: inherit; }
+
+/* Both deliverables use Times New Roman as the stable, recruiter-readable
+   document face. Status labels remain typographic instead of color-coded. */
+.cv2,
+.cv2 *,
+.resume2,
+.resume2 * {
+  font-family: "Times New Roman", Times, serif;
+  letter-spacing: normal;
+}
+.cv2 .chip,
+.resume2 .chip,
+.resume2 .chip-published,
+.resume2 .chip-review {
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  font-family: inherit;
+  font-weight: 600;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+/* Keep the expanded skills line compact enough for the one-page industry layout. */
+.resume2 .skill-line { font-size: 8.75pt; line-height: 1.18; }
+
+/* Compact evidence metadata after adding the community-adoption project. */
+.resume2 .publine { font-size: 8.7pt; line-height: 1.18; }
+
+/* Reclaim the final line without reducing the evidence sections. */
+.resume2 section:last-child h2 { margin-top: 1pt; margin-bottom: 1pt; }
+.resume2 section:last-child .skill-line { font-size: 8.4pt; line-height: 1.08; }
+.resume2 section:nth-last-child(2) .edu-line { line-height: 1.15; margin-bottom: 0; }
+
+/* Traditional Chinese documents use Taiwan system fonts with complete CJK
+   coverage. English citations and URLs fall back cleanly within the stack. */
+html[lang="zh-Hant-TW"] .zh-doc,
+html[lang="zh-Hant-TW"] .zh-doc * {
+  font-family: "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", "PMingLiU", serif;
+  letter-spacing: 0;
+}
+html[lang="zh-Hant-TW"] .zh-doc .u {
+  font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+}
+html[lang="zh-Hant-TW"] .resume2 { font-size: 8.9pt; line-height: 1.28; }
+html[lang="zh-Hant-TW"] .resume2 .r2-contact { font-size: 7.4pt; }
+html[lang="zh-Hant-TW"] .resume2 .skill-line,
+html[lang="zh-Hant-TW"] .resume2 .publine { font-size: 8.15pt; line-height: 1.16; }
+html[lang="zh-Hant-TW"] .cv2 { font-size: 8.9pt; line-height: 1.36; }
+html[lang="zh-Hant-TW"] .cv2 .card-body { font-size: 7.8pt; }
