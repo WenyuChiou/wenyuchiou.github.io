@@ -29,7 +29,7 @@ assert.equal(search.inputSchema.properties.limit.maximum, 5);
 
 const governance = await search.execute({ query: "agent governance constraints", locale: "en", limit: 3 });
 assert.equal(governance.matches[0].id, "wagf");
-assert.equal(governance.matches[0].url, "https://wenyuchiou.github.io/work/wagf/");
+assert.equal(governance.matches[0].url, "https://wenyuchiou.github.io/research/#observatory-stage-governance-repair");
 assert.equal("query" in governance, false, "search output must not echo the query");
 const chineseSearch = await search.execute({ query: "洪災家戶調適與保險", locale: "zh-TW", limit: 2 });
 assert.equal(chineseSearch.matches[0].id, "floodabm");
@@ -49,7 +49,7 @@ assert.equal(read.inputSchema.properties.ids.uniqueItems, true);
 const evidence = await read.execute({ ids: ["wagf", "floodabm"], locale: "zh-TW" });
 assert.deepEqual(evidence.records.map((record) => record.id), ["wagf", "floodabm"]);
 assert.ok(evidence.records[0].verifiedTerms.includes("validators"));
-assert.match(evidence.records[0].url, /\/zh\/work\/wagf\/$/);
+assert.match(evidence.records[0].url, /\/zh\/research\/#observatory-stage-governance-repair$/);
 await assert.rejects(read.execute({ ids: ["wagf", "invented"] }), /unknown_evidence_id/);
 await assert.rejects(read.execute({ ids: ["wagf", "wagf"] }), /duplicate_evidence_id/);
 await assert.rejects(read.execute({ ids: [] }), /invalid_ids/);

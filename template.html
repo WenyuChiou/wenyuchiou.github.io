@@ -1,11 +1,11 @@
 <!doctype html>
 <!-- template.html is the source for all generated route documents. -->
-<html lang="{{LANG}}">
+<html lang="{{LANG}}" data-lang="{{DATA_LANG}}" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="{{CSP}}">
-  <meta name="theme-color" content="#101815">
+  <meta name="theme-color" content="#081316">
   <meta name="portfolio-ai-endpoint" content="{{AI_ENDPOINT}}">
   <meta name="turnstile-site-key" content="{{TURNSTILE_SITE_KEY}}">
   <title>{{TITLE}}</title>
@@ -27,10 +27,7 @@
   <meta name="twitter:image" content="{{OG_IMAGE}}">
 {{HEAD_EXTRA}}
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-  <script>{{THEME_SCRIPT}}</script>
-  <link rel="stylesheet" href="/styles.css">
-  <link rel="stylesheet" href="/editorial.css">
-<link rel="stylesheet" href="/features/editorial/interactions.css">
+{{STYLES}}
   <script>{{APP_LOADER_SCRIPT}}</script>
 </head>
 <body>

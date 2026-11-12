@@ -44,7 +44,7 @@ export async function auditPortfolioGuide(browser, origin, failures, { screensho
         if (/huggingface|hf\.co|transformers-4\.2\.0|challenges\.cloudflare/.test(request.url())) return void request.abort();
         void request.continue();
       });
-      await page.goto(`${origin}${locale === 'en' ? '/' : '/zh/'}`, { waitUntil: 'networkidle0' });
+      await page.goto(`${origin}${locale === 'en' ? '' : '/zh'}/work/human-grounded-llm-evaluation/`, { waitUntil: 'networkidle0' });
       await page.click('[data-navigator-launch]');
       await page.waitForSelector('[data-navigator-results] li');
       await page.click('[data-guide-intent="tools"]');
@@ -88,14 +88,18 @@ export async function auditPortfolioGuide(browser, origin, failures, { screensho
       await page.click('[data-guide-view]');
       await page.waitForFunction(() => document.querySelector('.provenance-workbench').dataset.lens === 'simulation' && document.querySelector('.provenance-workbench').dataset.guideStage === 'consequence');
       if (await page.$eval('.provenance-workbench', element => element.dataset.guideRepaired) !== 'false') failures.push(`${locale}: view suggestion executed a repair`);
-      await page.click('[data-guide-open="observatory"]');
-      await page.waitForSelector('dialog[open]');
+      /* the scene is still laying out after the view change, so a pointer click can land where the button was: try up to three times */
+      for (let attempt = 0; attempt < 3; attempt++) {
+        await page.click('[data-guide-open="observatory"]');
+        if (await page.waitForSelector('dialog[open]', { timeout: 4000 }).then(() => true, () => false)) break;
+      }
+      await page.waitForSelector('dialog[open]', { timeout: 5000 });
       if (!(await page.$eval('[data-guide-context]', element => element.textContent)).length) failures.push(`${locale}: scene context missing`);
       await page.click('[data-guide-intent="research"]');
       await page.click('.navigator-submit');
       await page.waitForSelector('[data-guide-sections]:not([hidden])');
       await page.addScriptTag({ content: axe.source });
-      for (const theme of ['light', 'dark']) for (const width of [360, 390, 768, 1440]) {
+      for (const theme of ['dark']) for (const width of [360, 390, 768, 1440]) {
         await page.setViewport({ width, height: width >= 768 ? 1000 : 844 });
         await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
         await page.$eval('.navigator-frame', element => { element.scrollTop = 0; });
@@ -134,5 +138,5 @@ export async function auditPortfolioGuide(browser, origin, failures, { screensho
       await page.close();
     }
   } finally { await context.close(); }
-  if (failures.length === startFailures) console.log('portfolio-guide: bilingual 3-task/local-first/citation/context/cancellation/keyboard/16-view matrix passed; provider and Turnstile explicitly mocked');
+  if (failures.length === startFailures) console.log('portfolio-guide: bilingual 3-task/local-first/citation/context/cancellation/keyboard/8-view matrix (single dark theme) passed; provider and Turnstile explicitly mocked');
 }

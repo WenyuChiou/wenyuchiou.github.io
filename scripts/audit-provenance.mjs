@@ -61,7 +61,7 @@ try {
       const destinationTop=await page.$eval('[data-provenance-island]',node=>node.getBoundingClientRect().top);
       assert.ok(destinationTop>=0 && destinationTop<200,'Deep link scrolls to the case interaction');
       const prefix=locale==='en'?'':'/zh';
-      for(const [slug,lens] of [['human-grounded-llm-evaluation','evaluation'],['wagf','governance'],['floodabm','simulation']]) {
+      for(const [slug,lens] of [['human-grounded-llm-evaluation','evaluation'],['floodabm','simulation']]) {
         await page.goto(`${base}${prefix}/work/${slug}/`,{waitUntil:'networkidle0'});
         await activate(page);
         assert.equal(await page.$eval('.provenance-workbench',node=>node.dataset.lens),lens,'Case defaults to its own lens');

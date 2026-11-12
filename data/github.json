@@ -1,41 +1,46 @@
 {
-  "checkedAt": "2026-11-12T09:22:07.420Z",
+  "checkedAt": "2026-11-12T15:16:25.203Z",
   "owner": "WenyuChiou",
   "repositories": {
     "awesome-agentic-ai-zh": {
-      "stars": 8739,
-      "forks": 1083,
-      "url": "https://github.com/WenyuChiou/awesome-agentic-ai-zh",
-      "previewUrl": "/assets/github/awesome-agentic-ai-zh.webp",
-      "previewSourceUrl": "https://repository-images.githubusercontent.com/1229284184/6b2714ee-67ae-493d-a8ab-581370d76fd8"
+      "stars": 8747,
+      "forks": 1084,
+      "url": "https://github.com/WenyuChiou/awesome-agentic-ai-zh"
     },
     "ai-research-skills": {
-      "stars": 650,
+      "stars": 651,
       "forks": 45,
-      "url": "https://github.com/WenyuChiou/ai-research-skills",
-      "previewUrl": "/assets/github/ai-research-skills.webp",
-      "previewSourceUrl": "https://repository-images.githubusercontent.com/1221061473/058c3873-5b00-409c-a859-f84f2f786a6c"
+      "url": "https://github.com/WenyuChiou/ai-research-skills"
+    },
+    "academic-writing-skills": {
+      "stars": 422,
+      "forks": 23,
+      "url": "https://github.com/WenyuChiou/academic-writing-skills"
+    },
+    "zotero-skills": {
+      "stars": 78,
+      "forks": 7,
+      "url": "https://github.com/WenyuChiou/zotero-skills"
     },
     "research-hub": {
       "stars": 67,
       "forks": 15,
-      "url": "https://github.com/WenyuChiou/research-hub",
-      "previewUrl": null,
-      "previewSourceUrl": null
-    },
-    "agent-collab-skills": {
-      "stars": 34,
-      "forks": 7,
-      "url": "https://github.com/WenyuChiou/agent-collab-skills",
-      "previewUrl": "/assets/github/agent-collab-skills.webp",
-      "previewSourceUrl": "https://repository-images.githubusercontent.com/1223161782/c6660473-67cb-4271-89b7-80c1db702131"
+      "url": "https://github.com/WenyuChiou/research-hub"
     },
     "codex-delegate": {
       "stars": 62,
       "forks": 6,
-      "url": "https://github.com/WenyuChiou/codex-delegate",
-      "previewUrl": null,
-      "previewSourceUrl": null
+      "url": "https://github.com/WenyuChiou/codex-delegate"
+    },
+    "agent-board": {
+      "stars": 58,
+      "forks": 7,
+      "url": "https://github.com/WenyuChiou/agent-board"
+    },
+    "agent-collab-skills": {
+      "stars": 34,
+      "forks": 7,
+      "url": "https://github.com/WenyuChiou/agent-collab-skills"
     }
   }
 }

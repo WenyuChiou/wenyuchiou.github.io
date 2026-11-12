@@ -35,7 +35,7 @@ export const GUIDE_EVIDENCE = [
   {
     id: "wagf",
     title: { en: "WAGF Governed Agent System", "zh-TW": "WAGF 受治理代理系統" },
-    href: "/work/wagf/",
+    href: "/research/#observatory-stage-governance-repair",
     kind: "case",
     agentType: "llm-agent",
     tasks: ["research", "observatory"],
@@ -60,7 +60,7 @@ export const GUIDE_EVIDENCE = [
       "zh-TW": ["代理治理", "結構化提案", "限制驗證", "針對性修正", "稽核軌跡"],
     },
     source: {
-      url: "https://wenyuchiou.github.io/work/wagf/",
+      url: "https://wenyuchiou.github.io/research/",
       revision: "bdd651156cdde2467d6ac8351c65b71f98cb37ec",
       checkedAt: "2026-10-13",
     },

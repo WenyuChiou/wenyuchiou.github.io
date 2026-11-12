@@ -40,7 +40,8 @@ export const FEATURE_CONTENT = {
           label: "Governance",
           caseTitle: "WAGF",
           caseSlug: "wagf",
-          caseHref: "/work/wagf/",
+          caseHref: "/research/#observatory-stage-governance-repair",
+          caseLinkLabel: "See this stage in the research program",
           colorRole: "governance",
           summary: "Keep a proposed action separate from system state until deterministic validators accept it.",
           stages: [
@@ -105,16 +106,6 @@ export const FEATURE_CONTENT = {
         consequence: "Each annual decision changes exposure, loss, and the resources available for the next cycle.",
         sources: [{ label: "Water Resources Research article", href: SOURCE_LINKS.wrr }, { label: "FLOODABM repository", href: SOURCE_LINKS.floodabm }],
       },
-      wagf: {
-        status: "",
-        problem: "An unconstrained LLM proposal can create impossible financial or physical state changes.",
-        role: "I designed the proposal schema, validator sequence, targeted repair path, and audit record.",
-        input: "A synthetic household state, action catalog, and explicit behavioral, financial, and physical constraints.",
-        decision: "The model proposes an action with typed parameters but cannot write to state.",
-        validation: "A failed affordability check blocks the update; repair changes only the invalid field before all validators rerun.",
-        consequence: "The accepted proposal is committed with a trace linking input, failure, repair, and final state update.",
-        sources: [{ label: "Related public FLOODABM repository", href: SOURCE_LINKS.floodabm }],
-      },
     },
   },
   "zh-TW": {
@@ -131,7 +122,7 @@ export const FEATURE_CONTENT = {
       visual: { evaluationLabel: "比較人類實測行為與模型生成行為", governanceLabel: "提案必須先通過驗證才能更新狀態", measured: "人類實測結構", generated: "模型生成行為", compare: "比較方向、群體模式與穩定性", proposal: "結構化提案", validator: "確定性驗證閘門", stateUpdate: "獲准的狀態更新" },
       lenses: {
         evaluation: { label: "評估", caseTitle: "以人類行為為基礎的 LLM 評估", caseSlug: "human-grounded-llm-evaluation", caseHref: "/work/human-grounded-llm-evaluation/", colorRole: "evaluation", summary: "比較模型生成的選擇與人類實測的決策結構，並清楚界定比較何時不再有效。", stages: [["published", "以實測構念與自陳選擇建立經驗基準。"], ["illustrative", "無標籤的合成人物設定只帶入核准的屬性。"], ["illustrative", "重複執行模型，取得可比較的選擇與簡短理由。"], ["public", "比較方向、群體差異與執行穩定性，不公開個別受訪者資料。"], ["illustrative", "產出是有邊界的評估結果，不是模型足以代表真人的宣稱。"]], focus: ["以實測構念與選擇建立行為基準。", "控制哪些核准屬性可以進入模型。", "以可比較的結構記錄重複決策。", "檢查方向、群體模式與執行穩定性。", "清楚說明這項比較的效度邊界。"], outcomes: ["一個以經驗資料為基礎的行為參照。", "受控制且不暴露標籤的合成情境。", "一組重複執行的結構化模型選擇。", "可查驗的一致性與穩定性評估。", "附帶明確限制的評估結果。"] },
-        governance: { label: "治理", caseTitle: "WAGF", caseSlug: "wagf", caseHref: "/work/wagf/", colorRole: "governance", summary: "在確定性驗證器接受提案以前，讓代理輸出與系統狀態保持分離。", stages: [["published", "行為與物理限制界定合理行動必須遵守的條件。"], ["illustrative", "合成代理狀態限制模型可提出的行動範圍。"], ["illustrative", "LLM 只回傳結構化提案，不能直接修改模擬狀態。"], ["public", "驗證器拒絕無效欄位、要求針對性修正，並保留稽核軌跡。"], ["illustrative", "只有通過驗證的提案才能更新耦合模型。"]], focus: ["在生成之前宣告行為與物理限制。", "依目前狀態限制可提出的行動。", "讓模型輸出與可執行的狀態更新分離。", "阻擋無效欄位，且只修正失敗部分。", "所有驗證通過後才允許更新。"], outcomes: ["一組明確宣告的限制邊界。", "了解目前狀態的合成代理情境。", "沒有直接寫入權限的型別化提案。", "驗證結果、針對性修正與稽核軌跡。", "獲得授權且可追溯的狀態轉移。"] },
+        governance: { label: "治理", caseTitle: "WAGF", caseSlug: "wagf", caseHref: "/research/#observatory-stage-governance-repair", caseLinkLabel: "在研究計畫中看這個階段", colorRole: "governance", summary: "在確定性驗證器接受提案以前，讓代理輸出與系統狀態保持分離。", stages: [["published", "行為與物理限制界定合理行動必須遵守的條件。"], ["illustrative", "合成代理狀態限制模型可提出的行動範圍。"], ["illustrative", "LLM 只回傳結構化提案，不能直接修改模擬狀態。"], ["public", "驗證器拒絕無效欄位、要求針對性修正，並保留稽核軌跡。"], ["illustrative", "只有通過驗證的提案才能更新耦合模型。"]], focus: ["在生成之前宣告行為與物理限制。", "依目前狀態限制可提出的行動。", "讓模型輸出與可執行的狀態更新分離。", "阻擋無效欄位，且只修正失敗部分。", "所有驗證通過後才允許更新。"], outcomes: ["一組明確宣告的限制邊界。", "了解目前狀態的合成代理情境。", "沒有直接寫入權限的型別化提案。", "驗證結果、針對性修正與稽核軌跡。", "獲得授權且可追溯的狀態轉移。"] },
         simulation: { label: "模擬", caseTitle: "FLOODABM", caseSlug: "floodabm", caseHref: "/work/floodabm/", colorRole: "simulation", summary: "追蹤家戶決策與環境條件如何隨時間互相改變。", stages: [["published", "調查證據與公開洪災資料共同建立行為基礎。"], ["published", "居住權屬、風險知覺、資源與暴露形成決策情境。"], ["public", "代理在限制下選擇調適、保險或不採取行動。"], ["public", "模型檢查行為、財務與物理狀態轉移是否一致。"], ["published", "洪災損失與調適會改變下一輪的家戶與環境狀態。"]], focus: ["以調查與公開風險證據建立家戶行為基礎。", "表達居住權屬、資源、風險知覺與暴露。", "在行為與財務限制下做出調適決策。", "維持人類、財務與物理狀態轉移的一致性。", "把損失與調適影響帶回下一輪決策。"], outcomes: ["以人類證據為基礎的行為參照。", "家戶與洪災共同形成的決策情境。", "受限制的調適或保險選擇。", "通過檢查的耦合模型狀態轉移。", "更新後的人類—環境系統狀態。"] },
       },
       flow: { title: "人類與環境的耦合回饋", description: "上軌呈現人類理解與調適，下軌呈現危害、損害與環境狀態更新，兩者彼此回饋。", humanLabel: "人類軌", environmentLabel: "環境軌", human: ["理解風險", "決策與調適", "更新資源"], environment: ["危害狀態", "損害與損失", "下一期環境"], feedback: "結果會回到下一期的風險認知、行動能力與暴露。" },
@@ -140,7 +131,6 @@ export const FEATURE_CONTENT = {
     evidenceSlices: {
       "human-grounded-llm-evaluation": { status: "", problem: "生成的洪水保險問卷回答，能否保留真人家戶的差異與決策關係？", role: "我將實測家戶問卷與兩個 LLM 的生成回答配對，檢查量測品質、決策路徑與重複執行。", input: "真實家戶問卷，以及依家戶情境生成的同一份問卷回答。", decision: "比較投保意願及實測決策變項之間的關係。", validation: "分別檢查量測品質、比較家戶限制群體，並在設定不變下測試重複回答。", consequence: "辨識只比較平均答案時容易忽略的家戶差異與決策關係。", sources: [{ label: "相關研究個人檔案", href: SOURCE_LINKS.scholar }] },
       floodabm: { status: "WRR 文章、AGU 海報與程式庫已公開；本案例的分析手稿仍在修訂中。", problem: "個別調適選擇會改變長期洪災損失、保險與家戶能力。", role: "我開發並測試家戶決策層，並將它耦合到巨災模型的狀態轉移。", input: "調查支持的行為、家戶情境、洪災危害、損害、保險與財務狀態。", decision: "家戶依居住權屬與資源限制，評估防護、保險或不採取行動。", validation: "行為校準、狀態不變量、重複情境，以及與公開證據比較。", consequence: "每年的決策都會改變暴露、損失與下一期可用資源。", sources: [{ label: "Water Resources Research 文章", href: SOURCE_LINKS.wrr }, { label: "FLOODABM 程式庫", href: SOURCE_LINKS.floodabm }] },
-      wagf: { status: "", problem: "未受約束的 LLM 提案可能造成不可能的財務或物理狀態變化。", role: "我設計提案結構、驗證順序、針對性修正與稽核紀錄。", input: "合成家戶狀態、行動目錄，以及明確的行為、財務與物理限制。", decision: "模型以型別化參數提出行動，但不能寫入狀態。", validation: "負擔能力檢查失敗時阻擋更新，只修正無效欄位，再重跑全部驗證。", consequence: "通過的提案連同輸入、失敗、修正與最終更新的完整軌跡一起提交。", sources: [{ label: "相關公開 FLOODABM 程式庫", href: SOURCE_LINKS.floodabm }] },
     },
   },
 };

@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { GUIDE_EVIDENCE } from "../guide-evidence.js";
 
+const GOVERNANCE_STAGE_HREF = "/research/#observatory-stage-governance-repair";
 const EXPECTED_IDS = [
   "human-grounded-llm-evaluation",
   "wagf",
@@ -100,7 +101,9 @@ test("tool records use public immutable README sources and state their boundarie
 test("case records retain public boundaries, including FLOODABM's non-LLM scope", () => {
   const cases = GUIDE_EVIDENCE.filter(({ kind }) => kind === "case");
   assert.equal(cases.length, 3);
-  assert.ok(cases.every(({ href, source }) => href.startsWith("/work/") && new URL(source.url).hostname === "wenyuchiou.github.io"));
+  assert.ok(cases.every(({ href, source }) => href.startsWith("/work/") === (href !== GOVERNANCE_STAGE_HREF) && new URL(source.url).hostname === "wenyuchiou.github.io"));
+  assert.deepEqual(cases.filter(({ href }) => href === GOVERNANCE_STAGE_HREF).map(({ id }) => id), ["wagf"], "the taken-down WAGF page resolves to the Research governance stage");
+  assert.equal(GUIDE_EVIDENCE.find(({ id }) => id === "wagf").source.url, "https://wenyuchiou.github.io/research/");
 
   const floodabm = GUIDE_EVIDENCE.find(({ id }) => id === "floodabm");
   assert.match(floodabm.limitations.en, /not an integrated LLM system/i);

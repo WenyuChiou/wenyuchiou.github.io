@@ -1,0 +1,47 @@
+# Refreshes the animated dam and snake commit maps once a day.
+# Scheduled workflows only run from the repository's default branch (main), so a copy of this
+# file has to exist on main. It always checks out standalone-portfolio, the branch GitHub Pages
+# deploys from, and commits only the three generated files under assets/commit-maps/.
+# A commit pushed with GITHUB_TOKEN does not rebuild GitHub Pages, so nothing here depends on a
+# rebuild: the homepage and the profile README both read these files from the repository.
+name: Refresh commit maps
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 9 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-commit-maps
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: standalone-portfolio
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.19.0
+      - run: node scripts/commit-maps.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: node --test scripts/test-commit-maps.mjs
+      - name: Commit refreshed maps
+        shell: bash
+        run: |
+          git add assets/commit-maps/year.json assets/commit-maps/activity-dam.svg assets/commit-maps/activity-snake.svg
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(data): refresh commit maps"
+          git pull --rebase origin standalone-portfolio
+          git push origin HEAD:standalone-portfolio

@@ -15,9 +15,28 @@ export const EDITORIAL = {
     limits: {
       "human-grounded-llm-evaluation": "The interactive examples use synthetic records, not individual survey responses or research results.",
       floodabm: "Simulated household agents model adaptation; they are not an integrated LLM system.",
-      wagf: "Demonstrations illustrate validation behavior, not a real-world safety guarantee.",
     },
     aboutLink: "More about my research path", portraitAlt: "Portrait of Wenyu Chiou",
+    chain: {
+      label: "Research questions", feedback: "A loop: effects feed into the next decision", cta: "Follow one decision",
+      steps: [
+        { id: "evidence", label: "Human data", text: "Surveys measure what shapes decisions" },
+        { id: "decision", label: "Coupled model", text: "How do LLM agents act in an environment?" },
+        { id: "validation", label: "Evaluate and validate", text: "Do their decisions match human evidence and pass checks?" },
+        { id: "consequence", label: "Coupled effects", text: "What does their interaction change over time?" },
+      ],
+    },
+    roles: {
+      title: "Four roles, kept apart",
+      note: "These projects share a research approach, not one integrated published system.",
+      items: [
+        { id: "respondent", colorRole: "human", name: "Human respondents", text: "Real people whose survey answers provide the human evidence." },
+        { id: "household", colorRole: "environment", name: "Simulated household agents", text: "Model households that make adaptation choices in FLOODABM; they are not people and not an LLM system." },
+        { id: "llm", colorRole: "model", name: "LLM decision agents", text: "Language models that answer survey questions or propose actions. I compare their answers with human evidence (manuscript in preparation) and, in WAGF (in development), check proposals before a simulation changes." },
+        { id: "research", colorRole: "context", name: "AI research agents", text: "Software that handles literature and tasks, while sources, checks, and workflow state stay inspectable." },
+      ],
+    },
+    whyLabel: "Why", howLabel: "How", contributionShortLabel: "Contribution", sourceLabel: "Public source", expandLabel: "Methods and boundaries",
   },
   "zh-TW": {
     updatesEyebrow: "公開近況", updatesTitle: "我在公開交流的想法",
@@ -35,8 +54,27 @@ export const EDITORIAL = {
     limits: {
       "human-grounded-llm-evaluation": "互動示例使用合成紀錄，不是個別受訪者資料或研究結果。",
       floodabm: "家戶代理模擬調適行為，不是已整合 LLM 的系統。",
-      wagf: "示例呈現驗證行為，不代表真實世界的安全保證。",
     },
     aboutLink: "了解我的研究歷程", portraitAlt: "邱文昱的個人照片",
+    chain: {
+      label: "研究問題", feedback: "這是一個迴圈：影響會回到下一輪決策", cta: "跟著一個決策走一遍",
+      steps: [
+        { id: "evidence", label: "人類資料", text: "問卷量測影響家戶決策的因素" },
+        { id: "decision", label: "耦合模型", text: "LLM 代理在環境模型中如何行動？" },
+        { id: "validation", label: "評估與驗證", text: "決策是否符合人類證據、通過檢查？" },
+        { id: "consequence", label: "耦合影響", text: "兩者的互動隨時間改變了什麼？" },
+      ],
+    },
+    roles: {
+      title: "四種角色，各自分明",
+      note: "這些專案共用研究方法，但並不是一套已整合、已發表的系統。",
+      items: [
+        { id: "respondent", colorRole: "human", name: "真人受訪者", text: "填答問卷的真實受訪者，是人類證據的來源。" },
+        { id: "household", colorRole: "environment", name: "模擬家戶代理", text: "FLOODABM 中做出調適選擇的模型家戶，不是真人，也不是 LLM 系統。" },
+        { id: "llm", colorRole: "model", name: "LLM 決策代理", text: "回答問卷題目或提出行動的語言模型。我把它們的回答與人類證據對照（論文準備中）；在仍開發中的 WAGF 裡，則在模擬狀態改變前先檢查提案。" },
+        { id: "research", colorRole: "context", name: "科研 AI 代理", text: "協助處理文獻與任務的軟體，來源、檢查與工作狀態都可檢視。" },
+      ],
+    },
+    whyLabel: "為什麼", howLabel: "怎麼做", contributionShortLabel: "貢獻", sourceLabel: "公開來源", expandLabel: "方法與限制",
   },
 };

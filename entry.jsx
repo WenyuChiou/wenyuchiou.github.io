@@ -100,7 +100,7 @@ function initProgressiveEnhancement() {
 
 if (root) {
   const page = root.dataset.page || "home";
-  if (page === "home" || page === "hire" || page.startsWith("case:")) {
+  if (page === "hire" || page.startsWith("case:")) {
     hydrateRoot(root, <App page={page} locale={root.dataset.locale || "en"} basePath={root.dataset.basePath || "/"} />);
   } else {
     const menu = root.querySelector(".menu-button");
@@ -117,11 +117,6 @@ if (root) {
       menu.setAttribute("aria-expanded", "false");
       menu.setAttribute("aria-label", menu.dataset.openLabel);
       menu.focus();
-    });
-    root.querySelector(".theme-button")?.addEventListener("click", () => {
-      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-      document.documentElement.dataset.theme = next;
-      try { window.localStorage.setItem("wy-theme", next); } catch {}
     });
     root.querySelectorAll(".stage").forEach((stage) => {
       const summary = stage.querySelector("summary");
@@ -181,7 +176,6 @@ document.addEventListener("click", (event) => {
   else if (href.includes("Academic_CV_zh-TW")) payload = ["academic_cv_download", "resume-zh"];
   else if (href.includes("human-grounded-llm-evaluation")) payload = ["case_open", "human-grounded-llm-evaluation"];
   else if (href.includes("/work/floodabm")) payload = ["case_open", "floodabm"];
-  else if (href.includes("/work/wagf")) payload = ["case_open", "wagf"];
   else if (href.includes("/articles/")) payload = ["article_open", "articles"];
   else if (href.startsWith("mailto:")) payload = ["contact_click", "email"];
   else if (href.includes("linkedin.com")) payload = ["contact_click", "linkedin"];

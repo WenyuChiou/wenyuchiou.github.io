@@ -21,7 +21,6 @@ export const PAGE_DEFINITIONS = [
   { id: "work", path: "/work/" },
   { id: "case:human-grounded-llm-evaluation", path: "/work/human-grounded-llm-evaluation/" },
   { id: "case:floodabm", path: "/work/floodabm/" },
-  { id: "case:wagf", path: "/work/wagf/" },
   { id: "research", path: "/research/" },
   { id: "publications", path: "/publications/" },
   { id: "hire", path: "/hire/" },
