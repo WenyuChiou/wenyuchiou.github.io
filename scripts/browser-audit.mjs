@@ -490,16 +490,97 @@ const auditHomepageBlockedYear = async (route, width) => {
   await page.close();
 };
 
+/* What the static layout must show: every tab panel, timeline stop and reference card, no control that needs the
+   homepage script, and (when asked) the two commit maps as loaded pictures. Runs inside the page. */
+const staticLayoutProblems = (withMaps) => {
+  const problems = [];
+  /* opacity is left out on purpose: the active panels fade in on load */
+  const shown = (el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== "hidden";
+  const content = [...document.querySelectorAll("[data-panel], .tdp, .pkd")];
+  if (content.length < 20) problems.push(`only ${content.length} panels, stops and cards found`);
+  const missing = content.filter((el) => !shown(el)).map((el) => el.dataset.panel || el.dataset.td || el.id);
+  if (missing.length) problems.push(`content not shown: ${missing.join(", ")}`);
+  const inert = [...document.querySelectorAll(".tabs[data-tabs], .pkx, .ti, .knobs, .a5s")].filter(shown).length;
+  if (inert) problems.push(`${inert} controls that need the script are still shown`);
+  const maps = [...document.querySelectorAll("img.a5f")];
+  if (maps.length !== 2 || maps.some((img) => !shown(img))) problems.push("the two static commit maps are not shown");
+  else if (withMaps && maps.some((img) => !img.complete || !img.naturalWidth)) problems.push("a static commit map did not load");
+  if (document.documentElement.scrollWidth > document.documentElement.clientWidth + 1) problems.push("the page scrolls sideways");
+  return problems;
+};
+
 const auditHomepageSource = async (route) => {
   const html = await (await fetch(`${origin}${route}`)).text();
   if (/\sstyle\s*=\s*["']/i.test(html)) failures.push(`${route}: served homepage HTML contains style attributes`);
-  const page = await browser.newPage();
-  await page.setJavaScriptEnabled(false);
-  await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
-  await page.goto(`${origin}${route}`, { waitUntil: "load" });
-  const staticSections = await page.evaluate((ids) => ids.filter((id) => !document.getElementById(id)), homeSectionIds);
-  if (staticSections.length) failures.push(`${route}: no-JavaScript homepage lacks sections ${staticSections.join(", ")}`);
-  await page.close();
+  /* JavaScript switched off */
+  for (const width of [390, 1280]) {
+    const page = await browser.newPage();
+    await page.setJavaScriptEnabled(false);
+    await page.setViewport({ width, height: 844, deviceScaleFactor: 1 });
+    await page.goto(`${origin}${route}`, { waitUntil: "load" });
+    const staticSections = await page.evaluate((ids) => ids.filter((id) => !document.getElementById(id)), homeSectionIds);
+    if (staticSections.length) failures.push(`${route}: no-JavaScript homepage lacks sections ${staticSections.join(", ")}`);
+    for (const problem of await page.evaluate(staticLayoutProblems, true)) failures.push(`${route} without JavaScript @${width}px: ${problem}`);
+    await page.close();
+  }
+  /* JavaScript on, but the homepage script never arrives: the inline flag must be set first (under the page policy), then withdrawn */
+  {
+    const label = `${route} with home.js blocked`;
+    const page = await browser.newPage();
+    const errors = [];
+    let held = null;
+    await page.setViewport({ width: 1280, height: 900, deviceScaleFactor: 1 });
+    await page.setRequestInterception(true);
+    page.on("request", (request) => {
+      if (request.url().includes("/assets/home/home.js")) { held = request; return; }
+      request.continue().catch(() => {});
+    });
+    page.on("pageerror", (error) => errors.push(`uncaught ${error.message}`));
+    page.on("console", (message) => { if (message.type() === "error" && !/ERR_FAILED|ERR_BLOCKED_BY_CLIENT|Failed to load resource/i.test(message.text())) errors.push(`console ${message.text()}`); });
+    const until = async (check, ms = 10000) => {
+      const deadline = Date.now() + ms;
+      while (Date.now() < deadline) {
+        try { if (await check()) return true; } catch { /* the document is still being swapped in */ }
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      return false;
+    };
+    const navigation = page.goto(`${origin}${route}`, { waitUntil: "domcontentloaded" }).catch((error) => { errors.push(`navigation ${error.message}`); });
+    if (!(await until(() => held !== null))) failures.push(`${label}: the page never requested its script`);
+    if (!(await until(() => page.evaluate(() => document.documentElement.classList.contains("scripted"))))) failures.push(`${label}: the inline script did not mark the page before its script loaded`);
+    /* parsing is finished and the script is still held: the panels exist, and the inactive ones must already be collapsed */
+    if (!(await until(() => page.evaluate(() => document.readyState === "interactive")))) failures.push(`${label}: the page did not finish parsing while its script was held`);
+    const collapsed = await page.evaluate(() => { const off = [...document.querySelectorAll("[data-panel]:not(.on)")]; return off.length ? off.filter((el) => el.getClientRects().length).length : -1; }).catch(() => -1);
+    if (collapsed !== 0) failures.push(`${label}: ${collapsed < 0 ? "no inactive panels were found" : `${collapsed} inactive panels were laid out`} while the script was still loading`);
+    if (held) await held.abort().catch(() => {});
+    await navigation;
+    if (!(await until(() => page.evaluate(() => !document.documentElement.classList.contains("scripted"))))) failures.push(`${label}: the page kept the scripted layout although its script never ran`);
+    for (const problem of await page.evaluate(staticLayoutProblems, false)) failures.push(`${label}: ${problem}`);
+    for (const error of errors) failures.push(`${label}: ${error}`);
+    await page.close();
+  }
+  /* JavaScript on and working: one panel per tab group, no static-only element shown, and the static map pictures are never fetched */
+  {
+    const label = `${route} scripted`;
+    const page = await browser.newPage();
+    const fetched = [];
+    await page.setViewport({ width: 1280, height: 900, deviceScaleFactor: 1 });
+    page.on("request", (request) => { if (/\/assets\/commit-maps\/activity-[a-z]+\.svg/.test(request.url())) fetched.push(request.url()); });
+    await page.goto(`${origin}${route}`, { waitUntil: "networkidle0" });
+    await page.evaluate(async () => { document.getElementById("activity").scrollIntoView(); await new Promise((resolve) => setTimeout(resolve, 600)); });
+    const state = await page.evaluate(() => {
+      const shown = (el) => el.getClientRects().length > 0;
+      const groups = {};
+      for (const el of document.querySelectorAll("[data-panel]")) { const group = el.dataset.panel.split(":")[0]; groups[group] = (groups[group] || 0) + (shown(el) ? 1 : 0); }
+      return { flags: document.documentElement.className, groups, staticOnly: [...document.querySelectorAll(".so, .a5f")].filter(shown).length };
+    });
+    if (!/\bscripted\b/.test(state.flags) || !/\bjs\b/.test(state.flags)) failures.push(`${label}: <html> classes are "${state.flags}"`);
+    const wrong = Object.entries(state.groups).filter(([, count]) => count !== 1).map(([group, count]) => `${group}=${count}`);
+    if (wrong.length || Object.keys(state.groups).length < 4) failures.push(`${label}: each tab group must show exactly one panel (${JSON.stringify(state.groups)})`);
+    if (state.staticOnly) failures.push(`${label}: ${state.staticOnly} static-only elements are shown`);
+    if (fetched.length) failures.push(`${label}: the static commit-map pictures were fetched although the live maps drew (${fetched.length})`);
+    await page.close();
+  }
 };
 
 if (process.argv.includes("--guide-only")) {

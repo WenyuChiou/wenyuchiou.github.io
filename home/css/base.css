@@ -74,7 +74,7 @@ a.blk{display:block;text-decoration:none}a.blk:hover{transform:translateY(-6px);
 .tabs button[aria-selected=true]{color:var(--on,#06282c)}
 .tabs .ind{position:absolute;left:0;top:5px;height:44px;width:0;border-radius:999px;background:var(--pill,var(--aqua));transition:transform .6s var(--ease),width .6s var(--ease)}
 .blk.sand .tabs,.blk.aqua .tabs,.blk.sun .tabs,.blk.iris .tabs{--pill:var(--fg);--on:#fff}
-[data-panel]:not(.on){display:none!important}[data-panel].on{animation:pin .7s var(--ease)}
+.scripted [data-panel]:not(.on){display:none!important}[data-panel].on{animation:pin .7s var(--ease)}
 @keyframes pin{from{opacity:0;transform:translateY(14px);filter:blur(8px)}}
 
 /* reveal */

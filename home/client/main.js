@@ -4,7 +4,7 @@ var r=document.documentElement,q=location.search,doc=document;
 function $(s,c){return Array.prototype.slice.call((c||doc).querySelectorAll(s))}
 function one(s,c){return (c||doc).querySelector(s)}
 var RM=matchMedia("(prefers-reduced-motion:reduce)").matches,ST=/static/.test(q);
-r.classList.add("js");
+r.classList.add("js","scripted"); /* .scripted is normally set by the inline script in the head; see the static layout in site.css */
 
 /* tabs with sliding pill */
 function placeInd(tb){var b=one('[aria-selected="true"]',tb),i=one(".ind",tb);if(!b||!i||!b.offsetWidth)return;i.style.width=b.offsetWidth+"px";i.style.transform="translateX("+b.offsetLeft+"px)"}

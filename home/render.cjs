@@ -22,7 +22,7 @@ const links = [["github", "GitHub", GHU], ["linkedin", "LinkedIn", LI], ["schola
 const phases = [
   ["Ask", "問", "It starts with a survey: what would your household do before the next flood?", "從問卷開始：下一次淹水前，你家會怎麼做？", "Household survey I designed and fielded", "問卷由我設計、發放"],
   ["Decide", "決定", "Agents carry those choices into the model: adapt, insure, or wait.", "代理把這些選擇帶進模型：調適、買保險，或先等等。", "Rule-based agents in FLOODABM · LLM agents in the WRR paper", "FLOODABM 用規則式代理 · WRR 論文用 LLM 代理"],
-  ["Flood", "淹水", "Then the river answers. Same water, different outcomes.", "接著換河流回答。同一場水，結果不一樣。", "Drag the river, or switch adaptation off", "拖拖看水位，或把調適關掉"],
+  ["Flood", "淹水", "Then the river answers. Same water, different outcomes.", "接著換河流回答。同一場水，結果不一樣。", "Drag the river, or switch adaptation off", "拖拖看水位，或把調適關掉", true],
   ["Next year", "下一年", "Damage and payouts shape what each household can do next.", "損失和理賠，決定每一戶下一步還能做什麼。", "Then the loop runs again", "然後再跑下一輪"],
 ];
 const hero = `<div class="wrap hero">
@@ -39,7 +39,7 @@ ${chip("Open to Summer 2027 internships", "2027 暑期實習開放中", true)}
 <svg class="ring" viewBox="0 0 44 44" aria-hidden="true"><circle class="r0" cx="22" cy="22" r="18"/><circle class="r1" cx="22" cy="22" r="18" pathLength="4" stroke-dasharray="1 4"/></svg></div>
 <div class="ctl">
 ${tabs("ph", phases.map((p, i) => [i, `<b>${i + 1}</b>${t(p[0], p[1])}`]), zhPage ? "研究循環" : "Research loop")}
-${phases.map((p, i) => `<p class="cap${i ? "" : " on"}" data-panel="ph:${i}">${t(p[2], p[3])}<small>${t(p[4], p[5])}</small></p>`).join("")}
+${phases.map((p, i) => `<p class="cap${i ? "" : " on"}" data-panel="ph:${i}"><b class="so">${i + 1} · ${t(p[0], p[1])}</b>${t(p[2], p[3])}<small${p[6] ? ' class="jo"' : ""}>${t(p[4], p[5])}</small></p>`).join("")}
 <div class="knobs"><label>${t("River", "水位")}<input type="range" id="lv" min="0" max="100" value="8" aria-label="${zhPage ? "河川水位" : "River level"}"></label><label><button class="sw" id="adapt" aria-pressed="false" aria-label="${zhPage ? "家戶調適" : "Households adapt"}"></button>${t("Households adapt", "家戶做調適")}</label></div>
 <div class="legend"><span><i style="background:#eef6f4"></i>${t("dry", "沒淹")}</span><span><i style="background:#f4a285"></i>${t("flooded", "淹水")}</span><span><i style="background:#f7d67f"></i>${t("flooded, insured", "淹水但有保險")}</span></div>
 </div></div></div>`;
@@ -181,29 +181,34 @@ const lane = (i, en, zh) => `<p class="tlb">${t(en, zh)}</p><div class="tln l${i
 const years = [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
 const pathPanel = `<div class="tl" id="tl" role="group" aria-label="${zhPage ? "學習與研究的時間軸" : "Study and research on a time axis"}"><div class="tax">${years.map((y) => `<i style="--a:${px(y).toFixed(2)}%">${y}</i>`).join("")}<i class="now" style="--a:${px(NOW).toFixed(2)}%">${t("now", "現在")}</i></div>
 ${lane(0, "Study", "學歷")}${lane(1, "Research", "研究")}</div>
-<div class="td">${pathItems.map((x) => `<div class="tdp${x.k === "caws" ? " on" : ""}" data-td="${x.k}"><div><time>${t(...x.when)}</time><h3>${t(...x.role)}</h3><p>${t(...x.place)}</p>${x.links.length ? `<div class="btns">${x.links.map(([ic, e, z, h]) => `<a class="btn sm" href="${h}">${icon(ic, 16)}${t(e, z)}</a>`).join("")}</div>` : ""}</div>
+<div class="td">${order.slice().reverse().map((k) => pathItems.find((x) => x.k === k)).map((x) => `<div class="tdp${x.k === "caws" ? " on" : ""}" data-td="${x.k}"><div><time>${t(...x.when)}</time><h3>${t(...x.role)}</h3><p>${t(...x.place)}</p>${x.links.length ? `<div class="btns">${x.links.map(([ic, e, z, h]) => `<a class="btn sm" href="${h}">${icon(ic, 16)}${t(e, z)}</a>`).join("")}</div>` : ""}</div>
 <ul>${x.pts.map(([e, z]) => `<li>${t(e, z)}</li>`).join("")}</ul></div>`).join("")}</div>`;
+/* .so = shown only in the static layout (no script), where the tab bar is hidden and every panel is open; .jo = a hint that only makes sense with the script */
+const cvLabels = { path: t("Path", "經歷"), pub: t("Publications &amp; posters", "論文與海報"), talk: t("Talks", "發表"), award: t("Awards", "獎項") };
+const cvLabel = (k) => `<h3 class="so">${cvLabels[k]}</h3>`;
 const cv = `<section id="cv"><div class="wrap">
 <p class="eb">02 · ${t("Experience", "經歷")}</p>
-<div class="sec-h"><div><h2>${t(`Field hydrology first, then ${em("agents")}`, `先跑野外水文，再做${em("代理")}`)}</h2><p class="sub">${t("Isotopes at a reservoir, groundwater on a coast, climate ensembles, then households and floods. Pick a stop.", "從水庫的同位素、海岸的地下水、氣候模式系集，到家戶與洪災。點一站看看。")}</p></div></div>
-<div class="blk sand cv"><div class="cvh">${tabs("cv", [["path", t("Path", "經歷")], ["pub", t("Publications &amp; posters", "論文與海報")], ["talk", t("Talks", "發表")], ["award", t("Awards", "獎項")]], zhPage ? "經歷分頁" : "Experience sections")}</div>
-<div data-panel="cv:path" class="on">${pathPanel}</div>
-${["pub", "talk"].map((k) => `<div data-panel="cv:${k}">${refPanel(k)}</div>`).join("")}
-<div data-panel="cv:award">${cvTabs.award.map((r) => ln(...r)).join("")}</div>
+<div class="sec-h"><div><h2>${t(`Field hydrology first, then ${em("agents")}`, `先跑野外水文，再做${em("代理")}`)}</h2><p class="sub">${t("Isotopes at a reservoir, groundwater on a coast, climate ensembles, then households and floods.", "從水庫的同位素、海岸的地下水、氣候模式系集，到家戶與洪災。")}<span class="jo">${t(" Pick a stop.", "點一站看看。")}</span></p></div></div>
+<div class="blk sand cv"><div class="cvh">${tabs("cv", Object.entries(cvLabels), zhPage ? "經歷分頁" : "Experience sections")}</div>
+<div data-panel="cv:path" class="on">${cvLabel("path")}${pathPanel}</div>
+${["pub", "talk"].map((k) => `<div data-panel="cv:${k}">${cvLabel(k)}${refPanel(k)}</div>`).join("")}
+<div data-panel="cv:award">${cvLabel("award")}${cvTabs.award.map((r) => ln(...r)).join("")}</div>
 <div class="cvd"><span>${t("Full CV", "完整履歷")}</span><div class="btns"><a class="btn pri" href="${CV_EN}">${icon("paper", 18)}${t("Academic CV · PDF", "學術履歷 · PDF（英文）")}</a><a class="btn" href="${CV_ZH}">${icon("paper", 18)}${t("中文版 · PDF", "學術履歷 · PDF（中文）")}</a><a class="btn" href="${RES}">${icon("paper", 18)}${t("Industry résumé · PDF", "業界履歷 · PDF")}</a></div></div>
 </div></div></section>`;
 
 /* ---------- activity ---------- */
 const y0 = YEAR.days[0][0], y1 = YEAR.days[YEAR.days.length - 1][0], ymd = (d) => d.replace(/-0?/g, "/"), MONS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], mdy = (d) => `${MONS[+d.slice(5, 7) - 1]} ${+d.slice(8)}, ${d.slice(0, 4)}`;
+/* static picture of each map (the daily SVG), shown only when the script that draws the live one does not run */
+const mapImg = (name, height, en, zh) => `<img class="a5f" src="${A}/commit-maps/activity-${name}.svg" alt="${zhPage ? zh : en}" width="1240" height="${height}" loading="lazy" decoding="async">`;
 const playBtn = `<button class="a5p" aria-pressed="false" aria-label="${zhPage ? "播放或暫停" : "Play or pause"}"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="pl" d="M5 2.500l9 5.500-9 5.500z"/><path class="pa" d="M3.500 2.500h3.200v11H3.500zM9.300 2.500h3.200v11H9.300z"/></svg></button>`;
 const activity = `<section id="activity"><div class="wrap">
 <p class="eb">04 · ${t("Activity", "動態")}</p>
 <div class="sec-h"><div><h2>${t(`A year of commits, run like a ${em("reservoir")}`, `一年的 commit，當成一座${em("水庫")}來操作`)}</h2><p class="sub">${t("Each day’s commits fall as rain. The reservoir keeps about two weeks of them, and the fuller it gets, the more the gate lets out.", "每天的 commit 是雨量。水庫大約留住兩週的量，水位越高，閘門放得越多。")}</p></div>${tabs("ac", [["dam", t("The dam", "水壩")], ["snake", t("Snake", "貪吃蛇")]], zhPage ? "Commit 地圖" : "Commit map")}</div>
 <div id="act5" data-days='${JSON.stringify(YEAR.days)}'>
-<div class="blk a5 on" data-panel="ac:dam" data-a5="dam"><div class="a5s" tabindex="0" role="application" aria-label="${zhPage ? "一年的 commit 注入水庫。用方向鍵逐日移動。" : "Dam filled by one year of commits. Arrow keys move through the days."}"><div class="a5c"></div><span class="a5ag">${icon("robot", 22)}</span><span class="a5call"></span>${playBtn}</div></div>
-<div class="blk a5" data-panel="ac:snake" data-a5="snake"><div class="a5s" tabindex="0" role="application" aria-label="${zhPage ? "一年的 commit 排成每日方格。用方向鍵操控貪吃蛇。" : "One year of commits as a grid of days. Arrow keys steer the snake."}"><div class="a5c"></div>${playBtn}</div></div>
+<div class="blk a5 on" data-panel="ac:dam" data-a5="dam"><div class="a5s" tabindex="0" role="application" aria-label="${zhPage ? "一年的 commit 注入水庫。用方向鍵逐日移動。" : "Dam filled by one year of commits. Arrow keys move through the days."}"><div class="a5c"></div><span class="a5ag">${icon("robot", 22)}</span><span class="a5call"></span>${playBtn}</div>${mapImg("dam", 532, "The past year of commits drawn as rain that fills a reservoir behind a dam, month by month.", "過去一年的 commit 畫成雨水，逐月注入水壩後方的水庫。")}</div>
+<div class="blk a5" data-panel="ac:snake" data-a5="snake"><div class="a5s" tabindex="0" role="application" aria-label="${zhPage ? "一年的 commit 排成每日方格。用方向鍵操控貪吃蛇。" : "One year of commits as a grid of days. Arrow keys steer the snake."}"><div class="a5c"></div>${playBtn}</div>${mapImg("snake", 317, "The past year of commits as a grid with one square per day, and a snake that eats the squares from the quietest day to the busiest.", "過去一年的 commit 排成每日一格，貪吃蛇從最少的那天吃到最多的那天。")}</div>
 </div>
-<p class="tmn">${t("Public repositories only · ", "只算公開專案 · ")}<span id="a5range">${zhPage ? `${ymd(y0)} → ${ymd(y1)}` : `${mdy(y0)} → ${mdy(y1)}`}</span>${t(" · hover, drag or use the arrow keys", " · 可以滑過、拖曳，或用方向鍵")}</p>
+<p class="tmn">${t("Public repositories only · ", "只算公開專案 · ")}<span id="a5range">${zhPage ? `${ymd(y0)} → ${ymd(y1)}` : `${mdy(y0)} → ${mdy(y1)}`}</span><span class="jo">${t(" · hover, drag or use the arrow keys", " · 可以滑過、拖曳，或用方向鍵")}</span></p>
 </div></section>`;
 
 /* ---------- contact ---------- */

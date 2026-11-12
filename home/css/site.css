@@ -27,8 +27,24 @@ footer p{margin:0}
 .pkb,.pkw,.pkn{margin:8px 0 0;font-size:14.5px;line-height:1.5;color:var(--fg2)}
 .pkn{color:var(--fg)}
 .pkd .btns{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
-html:not(.js) .pkd{grid-area:auto;visibility:visible;opacity:1;transform:none;margin-top:12px}
-html:not(.js) .pkx,html:not(.js) .pkh{display:none}
+/* Static layout. An inline script in the head puts .scripted on <html> before first paint and takes it back when the
+   homepage script never runs; without JavaScript it is never there. Without it every tab panel, timeline stop and
+   reference card is laid out in full, the controls that need the script are hidden, and the two commit maps are pictures. */
+html:not(.scripted) .tabs[data-tabs],html:not(.scripted) .cvh,html:not(.scripted) .knobs,html:not(.scripted) .legend,html:not(.scripted) .ring,html:not(.scripted) .jo,html:not(.scripted) .tl,html:not(.scripted) .a5s,html:not(.scripted) .pkl{display:none}
+html:not(.scripted) .pk{display:block}
+html:not(.scripted) .pkv{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px;align-items:start}
+html:not(.scripted) .pkd{display:block;grid-area:auto;visibility:visible;opacity:1;transform:none;margin:0}
+html:not(.scripted) .cap{min-height:0}
+.cap .so{display:block;margin-bottom:5px;font:500 12.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--aqua)}
+h3.so{margin:0 0 18px;font:500 12.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--fg2)}
+html[data-lang=zh] .so{letter-spacing:.04em}
+html:not(.scripted) .cv [data-panel]+[data-panel]{margin-top:30px;padding-top:28px;border-top:1px solid var(--bd)}
+html:not(.scripted) .td{display:grid;gap:26px;min-height:0;padding-top:0;border-top:0}
+html:not(.scripted) .tdp{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:18px 48px;padding-top:26px;border-top:1px solid var(--bd)}
+html:not(.scripted) .a5+.a5{margin-top:16px}
+.a5f{display:block;width:100%;height:auto;border-radius:16px}
+.scripted .so,.scripted .a5f{display:none!important}
+@media (max-width:720px){html:not(.scripted) .tdp{grid-template-columns:minmax(0,1fr)}}
 /* narrow screens: one column, and each card sits right under its own row */
 @media (max-width:980px){.pk{display:flex;flex-direction:column}.pkl,.pkv{display:contents}.pkd{margin:2px 0 14px}.pkd:not(.on){display:none}.pki{max-width:520px}}
 @media (max-width:720px){.cv .pkr{grid-template-columns:minmax(0,1fr)}.pkx{justify-self:start}}

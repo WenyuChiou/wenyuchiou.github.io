@@ -7,6 +7,7 @@ import { LEGACY_REDIRECTS } from '../seo.js';
 import { GUIDE_EVIDENCE } from '../guide-evidence.js';
 import { FEATURE_CONTENT } from '../feature-content.js';
 import { createRequire } from 'node:module';
+import { createHash } from 'node:crypto';
 
 const { starTone, irisTone, ratio } = createRequire(import.meta.url)('../home/tiles.cjs');
 test('homepage tile colours keep their text at 4.5:1 or better for every star count', () => {
@@ -166,4 +167,27 @@ test('every internal link that names a section lands on a page and an anchor tha
   };
   walk('.');
   assert.deepEqual(missing, []);
+});
+
+test('the homepage collapses tab panels only where its script runs, and the page policy allows every inline script by hash', () => {
+  const css = readFileSync('assets/home/home.css', 'utf8');
+  assert.ok(css.includes('.scripted [data-panel]:not(.on){display:none!important}'), 'panel hiding is scoped to .scripted');
+  assert.doesNotMatch(css, /(^|[},])\[data-panel\]:not\(\.on\)\{display:none/, 'no unscoped rule hides inactive panels');
+  assert.match(readFileSync('assets/home/home.js', 'utf8'), /classList\.add\("js","scripted"\)/);
+  for (const prefix of ['', 'zh/']) {
+    const html = readFileSync(`${prefix}index.html`, 'utf8');
+    const policy = html.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
+    const inline = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(match => match[1]);
+    const flag = inline.filter(code => code.includes('"scripted"'));
+    assert.equal(flag.length, 1, `${prefix}index.html: one inline script marks the page as scripted`);
+    assert.ok(html.indexOf(flag[0]) < html.indexOf('/assets/home/home.css'), 'the mark is set before the stylesheet applies');
+    assert.match(flag[0], /DOMContentLoaded[\s\S]*classList\.contains\("js"\)\|\|r\.classList\.remove\("scripted"\)/, 'the mark is withdrawn when the homepage script did not run');
+    for (const code of inline) assert.ok(policy.includes(`'sha256-${createHash('sha256').update(code).digest('base64')}'`), `${prefix}index.html: inline script is allowed by its hash`);
+    assert.doesNotMatch(policy, /'unsafe-inline'/);
+    assert.equal((html.match(/<h3 class="so">/g) || []).length, 4, 'four static labels for the experience panels');
+    assert.equal((html.match(/<b class="so">/g) || []).length, 4, 'four static labels for the research-loop captions');
+    assert.deepEqual([...html.matchAll(/ data-td="([a-z]+)"/g)].map(match => match[1]), ['caws', 'phd', 'ra', 'ncdr', 'ms', 'sinica', 'bs'], 'timeline stops are written newest first, the order the static layout shows');
+    for (const name of ['dam', 'snake']) assert.match(html, new RegExp(`<img class="a5f" src="/assets/commit-maps/activity-${name}\\.svg" alt="[^"]{20,}" width="1240" height="\\d+" loading="lazy"`));
+  }
+  for (const page of ['work/', 'zh/about/']) assert.doesNotMatch(readFileSync(`${page}index.html`, 'utf8'), /"scripted"/, 'inner pages carry no homepage flag');
 });
